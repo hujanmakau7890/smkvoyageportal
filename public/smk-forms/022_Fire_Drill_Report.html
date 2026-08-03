@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>022 Fire Drill Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Sembunyikan panah khusus input tanggal/waktu secara absolut dan global */
+        ::-webkit-calendar-picker-indicator {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            -webkit-appearance: none !important;
+            position: absolute !important;
+            z-index: -9999 !important;
+        }
+
+        /* Print Styling */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            .no-print { display: none !important; }
+            body { font-size: 11px; background-color: white; padding: 0 !important; margin: 0 !important; }
+            .print\:shadow-none { box-shadow: none !important; }
+            .print\:p-0 { padding: 0 !important; }
+            .max-w-4xl { max-width: 100% !important; }
+            
+            /* Print Styling Customizations */
+            .print-row {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+                width: 100% !important;
+            }
+            .print-row > div:nth-child(1) { width: 25% !important; text-align: left !important; }
+            .print-row > div:nth-child(2) { width: 50% !important; text-align: center !important; }
+            .print-row > div:nth-child(3) { width: 25% !important; text-align: right !important; position: relative !important; }
+            
+            /* Status box relative to right column on print */
+            .print-right-box {
+                position: absolute !important;
+                top: -5px !important;
+                right: 0 !important;
+            }
+            
+            /* Sembunyikan elemen bawaan browser di input type date/time/number */
+            input[type="date"]::-webkit-calendar-picker-indicator,
+            input[type="time"]::-webkit-calendar-picker-indicator,
+            input[type="date"]::-webkit-inner-spin-button,
+            input[type="time"]::-webkit-inner-spin-button,
+            input[type="date"]::-webkit-clear-button,
+            input[type="time"]::-webkit-clear-button,
+            input[type="number"]::-webkit-inner-spin-button,
+            input[type="number"]::-webkit-outer-spin-button {
+                display: none !important;
+                -webkit-appearance: none !important;
+                margin: 0;
+            }
+            input[type="number"] {
+                -moz-appearance: textfield !important;
+            }
+
+            input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea, select {
+                border: none !important;
+                border-bottom: 1px dotted #000 !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                resize: none;
+                font-size: 12px;
+                color: black !important;
+            }
+            /* Removes border from signature inputs since they already have a border below them via Tailwind */
+            .sig-input {
+                border-bottom: none !important;
+            }
+            ::-webkit-input-placeholder { color: transparent !important; }
+            :-moz-placeholder { color: transparent !important; }
+            ::-moz-placeholder { color: transparent !important; }
+            :-ms-input-placeholder { color: transparent !important; }
+            /* Custom styling to ensure radio buttons print nicely */
+            input[type="radio"] {
+                appearance: none !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                width: 14px !important;
+                height: 14px !important;
+                border: 2px solid #000 !important;
+                border-radius: 50% !important;
+                display: inline-block !important;
+                position: relative !important;
+                box-sizing: border-box !important;
+                background-color: transparent !important;
+                print-color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+            input[type="radio"]:checked::after {
+                content: '' !important;
+                width: 6px !important;
+                height: 6px !important;
+                background-color: #000 !important;
+                border-radius: 50% !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                print-color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+            }
+        }
+
+        /* Sembunyikan elemen bawaan browser di input type date/time/number */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator,
+        input[type="date"]::-webkit-inner-spin-button,
+        input[type="time"]::-webkit-inner-spin-button,
+        input[type="date"]::-webkit-clear-button,
+        input[type="time"]::-webkit-clear-button,
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            display: none !important;
+            -webkit-appearance: none !important;
+            margin: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Tambahkan font custom agar elemen tidak kepotong di PDF dan pastikan layout pas */
+        .text-xs { font-size: 0.70rem; line-height: 1.1rem; word-break: break-word; white-space: normal; }
+        .text-sm { font-size: 0.8rem; line-height: 1.2rem; word-break: break-word; white-space: normal; }
+        
+        /* Global styling for radio buttons to ensure consistency */
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #000;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            background-color: transparent;
+            cursor: pointer;
+            box-sizing: border-box;
+            vertical-align: middle;
+            margin-top: -2px;
+        }
+        input[type="radio"]:checked::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background-color: #000;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Tata letak pilihan Good/Damage dan Yes/No */
+        .check-item {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        .check-item > label:first-child {
+            width: 100% !important;
+            padding-right: 0 !important;
+            margin-bottom: 6px !important;
+        }
+        .choice-group {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 18px !important;
+            width: 100% !important;
+        }
+        .choice-group label {
+            display: inline-flex !important;
+            align-items: center !important;
+            white-space: nowrap !important;
+            line-height: 1 !important;
+            min-width: 64px;
+        }
+        .choice-group input[type="radio"] {
+            flex: 0 0 14px !important;
+            margin: 0 5px 0 0 !important;
+        }
+
+        /* Jumlah crew: input dan satuan "orang" tetap sejajar */
+        .crew-count-row {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 10px;
+        }
+        .crew-count-label {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .crew-count-field {
+            flex: 0 0 auto;
+            width: auto !important;
+            display: inline-flex !important;
+            align-items: baseline !important;
+            justify-content: flex-end !important;
+            gap: 5px;
+            white-space: nowrap !important;
+        }
+        .crew-count-field input {
+            width: 48px !important;
+            flex: 0 0 48px !important;
+            margin: 0 !important;
+        }
+        .crew-count-field span {
+            margin: 0 !important;
+            white-space: nowrap !important;
+        }
+
+        @media print {
+            .check-item { break-inside: avoid; }
+            .choice-group { gap: 14px !important; }
+            .choice-group label { min-width: 58px; }
+        }
+
+        /* Modifikasi lebar kolom khusus untuk perangkat mobile (tampilan layar sempit) */
+        @media (max-width: 768px) {
+            .mobile-col-break {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+            .mobile-w-full {
+                width: 100% !important;
+            }
+            .mobile-mb {
+                margin-bottom: 0.5rem !important;
+            }
+        }
+        input[type="number"] {
+            -moz-appearance: textfield !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 p-4 sm:p-8 font-sans text-gray-800">
+    <div class="max-w-4xl mx-auto bg-white p-6 sm:p-10 shadow-lg print:shadow-none print:p-0">
+        <!-- Print Button -->
+        <div class="flex justify-end mb-6 no-print">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded flex items-center shadow">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="border-2 border-black p-2 mb-4">
+            <div class="flex flex-col md:flex-row justify-between items-center border-b-2 border-black pb-2 mb-2 relative print-row">
+                <div class="w-full md:w-1/3 text-center md:text-left mb-2 md:mb-0">
+                    <h1 class="text-sm font-bold uppercase leading-tight">PT Mentari Mas Multimoda</h1>
+                </div>
+                <div class="w-full md:w-1/3 text-center mb-4 md:mb-0">
+                    <h2 class="text-base font-bold leading-tight">022 FIRE DRILL REPORT<br><span class="text-xs font-normal">LAPORAN LATIHAN PERAN PEMADAM KEBAKARAN</span></h2>
+                </div>
+                <div class="w-full md:w-1/3 text-center md:text-right text-xs font-semibold relative print-right">
+                    <!-- Status indicator like in Excel -->
+                    <div class="absolute -top-1 right-12 md:right-0 md:-top-2 border border-black flex print-right-box" style="right: 0;">
+                        <div class="w-6 h-6 border-r border-black flex items-center justify-center font-bold text-xs">CS</div>
+                        <div class="px-2 h-6 flex items-center justify-center font-bold text-xs">BLN</div>
+                    </div>
+                    
+                    <div class="mt-8 md:mt-6">
+                        <p>Release: Rev.0:</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-x-6 gap-y-2">
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Ship Name / Nama Kapal:</label>
+                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
+                </div>
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Report Date / Tanggal Laporan:</label>
+                    <input type="text" placeholder="DD-MM-YYYY" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm date-mask">
+                </div>
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Origin Port / Pelabuhan Asal:</label>
+                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
+                </div>
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Next Port / Pelabuhan Tujuan:</label>
+                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
+                </div>
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Drill Date / Tanggal Latihan:</label>
+                    <input type="text" placeholder="DD-MM-YYYY" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm date-mask">
+                </div>
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Duration / Waktu Latihan:</label>
+                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
+                </div>
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Starting at / Mulai Jam:</label>
+                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
+                </div>
+                <div class="flex items-center">
+                    <label class="text-xs font-semibold w-2/5">Finish at / Selesai Jam:</label>
+                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
+                </div>
+            </div>
+        </div>
+
+        <!-- Position & Details -->
+        <div class="border-2 border-black p-3 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-3">
+                <!-- Left col -->
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Vessel's Position / Posisi kapal saat latihan:</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-sm">N/S:</span><input type="text" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm"></div>
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-sm">E/W:</span><input type="text" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm"></div>
+                    </div>
+                </div>
+                <!-- Right col -->
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Fire Location / Lokasi Kebakaran:</label>
+                    <input type="text" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
+                </div>
+            </div>
+
+            <div class="mb-3 flex flex-col md:flex-row md:items-center">
+                <label class="text-xs font-semibold md:w-1/3">The Training Commander / Komandan Latihan:</label>
+                <input type="text" class="md:w-2/3 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm w-full">
+            </div>
+
+            <div class="mb-3 flex flex-col md:flex-row md:items-end md:justify-between">
+                <label class="text-xs font-semibold md:w-3/4 pr-4 text-justify">The total time required since the fire signal is sounded up to the readiness of Fire Fighting Equipment arrives at the fire location / Total waktu yang diperlukan sejak sinyal kebakaran dibunyikan sampai dengan kesiapan Peralatan Pemadam Kebakaran tiba di lokasi kebakaran:</label>
+                <div class="md:w-1/4 flex items-center justify-end mt-2 md:mt-0">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-sm"> <span class="text-xs ml-2 font-semibold">menit</span>
+                </div>
+            </div>
+
+            <div class="mb-3 flex flex-col md:flex-row md:items-center">
+                <label class="text-xs font-semibold md:w-1/2 pr-2">Fire Fighting Equipment Type / Tipe peralatan pemadam kebakaran yang digunakan:</label>
+                <input type="text" class="md:w-1/2 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm w-full">
+            </div>
+
+            <div class="mb-3">
+                <label class="block text-xs font-semibold mb-1">How to use its / Bagaimana menggunakannya:</label>
+                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-12 text-sm leading-tight rounded-sm"></textarea>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between">
+                <label class="text-xs font-semibold md:w-3/4 pr-4 text-justify">Conditions of waterproof door, fire door how ABK closes and the time it takes to act / Kondisi dari pintu kedap air, pintu kebakaran (fire door) bagaimana ABK menutup dan waktu yang diperlukan untuk bertindak:</label>
+                <div class="md:w-1/4 flex items-center justify-end mt-2 md:mt-0">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-sm"> <span class="text-xs ml-2 font-semibold">menit</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklists -->
+        <div class="border-2 border-black p-3 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                
+                <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
+                    <label class="text-xs mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">If the fire in the room, Whether is the fan/blower has been turn off / Bila kebakaran di ruangan, apakah fan/blower telah dipadamkan:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-xs">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="fan_blower" class="mr-1"> Good</label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="fan_blower" class="mr-1"> Damage</label>
+                    </div>
+                </div>
+
+                <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
+                    <label class="text-xs mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Whether is Quick Closing Valve can be enable and functionlized / Apakah quick closing valves dapat difungsikan (simulasi):</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-xs">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="quick_valve" class="mr-1"> Yes</label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="quick_valve" class="mr-1"> No</label>
+                    </div>
+                </div>
+
+                <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
+                    <label class="text-xs mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">The hose & nozzle condition / Kondisi selang & nosel:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-xs">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="hose_nozzle" class="mr-1"> Good</label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="hose_nozzle" class="mr-1"> Damage</label>
+                    </div>
+                </div>
+
+                <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
+                    <label class="text-xs mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Fire Pump Condition / Kondisi Pompa Kebakaran:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-xs">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="fire_pump" class="mr-1"> Good</label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="fire_pump" class="mr-1"> Damage</label>
+                    </div>
+                </div>
+
+                <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
+                    <label class="text-xs mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Fire Resistance Condition / Kondisi Baju Tahan Api:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-xs">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="fire_suit" class="mr-1"> Good</label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="fire_suit" class="mr-1"> Damage</label>
+                    </div>
+                </div>
+
+                <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
+                    <label class="text-xs mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Breathing Apparatus Condition / Kondisi Breathing Apparatus:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-xs">
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="breathing_app" class="mr-1"> Good</label>
+                        <label class="flex items-center cursor-pointer"><input type="radio" name="breathing_app" class="mr-1"> Damage</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Extinguishers with Date -->
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                <div class="flex flex-col border-b border-gray-200 pb-1">
+                    <div class="check-item flex mobile-col-break justify-between items-center mb-1">
+                        <label class="text-xs mobile-w-full mobile-mb font-semibold leading-tight">CO2 Condition / Kondisi Pemadam CO2:</label>
+                        <div class="choice-group flex gap-3 text-xs mobile-w-full justify-start">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="co2_cond" class="mr-1"> Good</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="co2_cond" class="mr-1"> Damage</label>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end">
+                        <label class="text-xs mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
+                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs w-32 date-mask">
+                    </div>
+                </div>
+
+                <div class="flex flex-col border-b border-gray-200 pb-1">
+                    <div class="check-item flex mobile-col-break justify-between items-center mb-1">
+                        <label class="text-xs mobile-w-full mobile-mb font-semibold leading-tight">Foam extinguisher condition / Kondisi Pemadam Foam:</label>
+                        <div class="choice-group flex gap-3 text-xs mobile-w-full justify-start">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="foam_cond" class="mr-1"> Good</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="foam_cond" class="mr-1"> Damage</label>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end">
+                        <label class="text-xs mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
+                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs w-32 date-mask">
+                    </div>
+                </div>
+
+                <div class="flex flex-col border-b border-gray-200 pb-1">
+                    <div class="check-item flex mobile-col-break justify-between items-center mb-1">
+                        <label class="text-xs mobile-w-full mobile-mb font-semibold leading-tight">ABC extinguisher Condition / Kondisi Pemadam ABC:</label>
+                        <div class="choice-group flex gap-3 text-xs mobile-w-full justify-start">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="abc_cond" class="mr-1"> Good</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="abc_cond" class="mr-1"> Damage</label>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end">
+                        <label class="text-xs mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
+                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs w-32 date-mask">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Participants & Notes -->
+        <div class="border-2 border-black p-3 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                <div class="crew-count-row flex items-center justify-between border-b md:border-none border-gray-200 pb-2 md:pb-0">
+                    <label class="crew-count-label text-xs font-semibold pr-2">The Number of Crew involved in the drill / Jumlah ABK yang terlibat:</label>
+                    <div class="crew-count-field flex items-center justify-end">
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" class="border-b border-gray-400 focus:outline-none focus:border-black text-center text-sm"><span class="text-xs font-semibold">orang</span>
+                    </div>
+                </div>
+                <div class="crew-count-row flex items-center justify-between border-b md:border-none border-gray-200 pb-2 md:pb-0">
+                    <label class="crew-count-label text-xs font-semibold pr-2">The number of Crew who are absent due to guard duty / Jumlah ABK absen tugas jaga:</label>
+                    <div class="crew-count-field flex items-center justify-end">
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" class="border-b border-gray-400 focus:outline-none focus:border-black text-center text-sm"><span class="text-xs font-semibold">orang</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="block text-xs font-semibold mb-1">Crew can't follow the drill for a reason (name & rank) / ABK yang tidak mengikuti latihan karena suatu alasan (nama & jabatan):</label>
+                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-10 text-sm leading-tight rounded-sm"></textarea>
+            </div>
+
+            <div class="mb-3 flex flex-col md:flex-row md:items-center">
+                <label class="text-xs font-semibold md:w-1/2 pr-2">Date of next fire fighting drill / Tanggal rencana latihan kebakaran berikutnya:</label>
+                <input type="text" placeholder="DD-MM-YYYY" class="md:w-1/4 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm date-mask">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold mb-1">Drill Result Notes (filled by Master) / Catatan Hasil Latihan (diisi oleh Nakhoda):</label>
+                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-16 text-sm leading-tight rounded-sm"></textarea>
+            </div>
+        </div>
+
+        <!-- Signatures -->
+        <div class="border-2 border-black p-3 mb-2">
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="flex flex-col justify-between h-32">
+                    <p class="text-[10px] sm:text-xs font-semibold">Prepared by / Dibuat oleh,</p>
+                    <div class="relative flex-grow flex items-center justify-center my-1 sig-container">
+                        <label class="cursor-pointer text-[9px] sm:text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
+                            + Add TTD
+                            <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-1">
+                        </label>
+                        <div id="sig-preview-1" class="hidden relative w-full h-full flex items-center justify-center">
+                            <img src="" class="max-h-12 sm:max-h-16 max-w-full object-contain" alt="Signature">
+                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-1">&times;</button>
+                        </div>
+                    </div>
+                    <div class="mt-auto">
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-xs sm:text-sm sig-input bg-transparent">
+                        <p class="text-[9px] sm:text-[10px] mt-1 font-semibold">Chief Officer / Mualim I</p>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between h-32">
+                    <p class="text-[10px] sm:text-xs font-semibold">Knowledge by / Diketahui oleh,</p>
+                    <div class="relative flex-grow flex items-center justify-center my-1 sig-container">
+                        <label class="cursor-pointer text-[9px] sm:text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
+                            + Add TTD
+                            <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-2">
+                        </label>
+                        <div id="sig-preview-2" class="hidden relative w-full h-full flex items-center justify-center">
+                            <img src="" class="max-h-12 sm:max-h-16 max-w-full object-contain" alt="Signature">
+                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-2">&times;</button>
+                        </div>
+                    </div>
+                    <div class="mt-auto">
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-xs sm:text-sm sig-input bg-transparent">
+                        <p class="text-[9px] sm:text-[10px] mt-1 font-semibold">Chief Engineer / KKM</p>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between h-32">
+                    <p class="text-[10px] sm:text-xs font-semibold">Approval by / Disetujui Oleh,</p>
+                    <div class="relative flex-grow flex items-center justify-center my-1 sig-container">
+                        <label class="cursor-pointer text-[9px] sm:text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
+                            + Add TTD
+                            <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-3">
+                        </label>
+                        <div id="sig-preview-3" class="hidden relative w-full h-full flex items-center justify-center">
+                            <img src="" class="max-h-12 sm:max-h-16 max-w-full object-contain" alt="Signature">
+                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-3">&times;</button>
+                        </div>
+                    </div>
+                    <div class="mt-auto">
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-xs sm:text-sm sig-input bg-transparent">
+                        <p class="text-[9px] sm:text-[10px] mt-1 font-semibold">Master / Nakhoda</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-[10px] text-gray-700 font-bold italic print:text-black">
+            <p>" Lampirkan photo disetiap laporan drill / attach photo every drill report "</p>
+            <p>" Setiap Drill agar di catat didalam Log Book / Every Drill must be fill in Log Book "</p>
+        </div>
+        
+        <!-- Photo Attachment Section for Print -->
+        <div class="border-2 border-black p-3 mt-4 print:block" style="page-break-inside: avoid;">
+            <h3 class="font-bold mb-2 text-center border-b border-black pb-1 text-sm">DOKUMENTASI / PHOTO ATTACHMENT</h3>
+            <!-- File input hidden in print -->
+            <div class="mb-3 no-print text-center bg-gray-50 p-4 border border-dashed border-gray-300 rounded">
+                <p class="text-sm font-semibold mb-2 text-gray-600">Klik di bawah ini untuk memasukkan foto (Foto akan tercetak di PDF)</p>
+                <input type="file" id="photo-upload" multiple accept="image/*" class="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+            </div>
+            <!-- Grid for displaying selected photos -->
+            <div id="photo-preview" class="grid grid-cols-2 gap-4">
+                <!-- Preview images will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple auto-formatting for date and time fields to make text inputs act like date/time
+        // Format: DD-MM-YYYY
+        document.querySelectorAll('.date-mask').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let v = e.target.value.replace(/\D/g, '');
+                if (v.length > 8) v = v.slice(0, 8);
+                if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+                if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+                e.target.value = v;
+            });
+        });
+        
+        document.querySelectorAll('.time-mask').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let v = e.target.value.replace(/\D/g, '');
+                if (v.length > 4) v = v.slice(0, 4);
+                if (v.length > 2) v = v.slice(0, 2) + ':' + v.slice(2);
+                e.target.value = v;
+            });
+        });
+
+        // Radio dapat dibatalkan: klik kembali pilihan yang sudah aktif untuk menghapus marking
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('pointerdown', function() {
+                this.dataset.wasChecked = this.checked ? 'true' : 'false';
+            });
+            radio.addEventListener('click', function() {
+                if (this.dataset.wasChecked === 'true') {
+                    this.checked = false;
+                    this.dataset.wasChecked = 'false';
+                }
+            });
+        });
+
+        // Handle photo uploads for preview and print
+        document.getElementById('photo-upload').addEventListener('change', function(e) {
+            const previewContainer = document.getElementById('photo-preview');
+            // Clear existing logic removed to allow appending more photos if needed, 
+            // but let's clear it to keep it simple and match the files array exactly per selection.
+            previewContainer.innerHTML = ''; 
+            
+            const files = Array.from(e.target.files);
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const imgDiv = document.createElement('div');
+                        imgDiv.className = 'border border-gray-300 p-1 flex items-center justify-center';
+                        imgDiv.style.height = '250px'; // fixed height for uniformity in grid
+                        
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.className = 'max-h-full max-w-full object-contain';
+                        
+                        imgDiv.appendChild(img);
+                        previewContainer.appendChild(imgDiv);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Signature Upload Handler
+        document.querySelectorAll('.sig-upload').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const targetId = this.getAttribute('data-target');
+                    const previewDiv = document.getElementById(targetId);
+                    const containerDiv = previewDiv.closest('.sig-container');
+                    const img = previewDiv.querySelector('img');
+                    const label = containerDiv.querySelector('label');
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        img.src = event.target.result;
+                        label.classList.add('hidden'); // Sembunyikan tombol Add TTD
+                        previewDiv.classList.remove('hidden'); // Tampilkan gambar TTD
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Signature Remove Handler
+        document.querySelectorAll('.remove-sig').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const previewDiv = document.getElementById(targetId);
+                const containerDiv = previewDiv.closest('.sig-container');
+                const img = previewDiv.querySelector('img');
+                const label = containerDiv.querySelector('label');
+                const fileInput = label.querySelector('.sig-upload');
+
+                img.src = '';
+                fileInput.value = ''; // Reset file upload
+                previewDiv.classList.add('hidden'); // Sembunyikan gambar TTD
+                label.classList.remove('hidden'); // Munculkan kembali tombol Add TTD
+            });
+        });
+    </script>
+</body>
+</html>

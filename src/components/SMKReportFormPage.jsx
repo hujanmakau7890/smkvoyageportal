@@ -89,7 +89,7 @@ export default function SMKReportFormPage() {
       </div>
 
       {!visibleForms.length && <div style={{ padding: 22, color: colors.muted, textAlign: "center" }}>Form tidak ditemukan.</div>}
-      <p style={{ marginTop: 14, color: colors.muted, fontSize: 11 }}>Form 004 belum tersedia.</p>
+      <p style={{ marginTop: 14, color: colors.muted, fontSize: 11 }}>Daftar akan ditambah saat form baru tersedia.</p>
     </div>
   );
 }
