@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>003 Internal Audit Schedule</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#e5e7eb;font-family:Arial,sans-serif;color:#111}.page{max-width:1400px;margin:20px auto;background:#fff;padding:24px;box-shadow:0 3px 14px #999}.toolbar{text-align:right;margin-bottom:18px}.print-btn,.add-btn,.delete-btn,.ttd-btn{border:0;border-radius:6px;color:#fff;background:#1769d2;font-weight:700;padding:10px 16px;cursor:pointer}.add-btn{background:#15803d;margin-right:7px}.delete-btn{background:#dc2626;margin-right:7px}.header{border:2px solid #000;margin-bottom:12px;padding:8px}.header-top{display:grid;grid-template-columns:24% 52% 24%;align-items:start;border-bottom:2px solid #000;padding:4px 0 10px;min-height:78px}.company{font-size:14px;font-weight:700;text-transform:uppercase}.title{text-align:center;font-size:15px;font-weight:700;line-height:1.25}.status-area{min-height:68px;text-align:right;font-size:11px;padding-right:16px;display:flex;flex-direction:column;align-items:flex-end;gap:10px}.status-box{position:static;display:inline-flex;flex:none;border:1px solid #000;font-weight:700}.status-box span{padding:5px 8px;white-space:nowrap}.status-box span+span{border-left:1px solid #000}.release{padding-top:0;line-height:1.35;white-space:nowrap;display:block;width:100%;text-align:right;padding-right:2px}.table-wrap{overflow-x:auto;width:100%}table{width:100%;min-width:1100px;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #000;padding:3px;text-align:center;vertical-align:middle;font-size:10px}th{background:#f3f4f6;font-weight:700}.no{width:38px}.unit{width:230px}.auditor{width:145px}.month{width:51px}.cell-input,.cell-area{display:block;width:100%;min-height:29px;border:0;outline:0;background:transparent;text-align:center;font:inherit;padding:4px}.cell-area{resize:none;overflow:hidden;text-align:left}.month-input{text-transform:uppercase}.foot{display:flex;justify-content:flex-end;margin-top:24px}.signature{width:300px;text-align:center}.signature-space{position:relative;height:85px;display:flex;align-items:center;justify-content:center}.sig-preview{position:relative;width:100%;height:100%;display:none;align-items:center;justify-content:center}.sig-preview img{max-width:100%;max-height:75px;object-fit:contain}.remove-sig{position:absolute;top:0;right:0;width:18px;height:18px;border:0;border-radius:50%;background:#dc2626;color:#fff;font-weight:bold;line-height:18px;padding:0;cursor:pointer}.name-input,.place-input{width:100%;border:0;border-bottom:1px solid #000;outline:0;text-align:center;padding:4px}.caption{font-size:11px;font-weight:700;margin-top:4px}.hidden{display:none!important}
+@media(max-width:768px){.page{margin:0;padding:12px;box-shadow:none}.header-top{display:flex;flex-direction:column;align-items:center;gap:9px}.company,.title,.status-area{width:100%;text-align:center}.status-area{min-height:70px}.status-box{right:0}.release{text-align:right}.toolbar{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}.print-btn,.add-btn,.delete-btn{padding:9px;font-size:12px}.foot{justify-content:center}.signature{width:100%}}
+@media print{@page{size:A4 landscape;margin:7mm}.no-print{display:none!important}html,body{width:100%!important;margin:0!important;padding:0!important;background:#fff;overflow:visible!important}.page{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none}.header{width:100%!important;overflow:visible!important}.header-top{display:grid!important;grid-template-columns:24% 52% 24%!important;min-height:78px!important;padding:4px 0 10px!important;overflow:visible!important}.company{text-align:left!important}.title{text-align:center!important}.status-area{position:static!important;display:flex!important;flex-direction:column!important;align-items:flex-end!important;gap:8px!important;min-height:68px!important;text-align:right!important;padding-right:16px!important;overflow:visible!important}.status-box{position:static!important;display:inline-flex!important;flex:none!important;margin:0!important}.release{position:static!important;display:block!important;width:100%!important;padding:0 2px 0 0!important;text-align:right!important;white-space:nowrap!important;overflow:visible!important}.table-wrap{display:block!important;width:100%!important;max-width:100%!important;overflow:visible!important}table{width:99.5%!important;max-width:99.5%!important;min-width:0!important;margin:0 auto!important;table-layout:fixed!important;border-collapse:collapse!important}th,td{font-size:7.5px!important;padding:1px!important;word-break:break-word!important;overflow-wrap:anywhere!important;min-width:0!important;max-width:none!important;overflow:hidden!important}.no{width:3%!important}.unit{width:18%!important}.auditor{width:12%!important}.month{width:5.5%!important}.cell-input,.cell-area{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:19px!important;padding:1px!important;margin:0!important;font-size:7.5px!important;border:0!important;background:transparent!important;overflow:hidden!important}.cell-area{height:auto!important;white-space:normal!important}.cell-input::placeholder,.cell-area::placeholder,.place-input::placeholder{color:transparent!important;opacity:0!important}.foot{margin-top:12px}.signature-space{height:65px}.sig-preview:not(.hidden){display:flex!important}.sig-preview.hidden{display:none!important}.sig-preview img{max-height:58px}.name-input,.place-input{font-size:9px}.caption{font-size:8px}}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="toolbar no-print"><button class="add-btn" id="addRow">+ Tambah Baris</button><button class="delete-btn" id="deleteRow">− Hapus Baris Terakhir</button><button class="print-btn" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
+<header class="header">
+ <div class="header-top">
+  <div class="company">PT Mentari Mas Multimoda</div>
+  <div class="title">003 &nbsp; JADWAL EKSTERNAL &amp; INTERNAL AUDIT<br><span style="font-size:11px;font-weight:normal">SCHEDULE EXTERNAL &amp; INTERNAL AUDIT</span></div>
+  <div class="status-area"><div class="status-box"><span>CS</span><span>THN</span></div><div class="release">Release : &nbsp;&nbsp;&nbsp; Rev. 0 :</div></div>
+ </div>
+</header>
+<div class="table-wrap">
+<table>
+ <thead>
+  <tr><th rowspan="2" class="no">No</th><th rowspan="2" class="unit">UNIT KERJA / WORK UNIT</th><th colspan="1" class="auditor">TEAM</th><th colspan="12">JADWAL TAHUN / YEARLY SCHEDULE :</th></tr>
+  <tr><th class="auditor">AUDITOR</th><th class="month">JAN</th><th class="month">FEB</th><th class="month">MAR</th><th class="month">APR</th><th class="month">MEI</th><th class="month">JUN</th><th class="month">JUL</th><th class="month">AGT</th><th class="month">SEP</th><th class="month">OKT</th><th class="month">NOP</th><th class="month">DEC</th></tr>
+ </thead>
+ <tbody id="auditRows"></tbody>
+</table>
+</div>
+<div class="foot">
+ <section class="signature">
+  <input class="place-input" type="text" placeholder="Place, Date"><div class="caption">Place, Date</div>
+  <div class="signature-space sig-container">
+   <label class="ttd-btn no-print">+ Add TTD<input type="file" class="sig-upload hidden" accept="image/*"></label>
+   <div class="sig-preview"><img alt="Tanda tangan"><button type="button" class="remove-sig no-print">×</button></div>
+  </div>
+  <input class="name-input" type="text"><div class="caption">Name</div><div class="caption">DPA / CSO</div>
+ </section>
+</div>
+</div>
+<script>
+const tbody=document.getElementById('auditRows');
+function autoGrow(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'}
+function addRow(no=''){
+ const tr=document.createElement('tr');
+ tr.innerHTML=`<td><input class="cell-input" type="text" value="${no}"></td><td><textarea class="cell-area" rows="1"></textarea></td><td><textarea class="cell-area" rows="1"></textarea></td>${Array.from({length:12},()=>'<input class="cell-input month-input" type="text">').map(x=>`<td>${x}</td>`).join('')}`;
+ tbody.appendChild(tr);tr.querySelectorAll('textarea').forEach(t=>t.addEventListener('input',()=>autoGrow(t)));
+}
+for(let i=1;i<=20;i++)addRow(i);
+document.getElementById('addRow').addEventListener('click',()=>addRow(''));
+document.getElementById('deleteRow').addEventListener('click',()=>{
+ const rows=tbody.querySelectorAll('tr');
+ if(rows.length>1) rows[rows.length-1].remove();
+});
+const upload=document.querySelector('.sig-upload'), preview=document.querySelector('.sig-preview'), sigLabel=document.querySelector('.ttd-btn'), sigImg=preview.querySelector('img');
+upload.addEventListener('change',e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{sigImg.src=x.target.result;sigLabel.classList.add('hidden');preview.style.display='flex'};r.readAsDataURL(f)});
+document.querySelector('.remove-sig').addEventListener('click',()=>{sigImg.src='';upload.value='';preview.style.display='none';sigLabel.classList.remove('hidden')});
+</script>
+</body>
+</html>

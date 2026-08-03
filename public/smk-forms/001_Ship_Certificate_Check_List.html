@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>001 Ship Certificate Check List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Sembunyikan elemen input bawaan browser yang berantakan secara absolut */
+        ::-webkit-calendar-picker-indicator,
+        ::-webkit-inner-spin-button,
+        ::-webkit-outer-spin-button,
+        ::-webkit-clear-button {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            -webkit-appearance: none !important;
+            position: absolute !important;
+            z-index: -9999 !important;
+        }
+
+        /* Print Styling */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            
+            /* Pastikan tabel mengambil seluruh lebar halaman */
+            table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                /* Batalkan jika ada setting min-width dari layar */
+                min-width: 0 !important;
+                display: table !important;
+            }
+            .table-responsive {
+                overflow: visible !important;
+                display: block !important;
+                width: 100% !important;
+            }
+            
+            /* Override tailwind dan style layar untuk baris data di print */
+            th, td {
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                min-width: 0 !important;
+                padding: 1px !important;
+            }
+
+            /* Definisikan persentase kolom spesifik untuk cetakan PDF agar pas 100% */
+            th:nth-child(1), td:nth-child(1) { width: 3% !important; }
+            th:nth-child(2), td:nth-child(2) { width: 30% !important; } /* Surat Kapal diperlebar */
+            th:nth-child(3), td:nth-child(3) { width: 13% !important; }
+            th:nth-child(4), td:nth-child(4) { width: 10% !important; }
+            th:nth-child(5), td:nth-child(5) { width: 10% !important; }
+            th:nth-child(6), td:nth-child(6) { width: 10% !important; }
+            th:nth-child(7), td:nth-child(7) { width: 10% !important; }
+            th:nth-child(8), td:nth-child(8) { width: 14% !important; }
+
+            .no-print { display: none !important; }
+            body { font-size: 10px; background-color: white; padding: 0 !important; margin: 0 !important; }
+            .print\:shadow-none { box-shadow: none !important; }
+            .print\:p-0 { padding: 0 !important; }
+            .max-w-5xl { max-width: 100% !important; }
+
+            /* Ensure header grid resets to row mode on print just like desktop */
+            .border-b-2.border-black {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+            }
+            .border-b-2.border-black > div:nth-child(1) { width: 25% !important; text-align: left !important; }
+            .border-b-2.border-black > div:nth-child(2) { width: 50% !important; text-align: center !important; }
+            .border-b-2.border-black > div:nth-child(3) { width: 25% !important; text-align: right !important; position: relative !important; }
+
+            /* Status box relative to right column on print */
+            .print-right-box {
+                position: absolute !important;
+                top: 0px !important;
+                right: 0 !important;
+            }
+
+            .md\:grid.md\:grid-cols-2 {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
+            }
+            .md\:text-right { text-align: right !important; }
+            
+            td input[type="text"] {
+                color: black !important;
+                font-size: 10px !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                min-height: 0 !important;
+                height: 100% !important;
+            }
+
+            /* Saat PDF dicetak, sembunyikan placeholder (DD-MM-YYYY) sepenuhnya */
+            ::-webkit-input-placeholder, 
+            :-moz-placeholder, 
+            ::-moz-placeholder, 
+            :-ms-input-placeholder {
+                color: transparent !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+            }
+            
+            /* Aturan ketat tambahan untuk placeholder modern */
+            input::placeholder {
+                color: transparent !important;
+                opacity: 0 !important;
+            }
+        }
+
+        /* Table styling (pulled out of print block) */
+        .text-xs { font-size: 0.70rem; line-height: 1.1rem; word-break: break-word; white-space: normal; }
+        .text-sm { font-size: 0.8rem; line-height: 1.2rem; word-break: break-word; white-space: normal; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 0;
+            font-size: 11px;
+            vertical-align: middle;
+            text-align: center;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+            padding: 4px;
+        }
+        
+        td input[type="text"] {
+            width: 100%;
+            height: 100%;
+            min-height: 28px;
+            box-sizing: border-box;
+            border: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+            padding: 4px;
+        }
+
+        /* Responsive Table adjustments for Mobile - Only apply to screen, NOT print */
+        @media screen and (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+                display: block;
+                width: 100%;
+            }
+            /* Override tailwind classes and ensure fixed widths on mobile so text fits inside cells */
+            table.table-fixed {
+                table-layout: auto !important; /* Allow columns to stretch based on content */
+                min-width: 800px; /* Force horizontal scroll */
+            }
+            th, td {
+                min-width: 90px; /* Ensure columns have enough space for DD-MM-YYYY */
+                white-space: nowrap; /* Prevent wrapping in data cells */
+            }
+            th:nth-child(2), td:nth-child(2) {
+                min-width: 200px;
+                white-space: normal; /* Let the cert names wrap */
+            }
+            td input {
+                width: 100% !important;
+                min-width: 80px;
+            }
+            .remarks-input {
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-200 p-4 sm:p-8 font-sans text-gray-800">
+    <div class="max-w-5xl mx-auto bg-white p-6 sm:p-10 shadow-lg print:shadow-none print:p-0">
+        <!-- Print Button -->
+        <div class="flex justify-end mb-6 no-print">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded flex items-center shadow">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="border-2 border-black p-2 mb-4">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-start border-b-2 border-black pb-2 mb-2 space-y-2 md:space-y-0 print-row relative">
+                <div class="w-full md:w-1/4 text-center md:text-left">
+                    <h1 class="text-sm font-bold uppercase leading-tight">PT Mentari Mas Multimoda</h1>
+                </div>
+                <div class="w-full md:w-1/2 text-center">
+                    <h2 class="text-base font-bold leading-tight">001<br>CHECKLIST SURAT KAPAL<br><span class="text-xs font-normal">SHIP CERTIFICATE CHECK LIST</span></h2>
+                </div>
+                <div class="w-full md:w-1/4 text-center md:text-right text-xs font-semibold print-right relative">
+                    <!-- Status indicator like in Excel -->
+                    <div class="absolute top-0 right-12 md:right-0 md:-top-0 border border-black flex print-right-box" style="right: 0;">
+                        <div class="w-6 h-6 border-r border-black flex items-center justify-center font-bold">S</div>
+                        <div class="px-2 h-6 flex items-center justify-center font-bold">SET</div>
+                    </div>
+                    
+                    <div class="mt-8 md:mt-8">
+                        <p>Release:</p>
+                        <p>Rev:</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row md:grid md:grid-cols-2 gap-4">
+                <div class="flex items-center">
+                    <label class="font-bold text-sm mr-2 w-10 md:w-16">MV:</label>
+                    <input type="text" class="flex-grow border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm font-bold uppercase">
+                </div>
+                <div class="flex items-center">
+                    <label class="font-bold text-sm mr-2 w-10 md:w-16 md:text-right">Date:</label>
+                    <input type="text" placeholder="DD-MM-YYYY" class="flex-grow border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm date-mask">
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive mb-4">
+            <table class="table-fixed w-full">
+                <thead>
+                    <tr>
+                        <th class="w-[3%]">No.</th>
+                        <th class="w-[32%] text-left">Surat Kapal *<br><span class="font-normal text-[9px]">Ship Certificate</span></th>
+                        <th class="w-[11%]">Tempat Terbit<br><span class="font-normal text-[9px]">Issued Place</span></th>
+                        <th class="w-[10%]">Tanggal Terbit<br><span class="font-normal text-[9px]">Date of Issued</span></th>
+                        <th class="w-[10%]">Tanggal Kadaluarsa<br><span class="font-normal text-[9px]">Expired Date</span></th>
+                        <th class="w-[10%]">Tgl Survey Terakhir<br><span class="font-normal text-[9px]">Last Survey Date</span></th>
+                        <th class="w-[10%]">Tgl Survey YAD<br><span class="font-normal text-[9px]">Next Survey Date</span></th>
+                        <th class="w-[14%]">Keterangan<br><span class="font-normal text-[9px]">Remarks</span></th>
+                    </tr>
+                </thead>
+                <tbody id="cert-tbody">
+                    <!-- Rows injected by JS below -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer / Signature -->
+        <div class="mt-8 mb-4 border border-white">
+            <div class="flex justify-between items-end">
+                <div class="w-1/2">
+                    <p class="text-xs font-bold italic mb-1">* Selalu di update setiap ada perubahan data sertifikat / Always up date every change of certificate data</p>
+                    <p class="text-[10px] italic mb-3 ml-2">Hanya Isi Sertifikat Asli di sini, Sertifikat Lama harus dihapus, sertifikat kadaluarsa & Tidak perlu izin harus dihapus juga<br>Only Original Certificate Fill here, Old Cert must be removed, expired cert & Not require for clearance must be removed too</p>
+                    
+                    <p class="text-xs font-bold italic mb-1">** SNPP jika diterbitkan berdasarkan aturan UU No. 17 Th 2008 tentang Pelayaran / NPPC if issued based on the rules of Indonesian Shipping Act No. 17, 2008</p>
+                    
+                    <p class="text-xs font-bold italic mt-2">*** Hanya untuk Sertifikat Klas yang dikeluarkan oleh Klas BKI / Only for Class Certificates issued by BKI Class</p>
+                </div>
+                <div class="w-1/3 text-center pt-2 flex flex-col justify-between">
+                    <p class="text-sm font-bold">Prepared by Master,<br><span class="font-normal text-xs">Signature & Stamp</span></p>
+                    
+                    <div class="relative flex-grow flex items-center justify-center my-2 min-h-[4rem] sig-container">
+                        <label class="cursor-pointer text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-2 py-1 no-print text-gray-600 transition-colors">
+                            + Add TTD
+                            <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-001">
+                        </label>
+                        <div id="sig-preview-001" class="hidden relative w-full h-full flex items-center justify-center">
+                            <img src="" class="max-h-16 max-w-full object-contain" alt="Signature">
+                            <button type="button" class="absolute top-0 right-0 md:-right-4 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-001">&times;</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-sm uppercase px-1">
+                        <p class="text-xs font-bold mt-1">Name of Master</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const certs = [
+            "Surat Laut / Registry Certificate",
+            "Surat Ukur / Tonnage Certificate (Permanen)",
+            "DOC - Document of Compliance (Copy)",
+            "SMC - Safety Management Cert",
+            "ISSC - International Ship Security Cert",
+            "Sert Konstruksi / Ship Construction Certificate",
+            "Sert Perlengkapan / Ship Equipment Certificate",
+            "Sert Radio / Ship Radio Certificate",
+            "Izin Stasiun Radio Kapal Laut / Ship Station License",
+            "DG - Dangerous Good Certificate",
+            "Minimum Safe Manning Certificate",
+            "IOPP - International Oil Pollution Cert **",
+            "IAPP - International Air Pollution Cert **",
+            "ISPP - International Seawage Cert **",
+            "BWMC - Ballast Water Management Certificate",
+            "Sert Jaminan Pencemaran Minyak / CLC Bunker",
+            "Jaminan Pengangkatan Kerangka / WRC",
+            "AFS - Anti Fouling Certificate",
+            "SSCEC - Ship Sanitation Certificate",
+            "P3K - Medicine Certificate",
+            "ILR - Inflatable Liferaft Certificate",
+            "HRU - Hydrostatic Release Unit Cert",
+            "PMK + BA + EEBD - Fire Fighting Equipment Cert",
+            "CO2 System certificate",
+            "Tera Botol CO2 (Depnaker Cert)",
+            "SBMC - Shore Base Maintainance Certificate",
+            "EPIRB",
+            "SART",
+            "AIS & SSAS - Annual Test",
+            "RPT - Rencana Pola Trayek",
+            "ILLC - International Load Line Certificate",
+            "Sertifikat Class / Class Certificate (IACS Class)",
+            "Sertifikat Class Lambung / Hull Certificate ***",
+            "Sertifikat Class Mesin / Machinery Certificate ***",
+            "CSR - Continous Synopsis Record (Permanen)",
+            "IEEC - International Energy Efficiency Cert",
+            "MLC - Maritime Laboure Cert"
+        ];
+
+        const tbody = document.getElementById('cert-tbody');
+        
+        certs.forEach((certName, index) => {
+            const tr = document.createElement('tr');
+            
+            // Menghapus border bawah dashed agar clean 100% dan teks benar-benar di tengah sel tabel
+            const inputClass = "w-full focus:bg-gray-50";
+            const dateInputClass = "w-full focus:bg-gray-50 date-mask";
+            
+            tr.innerHTML = `
+                <td class="text-center font-bold p-2">${index + 1}</td>
+                <td class="text-left text-[10px] sm:text-xs font-semibold px-2 leading-tight py-2">${certName}</td>
+                <td><input type="text" class="${inputClass}"></td>
+                <td><input type="text" placeholder="DD-MM-YYYY" class="${dateInputClass}"></td>
+                <td><input type="text" placeholder="DD-MM-YYYY" class="${dateInputClass}"></td>
+                <td><input type="text" placeholder="DD-MM-YYYY" class="${dateInputClass}"></td>
+                <td><input type="text" placeholder="DD-MM-YYYY" class="${dateInputClass}"></td>
+                <td><input type="text" class="${inputClass} text-left px-2" style="text-align: left;"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Simple auto-formatting for date fields
+        // Format: DD-MM-YYYY
+        document.querySelectorAll('.date-mask').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let v = e.target.value.replace(/\D/g, '');
+                if (v.length > 8) v = v.slice(0, 8);
+                if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+                if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+                e.target.value = v;
+            });
+        });
+
+        // Signature Upload Handler
+        document.querySelectorAll('.sig-upload').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const targetId = this.getAttribute('data-target');
+                    const previewDiv = document.getElementById(targetId);
+                    const containerDiv = previewDiv.closest('.sig-container');
+                    const img = previewDiv.querySelector('img');
+                    const label = containerDiv.querySelector('label');
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        img.src = event.target.result;
+                        label.classList.add('hidden'); // Sembunyikan tombol Add TTD
+                        previewDiv.classList.remove('hidden'); // Tampilkan gambar TTD
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Signature Remove Handler
+        document.querySelectorAll('.remove-sig').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const previewDiv = document.getElementById(targetId);
+                const containerDiv = previewDiv.closest('.sig-container');
+                const img = previewDiv.querySelector('img');
+                const label = containerDiv.querySelector('label');
+                const fileInput = label.querySelector('.sig-upload');
+
+                img.src = '';
+                fileInput.value = ''; // Reset file upload
+                previewDiv.classList.add('hidden'); // Sembunyikan gambar TTD
+                label.classList.remove('hidden'); // Munculkan kembali tombol Add TTD
+            });
+        });
+    </script>
+</body>
+</html>
