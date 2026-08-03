@@ -5746,6 +5746,7 @@ export default function App() {
   const [theme, setTheme] = useState("light");
   const [vpOpen, setVpOpen] = useState(true); // Voyage Portal submenu open
   const [smkOpen, setSmkOpen] = useState(false); // SMK submenu open
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(null); // "voyage" | "smk" | null
 
   // Check Supabase session on mount
   useEffect(() => {
@@ -6026,27 +6027,60 @@ export default function App() {
       </div>
       {viewing && <Modal report={viewing} onClose={() => setViewing(null)} onEdit={() => startEdit(viewing)} onDelete={deleteReport} allReports={visibleReports}/>}
       {isMobile && (
-        <nav style={ss.bottomNav} aria-label="Menu mobile">
-          {voyageNav.map(n => {
-            // Short labels so 6 items fit evenly without truncation
-            const short = ({ dashboard:"Home", new:"Buat", log:"Log", rh:"RH", mgmt:"Mgmt" })[n.id] || n.l;
-            const active = page===n.id || (n.id==="log" && page==="edit");
-            return (
-              <button key={n.id} type="button" style={ss.bottomNavItem(active)} onClick={() => goVoyage(n.id)}>
-                <span style={{ fontSize:16, lineHeight:1, display:"block" }}>{n.i}</span>
-                <span style={{ fontSize:9, lineHeight:1.1, display:"block", maxWidth:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{short}</span>
-              </button>
-            );
-          })}
-          <button type="button" style={ss.bottomNavItem(page==="nc")} onClick={() => { setVpOpen(false); setSmkOpen(false); setPage("nc"); }}>
-            <span style={{ fontSize:16, lineHeight:1, display:"block" }}>🗄️</span>
-            <span style={{ fontSize:9, lineHeight:1.1, display:"block", maxWidth:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>NC</span>
-          </button>
-          <button type="button" style={ss.bottomNavItem(isSmkPage)} onClick={() => goSmk("smk-manual")}>
-            <span style={{ fontSize:16, lineHeight:1, display:"block" }}>⚓</span>
-            <span style={{ fontSize:9, lineHeight:1.1, display:"block", maxWidth:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>SMK</span>
-          </button>
-        </nav>
+        <>
+          {mobileMenuOpen && (
+            <div style={{
+              position:"fixed", left:8, right:8, bottom:66, zIndex:99,
+              display:"grid", gap:5, padding:8, borderRadius:12,
+              background:C.panel, border:`1px solid ${C.border}`,
+              boxShadow:"0 -8px 24px rgba(0,0,0,.18)"
+            }}>
+              {(mobileMenuOpen === "voyage" ? voyageNav : smkNav).map(n => {
+                const active = page===n.id || (n.id==="log" && page==="edit");
+                return (
+                  <button
+                    key={n.id}
+                    type="button"
+                    style={{ ...subBtn(active), padding:"10px 12px", margin:0 }}
+                    onClick={() => {
+                      if (mobileMenuOpen === "voyage") goVoyage(n.id);
+                      else goSmk(n.id);
+                      setMobileMenuOpen(null);
+                    }}
+                  >
+                    <span>{n.i}</span><span>{n.l}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <nav style={ss.bottomNav} aria-label="Menu mobile">
+            <button
+              type="button"
+              style={ss.bottomNavItem(isVoyagePage)}
+              onClick={() => setMobileMenuOpen(open => open === "voyage" ? null : "voyage")}
+            >
+              <span style={{ fontSize:16, lineHeight:1, display:"block" }}>🚢</span>
+              <span style={{ fontSize:9, lineHeight:1.1, display:"block" }}>Voyage Portal {mobileMenuOpen === "voyage" ? "▾" : "▴"}</span>
+            </button>
+            <button
+              type="button"
+              style={ss.bottomNavItem(page==="nc")}
+              onClick={() => { setMobileMenuOpen(null); setVpOpen(false); setSmkOpen(false); setPage("nc"); }}
+            >
+              <span style={{ fontSize:16, lineHeight:1, display:"block" }}>🗄️</span>
+              <span style={{ fontSize:9, lineHeight:1.1, display:"block" }}>Database NC</span>
+            </button>
+            <button
+              type="button"
+              style={ss.bottomNavItem(isSmkPage)}
+              onClick={() => setMobileMenuOpen(open => open === "smk" ? null : "smk")}
+            >
+              <span style={{ fontSize:16, lineHeight:1, display:"block" }}>⚓</span>
+              <span style={{ fontSize:9, lineHeight:1.1, display:"block" }}>SMK {mobileMenuOpen === "smk" ? "▾" : "▴"}</span>
+            </button>
+          </nav>
+        </>
       )}
     </div>
   );
