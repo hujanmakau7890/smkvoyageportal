@@ -6,6 +6,7 @@
     <title>002 Class Status Survey Check List</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+.ship-select{flex:1;min-width:0;border:0;border-bottom:1px solid #000;outline:0;padding:4px;background:#fff;color:#111;font:inherit} @media print{.ship-select{appearance:none!important;-webkit-appearance:none!important;background:transparent!important;border:0!important;border-bottom:1px dotted #000!important;color:#000!important}}
         /* Sembunyikan elemen input bawaan browser secara absolut */
         ::-webkit-calendar-picker-indicator,
         ::-webkit-inner-spin-button,
@@ -216,7 +217,7 @@
             <div class="flex flex-col md:flex-row md:grid md:grid-cols-2 gap-4 print-grid">
                 <div class="flex items-center">
                     <label class="font-bold text-sm mr-2 w-10 md:w-16">MV :</label>
-                    <input type="text" class="flex-grow border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm font-bold uppercase">
+                    <select class="ship-select flex-grow border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm font-bold uppercase"><option value="">Pilih Kapal</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select>
                 </div>
                 <div class="flex items-center">
                     <label class="font-bold text-sm mr-2 w-10 md:w-16 md:text-right print-right">Date :</label>
