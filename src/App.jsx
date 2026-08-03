@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 import NCDatabase from "./NCDatabase";
+import SMKReportFormPage from "./components/SMKReportFormPage";
 // --- XLSX FOR EXPORT ---
 const XLSX_CDN = "https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js";
 let XLSX = null;
@@ -5726,66 +5727,6 @@ function ManagementReport({ reports, runningHours, user, consMe }) {
           )}
         </div>
       )}
-    </div>
-  );
-}
-
-// --- SMK FORMS ----------------------------------------------------------------
-const SMK_FORMS = [
-  { code:"001", title:"Checklist Surat Kapal", file:"001_Ship_Certificate_Check_List.html" },
-  { code:"002", title:"Checklist Klass Status Survey", file:"002_Class_Status_Survey_Check_List.html" },
-  { code:"003", title:"Jadwal Eksternal & Internal Audit", file:"003_Internal_Audit_Schedule.html" },
-  { code:"005", title:"Catatan Internal Audit", file:"005_Internal_Audit_Notes.html" },
-  { code:"006", title:"Program Management Review, Komite Keselamatan dan Safety Meeting", file:"006_Program_Review_Safety_Meeting.html" },
-  { code:"007-A", title:"Notulen Rapat Management Review", file:"007A_Management_Review_Meeting_Minutes.html" },
-  { code:"007-B", title:"Master's Review", file:"007B_Masters_Review.html" },
-  { code:"008", title:"Notulen Rapat Komite Manajemen Keselamatan", file:"008_Safety_Management_Committee_Meeting_Minutes.html" },
-  { code:"009-A", title:"Notulen Rapat Keselamatan Kapal", file:"009A_Ship_Safety_Meeting_Minutes.html" },
-  { code:"009-B", title:"Shipboard Management Meeting", file:"009B_Shipboard_Management_Meeting.html" },
-  { code:"010", title:"Form Penilaian Risiko / Risk Assessment", file:"010_Risk_Assessment.html" },
-];
-
-function SMKReportFormPage() {
-  const [selectedForm, setSelectedForm] = useState(null);
-
-  if (selectedForm) {
-    return (
-      <div style={{ height:"calc(100vh - 92px)", display:"flex", flexDirection:"column", gap:10 }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
-          <button type="button" style={ss.btnG} onClick={() => setSelectedForm(null)}>← Pilih Form Lain</button>
-          <div style={{ fontSize:13, fontWeight:700, color:C.text, textAlign:"right" }}>{selectedForm.code} — {selectedForm.title}</div>
-        </div>
-        <iframe
-          title={`${selectedForm.code} ${selectedForm.title}`}
-          src={`/smk-forms/${selectedForm.file}`}
-          style={{ flex:1, width:"100%", border:`1px solid ${C.border}`, borderRadius:10, background:"white" }}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <h2 style={{ margin:"0 0 5px", color:C.text, fontSize:20 }}>Buat Laporan SMK</h2>
-      <p style={{ margin:"0 0 18px", color:C.muted, fontSize:12 }}>Pilih form laporan yang akan dibuat.</p>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(240px, 1fr))", gap:10 }}>
-        {SMK_FORMS.map(form => (
-          <button
-            key={form.code}
-            type="button"
-            onClick={() => setSelectedForm(form)}
-            style={{
-              display:"flex", alignItems:"center", gap:12, width:"100%", padding:14,
-              border:`1px solid ${C.border}`, borderRadius:10, background:C.panel,
-              color:C.text, cursor:"pointer", textAlign:"left"
-            }}
-          >
-            <span style={{ minWidth:52, padding:"7px 8px", borderRadius:7, background:C.accent+"18", color:C.accent, fontSize:12, fontWeight:800, textAlign:"center" }}>{form.code}</span>
-            <span style={{ fontSize:12, fontWeight:700, lineHeight:1.35 }}>{form.title}</span>
-          </button>
-        ))}
-      </div>
-      <p style={{ marginTop:14, color:C.muted, fontSize:11 }}>Form 004 belum tersedia.</p>
     </div>
   );
 }
