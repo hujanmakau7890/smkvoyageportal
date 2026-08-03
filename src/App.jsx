@@ -5744,6 +5744,7 @@ export default function App() {
   const [consMe, setConsMe] = useState({}); // key: "ship|year|month" -> {cons_me}
   const [theme, setTheme] = useState("light");
   const [vpOpen, setVpOpen] = useState(true); // Voyage Portal submenu open
+  const [smkOpen, setSmkOpen] = useState(false); // SMK submenu open
 
   // Check Supabase session on mount
   useEffect(() => {
@@ -5861,6 +5862,12 @@ export default function App() {
   ];
   const voyagePageIds = ["dashboard","new","edit","log","rh","mgmt"];
   const isVoyagePage = voyagePageIds.includes(page);
+  const smkNav = [
+    { id:"smk-manual", l:"Prosedur Manual", i:"📘" },
+    { id:"smk-new", l:"Buat Laporan SMK", i:"📝" },
+    { id:"smk-log", l:"Laporan SMK", i:"📋" },
+  ];
+  const isSmkPage = smkNav.some(n => n.id === page);
 
   const addReport = async (r) => { await loadReports(); setPage("dashboard"); };
   const updateReport = async (r) => { await loadReports(); setPage("log"); };
@@ -5881,6 +5888,13 @@ export default function App() {
 
   const goVoyage = (id) => {
     setVpOpen(true);
+    setSmkOpen(false);
+    setPage(id);
+  };
+
+  const goSmk = (id) => {
+    setVpOpen(false);
+    setSmkOpen(true);
     setPage(id);
   };
 
@@ -5967,12 +5981,33 @@ export default function App() {
             <button
               type="button"
               style={groupBtn(page==="nc")}
-              onClick={() => { setVpOpen(false); setPage("nc"); }}
+              onClick={() => { setVpOpen(false); setSmkOpen(false); setPage("nc"); }}
             >
               <span style={{ display:"flex", alignItems:"center", gap:9 }}>
                 <span>🗄️</span><span>Database NC</span>
               </span>
             </button>
+
+            {/* SMK group */}
+            <button
+              type="button"
+              style={groupBtn(isSmkPage)}
+              onClick={() => {
+                setVpOpen(false);
+                setSmkOpen(open => !open);
+              }}
+            >
+              <span style={{ display:"flex", alignItems:"center", gap:9 }}>
+                <span>⚓</span><span>SMK</span>
+              </span>
+              <span style={{ fontSize:10, color:C.muted }}>{smkOpen ? "▾" : "▸"}</span>
+            </button>
+
+            {smkOpen && smkNav.map(n => (
+              <button key={n.id} type="button" style={subBtn(page===n.id)} onClick={() => goSmk(n.id)}>
+                <span>{n.i}</span><span>{n.l}</span>
+              </button>
+            ))}
           </nav>
         )}
         <main style={{ ...ss.main, paddingBottom: isMobile ? 72 : 22, ...(page==="nc" ? { padding: isMobile ? "6px 6px 76px" : 0 } : {}), ...(isMobile && page!=="nc" ? { paddingLeft:12, paddingRight:12 } : {}) }}>
@@ -5983,6 +6018,9 @@ export default function App() {
           {page==="rh"        && <RHConsPage runningHours={runningHours} setRunningHours={setRunningHours} user={user} consMe={consMe} setConsMe={setConsMe}/>}
           {page==="mgmt"      && <ManagementReport reports={visibleReports} runningHours={runningHours} user={user} consMe={consMe}/>}
           {page==="nc"        && <NCDatabase theme={theme} user={user} />}
+          {page==="smk-manual" && <div><h2>Prosedur Manual</h2></div>}
+          {page==="smk-new"    && <div><h2>Buat Laporan SMK</h2></div>}
+          {page==="smk-log"    && <div><h2>Laporan SMK</h2></div>}
         </main>
       </div>
       {viewing && <Modal report={viewing} onClose={() => setViewing(null)} onEdit={() => startEdit(viewing)} onDelete={deleteReport} allReports={visibleReports}/>}
@@ -5999,9 +6037,13 @@ export default function App() {
               </button>
             );
           })}
-          <button type="button" style={ss.bottomNavItem(page==="nc")} onClick={() => { setVpOpen(false); setPage("nc"); }}>
+          <button type="button" style={ss.bottomNavItem(page==="nc")} onClick={() => { setVpOpen(false); setSmkOpen(false); setPage("nc"); }}>
             <span style={{ fontSize:16, lineHeight:1, display:"block" }}>🗄️</span>
             <span style={{ fontSize:9, lineHeight:1.1, display:"block", maxWidth:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>NC</span>
+          </button>
+          <button type="button" style={ss.bottomNavItem(isSmkPage)} onClick={() => goSmk("smk-manual")}>
+            <span style={{ fontSize:16, lineHeight:1, display:"block" }}>⚓</span>
+            <span style={{ fontSize:9, lineHeight:1.1, display:"block", maxWidth:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>SMK</span>
           </button>
         </nav>
       )}
