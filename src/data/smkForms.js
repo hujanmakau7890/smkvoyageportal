@@ -14,6 +14,8 @@ export const SMK_FORMS = [
   { code: "016", title: "Familiarisation Checklist - 24 Hours of Joining Vessel", category: "Familiarisasi", file: "016_Familiarisation_Checklist.html" },
   { code: "017", title: "Familiarisation Checklist - 7 Days of Joining Vessel", category: "Familiarisasi", file: "017_Familiarisation_Checklist.html" },
   { code: "018", title: "Monitoring Sertifikat Crew / Crew Certificate Monitoring", category: "Sertifikat", file: "018_Crew_Certificate_Monitoring.html" },
+  { code: "019", title: "Deck Officer Training Evaluation Report", category: "Evaluasi", file: "019_Deck_Officer_Training_Evaluation.html" },
+  { code: "020", title: "Engineer Training Evaluation Report", category: "Evaluasi", file: "020_Engineer_Training_Evaluation.html" },
   { code: "022", title: "Laporan Latihan Peran Pemadam Kebakaran / Fire Drill Report", category: "Latihan", file: "022_Fire_Drill_Report.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
