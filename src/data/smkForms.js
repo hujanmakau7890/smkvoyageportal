@@ -29,6 +29,7 @@ export const SMK_FORMS = [
   { code: "032", title: "Laporan Kebakaran Kapal / Ship's Fire Report", category: "Laporan Insiden", file: "032_Ships_Fire_Report.html" },
   { code: "033", title: "Laporan Kerusakan Mesin Induk / Main Engine Damage Report", category: "Laporan Insiden", file: "033_Main_Engine_Damage_Report.html" },
   { code: "034", title: "Laporan Kerusakan Motor Bantu / Auxiliary Engine Damage Report", category: "Laporan Insiden", file: "034_Auxiliary_Engine_Damage_Report.html" },
+  { code: "035", title: "Laporan Kerusakan Mesin Kemudi / Steering Failure Report", category: "Laporan Insiden", file: "035_Steering_Failure_Report.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
