@@ -25,6 +25,7 @@ export const SMK_FORMS = [
   { code: "028", title: "Laporan Latihan Penyelamatan Orang Jatuh ke Laut dan Pemulihan Kondisinya / Man Overboard & Recovery Drill", category: "Latihan", file: "028_Man_Overboard_and_Recovery_Drill.html" },
   { code: "029", title: "Latihan Tim Tanggap Darurat / Table Top Drill", category: "Latihan", file: "029_Table_Top_Drill.html" },
   { code: "030", title: "Laporan Tabrakan Kapal / Ship's Collision Report", category: "Laporan Insiden", file: "030_Ships_Collision_Report.html" },
+  { code: "031", title: "Laporan Kapal Kandas atau Terdampar / Ship Grounding Report", category: "Laporan Insiden", file: "031_Ship_Grounding_Report.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
