@@ -33,6 +33,7 @@ export const SMK_FORMS = [
   { code: "036", title: "Kriteria Kualifikasi Kru / Crew Qualification Criteria", category: "Inventaris", file: "036_Crew_Qualification_Criteria.html" },
   { code: "038-A", title: "Penilaian Kinerja Officer Senior / Senior Officers Performance Report", category: "Penilaian", file: "038A_Senior_Officers_Performance_Report.html" },
   { code: "038-B", title: "Penilaian Awak Kapal / Crew Assessment", category: "Penilaian", file: "038B_Crew_Assessment.html" },
+  { code: "039", title: "Crew List / Daftar Kru", category: "Inventaris", file: "039_Crew_List.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
