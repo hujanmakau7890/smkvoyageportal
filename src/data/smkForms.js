@@ -19,6 +19,7 @@ export const SMK_FORMS = [
   { code: "022", title: "Laporan Latihan Peran Pemadam Kebakaran / Fire Drill Report", category: "Latihan", file: "022_Fire_Drill_Report.html" },
   { code: "023", title: "Laporan Latihan Peran Sekoci / Abandon Ship Drill", category: "Latihan", file: "023_Abandon_Ship_Drill_Report.html" },
   { code: "024", title: "Laporan Latihan Peragaan Peralatan Keselamatan / Safety Equipment Demonstration Drill", category: "Latihan", file: "024_Safety_Equipment_Demonstration_Drill.html" },
+  { code: "025", title: "Laporan Latihan Memasuki Ruang Tertutup dan Penyelamatan Korban / Entry Enclosed Space and Rescue Drill", category: "Latihan", file: "025_Entry_Enclosed_Space_and_Rescue_Drill.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
