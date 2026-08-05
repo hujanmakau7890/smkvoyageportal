@@ -32,6 +32,7 @@ export const SMK_FORMS = [
   { code: "035", title: "Laporan Kerusakan Mesin Kemudi / Steering Failure Report", category: "Laporan Insiden", file: "035_Steering_Failure_Report.html" },
   { code: "036", title: "Kriteria Kualifikasi Kru / Crew Qualification Criteria", category: "Inventaris", file: "036_Crew_Qualification_Criteria.html" },
   { code: "038-A", title: "Penilaian Kinerja Officer Senior / Senior Officers Performance Report", category: "Penilaian", file: "038A_Senior_Officers_Performance_Report.html" },
+  { code: "038-B", title: "Penilaian Awak Kapal / Crew Assessment", category: "Penilaian", file: "038B_Crew_Assessment.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
