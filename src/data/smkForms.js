@@ -18,6 +18,7 @@ export const SMK_FORMS = [
   { code: "020", title: "Engineer Training Evaluation Report", category: "Evaluasi", file: "020_Engineer_Training_Evaluation.html" },
   { code: "022", title: "Laporan Latihan Peran Pemadam Kebakaran / Fire Drill Report", category: "Latihan", file: "022_Fire_Drill_Report.html" },
   { code: "023", title: "Laporan Latihan Peran Sekoci / Abandon Ship Drill", category: "Latihan", file: "023_Abandon_Ship_Drill_Report.html" },
+  { code: "024", title: "Laporan Latihan Peragaan Peralatan Keselamatan / Safety Equipment Demonstration Drill", category: "Latihan", file: "024_Safety_Equipment_Demonstration_Drill.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
