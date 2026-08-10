@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>047 Voyage Main Engine & Machinery Report - 2 Stroke</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #e5e7eb; font-family: Arial, sans-serif; padding: 12px; }
+    .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 12px; }
+    .btn { border: 0; border-radius: 6px; padding: 8px 16px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
+    .head, .sec { border: 2px solid #000; padding: 8px; margin-top: 8px; }
+    .top { display: grid; grid-template-columns: 20% 60% 20%; border-bottom: 2px solid #000; min-height: 65px; align-items: center; }
+    .co { font-weight: bold; font-size: 13px; }
+    .ttl { font-weight: bold; font-size: 13px; text-align: center; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 9px; padding-right: 6px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 10px; }
+    .code span + span { border-left: 1px solid #000; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 4px 12px; margin-top: 6px; }
+    .f { display: flex; gap: 4px; font-size: 9px; font-weight: bold; align-items: baseline; }
+    .f input, .f select { flex: 1; min-width: 0; border: 0; border-bottom: 1px solid #000; background: #fff; padding: 1px 3px; font-size: 9px; }
+    .f .label { font-weight: bold; white-space: nowrap; }
+    .sec h3 { font-size: 10px; margin: 0 0 4px 0; background: #eee; padding: 3px 8px; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2px 8px; font-size: 8.5px; }
+    .info-grid .item { display: flex; align-items: baseline; gap: 3px; white-space: nowrap; }
+    .info-grid .item label { font-weight: bold; min-width: 60px; font-size: 8.5px; }
+    .info-grid .item input { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 8.5px; min-width: 30px; }
+    .info-grid .item .suffix { font-weight: normal; margin-left: 2px; font-size: 8px; }
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 7.5px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 1px 2px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; }
+    .tbl td:first-child, .tbl th:first-child { text-align: left; padding-left: 4px; }
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 7.5px; padding: 0; min-height: 14px; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .sig { text-align: center; border: 2px solid #000; margin-top: 8px; padding: 8px; font-size: 8.5px; }
+    .siggrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px; }
+    .sigbox { border: 0; text-align: center; }
+    .sigbox .space { height: 50px; display: flex; align-items: center; justify-content: center; border: none; margin: 2px 0; background: #fafafa; }
+    .sigbox .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sigbox .space .pv img { max-height: 45px; max-width: 100%; }
+    .sigbox .space .pv .x { position: absolute; right: 4px; top: 4px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .sigbox .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 80%; font-size: 8.5px; margin-top: 2px; }
+    .sigbox .role { margin-top: 2px; font-weight: bold; font-size: 8.5px; }
+    .sigbox .since { font-size: 7.5px; }
+    .hidden { display: none !important; }
+    .remark-box { border: 1px solid #000; padding: 4px; font-size: 8px; min-height: 30px; }
+    .remark-box textarea { width: 100%; border: none; resize: vertical; font-size: 8px; padding: 3px; height: 40px; }
+    .sub-header { font-weight: bold; font-size: 8.5px; background: #e0e0e0; padding: 2px 4px; margin-top: 3px; }
+
+    /* ===== PRINT STYLES - DENGAN SPASI ANTAR TABEL ===== */
+    @media print {
+      @page { size: A4 landscape; margin: 3mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 2px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 2px; }
+      .top { min-height: 25px; grid-template-columns: 20% 60% 20%; }
+      .co { font-size: 9px; }
+      .ttl { font-size: 11px; }
+      .st { font-size: 7px; }
+      .grid { gap: 1px 6px; margin-top: 2px; }
+      .f { font-size: 7.5px; }
+      .f input, .f select { font-size: 7.5px; }
+      .sec {
+        padding: 3px;
+        margin-top: 2px !important;
+        margin-bottom: 8px !important;
+        border-width: 1px;
+        page-break-inside: avoid;
+      }
+      .sec h3 {
+        font-size: 8px;
+        padding: 1px 4px;
+        margin-bottom: 2px;
+      }
+      .info-grid {
+        font-size: 7px;
+        gap: 1px 4px;
+      }
+      .info-grid .item label {
+        font-size: 7px;
+        min-width: 45px;
+      }
+      .info-grid .item input {
+        font-size: 7px;
+      }
+      .tbl {
+        font-size: 6.2px;
+        margin-top: 1px;
+      }
+      .tbl th, .tbl td {
+        padding: 0.3px 1.5px;
+        line-height: 1.1;
+      }
+      .tbl input {
+        font-size: 6.2px;
+        min-height: 10px;
+        padding: 0;
+      }
+      .sig {
+        padding: 3px;
+        font-size: 7px;
+        margin-top: 6px !important;
+        border-width: 1px;
+      }
+      .siggrid { gap: 10px; }
+      .sigbox .space { height: 30px; }
+      .sigbox .space .pv img { max-height: 24px; }
+      .sigbox .nm { font-size: 7px; }
+      .sigbox .role { font-size: 7px; }
+      .sigbox .since { font-size: 6px; }
+      .remark-box {
+        padding: 2px;
+        font-size: 7px;
+        min-height: 15px;
+      }
+      .remark-box textarea {
+        height: 20px;
+        font-size: 7px;
+        padding: 1px;
+      }
+      .sub-header {
+        font-size: 6.5px;
+        padding: 1px 3px;
+        margin-top: 2px;
+      }
+      select option[value=""] { display: none !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; }
+      .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .container > *:last-child {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+      }
+    }
+    @media screen and (max-width: 700px) {
+      .top { grid-template-columns: 1fr; text-align: center; border-bottom: 1px solid #000; }
+      .co, .ttl, .st { width: 100%; text-align: center; }
+      .st { align-items: center; padding-right: 0; }
+      .siggrid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 6px; }
+      .f { font-size: 8px; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="tools no-print">
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">047<br>MAIN ENGINE &amp; MACHINERY REPORT<br>2 STROKE ENGINE</div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>VOY</span></div>
+        <div>Release: &nbsp; Rev.0:</div>
+      </div>
+    </div>
+    <div style="font-size:8px; margin-top:2px; font-style:italic;">please fill-up at sea only</div>
+    <div class="grid">
+      <label class="f"><span class="label">MV / Nama Kapal:</span><select id="shipSelect"><option value="">Pilih</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label>
+      <label class="f"><span class="label">Voy No :</span><input></label>
+      <label class="f"><span class="label">Week no. :</span><input></label>
+      <label class="f"><span class="label">Date :</span><input class="date" placeholder="DD-MM-YYYY"></label>
+    </div>
+  </header>
+
+  <!-- DATA OPERASIONAL UTAMA -->
+  <section class="sec">
+    <h3>Main Engine Operational Data</h3>
+    <div class="info-grid">
+      <div class="item"><label>M/E type :</label><input></div>
+      <div class="item"><label>RPM :</label><input><span class="suffix">rpm</span></div>
+      <div class="item"><label>Prop. Pitch :</label><input><span class="suffix">%</span></div>
+      <div class="item"><label>FW Cons. total :</label><input><span class="suffix">t/d</span></div>
+      <div class="item"><label>Eng. Room Temp. :</label><input><span class="suffix">°C</span></div>
+      <div class="item"><label>Eng. Load :</label><input><span class="suffix">%</span></div>
+      <div class="item"><label>GO Cons. :</label><input><span class="suffix">t/d</span></div>
+      <div class="item"><label>Exh. gas Temp. before TC :</label><input><span class="suffix">°C</span></div>
+      <div class="item"><label>Sea Water Temp :</label><input><span class="suffix">°C</span></div>
+      <div class="item"><label>FO Cons. ME :</label><input><span class="suffix">t/d</span></div>
+      <div class="item"><label>Exh. gas Temp. behind TC :</label><input><span class="suffix">°C</span></div>
+      <div class="item"><label>Wind :</label><input><span class="suffix">Bft</span></div>
+      <div class="item"><label>FO Cons. AE :</label><input><span class="suffix">t/d</span></div>
+      <div class="item"><label>Rev. Turbo charger :</label><input><span class="suffix">rpm</span></div>
+      <div class="item"><label>Speed :</label><input><span class="suffix">kn</span></div>
+      <div class="item"><label>Boiler :</label><input><span class="suffix">t/d</span></div>
+      <div class="item"><label>Sea :</label><input><span class="suffix">m</span></div>
+    </div>
+  </section>
+
+  <!-- TABEL PER SILINDER -->
+  <section class="sec">
+    <h3>Cylinder Data</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:900px;">
+        <thead>
+          <tr>
+            <th style="width:100px;">Parameter</th>
+            <th>Cyl 1</th><th>Cyl 2</th><th>Cyl 3</th><th>Cyl 4</th><th>Cyl 5</th>
+            <th>Cyl 6</th><th>Cyl 7</th><th>Cyl 8</th><th>Cyl 9</th><th>Cyl 10</th>
+          </tr>
+        </thead>
+        <tbody id="cyl-tbody">
+          <!-- diisi JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TEMPERATURES + PRESSURE MAIN ENGINE + FUEL OIL / LUBE OIL -->
+  <section class="sec">
+    <h3>Temperatures + Pressure of Main Engine &amp; Fuel / Lube Oil</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+      <!-- Kolom kiri: parameter mesin -->
+      <div>
+        <div class="sub-header">Main Engine Parameters</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>T water engine inlet H.T</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>T water engine outlet H.T</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>P water before engine H.T</label><input><span class="suffix">bar</span></div>
+          <div class="item"><label>T water LT</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>P water LT</label><input><span class="suffix">bar</span></div>
+          <div class="item"><label>Evaporator production</label><input><span class="suffix">t/d</span></div>
+          <div class="item"><label>Water in oil test M/E lub oil</label><input><span class="suffix">%</span></div>
+          <div class="item"><label>P charger air bef./aft cooler</label><input><span class="suffix">bar</span></div>
+          <div class="item"><label>T charger air bef./aft cooler</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>P diff air cooler (U-pipe)</label><input><span class="suffix">mbar</span></div>
+          <div class="item"><label>P lube oil before engine</label><input><span class="suffix">bar</span></div>
+          <div class="item"><label>T lube oil before inlet</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>T lube oil before outlet</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>P lub oil gear box</label><input><span class="suffix">bar</span></div>
+          <div class="item"><label>T lub oil gear box</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>P oil CPP unit</label><input><span class="suffix">bar</span></div>
+          <div class="item"><label>T oil CPP unit</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>T stern tube</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>Shaft generator</label><input><span class="suffix">kW</span></div>
+        </div>
+      </div>
+      <!-- Kolom kanan: Fuel Oil, Lube Oil, Running Hours, Separator, Boiler -->
+      <div>
+        <div class="sub-header">Heavy / Light Fuel Oil</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>P fuel before M/E</label><input><span class="suffix">bar</span></div>
+          <div class="item"><label>T fuel before M/E</label><input><span class="suffix">°C</span></div>
+          <div class="item"><label>Viscosity of fuel at M.E</label><input><span class="suffix">cst</span></div>
+          <div class="item"><label>Fuel type/grade/sulphur</label><input><span class="suffix">cst @ 50°C</span></div>
+        </div>
+        <div class="sub-header" style="margin-top:4px;">Daily Lub Oil Consumption</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>Main engine</label><input><span class="suffix">kg/d</span></div>
+          <div class="item"><label>Aux. Gen. 1/2/3</label><input><span class="suffix">kg/d</span></div>
+          <div class="item"><label>Emerg. Gen</label><input><span class="suffix">kg/d</span></div>
+          <div class="item"><label>Stern tube</label><input><span class="suffix">kg/d</span></div>
+        </div>
+        <div class="sub-header" style="margin-top:4px;">Lub Oil Stock</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>Main engine.L.O</label><input><span class="suffix">kg</span></div>
+          <div class="item"><label>Auxilary diesel L.O</label><input><span class="suffix">kg</span></div>
+        </div>
+        <div class="sub-header" style="margin-top:4px;">Running Hours</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>Main engine</label><input><span class="suffix">total</span></div>
+          <div class="item"><label>Generator 1/2/3</label><input><span class="suffix">total</span></div>
+          <div class="item"><label>Emerg. Gen.</label><input><span class="suffix">total</span></div>
+          <div class="item"><label>Compressor 1/2/3</label><input><span class="suffix">h/d</span></div>
+          <div class="item"><label>Work air compressor</label><input><span class="suffix">h/d</span></div>
+          <div class="item"><label>Boiler Burner</label><input><span class="suffix">h/d</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COOLING WATER TREATMENT + SEPARATOR -->
+  <section class="sec">
+    <h3>Cooling Water Treatment &amp; Separator</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+      <div>
+        <div class="sub-header">Cooling Water Treatment</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>PH (HT)</label><input></div>
+          <div class="item"><label>PH (LT)</label><input></div>
+          <div class="item"><label>Inhibitor concentration</label><input></div>
+          <div class="item"><label>Chlorid / ppm</label><input></div>
+        </div>
+        <div class="sub-header" style="margin-top:4px;">Boiler</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>Alkalinity / ppm</label><input></div>
+          <div class="item"><label>Conductivity / ppm</label><input></div>
+          <div class="item"><label>Condensate pH</label><input></div>
+        </div>
+      </div>
+      <div>
+        <div class="sub-header">Separator</div>
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="item"><label>LO separator M/E</label><input><span class="suffix">h</span><input style="flex:0.5;"><span class="suffix">°C</span></div>
+          <div class="item"><label>LO separator A/E</label><input><span class="suffix">h</span><input style="flex:0.5;"><span class="suffix">°C</span></div>
+          <div class="item"><label>HFO 1 separator</label><input><span class="suffix">h</span><input style="flex:0.5;"><span class="suffix">°C</span></div>
+          <div class="item"><label>HFO 2 separator</label><input><span class="suffix">h</span><input style="flex:0.5;"><span class="suffix">°C</span></div>
+          <div class="item"><label>GO separator</label><input><span class="suffix">h</span><input style="flex:0.5;"><span class="suffix">°C</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN JOBS/REPAIRS -->
+  <section class="sec">
+    <h3>Main Jobs / Repairs Carried Out</h3>
+    <div class="remark-box">
+      <textarea placeholder="Tulis perbaikan / pekerjaan utama yang dilakukan ..."></textarea>
+    </div>
+  </section>
+
+  <!-- SIGNATURE -->
+  <section class="sig">
+    <b>Name &amp; Sign / Nama &amp; Tanda Tangan</b>
+    <div class="siggrid">
+      <div class="sigbox">
+        <b>Signed by</b>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:3px 8px;">+ Add TTD
+            <input id="sigup1" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv1" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama">
+        <div class="role">Chief Engineer</div>
+        <div class="since">on board since : <input style="border:0;border-bottom:1px solid #000;width:80px;font-size:7px;" placeholder="DD-MM-YYYY"></div>
+      </div>
+      <div class="sigbox">
+        <b>Signed by</b>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:3px 8px;">+ Add TTD
+            <input id="sigup2" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv2" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv2','sigup2')">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama">
+        <div class="role">Master</div>
+        <div class="since">on board since : <input style="border:0;border-bottom:1px solid #000;width:80px;font-size:7px;" placeholder="DD-MM-YYYY"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ======= POPULATE CYLINDER TABLE =======
+  var cylParams = [
+    'Exh. Gas temp. cyl. ME',
+    'Exh. Gas temp. cyl. E.C.R',
+    'Fuel pp. rack pos.',
+    'Ignition pressure',
+    'Compress. Pressure',
+    'Big end bearing/oil splash temp.'
+  ];
+  var cylTbody = document.getElementById('cyl-tbody');
+  var cylCount = 10;
+  cylParams.forEach(function(label) {
+    var row = '<tr><td>'+label+'</td>';
+    for (var i=0; i<cylCount; i++) {
+      row += '<td><input></td>';
+    }
+    row += '</tr>';
+    cylTbody.insertAdjacentHTML('beforeend', row);
+  });
+
+  // ======= DATE FORMATTING =======
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  window.clearSig = clearSig;
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '047 Voyage Main Engine & Machinery Report - 2 Stroke';
+      var ship = document.getElementById('shipSelect');
+      var date = document.querySelector('.date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+      if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({type:'FORM_TITLE', title:title}, '*');
+      }
+    }
+    var ship = document.getElementById('shipSelect');
+    var date = document.querySelector('.date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
+
+  // ======= HIDE PLACEHOLDER SAAT PRINT =======
+  (function() {
+    function blankSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (!s.value) {
+          s.dataset.ph = s.options[s.selectedIndex].text;
+          s.options[s.selectedIndex].text = '';
+        }
+      });
+    }
+    function restoreSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (s.dataset.ph !== undefined) {
+          s.options[s.selectedIndex].text = s.dataset.ph;
+          delete s.dataset.ph;
+        }
+      });
+    }
+    window.addEventListener('beforeprint', blankSelects);
+    window.addEventListener('afterprint', restoreSelects);
+    if (window.matchMedia) {
+      window.matchMedia('print').addListener(function(m) {
+        m.matches ? blankSelects() : restoreSelects();
+      });
+    }
+  })();
+</script>
+</body>
+</html>
