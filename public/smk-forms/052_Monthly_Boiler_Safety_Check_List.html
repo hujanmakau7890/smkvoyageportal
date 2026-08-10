@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>052 Monthly Boiler Safety Check List</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #e5e7eb; font-family: Arial, sans-serif; padding: 12px; }
+    .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 12px; }
+    .btn { border: 0; border-radius: 6px; padding: 8px 16px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
+    .head, .sec { border: 2px solid #000; padding: 8px; margin-top: 8px; }
+    .top { display: grid; grid-template-columns: 20% 60% 20%; border-bottom: 2px solid #000; min-height: 65px; align-items: center; }
+    .co { font-weight: bold; font-size: 13px; }
+    .ttl { font-weight: bold; font-size: 13px; text-align: center; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 9px; padding-right: 6px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 10px; }
+    .code span + span { border-left: 1px solid #000; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 4px 12px; margin-top: 6px; }
+    .f { display: flex; gap: 4px; font-size: 9px; font-weight: bold; align-items: baseline; }
+    .f input, .f select { flex: 1; min-width: 0; border: 0; border-bottom: 1px solid #000; background: #fff; padding: 1px 3px; font-size: 9px; }
+    .f .label { font-weight: bold; white-space: nowrap; }
+    .sec h3 { font-size: 10px; margin: 0 0 4px 0; background: #eee; padding: 3px 8px; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2px 8px; font-size: 8.5px; }
+    .info-grid .item { display: flex; align-items: baseline; gap: 3px; white-space: nowrap; }
+    .info-grid .item label { font-weight: bold; min-width: 60px; font-size: 8.5px; }
+    .info-grid .item input { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 8.5px; min-width: 30px; }
+    .info-grid .item .suffix { font-weight: normal; margin-left: 2px; font-size: 8px; }
+    .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 8.5px; }
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 7.5px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 1px 2px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; }
+    .tbl td:first-child, .tbl th:first-child { text-align: center; padding-left: 4px; }
+    .tbl td:nth-child(3), .tbl th:nth-child(3) { text-align: left; padding-left: 4px; }
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 7.5px; padding: 0; min-height: 14px; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .tbl .total { font-weight: bold; background: #f9f9f9; }
+    .sig { text-align: center; border: 2px solid #000; margin-top: 8px; padding: 8px; font-size: 8.5px; }
+    .siggrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px; }
+    .sigbox { border: 0; text-align: center; }
+    .sigbox .space { height: 50px; display: flex; align-items: center; justify-content: center; border: none; margin: 2px 0; background: #fafafa; }
+    .sigbox .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sigbox .space .pv img { max-height: 45px; max-width: 100%; }
+    .sigbox .space .pv .x { position: absolute; right: 4px; top: 4px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .sigbox .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 80%; font-size: 8.5px; margin-top: 2px; }
+    .sigbox .role { margin-top: 2px; font-weight: bold; font-size: 8.5px; }
+    .hidden { display: none !important; }
+    .remark-box { border: 1px solid #000; padding: 4px; font-size: 8px; min-height: 30px; }
+    .remark-box textarea { width: 100%; border: none; resize: vertical; font-size: 8px; padding: 3px; height: 40px; }
+    .sub-header { font-weight: bold; font-size: 8.5px; background: #e0e0e0; padding: 2px 4px; margin-top: 3px; }
+    .check-group { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .check-group label { font-weight: bold; font-size: 8.5px; display: flex; align-items: center; gap: 3px; }
+    .check-group input[type="radio"], .check-group input[type="checkbox"] { width: 14px; height: 14px; margin: 0; }
+    .inline-label { font-weight: normal; font-size: 8px; }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      @page { size: A4 landscape; margin: 3mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 2px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 2px; }
+      .top { min-height: 25px; grid-template-columns: 20% 60% 20%; }
+      .co { font-size: 9px; }
+      .ttl { font-size: 11px; }
+      .st { font-size: 7px; }
+      .grid { gap: 1px 6px; margin-top: 2px; }
+      .f { font-size: 7.5px; }
+      .f input, .f select { font-size: 7.5px; }
+      .sec {
+        padding: 3px;
+        margin-top: 2px !important;
+        margin-bottom: 6px !important;
+        border-width: 1px;
+        page-break-inside: avoid;
+      }
+      .sec h3 {
+        font-size: 8px;
+        padding: 1px 4px;
+        margin-bottom: 2px;
+      }
+      .info-grid {
+        font-size: 7px;
+        gap: 1px 4px;
+      }
+      .info-grid .item label {
+        font-size: 7px;
+        min-width: 45px;
+      }
+      .info-grid .item input {
+        font-size: 7px;
+      }
+      .tbl {
+        font-size: 6px;
+        margin-top: 1px;
+      }
+      .tbl th, .tbl td {
+        padding: 0.3px 1.5px;
+        line-height: 1.1;
+      }
+      .tbl td:first-child, .tbl th:first-child {
+        text-align: center;
+        padding-left: 1.5px;
+      }
+      .tbl td:nth-child(3), .tbl th:nth-child(3) {
+        text-align: left;
+        padding-left: 1.5px;
+      }
+      .tbl input {
+        font-size: 6px;
+        min-height: 10px;
+        padding: 0;
+      }
+      .sig {
+        padding: 3px;
+        font-size: 7px;
+        margin-top: 4px !important;
+        border-width: 1px;
+      }
+      .siggrid { gap: 10px; }
+      .sigbox .space { height: 30px; }
+      .sigbox .space .pv img { max-height: 24px; }
+      .sigbox .nm { font-size: 7px; }
+      .sigbox .role { font-size: 7px; }
+      .remark-box {
+        padding: 2px;
+        font-size: 7px;
+        min-height: 15px;
+      }
+      .remark-box textarea {
+        height: 20px;
+        font-size: 7px;
+        padding: 1px;
+      }
+      .sub-header {
+        font-size: 6.5px;
+        padding: 1px 3px;
+        margin-top: 2px;
+      }
+      .check-group label { font-size: 7px; }
+      .check-group input[type="radio"], .check-group input[type="checkbox"] { width: 10px; height: 10px; }
+      select option[value=""] { display: none !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; }
+      .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .container > *:last-child {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+      }
+    }
+    @media screen and (max-width: 700px) {
+      .top { grid-template-columns: 1fr; text-align: center; border-bottom: 1px solid #000; }
+      .co, .ttl, .st { width: 100%; text-align: center; }
+      .st { align-items: center; padding-right: 0; }
+      .siggrid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 6px; }
+      .f { font-size: 8px; flex-wrap: wrap; }
+      .check-group { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="tools no-print">
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">052<br>MONTHLY BOILER SAFETY CHECK LIST</div>
+      <div class="st">
+        <div class="code"><span>S</span><span>BLN</span></div>
+        <div>Release: &nbsp; Rev.0:</div>
+      </div>
+    </div>
+    <div class="grid">
+      <label class="f"><span class="label">Vessel :</span><select id="shipSelect"><option value="">Pilih Kapal</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label>
+      <label class="f"><span class="label">Date :</span><input class="date" placeholder="DD-MM-YYYY"></label>
+    </div>
+  </header>
+
+  <!-- MONTHLY CHECKLIST -->
+  <section class="sec">
+    <h3>Monthly Checklist</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:900px;">
+        <thead>
+          <tr>
+            <th style="width:100px;">Periode</th>
+            <th style="width:150px;">Category</th>
+            <th>Description</th>
+            <th style="width:70px;">Checked</th>
+          </tr>
+        </thead>
+        <tbody id="monthly-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6-MONTH CHECKLIST -->
+  <section class="sec">
+    <h3>6-Month Checklist</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:900px;">
+        <thead>
+          <tr>
+            <th style="width:100px;">Periode</th>
+            <th style="width:150px;">Category</th>
+            <th>Description</th>
+            <th style="width:70px;">Checked</th>
+          </tr>
+        </thead>
+        <tbody id="six-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SIGNATURE -->
+  <section class="sig">
+    <b>Name & Sign / Nama & Tanda Tangan</b>
+    <div class="siggrid">
+      <div class="sigbox">
+        <b>Prepared by / Dibuat oleh,</b>
+        <div class="space">
+          <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+            <input id="sigup1" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv1" class="pv hidden">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama">
+        <div class="role">Chief Engineer</div>
+      </div>
+      <div class="sigbox">
+        <b>Knowledge by / Mengetahui,</b>
+        <div class="space">
+          <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+            <input id="sigup2" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv2" class="pv hidden">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv2','sigup2')">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama">
+        <div class="role">Master</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ======= POPULATE MONTHLY TABLE =======
+  var monthlyRows = [
+    ['Monthly', 'Auxiliary boiler burner max. load test', 'Check max. oil flow according to manual or steam consumption (max. fuel oil consumption [l/h] = max. steam consumption [t] x 75 Example for 2400 kg steam boiler: 2,4 x 75 = 180 l/h)'],
+    ['', '', 'Check oil temperature & oil pressure at burner (compare with manual & performance report after last cleaning; too high temperature & pressure will increase the burner load and lead to black smoke)'],
+    ['', '', 'Check exhaust temperature and compare with performance report after cleaning (if temp. is higher than 400° C cleaning is necessary)'],
+    ['', '', 'Check exhaust gas differential pressure and compare with last performance report after cleaning (e.g. for Pin Tube Boiler: 95 mm WC at clean condition, to be cleaned at 200 mm WC)'],
+    ['Monthly', 'Sensor check', 'Low water sensors: use the test buttons; press for approx. 15 sec.'],
+    ['', '', 'Photo cells: disconnect each cell and check if alarm is triggered'],
+    ['', '', 'Burner door: carefully open while burner is running and check if alarm is triggered'],
+    ['', '', 'Salinity sensor: check alarm by lowering the set-point; check that the feed water pumps will stop'],
+    ['', '', 'Oil sensor: check by draining water or pulling sensor (depends on system type); check if feed water pumps are stopped. Check if forced oil sensor pump is running if applicable'],
+    ['', '', 'High steam pressure switch: check by lowering set point or by use of test pump (preferred)'],
+    ['Monthly', 'Straight Pass boiler', 'Check the flue tubes for clogging and residues, esp. at entrance and exit of tubes, and clean if necessary. Check condition of turning chamber and clean if necessary'],
+    ['Monthly', 'Standby pumps', 'Check feed water pumps for correct function and leakages'],
+    ['', '', 'Check fuel oil pumps for correct function and leakages'],
+    ['Monthly', 'Mountings Fuel Filter', 'Check if all mountings and connections to steel drum are in good condition and free of leakages (valves, compensators, hand holes, man hole, sensors). Check and clean all mounted fuel filter in boiler system (included filter'],
+    ['Monthly', 'Refractory check', 'Check general conditions of refractory and also of burner'],
+    ['', '', 'Make photo documentation of every visible condition changes (even small ones) and report to technical inspection'],
+    ['', '', 'Check condition of stored refractory repair material'],
+  ];
+  var monthlyTbody = document.getElementById('monthly-tbody');
+  monthlyRows.forEach(function(row) {
+    var tr = '<tr><td>'+row[0]+'</td><td>'+row[1]+'</td><td>'+row[2]+'</td><td><input type="checkbox"></td></tr>';
+    monthlyTbody.insertAdjacentHTML('beforeend', tr);
+  });
+
+  // ======= POPULATE 6-MONTH TABLE =======
+  var sixRows = [
+    ['6-month', 'DP Water level transmitter', 'Check the free flow of fluid to the sensor, valves can be blocked by hardness'],
+    ['', 'Water level control', 'Check correct function of feed water pump start/stop/stand-by, constant water level, low and high alarms/ and clean the conductivity electrode from residues if measure out of range'],
+    ['', 'Fuel oil pump', 'Check stand-by funtion'],
+  ];
+  var sixTbody = document.getElementById('six-tbody');
+  sixRows.forEach(function(row) {
+    var tr = '<tr><td>'+row[0]+'</td><td>'+row[1]+'</td><td>'+row[2]+'</td><td><input type="checkbox"></td></tr>';
+    sixTbody.insertAdjacentHTML('beforeend', tr);
+  });
+
+  // ======= DATE FORMATTING =======
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  window.clearSig = clearSig;
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '052 Monthly Boiler Safety Check List';
+      var ship = document.getElementById('shipSelect');
+      var date = document.querySelector('.date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+      if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({type:'FORM_TITLE', title:title}, '*');
+      }
+    }
+    var ship = document.getElementById('shipSelect');
+    var date = document.querySelector('.date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
+
+  // ======= HIDE PLACEHOLDER SAAT PRINT =======
+  (function() {
+    function blankSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (!s.value) {
+          s.dataset.ph = s.options[s.selectedIndex].text;
+          s.options[s.selectedIndex].text = '';
+          s.style.color = 'transparent';
+        }
+      });
+    }
+    function restoreSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (s.dataset.ph !== undefined) {
+          s.options[s.selectedIndex].text = s.dataset.ph;
+          delete s.dataset.ph;
+        }
+        s.style.color = '';
+      });
+    }
+    window.addEventListener('beforeprint', blankSelects);
+    window.addEventListener('afterprint', restoreSelects);
+    if (window.matchMedia) {
+      window.matchMedia('print').addListener(function(m) {
+        m.matches ? blankSelects() : restoreSelects();
+      });
+    }
+  })();
+</script>
+</body>
+</html>
