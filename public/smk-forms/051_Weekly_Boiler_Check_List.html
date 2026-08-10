@@ -381,6 +381,7 @@
         if (!s.value) {
           s.dataset.ph = s.options[s.selectedIndex].text;
           s.options[s.selectedIndex].text = '';
+          s.style.color = 'transparent';
         }
       });
     }
@@ -390,6 +391,7 @@
           s.options[s.selectedIndex].text = s.dataset.ph;
           delete s.dataset.ph;
         }
+        s.style.color = '';
       });
     }
     window.addEventListener('beforeprint', blankSelects);
