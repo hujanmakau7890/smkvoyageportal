@@ -41,6 +41,7 @@ export const SMK_FORMS = [
   { code: "045", title: "Monthly Running Hours Record", category: "Laporan Mesin", file: "045_Monthly_Running_Hours_Record.html" },
   { code: "046", title: "Voyage Main Engine & Machinery Report - 4 Stroke", category: "Laporan Mesin", file: "046_Voyage_Main_Engine_Machinery_Report_4_Stroke.html" },
   { code: "047", title: "Voyage Main Engine & Machinery Report - 2 Stroke", category: "Laporan Mesin", file: "047_Voyage_Main_Engine_Machinery_Report_2_Stroke.html" },
+  { code: "048", title: "Crank Shaft Deflection Main Engine", category: "Laporan Mesin", file: "048_Crank_Shaft_Deflection_Main_Engine.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
