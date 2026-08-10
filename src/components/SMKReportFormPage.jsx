@@ -19,9 +19,9 @@ export default function SMKReportFormPage() {
   // Update browser tab title when form changes (always-declared hook)
   useEffect(() => {
     if (!selectedForm) return;
-    document.title = `${selectedForm.code} ${selectedForm.title} — PT Mentari Mas Multimoda`;
+    document.title = `${selectedForm.code} ${selectedForm.title}`;
     return () => {
-      document.title = "FLEET- QSS — PT Mentari Mas Multimoda";
+      document.title = "FLEET- QSS";
     };
   }, [selectedForm]);
 
@@ -29,7 +29,7 @@ export default function SMKReportFormPage() {
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data && event.data.type === "FORM_TITLE" && event.data.title) {
-        document.title = `${event.data.title} — PT Mentari Mas Multimoda`;
+        document.title = event.data.title;
       }
     };
     window.addEventListener("message", handleMessage);
@@ -45,7 +45,7 @@ export default function SMKReportFormPage() {
       try {
         const iframeTitle = iframe.contentDocument?.title;
         if (iframeTitle) {
-          document.title = `${iframeTitle} — PT Mentari Mas Multimoda`;
+          document.title = iframeTitle;
         }
       } catch (e) {
         // cross-origin, ignore
