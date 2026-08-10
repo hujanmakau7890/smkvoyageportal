@@ -14,6 +14,46 @@ export default function SMKReportFormPage() {
   const [selectedForm, setSelectedForm] = useState(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("Semua");
+  const iframeRef = useRef(null);
+
+  // Update browser tab title when form changes (always-declared hook)
+  useEffect(() => {
+    if (!selectedForm) return;
+    document.title = `${selectedForm.code} ${selectedForm.title} — PT Mentari Mas Multimoda`;
+    return () => {
+      document.title = "FLEET- QSS — PT Mentari Mas Multimoda";
+    };
+  }, [selectedForm]);
+
+  // Listen for title updates from iframe (always-declared hook)
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data && event.data.type === "FORM_TITLE" && event.data.title) {
+        document.title = `${event.data.title} — PT Mentari Mas Multimoda`;
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  // Also read iframe title directly after load (same-origin)
+  const formFile = selectedForm?.file;
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe || !formFile) return;
+    const onLoad = () => {
+      try {
+        const iframeTitle = iframe.contentDocument?.title;
+        if (iframeTitle) {
+          document.title = `${iframeTitle} — PT Mentari Mas Multimoda`;
+        }
+      } catch (e) {
+        // cross-origin, ignore
+      }
+    };
+    iframe.addEventListener("load", onLoad);
+    return () => iframe.removeEventListener("load", onLoad);
+  }, [formFile]);
 
   const visibleForms = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -25,41 +65,6 @@ export default function SMKReportFormPage() {
   }, [search, categoryFilter]);
 
   if (selectedForm) {
-    const iframeRef = useRef(null);
-    // Update browser tab title when form changes
-    useEffect(() => {
-      document.title = `${selectedForm.code} ${selectedForm.title} — PT Mentari Mas Multimoda`;
-      return () => { document.title = "FLEET- QSS — PT Mentari Mas Multimoda"; };
-    }, [selectedForm]);
-    
-    // Listen for title updates from iframe
-    useEffect(() => {
-      const handleMessage = (event) => {
-        if (event.data && event.data.type === 'FORM_TITLE' && event.data.title) {
-          document.title = `${event.data.title} — PT Mentari Mas Multimoda`;
-        }
-      };
-      window.addEventListener('message', handleMessage);
-      return () => window.removeEventListener('message', handleMessage);
-    }, []);
-    
-    // Also read iframe title directly after load (same-origin)
-    useEffect(() => {
-      const iframe = iframeRef.current;
-      if (!iframe) return;
-      const onLoad = () => {
-        try {
-          const iframeTitle = iframe.contentDocument?.title;
-          if (iframeTitle) {
-            document.title = `${iframeTitle} — PT Mentari Mas Multimoda`;
-          }
-        } catch (e) {
-          // cross-origin, ignore
-        }
-      };
-      iframe.addEventListener('load', onLoad);
-      return () => iframe.removeEventListener('load', onLoad);
-    }, [selectedForm?.file]);
     return (
       <div style={{ height: "calc(100vh - 92px)", display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
