@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>045 Monthly Running Hours Record</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #e5e7eb; font-family: Arial, sans-serif; padding: 12px; }
+    .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 12px; }
+    .btn { border: 0; border-radius: 6px; padding: 8px 16px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
+    .head, .sec { border: 2px solid #000; padding: 8px; margin-top: 10px; }
+    .top { display: grid; grid-template-columns: 20% 60% 20%; border-bottom: 2px solid #000; min-height: 70px; align-items: center; }
+    .co { font-weight: bold; font-size: 13px; }
+    .ttl { font-weight: bold; font-size: 14px; text-align: center; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 10px; padding-right: 6px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 10px; }
+    .code span + span { border-left: 1px solid #000; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 16px; margin-top: 8px; }
+    .f { display: flex; gap: 6px; font-size: 10px; font-weight: bold; align-items: baseline; }
+    .f input, .f select { flex: 1; min-width: 0; border: 0; border-bottom: 1px solid #000; background: #fff; padding: 2px 4px; font-size: 10px; }
+    .wide { grid-column: 1 / -1; }
+    .sec h3 { font-size: 11px; margin: 0 0 6px 0; background: #eee; padding: 4px 8px; }
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 8px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 2px 3px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; }
+    .tbl td:first-child, .tbl th:first-child { text-align: left; padding-left: 6px; }
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 8px; padding: 0; min-height: 18px; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .tbl .total { font-weight: bold; background: #f9f9f9; }
+    .remark-box { border: 1px solid #000; padding: 4px; font-size: 8px; min-height: 30px; }
+    .remark-box textarea { width: 100%; border: none; resize: vertical; font-size: 8px; padding: 2px; height: 40px; }
+    .sig { text-align: center; border: 2px solid #000; margin-top: 10px; padding: 10px 8px; font-size: 9px; }
+    .siggrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 6px; }
+    .sigbox { border: 0; text-align: center; }
+    .sigbox .space { height: 65px; display: flex; align-items: center; justify-content: center; border: none; margin: 4px 0; position: relative; background: #fafafa; }
+    .sigbox .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sigbox .space .pv img { max-height: 55px; max-width: 100%; }
+    .sigbox .space .pv .x { position: absolute; right: 4px; top: 4px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .sigbox .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 85%; font-size: 9px; margin-top: 2px; }
+    .sigbox .role { margin-top: 2px; font-weight: bold; font-size: 9px; }
+    .hidden { display: none !important; }
+    .page-break { page-break-before: always; }
+    .sub-header { font-weight: bold; font-size: 9px; background: #e0e0e0; padding: 2px 4px; margin-top: 4px; }
+    .note { font-size: 7.5px; font-style: italic; color: #555; }
+
+    /* ===== PRINT STYLES – tanpa mengubah ukuran font ===== */
+    @media print {
+      @page { size: A4 landscape; margin: 5mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 4px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 4px; }
+      .top { min-height: 40px; grid-template-columns: 22% 56% 22%; }
+      .co { font-size: 10px; }
+      .ttl { font-size: 12px; }
+      .st { font-size: 8px; }
+      .grid { gap: 3px 10px; }
+      .f { font-size: 7.5px; }
+      .f input, .f select { font-size: 7.5px; }
+      /* HAPUS margin & padding berlebih di semua section pada print */
+      .sec { 
+        padding: 4px; 
+        margin-top: 2px !important; 
+        border-width: 1px;
+      }
+      .sec h3 { 
+        font-size: 8px; 
+        padding: 2px 6px; 
+        margin-bottom: 2px; 
+      }
+      .tbl { 
+        font-size: 6.5px; 
+        margin-top: 2px;
+      }
+      .tbl th, .tbl td { 
+        padding: 1px 2px; 
+      }
+      .tbl input { 
+        font-size: 6.5px; 
+        min-height: 12px; 
+      }
+      /* Signature */
+      .sig {
+        padding: 4px;
+        font-size: 7px;
+        margin-top: 2px !important;
+        border-width: 1px;
+      }
+      .sigbox .space { 
+        height: 40px; 
+        border: none !important; 
+        background: #fafafa; 
+        margin: 2px 0;
+      }
+      .sigbox .space .pv img { max-height: 30px; }
+      .sigbox .nm { font-size: 7px; }
+      .sigbox .role { font-size: 7px; }
+      .remark-box textarea { height: 20px; font-size: 6.5px; }
+      .sub-header { font-size: 7px; padding: 1px 3px; margin-top: 2px; }
+      textarea { font-size: 6.5px; }
+      /* Hilangkan margin pada page-break div agar tidak ada ruang kosong */
+      .page-break {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      /* Pastikan elemen di halaman 3 menempel ke atas */
+      .page-break .sec:first-child {
+        margin-top: 0 !important;
+      }
+      select option[value=""] { display: none !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; }
+    }
+
+    @media screen and (max-width: 700px) {
+      .top { grid-template-columns: 1fr; text-align: center; border-bottom: 1px solid #000; }
+      .co, .ttl, .st { width: 100%; text-align: center; }
+      .st { align-items: center; padding-right: 0; }
+      .siggrid { grid-template-columns: 1fr; }
+      .tbl { font-size: 7px; }
+      .f { font-size: 9px; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="tools no-print">
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">045<br>LAPORAN JAM OPERASI BULANAN<br>MONTHLY RUNNING HOURS RECORD</div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>BLN</span></div>
+        <div>Release: &nbsp; Rev.0:</div>
+      </div>
+    </div>
+    <div class="grid">
+      <label class="f">MV / Nama Kapal:
+        <select id="shipSelect">
+          <option value="">Pilih Kapal</option>
+          <option>Sahabat Mas</option>
+          <option>Semangat Mas</option>
+          <option>Express Mas</option>
+          <option>Pratama Mas</option>
+          <option>Prakarsa Mas</option>
+          <option>Mavendra Mas</option>
+          <option>Selaras Mas</option>
+          <option>Segoro Mas</option>
+        </select>
+      </label>
+      <label class="f">Tanggal:
+        <input class="date" placeholder="DD-MM-YYYY">
+      </label>
+      <label class="f">RH : Running Hours</label>
+      <label class="f">LM : Last Month</label>
+      <label class="f">TM : This Month</label>
+      <label class="f">TTL : Total (LM+TM)</label>
+    </div>
+    <div style="font-size:8px; margin-top:4px; border-top:1px solid #ccc; padding-top:4px;">
+      Laporan dikirim ke kantor menggunakan email atau hard copy setiap tanggal 5 bulan berikutnya / Report send to office by email or hard copy every date 5 next month
+    </div>
+  </header>
+
+  <!-- Halaman 1: MAIN ENGINE -->
+  <section class="sec">
+    <h3>MAIN ENGINE RUNNING HOURS (ME - RH)</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:1200px;">
+        <thead>
+          <tr>
+            <th style="width:120px;">LIST OF PARTS</th>
+            <th colspan="3" style="width:80px;">Cyl 1</th>
+            <th colspan="3" style="width:80px;">Cyl 2</th>
+            <th colspan="3" style="width:80px;">Cyl 3</th>
+            <th colspan="3" style="width:80px;">Cyl 4</th>
+            <th colspan="3" style="width:80px;">Cyl 5</th>
+            <th colspan="3" style="width:80px;">Cyl 6</th>
+            <th colspan="3" style="width:80px;">Cyl 7</th>
+            <th colspan="3" style="width:80px;">Cyl 8</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+            <th>LM</th><th>TM</th><th>TTL</th>
+          </tr>
+        </thead>
+        <tbody id="me-tbody"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:6px; overflow-x:auto;">
+      <table class="tbl" style="min-width:400px;">
+        <thead>
+          <tr><th style="width:150px;">Komponen</th><th>Last Month</th><th>This Month</th><th>TTL RH</th><th>Note / Catatan</th></tr>
+        </thead>
+        <tbody id="me-extra-tbody"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:6px;">
+      <div class="sub-header">Rencana Kerja ME bulan depan / Work plan next month for Main Engine :</div>
+      <textarea style="width:100%; height:30px; border:1px solid #000; font-size:8px; padding:2px; resize:vertical;"></textarea>
+    </div>
+  </section>
+
+  <!-- Halaman 2: AE + BOILER + PUMPS -->
+  <div class="page-break">
+    <section class="sec">
+      <h3>AUXILIARY ENGINE RUNNING HOURS RECORD</h3>
+      <div style="overflow-x:auto;">
+        <table class="tbl" style="min-width:900px;">
+          <thead>
+            <tr>
+              <th style="width:120px;"></th>
+              <th colspan="2" style="width:120px;">Aux Eng 1</th>
+              <th colspan="2" style="width:120px;">Aux Eng 2</th>
+              <th colspan="2" style="width:120px;">Aux Eng 3</th>
+              <th colspan="2" style="width:120px;">Aux Eng 4</th>
+              <th colspan="2" style="width:120px;">Emer Generator</th>
+              <th style="width:100px;">Remarks</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>Generator</th><th>Motor</th>
+              <th>Generator</th><th>Motor</th>
+              <th>Generator</th><th>Motor</th>
+              <th>Generator</th><th>Motor</th>
+              <th>Generator</th><th>Motor</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ae-tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:6px;">
+        <div class="sub-header">Rencana Kerja AE bulan depan / Work plan next month for Auxiliary Engine :</div>
+        <textarea style="width:100%; height:30px; border:1px solid #000; font-size:8px; padding:2px; resize:vertical;"></textarea>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h3>AUXILIARY BOILER &amp; CRANE RUNNING HOURS RECORD</h3>
+      <div style="overflow-x:auto;">
+        <table class="tbl" style="min-width:600px;">
+          <thead>
+            <tr>
+              <th style="width:140px;"></th>
+              <th style="width:80px;">Aux Boiler</th>
+              <th style="width:80px;">Crane No 1</th>
+              <th style="width:80px;">Crane No 2</th>
+              <th style="width:200px;">Rencana kerja utk bulan depan Aux Boiler &amp; Crane :</th>
+            </tr>
+          </thead>
+          <tbody id="boiler-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h3>POMPA POMPA (PUMPS) RUNNING HOURS RECORD</h3>
+      <div style="overflow-x:auto;">
+        <table class="tbl" style="min-width:800px;">
+          <thead>
+            <tr>
+              <th style="width:140px;">Nama Pompa</th>
+              <th style="width:70px;">Last Date Overhaul</th>
+              <th style="width:70px;">Last Month RH</th>
+              <th style="width:70px;">This Month RH</th>
+              <th style="width:70px;">Total RH</th>
+              <th style="width:150px;">Plan work for Next Month</th>
+            </tr>
+          </thead>
+          <tbody id="pumps-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Halaman 3: PURIFIERS + SIGNATURE -->
+  <div class="page-break">
+    <section class="sec">
+      <h3>PURIFIERS RUNNING HOURS RECORD</h3>
+      <div style="overflow-x:auto;">
+        <table class="tbl" style="min-width:600px;">
+          <thead>
+            <tr><th style="width:140px;">Purifier</th><th style="width:70px;">Last Date Overhaul</th><th style="width:70px;">Last Month RH</th><th style="width:70px;">This Month RH</th><th style="width:70px;">Total RH</th><th style="width:150px;">Plan work for Next Month</th></tr>
+          </thead>
+          <tbody id="purifier-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sig">
+      <b>Name &amp; Sign / Nama &amp; Tanda Tangan</b>
+      <div class="siggrid">
+        <div class="sigbox">
+          <b>Prepared by / Dibuat oleh,</b>
+          <div class="space">
+            <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+              <input id="sigup1" class="hidden" type="file" accept="image/*">
+            </label>
+            <div id="pv1" class="pv">
+              <img alt="signature">
+              <button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button>
+            </div>
+          </div>
+          <input class="nm" placeholder="Nama">
+          <div class="role">2nd Engineer</div>
+        </div>
+        <div class="sigbox">
+          <b>Checked &amp; Approved by / Diperiksa &amp; Disetujui oleh,</b>
+          <div class="space">
+            <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+              <input id="sigup2" class="hidden" type="file" accept="image/*">
+            </label>
+            <div id="pv2" class="pv">
+              <img alt="signature">
+              <button class="x no-print" onclick="clearSig('pv2','sigup2')">×</button>
+            </div>
+          </div>
+          <input class="nm" placeholder="Nama">
+          <div class="role">Chief Engineer</div>
+        </div>
+        <div class="sigbox">
+          <b>Knowledge by / Mengetahui,</b>
+          <div class="space">
+            <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+              <input id="sigup3" class="hidden" type="file" accept="image/*">
+            </label>
+            <div id="pv3" class="pv">
+              <img alt="signature">
+              <button class="x no-print" onclick="clearSig('pv3','sigup3')">×</button>
+            </div>
+          </div>
+          <input class="nm" placeholder="Nama">
+          <div class="role">Master</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  // ======= FUNGSI UNTUK MEMBUAT ROW DENGAN AUTO-TOTAL =======
+  function makeTotalRow(label, idPrefix, colCount) {
+    var cols = '';
+    for (var i=0; i<colCount; i++) {
+      cols += '<td><input class="lm" data-id="'+idPrefix+'_'+i+'_lm"></td>' +
+              '<td><input class="tm" data-id="'+idPrefix+'_'+i+'_tm"></td>' +
+              '<td class="total"><span class="ttl-val" id="'+idPrefix+'_'+i+'_ttl">0</span></td>';
+    }
+    return '<tr><td>'+label+'</td>'+cols+'</tr>';
+  }
+
+  // ======= POPULATE ME TABLE =======
+  var meParts = [
+    'Nozzle','Injector','Rocker Arm','Starting valve','Cyl Head','Ring Piston','Piston',
+    'Stang Piston','Small Bush','Crank Pin Bearing','Cyl Liner','Short Bolt Crank Pin Bearing',
+    'Long Bolt Crank Pin Bearing','Main Bearing','Bosch Pump (Feul p/p)'
+  ];
+  var meTbody = document.getElementById('me-tbody');
+  meParts.forEach(function(part) {
+    var row = makeTotalRow(part, 'me_'+part.replace(/\s/g,'_'), 8);
+    meTbody.insertAdjacentHTML('beforeend', row);
+  });
+
+  // ======= POPULATE ME EXTRA =======
+  var meExtra = [
+    {label:'Turbo Charge', id:'tc'},
+    {label:'Distributor', id:'dist'},
+    {label:'Inter Cooler', id:'intercooler'},
+    {label:'GOVERNOOR', id:'gov'},
+    {label:'LO Cooler', id:'locooler'},
+    {label:'FW Cooler', id:'fwcooler'},
+    {label:'Sump Tank', id:'sumptank'},
+    {label:'LO Filter', id:'lofilter'},
+    {label:'Feul Filter', id:'felfilter'}
+  ];
+  var meExtraTbody = document.getElementById('me-extra-tbody');
+  meExtra.forEach(function(item) {
+    var row = '<tr>' +
+      '<td>'+item.label+'</td>' +
+      '<td><input class="lm" data-id="mextra_'+item.id+'_lm"></td>' +
+      '<td><input class="tm" data-id="mextra_'+item.id+'_tm"></td>' +
+      '<td class="total"><span class="ttl-val" id="mextra_'+item.id+'_ttl">0</span></td>' +
+      '<td><input style="width:100%;border:0;border-bottom:1px solid #000;" placeholder="catatan"></td>' +
+      '</tr>';
+    meExtraTbody.insertAdjacentHTML('beforeend', row);
+  });
+
+  // ======= POPULATE AE TABLE =======
+  var aeRows = [
+    {label:'Last Date Overhaul', id:'ae_overhaul'},
+    {label:'Last Month RH', id:'ae_lm'},
+    {label:'This Month RH', id:'ae_tm'},
+    {label:'Total RH', id:'ae_ttl', isTotal:true}
+  ];
+  var aeTbody = document.getElementById('ae-tbody');
+  aeRows.forEach(function(row) {
+    var cols = '';
+    var aeUnits = 5;
+    for (var i=0; i<aeUnits; i++) {
+      if (row.isTotal) {
+        cols += '<td class="total"><span class="ttl-val" id="ae_ttl_'+i+'_gen">0</span></td>' +
+                '<td class="total"><span class="ttl-val" id="ae_ttl_'+i+'_mot">0</span></td>';
+      } else {
+        cols += '<td><input class="ae-'+row.id+'" data-ae="'+i+'" data-type="gen"></td>' +
+                '<td><input class="ae-'+row.id+'" data-ae="'+i+'" data-type="mot"></td>';
+      }
+    }
+    if (row.id === 'ae_overhaul' || row.id === 'ae_lm' || row.id === 'ae_tm') {
+      cols += '<td><input style="width:100%;border:0;border-bottom:1px solid #000;" placeholder="catatan"></td>';
+    } else {
+      cols += '<td></td>';
+    }
+    var tr = '<tr><td>'+row.label+'</td>'+cols+'</tr>';
+    aeTbody.insertAdjacentHTML('beforeend', tr);
+  });
+
+  // ======= POPULATE BOILER & CRANE =======
+  var boilerRows = [
+    {label:'Last Date Overhaul', id:'boiler_overhaul'},
+    {label:'Last Month RH', id:'boiler_lm'},
+    {label:'This Month RH', id:'boiler_tm'},
+    {label:'Total RH', id:'boiler_ttl', isTotal:true}
+  ];
+  var boilerTbody = document.getElementById('boiler-tbody');
+  boilerRows.forEach(function(row) {
+    var cols = '';
+    var units = 3;
+    for (var i=0; i<units; i++) {
+      if (row.isTotal) {
+        cols += '<td class="total"><span class="ttl-val" id="boiler_ttl_'+i+'">0</span></td>';
+      } else {
+        cols += '<td><input class="boiler-'+row.id+'" data-boiler="'+i+'"></td>';
+      }
+    }
+    if (row.id === 'boiler_overhaul') {
+      cols += '<td rowspan="4"><textarea style="width:100%;height:60px;border:1px solid #000;font-size:8px;resize:vertical;" placeholder="Rencana kerja ..."></textarea></td>';
+    } else {
+      cols += '<td></td>';
+    }
+    var tr = '<tr><td>'+row.label+'</td>'+cols+'</tr>';
+    boilerTbody.insertAdjacentHTML('beforeend', tr);
+  });
+
+  // ======= POPULATE PUMPS =======
+  var pumpList = [
+    'GS Pump','Bilge Pump','Ballast Pump No 1','Ballast Pump No 2',
+    'SW Cooling p/p ME stby','FW Cooling p/p ME stby','LO circ ME p/p stby',
+    'SW Cooling attch p/p ME','FW Cooling attch p/p ME','LO ME attach p/p 1',
+    'LO ME attach p/p 2','FO transfer p/p No 1','FO transfer p/p No 2',
+    'HSD Transfer p/p','Feul Booster p/p 1','Feul Booster p/p 2',
+    'Hidrofoor pump No 1','Hidrofoor pump No 2','Boiler Circl Pump No 1',
+    'Boiler Circl Pump No 2','Thermal oil Circl p/p No 1','Thermal oil Circl p/p No 2',
+    'SW Cooling p/p AE No 1','SW Cooling p/p AE No 2','LO Gear Box attach p/p',
+    'Emergency Fire Pump'
+  ];
+  var pumpsTbody = document.getElementById('pumps-tbody');
+  pumpList.forEach(function(name) {
+    var id = 'pump_'+name.replace(/\s/g,'_');
+    var row = '<tr>' +
+      '<td>'+name+'</td>' +
+      '<td><input class="pump-overhaul" data-pump="'+id+'"></td>' +
+      '<td><input class="pump-lm" data-pump="'+id+'"></td>' +
+      '<td><input class="pump-tm" data-pump="'+id+'"></td>' +
+      '<td class="total"><span class="ttl-val" id="pump_ttl_'+id+'">0</span></td>' +
+      '<td><input style="width:100%;border:0;border-bottom:1px solid #000;" placeholder="plan"></td>' +
+      '</tr>';
+    pumpsTbody.insertAdjacentHTML('beforeend', row);
+  });
+
+  // ======= POPULATE PURIFIERS =======
+  var purifierList = ['LO Purifier','MFO Purifier No 1','MFO Purifier No 2'];
+  var purifierTbody = document.getElementById('purifier-tbody');
+  purifierList.forEach(function(name) {
+    var id = 'pur_'+name.replace(/\s/g,'_');
+    var row = '<tr>' +
+      '<td>'+name+'</td>' +
+      '<td><input class="pur-overhaul" data-pur="'+id+'"></td>' +
+      '<td><input class="pur-lm" data-pur="'+id+'"></td>' +
+      '<td><input class="pur-tm" data-pur="'+id+'"></td>' +
+      '<td class="total"><span class="ttl-val" id="pur_ttl_'+id+'">0</span></td>' +
+      '<td><input style="width:100%;border:0;border-bottom:1px solid #000;" placeholder="plan"></td>' +
+      '</tr>';
+    purifierTbody.insertAdjacentHTML('beforeend', row);
+  });
+
+  // ======= UPDATE TOTAL =======
+  function updateTotals() {
+    // ME per silinder
+    document.querySelectorAll('#me-tbody .lm, #me-tbody .tm').forEach(function(inp) {
+      var row = inp.closest('tr');
+      var lmInputs = row.querySelectorAll('.lm');
+      var tmInputs = row.querySelectorAll('.tm');
+      var ttlSpans = row.querySelectorAll('.ttl-val');
+      for (var i=0; i<lmInputs.length; i++) {
+        var lm = parseFloat(lmInputs[i].value) || 0;
+        var tm = parseFloat(tmInputs[i].value) || 0;
+        ttlSpans[i].textContent = (lm + tm).toFixed(1);
+      }
+    });
+
+    // ME Extra
+    document.querySelectorAll('#me-extra-tbody .lm, #me-extra-tbody .tm').forEach(function(inp) {
+      var row = inp.closest('tr');
+      var lm = parseFloat(row.querySelector('.lm').value) || 0;
+      var tm = parseFloat(row.querySelector('.tm').value) || 0;
+      row.querySelector('.ttl-val').textContent = (lm + tm).toFixed(1);
+    });
+
+    // AE
+    for (var aeIdx=0; aeIdx<5; aeIdx++) {
+      var genLm = parseFloat(document.querySelector('.ae-lm[data-ae="'+aeIdx+'"][data-type="gen"]')?.value) || 0;
+      var genTm = parseFloat(document.querySelector('.ae-tm[data-ae="'+aeIdx+'"][data-type="gen"]')?.value) || 0;
+      var motLm = parseFloat(document.querySelector('.ae-lm[data-ae="'+aeIdx+'"][data-type="mot"]')?.value) || 0;
+      var motTm = parseFloat(document.querySelector('.ae-tm[data-ae="'+aeIdx+'"][data-type="mot"]')?.value) || 0;
+      var genTtl = document.getElementById('ae_ttl_'+aeIdx+'_gen');
+      var motTtl = document.getElementById('ae_ttl_'+aeIdx+'_mot');
+      if (genTtl) genTtl.textContent = (genLm + genTm).toFixed(1);
+      if (motTtl) motTtl.textContent = (motLm + motTm).toFixed(1);
+    }
+
+    // Boiler & Crane
+    for (var bIdx=0; bIdx<3; bIdx++) {
+      var bLm = parseFloat(document.querySelector('.boiler-lm[data-boiler="'+bIdx+'"]')?.value) || 0;
+      var bTm = parseFloat(document.querySelector('.boiler-tm[data-boiler="'+bIdx+'"]')?.value) || 0;
+      var bTtl = document.getElementById('boiler_ttl_'+bIdx);
+      if (bTtl) bTtl.textContent = (bLm + bTm).toFixed(1);
+    }
+
+    // Pumps
+    document.querySelectorAll('.pump-lm, .pump-tm').forEach(function(inp) {
+      var row = inp.closest('tr');
+      var lm = parseFloat(row.querySelector('.pump-lm').value) || 0;
+      var tm = parseFloat(row.querySelector('.pump-tm').value) || 0;
+      var ttlSpan = row.querySelector('.ttl-val');
+      if (ttlSpan) ttlSpan.textContent = (lm + tm).toFixed(1);
+    });
+
+    // Purifiers
+    document.querySelectorAll('.pur-lm, .pur-tm').forEach(function(inp) {
+      var row = inp.closest('tr');
+      var lm = parseFloat(row.querySelector('.pur-lm').value) || 0;
+      var tm = parseFloat(row.querySelector('.pur-tm').value) || 0;
+      var ttlSpan = row.querySelector('.ttl-val');
+      if (ttlSpan) ttlSpan.textContent = (lm + tm).toFixed(1);
+    });
+  }
+
+  document.addEventListener('input', function(e) {
+    if (e.target.matches('.lm, .tm, .ae-lm, .ae-tm, .boiler-lm, .boiler-tm, .pump-lm, .pump-tm, .pur-lm, .pur-tm')) {
+      updateTotals();
+    }
+  });
+
+  // ======= DATE FORMATTING =======
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  initSig('sigup3','pv3');
+  window.clearSig = clearSig;
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '045 Monthly Running Hours Record';
+      var ship = document.getElementById('shipSelect');
+      var date = document.querySelector('.date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+      if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({type:'FORM_TITLE', title:title}, '*');
+      }
+    }
+    var ship = document.getElementById('shipSelect');
+    var date = document.querySelector('.date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
+
+  // ======= HIDE PLACEHOLDER SAAT PRINT =======
+  (function() {
+    function blankSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (!s.value) {
+          s.dataset.ph = s.options[s.selectedIndex].text;
+          s.options[s.selectedIndex].text = '';
+        }
+      });
+    }
+    function restoreSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (s.dataset.ph !== undefined) {
+          s.options[s.selectedIndex].text = s.dataset.ph;
+          delete s.dataset.ph;
+        }
+      });
+    }
+    window.addEventListener('beforeprint', blankSelects);
+    window.addEventListener('afterprint', restoreSelects);
+    if (window.matchMedia) {
+      window.matchMedia('print').addListener(function(m) {
+        m.matches ? blankSelects() : restoreSelects();
+      });
+    }
+  })();
+
+  updateTotals();
+</script>
+</body>
+</html>
