@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>001 Ship Certificate Check List</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">  // Send form title to parent window for print dialog
+  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
+</script>
     <style>
 .ship-select{flex:1;min-width:0;border:0;border-bottom:1px solid #000;outline:0;padding:4px;background:#fff;color:#111;font:inherit} @media print{.ship-select{appearance:none!important;-webkit-appearance:none!important;background:transparent!important;border:0!important;border-bottom:1px dotted #000!important;color:#000!important}}
         /* Sembunyikan elemen input bawaan browser yang berantakan secara absolut */
@@ -398,6 +400,8 @@
                 label.classList.remove('hidden'); // Munculkan kembali tombol Add TTD
             });
         });
-    </script>
+      // Send form title to parent window for print dialog
+  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
+</script>
 </body>
 </html>

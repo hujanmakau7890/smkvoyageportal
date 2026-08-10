@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SMK_CATEGORIES, SMK_FORMS } from "../data/smkForms";
 
 const colors = {
@@ -25,6 +25,41 @@ export default function SMKReportFormPage() {
   }, [search, categoryFilter]);
 
   if (selectedForm) {
+    const iframeRef = useRef(null);
+    // Update browser tab title when form changes
+    useEffect(() => {
+      document.title = `${selectedForm.code} ${selectedForm.title} — PT Mentari Mas Multimoda`;
+      return () => { document.title = "FLEET- QSS — PT Mentari Mas Multimoda"; };
+    }, [selectedForm]);
+    
+    // Listen for title updates from iframe
+    useEffect(() => {
+      const handleMessage = (event) => {
+        if (event.data && event.data.type === 'FORM_TITLE' && event.data.title) {
+          document.title = `${event.data.title} — PT Mentari Mas Multimoda`;
+        }
+      };
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }, []);
+    
+    // Also read iframe title directly after load (same-origin)
+    useEffect(() => {
+      const iframe = iframeRef.current;
+      if (!iframe) return;
+      const onLoad = () => {
+        try {
+          const iframeTitle = iframe.contentDocument?.title;
+          if (iframeTitle) {
+            document.title = `${iframeTitle} — PT Mentari Mas Multimoda`;
+          }
+        } catch (e) {
+          // cross-origin, ignore
+        }
+      };
+      iframe.addEventListener('load', onLoad);
+      return () => iframe.removeEventListener('load', onLoad);
+    }, [selectedForm?.file]);
     return (
       <div style={{ height: "calc(100vh - 92px)", display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
@@ -40,6 +75,7 @@ export default function SMKReportFormPage() {
           </div>
         </div>
         <iframe
+          ref={iframeRef}
           title={`${selectedForm.code} ${selectedForm.title}`}
           src={`/smk-forms/${selectedForm.file}`}
           style={{ flex: 1, width: "100%", border: `1px solid ${colors.border}`, borderRadius: 10, background: "white" }}

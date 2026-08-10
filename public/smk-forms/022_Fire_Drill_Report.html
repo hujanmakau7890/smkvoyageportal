@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>022 Fire Drill Report</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">  // Send form title to parent window for print dialog
+  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
+</script>
     <style>
         /* Sembunyikan panah khusus input tanggal/waktu secara absolut dan global */
         ::-webkit-calendar-picker-indicator {
@@ -684,6 +686,8 @@
                 label.classList.remove('hidden'); // Munculkan kembali tombol Add TTD
             });
         });
-    </script>
+      // Send form title to parent window for print dialog
+  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
+</script>
 </body>
 </html>

@@ -22,4 +22,6 @@ const headings=[
 const items=document.getElementById('items');headings.forEach(h=>{const s=document.createElement('section');s.className='item';s.innerHTML=`<div class="item-title">${h}</div><textarea></textarea>`;items.appendChild(s)});
 function mask(e){let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>2)v=v.slice(0,2)+'-'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5);e.target.value=v}document.querySelectorAll('.date-mask').forEach(x=>x.oninput=mask);document.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{t.style.height='auto';t.style.height=t.scrollHeight+'px'});
 const up=document.querySelector('.upload'),pv=document.querySelector('.sig-preview'),lab=document.querySelector('.sig-space .btn'),im=pv.querySelector('img');up.onchange=e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{im.src=x.target.result;lab.classList.add('hidden');pv.classList.remove('hidden');pv.style.display='flex'};r.readAsDataURL(f)};document.querySelector('.remove').onclick=()=>{im.src='';up.value='';pv.classList.add('hidden');pv.style.display='none';lab.classList.remove('hidden')};
+  // Send form title to parent window for print dialog
+  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
 </script></body></html>

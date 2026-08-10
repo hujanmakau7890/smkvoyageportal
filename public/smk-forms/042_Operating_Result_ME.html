@@ -282,6 +282,8 @@ function clearSig(pv,up){const box=document.getElementById(pv);const btn=documen
 document.querySelectorAll('.date').forEach(x=>x.oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>2)v=v.slice(0,2)+'-'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5);e.target.value=v});
 const initSig=(up,pv)=>{const btn=document.getElementById(up);const box=document.getElementById(pv);btn.onchange=e=>{let f=e.target.files[0];if(!f)return;let rd=new FileReader;rd.onload=z=>{box.querySelector('img').src=z.target.result;btn.parentElement.classList.add('hidden');box.classList.remove('hidden');box.style.display='flex'};rd.readAsDataURL(f)}};
 initSig('sigup1','pv1');initSig('sigup2','pv2');initSig('sigup3','pv3');
+  // Send form title to parent window for print dialog
+  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
 </script>
 </body>
 </html>

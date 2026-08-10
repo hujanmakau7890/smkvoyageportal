@@ -57,6 +57,8 @@ document.getElementById('deleteRow').addEventListener('click',()=>{
 const upload=document.querySelector('.sig-upload'), preview=document.querySelector('.sig-preview'), sigLabel=document.querySelector('.ttd-btn'), sigImg=preview.querySelector('img');
 upload.addEventListener('change',e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{sigImg.src=x.target.result;sigLabel.classList.add('hidden');preview.style.display='flex'};r.readAsDataURL(f)});
 document.querySelector('.remove-sig').addEventListener('click',()=>{sigImg.src='';upload.value='';preview.style.display='none';sigLabel.classList.remove('hidden')});
+  // Send form title to parent window for print dialog
+  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
 </script>
 </body>
 </html>
