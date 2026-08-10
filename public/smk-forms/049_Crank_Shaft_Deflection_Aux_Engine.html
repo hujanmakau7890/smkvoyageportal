@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>049 Crank Shaft Deflection Auxiliary Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #e5e7eb; font-family: Arial, sans-serif; padding: 12px; }
+    .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 12px; }
+    .btn { border: 0; border-radius: 6px; padding: 8px 16px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
+    .head, .sec { border: 2px solid #000; padding: 8px; margin-top: 8px; }
+    .top { display: grid; grid-template-columns: 20% 60% 20%; border-bottom: 2px solid #000; min-height: 65px; align-items: center; }
+    .co { font-weight: bold; font-size: 13px; }
+    .ttl { font-weight: bold; font-size: 13px; text-align: center; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 9px; padding-right: 6px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 10px; }
+    .code span + span { border-left: 1px solid #000; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 4px 12px; margin-top: 6px; }
+    .f { display: flex; gap: 4px; font-size: 9px; font-weight: bold; align-items: baseline; }
+    .f input, .f select { flex: 1; min-width: 0; border: 0; border-bottom: 1px solid #000; background: #fff; padding: 1px 3px; font-size: 9px; }
+    .f .label { font-weight: bold; white-space: nowrap; }
+    .sec h3 { font-size: 10px; margin: 0 0 4px 0; background: #eee; padding: 3px 8px; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2px 8px; font-size: 8.5px; }
+    .info-grid .item { display: flex; align-items: baseline; gap: 3px; white-space: nowrap; }
+    .info-grid .item label { font-weight: bold; min-width: 60px; font-size: 8.5px; }
+    .info-grid .item input { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 8.5px; min-width: 30px; }
+    .info-grid .item .suffix { font-weight: normal; margin-left: 2px; font-size: 8px; }
+    .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 8.5px; }
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 7.5px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 1px 2px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; }
+    .tbl td:first-child, .tbl th:first-child { text-align: left; padding-left: 4px; }
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 7.5px; padding: 0; min-height: 14px; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .tbl .total { font-weight: bold; background: #f9f9f9; }
+    .sig { text-align: center; border: 2px solid #000; margin-top: 8px; padding: 8px; font-size: 8.5px; }
+    .siggrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px; }
+    .sigbox { border: 0; text-align: center; }
+    .sigbox .space { height: 50px; display: flex; align-items: center; justify-content: center; border: none; margin: 2px 0; background: #fafafa; }
+    .sigbox .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sigbox .space .pv img { max-height: 45px; max-width: 100%; }
+    .sigbox .space .pv .x { position: absolute; right: 4px; top: 4px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .sigbox .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 80%; font-size: 8.5px; margin-top: 2px; }
+    .sigbox .role { margin-top: 2px; font-weight: bold; font-size: 8.5px; }
+    .hidden { display: none !important; }
+    .remark-box { border: 1px solid #000; padding: 4px; font-size: 8px; min-height: 30px; }
+    .remark-box textarea { width: 100%; border: none; resize: vertical; font-size: 8px; padding: 3px; height: 40px; }
+    .sub-header { font-weight: bold; font-size: 8.5px; background: #e0e0e0; padding: 2px 4px; margin-top: 3px; }
+    .check-group { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .check-group label { font-weight: bold; font-size: 8.5px; display: flex; align-items: center; gap: 3px; }
+    .check-group input[type="radio"], .check-group input[type="checkbox"] { width: 14px; height: 14px; margin: 0; }
+    .inline-label { font-weight: normal; font-size: 8px; }
+    .diagram-container { display: flex; justify-content: center; margin: 8px 0; }
+    .diagram-container img { border: 1px solid #aaa; border-radius: 8px; background: #fafafa; max-width: 200px; max-height: 200px; }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      @page { size: A4 landscape; margin: 3mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 2px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 2px; }
+      .top { min-height: 25px; grid-template-columns: 20% 60% 20%; }
+      .co { font-size: 9px; }
+      .ttl { font-size: 11px; }
+      .st { font-size: 7px; }
+      .grid { gap: 1px 6px; margin-top: 2px; }
+      .f { font-size: 7.5px; }
+      .f input, .f select { font-size: 7.5px; }
+      .sec {
+        padding: 3px;
+        margin-top: 2px !important;
+        margin-bottom: 6px !important;
+        border-width: 1px;
+        page-break-inside: avoid;
+      }
+      .sec h3 {
+        font-size: 8px;
+        padding: 1px 4px;
+        margin-bottom: 2px;
+      }
+      .info-grid {
+        font-size: 7px;
+        gap: 1px 4px;
+      }
+      .info-grid .item label {
+        font-size: 7px;
+        min-width: 45px;
+      }
+      .info-grid .item input {
+        font-size: 7px;
+      }
+      .tbl {
+        font-size: 6px;
+        margin-top: 1px;
+      }
+      .tbl th, .tbl td {
+        padding: 0.3px 1.5px;
+        line-height: 1.1;
+      }
+      .tbl input {
+        font-size: 6px;
+        min-height: 10px;
+        padding: 0;
+      }
+      .sig {
+        padding: 3px;
+        font-size: 7px;
+        margin-top: 4px !important;
+        border-width: 1px;
+      }
+      .siggrid { gap: 10px; }
+      .sigbox .space { height: 30px; }
+      .sigbox .space .pv img { max-height: 24px; }
+      .sigbox .nm { font-size: 7px; }
+      .sigbox .role { font-size: 7px; }
+      .remark-box {
+        padding: 2px;
+        font-size: 7px;
+        min-height: 15px;
+      }
+      .remark-box textarea {
+        height: 20px;
+        font-size: 7px;
+        padding: 1px;
+      }
+      .sub-header {
+        font-size: 6.5px;
+        padding: 1px 3px;
+        margin-top: 2px;
+      }
+      .check-group label { font-size: 7px; }
+      .check-group input[type="radio"], .check-group input[type="checkbox"] { width: 10px; height: 10px; }
+      .diagram-container img { max-width: 120px; max-height: 120px; }
+      select option[value=""] { display: none !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; }
+      .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .container > *:last-child {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+      }
+    }
+    @media screen and (max-width: 700px) {
+      .top { grid-template-columns: 1fr; text-align: center; border-bottom: 1px solid #000; }
+      .co, .ttl, .st { width: 100%; text-align: center; }
+      .st { align-items: center; padding-right: 0; }
+      .siggrid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 6px; }
+      .f { font-size: 8px; flex-wrap: wrap; }
+      .check-group { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="tools no-print">
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">049<br>CRANKSHAFT DEFLECTION<br>AUXILIARY ENGINE</div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>SMT</span></div>
+        <div>Release: &nbsp; Rev.0:</div>
+      </div>
+    </div>
+    <div class="grid">
+      <label class="f"><span class="label">Vessel / Nama Kapal:</span><select id="shipSelect"><option value="">Pilih</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label>
+      <label class="f"><span class="label">Master :</span><input></label>
+      <label class="f"><span class="label">Ch. Eng :</span><input></label>
+      <label class="f"><span class="label">Engine Type :</span><input></label>
+      <label class="f"><span class="label">AE No :</span><input></label>
+      <label class="f"><span class="label">Inspection date :</span><input class="date" placeholder="DD-MM-YYYY"></label>
+      <label class="f"><span class="label">Checked by :</span><input></label>
+    </div>
+  </header>
+
+  <!-- CRANKUNIT MEASUREMENT -->
+  <section class="sec">
+    <h3>Crankunit Measurement</h3>
+    <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="item"><label>Id. No. of Measuring Gauge :</label><input></div>
+      <div class="item"><label>Measuring result :</label><input></div>
+    </div>
+
+    <!-- DIAGRAM POSISI CRANKPIN -->
+    <div class="diagram-container">
+      <img src="/images/048_crankshaft_diagram.png" alt="Crankpin positions" />
+    </div>
+
+    <div style="overflow-x:auto; margin-top:4px;">
+      <table class="tbl" style="min-width:900px;">
+        <thead>
+          <tr>
+            <th style="width:120px;">Crankpin position</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+          </tr>
+        </thead>
+        <tbody id="deflection-tbody">
+          <!-- diisi JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="font-size:7.5px; margin-top:4px; padding:4px; border:1px solid #ccc; background:#f9f9f9;">
+      <strong>Remark:</strong> C and D should be nearly the same. If C and D are not nearly equal this may indicate the dial gauge has moved, or has been read incorrectly. In this case, the reading should therefore be repeated and checked. If C and D still differ, this may either be due to journal ovality/eccentricity, or it may be because the journal is not resting in the main bearing (clearance underneath)
+    </div>
+  </section>
+
+  <!-- CRANKUNIT CHECK -->
+  <section class="sec">
+    <h3>Crankunit Check</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:700px;">
+        <thead>
+          <tr>
+            <th style="width:100px;">Unit</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+            <th>Camsh gear</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Ok</strong></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- LOADING CONDITION -->
+  <section class="sec">
+    <h3>Loading Condition</h3>
+    <div class="info-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+      <div class="item" style="grid-column:1/-1;">
+        <div class="check-group">
+          <label><input type="radio" name="loading" value="full"> Full</label>
+          <label><input type="radio" name="loading" value="half"> 1/2 full</label>
+          <label><input type="radio" name="loading" value="empty"> Empty</label>
+          <label style="font-weight:bold;">Ballast in mts : <input style="border:0;border-bottom:1px solid #000;width:80px;"></label>
+        </div>
+      </div>
+      <div class="item"><label>Draught fwd :</label><input><span class="suffix">m</span></div>
+      <div class="item"><label>Draught aft :</label><input><span class="suffix">m</span></div>
+      <div class="item"><label>Eng. Temp.</label><input><span class="suffix">°C</span></div>
+    </div>
+  </section>
+
+  <!-- REMARK -->
+  <section class="sec">
+    <h3>Remark</h3>
+    <div class="remark-box">
+      <textarea placeholder="Tulis catatan tambahan di sini..."></textarea>
+    </div>
+  </section>
+
+  <!-- SIGNATURE -->
+  <section class="sig">
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; align-items:end;">
+      <div>
+        <label style="font-weight:bold; font-size:8.5px;">Date :</label>
+        <input class="date" style="border:0;border-bottom:1px solid #000;width:100px;font-size:8.5px;" placeholder="DD-MM-YYYY">
+      </div>
+      <div>
+        <label style="font-weight:bold; font-size:8.5px;">Checked by,</label>
+        <div class="space" style="height:40px; display:flex; align-items:center; justify-content:center; border:none; margin:2px 0; background:#fafafa;">
+          <label class="btn no-print" style="font-size:7px; padding:2px 6px;">+ TTD
+            <input id="sigup1" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv1" class="pv" style="display:none; position:relative; width:100%; height:100%; align-items:center; justify-content:center;">
+            <img alt="signature" style="max-height:35px; max-width:100%;">
+            <button class="x no-print" onclick="clearSig('pv1','sigup1')" style="position:absolute; right:2px; top:2px; border:0; background:#dc2626; color:#fff; border-radius:50%; width:16px; height:16px; cursor:pointer; font-size:10px; line-height:16px; text-align:center;">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama" style="border:0;border-bottom:1px solid #000;text-align:center;width:80%;font-size:8.5px;">
+        <div class="role" style="font-weight:bold; font-size:8.5px;">Chief Engineer</div>
+      </div>
+      <div>
+        <label style="font-weight:bold; font-size:8.5px;">Knowledge by,</label>
+        <div class="space" style="height:40px; display:flex; align-items:center; justify-content:center; border:none; margin:2px 0; background:#fafafa;">
+          <label class="btn no-print" style="font-size:7px; padding:2px 6px;">+ TTD
+            <input id="sigup2" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv2" class="pv" style="display:none; position:relative; width:100%; height:100%; align-items:center; justify-content:center;">
+            <img alt="signature" style="max-height:35px; max-width:100%;">
+            <button class="x no-print" onclick="clearSig('pv2','sigup2')" style="position:absolute; right:2px; top:2px; border:0; background:#dc2626; color:#fff; border-radius:50%; width:16px; height:16px; cursor:pointer; font-size:10px; line-height:16px; text-align:center;">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama" style="border:0;border-bottom:1px solid #000;text-align:center;width:80%;font-size:8.5px;">
+        <div class="role" style="font-weight:bold; font-size:8.5px;">Master</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ======= POPULATE DEFLECTION TABLE =======
+  var deflectionRows = [
+    '1 Near bottom STB.',
+    '2 Starboard',
+    '3 Top',
+    '4 Port',
+    '5 Near Bottom, Port',
+    'Bottom 1/2 (1+5)=B',
+    'Top-Bottom (3-B)=V  (Vertical)',
+    'Stb.-Port (2-4)=H  (Horizontal)',
+    'Top+Bottom (3+B)=C',
+    'Stb.+Port (2+4)+D'
+  ];
+  var defTbody = document.getElementById('deflection-tbody');
+  var cylCount = 10;
+  deflectionRows.forEach(function(label) {
+    var row = '<tr><td>'+label+'</td>';
+    for (var i=0; i<cylCount; i++) {
+      if (label.indexOf('B=') > -1 || label.indexOf('V') > -1 || label.indexOf('H') > -1 || label.indexOf('C') > -1 || label.indexOf('D') > -1) {
+        row += '<td class="total"><input style="font-weight:bold;"></td>';
+      } else {
+        row += '<td><input></td>';
+      }
+    }
+    row += '</tr>';
+    defTbody.insertAdjacentHTML('beforeend', row);
+  });
+
+  // ======= DATE FORMATTING =======
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  window.clearSig = clearSig;
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '049 Crank Shaft Deflection Auxiliary Engine';
+      var ship = document.getElementById('shipSelect');
+      var date = document.querySelector('.date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+      if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({type:'FORM_TITLE', title:title}, '*');
+      }
+    }
+    var ship = document.getElementById('shipSelect');
+    var date = document.querySelector('.date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
+
+  // ======= HIDE PLACEHOLDER SAAT PRINT =======
+  (function() {
+    function blankSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (!s.value) {
+          s.dataset.ph = s.options[s.selectedIndex].text;
+          s.options[s.selectedIndex].text = '';
+        }
+      });
+    }
+    function restoreSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (s.dataset.ph !== undefined) {
+          s.options[s.selectedIndex].text = s.dataset.ph;
+          delete s.dataset.ph;
+        }
+      });
+    }
+    window.addEventListener('beforeprint', blankSelects);
+    window.addEventListener('afterprint', restoreSelects);
+    if (window.matchMedia) {
+      window.matchMedia('print').addListener(function(m) {
+        m.matches ? blankSelects() : restoreSelects();
+      });
+    }
+  })();
+</script>
+</body>
+</html>
