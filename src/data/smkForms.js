@@ -39,6 +39,7 @@ export const SMK_FORMS = [
   { code: "043", title: "Operating Result TC Auxiliary Engine", category: "Laporan Mesin", file: "043_Operating_Result_TC_Aux_Engine.html" },
   { code: "044", title: "Operating Result Auxiliary Engine", category: "Laporan Mesin", file: "044_Operating_Result_Aux_Engine.html" },
   { code: "045", title: "Monthly Running Hours Record", category: "Laporan Mesin", file: "045_Monthly_Running_Hours_Record.html" },
+  { code: "046", title: "Voyage Main Engine & Machinery Report - 4 Stroke", category: "Laporan Mesin", file: "046_Voyage_Main_Engine_Machinery_Report_4_Stroke.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
