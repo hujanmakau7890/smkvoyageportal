@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>044 Operating Result Auxiliary Engine</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+    body {
+      background: #e5e7eb;
+      font-family: Arial, sans-serif;
+      padding: 12px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 18px;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .tools {
+      text-align: right;
+      margin-bottom: 12px;
+    }
+    .btn {
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 16px;
+      background: #1769d2;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn:hover {
+      background: #0d47a1;
+    }
+    .head, .sec {
+      border: 2px solid #000;
+      padding: 8px;
+      margin-top: 10px;
+    }
+    .top {
+      display: grid;
+      grid-template-columns: 22% 56% 22%;
+      border-bottom: 2px solid #000;
+      min-height: 70px;
+      align-items: center;
+    }
+    .co {
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .ttl {
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .st {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-size: 10px;
+      padding-right: 6px;
+    }
+    .code {
+      display: flex;
+      border: 1px solid #000;
+      font-weight: bold;
+    }
+    .code span {
+      padding: 2px 10px;
+    }
+    .code span + span {
+      border-left: 1px solid #000;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 8px 16px;
+      margin-top: 8px;
+    }
+    .f {
+      display: flex;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: bold;
+      align-items: baseline;
+    }
+    .f input, .f select {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      border-bottom: 1px solid #000;
+      background: #fff;
+      padding: 2px 4px;
+      font-size: 10px;
+    }
+    .wide {
+      grid-column: 1 / -1;
+    }
+    .sec h3 {
+      font-size: 11px;
+      margin: 0 0 6px 0;
+      background: #eee;
+      padding: 4px 8px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 4px 12px;
+      font-size: 9px;
+    }
+    .info-grid .item {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .info-grid .item label {
+      font-weight: bold;
+      min-width: 80px;
+    }
+    .info-grid .item input {
+      flex: 1;
+      border: 0;
+      border-bottom: 1px solid #000;
+      background: transparent;
+      font-size: 9px;
+      min-width: 40px;
+    }
+    .info-grid .item select {
+      flex: 1;
+      border: 0;
+      border-bottom: 1px solid #000;
+      background: transparent;
+      font-size: 9px;
+    }
+    .info-grid .item .inline-label {
+      font-weight: normal;
+      margin: 0 2px;
+    }
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+      font-size: 8.5px;
+      table-layout: fixed;
+    }
+    .tbl th, .tbl td {
+      border: 1px solid #000;
+      padding: 2px 3px;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .tbl th {
+      background: #f3f4f6;
+      font-weight: bold;
+    }
+    .tbl td:first-child, .tbl th:first-child {
+      text-align: left;
+      padding-left: 6px;
+    }
+    .tbl input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      text-align: center;
+      font-size: 8.5px;
+      padding: 0;
+      min-height: 18px;
+    }
+    .tbl input:focus {
+      outline: 1px solid #1769d2;
+      background: #f0f8ff;
+    }
+    .sig {
+      text-align: center;
+      border: 2px solid #000;
+      margin-top: 10px;
+      padding: 10px 8px;
+      font-size: 9px;
+    }
+    .siggrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 6px;
+    }
+    .sigbox {
+      border: 0;
+      text-align: center;
+    }
+    .sigbox .space {
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      margin: 4px 0;
+      position: relative;
+      background: #fafafa;
+    }
+    .sigbox .space .pv {
+      display: none;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+    .sigbox .space .pv img {
+      max-height: 55px;
+      max-width: 100%;
+    }
+    .sigbox .space .pv .x {
+      position: absolute;
+      right: 4px;
+      top: 4px;
+      border: 0;
+      background: #dc2626;
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 18px;
+      text-align: center;
+    }
+    .sigbox .nm {
+      border: 0;
+      border-bottom: 1px solid #000;
+      text-align: center;
+      width: 85%;
+      font-size: 9px;
+      margin-top: 2px;
+    }
+    .sigbox .role {
+      margin-top: 2px;
+      font-weight: bold;
+      font-size: 9px;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .remark-box {
+      border: 1px solid #000;
+      padding: 6px;
+      font-size: 9px;
+      min-height: 40px;
+    }
+    .remark-box textarea {
+      width: 100%;
+      border: none;
+      resize: vertical;
+      font-size: 9px;
+      padding: 4px;
+      height: 60px;
+    }
+    /* print styles */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 5mm;
+      }
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .container {
+        margin: 0;
+        padding: 6px;
+        max-width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .head {
+        padding: 4px;
+      }
+      .top {
+        min-height: 40px;
+        grid-template-columns: 22% 56% 22%;
+      }
+      .co { font-size: 10px; }
+      .ttl { font-size: 12px; }
+      .st { font-size: 8px; }
+      .grid { gap: 3px 10px; }
+      .f { font-size: 7.5px; }
+      .f input, .f select { font-size: 7.5px; }
+      .sec { padding: 4px; margin-top: 4px; }
+      .sec h3 { font-size: 8px; padding: 2px 6px; margin-bottom: 2px; }
+      .info-grid { font-size: 7.5px; }
+      .info-grid .item input { font-size: 7.5px; }
+      .tbl { font-size: 6.5px; }
+      .tbl th, .tbl td { padding: 1px 2px; }
+      .tbl input { font-size: 6.5px; min-height: 14px; }
+      .sig { padding: 4px; font-size: 7px; margin-top: 4px; }
+      .sigbox .space {
+        height: 40px;
+        border: none !important;
+        background: #fafafa;
+      }
+      .sigbox .space .pv img { max-height: 35px; }
+      .sigbox .nm { font-size: 7px; }
+      .sigbox .role { font-size: 7px; }
+      .remark-box textarea { height: 30px; font-size: 7px; }
+      select option[value=""] { display: none !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; }
+    }
+    @media screen and (max-width: 700px) {
+      .top {
+        grid-template-columns: 1fr;
+        text-align: center;
+        border-bottom: 1px solid #000;
+      }
+      .co, .ttl, .st { width: 100%; text-align: center; }
+      .st { align-items: center; padding-right: 0; }
+      .siggrid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 7px; }
+      .f { font-size: 9px; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- tools -->
+  <div class="tools no-print">
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">044<br>HASIL PENGOPERASIAN MESIN BANTU<br>OPERATING RESULT AUXILIARY ENGINE</div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>BLN</span></div>
+        <div>Release: &nbsp; Rev.0:</div>
+      </div>
+    </div>
+    <div class="grid">
+      <label class="f">Ship Name / Nama Kapal:
+        <select id="shipSelect">
+          <option value="">Pilih Kapal</option>
+          <option>Sahabat Mas</option>
+          <option>Semangat Mas</option>
+          <option>Express Mas</option>
+          <option>Pratama Mas</option>
+          <option>Prakarsa Mas</option>
+          <option>Mavendra Mas</option>
+          <option>Selaras Mas</option>
+          <option>Segoro Mas</option>
+        </select>
+      </label>
+      <label class="f">Tanggal:
+        <input class="date" placeholder="DD-MM-YYYY">
+      </label>
+    </div>
+  </header>
+
+  <!-- SECTION: Auxiliary Engine Information -->
+  <section class="sec">
+    <h3>Auxiliary Engine Information</h3>
+    <div class="info-grid">
+      <div class="item"><label>AE NO :</label><input placeholder="cth: AE 1"></div>
+      <div class="item"><label>Engine Maker :</label><input></div>
+      <div class="item"><label>Engine Type :</label><input></div>
+      <div class="item"><label>Engine no. :</label><input></div>
+      <div class="item"><label>Inspection Date :</label><input class="date" placeholder="DD-MM-YYYY"></div>
+      <div class="item"><label>No. of Cyl. :</label><input></div>
+      <div class="item"><label>Layout BHP :</label><input></div>
+      <div class="item"><label>RPM :</label><input></div>
+      <div class="item"><label>Checked by :</label><input></div>
+      <div class="item"><label>Bore (m) :</label><input></div>
+      <div class="item"><label>Stroke (m) :</label><input></div>
+      <div class="item"><label>Cyl. Constant (HP,bar) :</label><input></div>
+      <div class="item"><label>Governor maker :</label><input></div>
+      <div class="item"><label>Governor type :</label><input></div>
+      <div class="item"><label>Mean friction pressure :</label><input></div>
+      <div class="item"><label>Slip factor :</label><input></div>
+    </div>
+  </section>
+
+  <!-- SECTION: Turbocharger Information -->
+  <section class="sec">
+    <h3>Turbocharger Information</h3>
+    <div class="info-grid">
+      <div class="item"><label>Turbocharger specification :</label><input></div>
+      <div class="item"><label>Impeller diameter :</label><input></div>
+      <div class="item"><label>TC Maker:</label><input></div>
+      <div class="item"><label>TC Type :</label><input></div>
+      <div class="item"><label>Max RPM :</label><input></div>
+      <div class="item"><label>Max Temp. (°C) :</label><input></div>
+      <div class="item"><label>TC units :</label><input></div>
+      <div class="item"><label>Serial no TC 1 :</label><input></div>
+      <div class="item"><label>Serial no TC 2 :</label><input></div>
+      <div class="item"><label>Serial no TC 3 :</label><input></div>
+      <div class="item"><label>Serial no TC 4 :</label><input></div>
+    </div>
+  </section>
+
+  <!-- SECTION: General Information -->
+  <section class="sec">
+    <h3>General Information</h3>
+    <div class="info-grid">
+      <div class="item"><label>Lub Oil sys. (tick box) :</label><input placeholder="✓ jika ya"></div>
+      <div class="item"><label>Bunker Station :</label><input></div>
+      <div class="item"><label>Fuel Oil Viscosity :</label><input></div>
+      <div class="item"><label>at :</label><input style="flex:0.5;"> <span class="inline-label">°C</span></div>
+      <div class="item"><label>Oil Brand :</label><input></div>
+      <div class="item"><label>Heat value kcal/kg :</label><input></div>
+      <div class="item"><label>Density at 15°C :</label><input></div>
+      <div class="item"><label>Sulphur % :</label><input></div>
+      <div class="item" style="grid-column:1/-1; display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+        <div><label>Brand</label> <input placeholder="Cyl. Oil" style="width:100%;"></div>
+        <div><label>Type</label> <input placeholder="Cyl. Oil" style="width:100%;"></div>
+        <div><label>Brand</label> <input placeholder="Circulating Oil" style="width:100%;"></div>
+        <div><label>Type</label> <input placeholder="Circulating Oil" style="width:100%;"></div>
+        <div><label>Brand</label> <input placeholder="Turbo Oil" style="width:100%;"></div>
+        <div><label>Type</label> <input placeholder="Turbo Oil" style="width:100%;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Operational Data Table -->
+  <section class="sec">
+    <h3>Operational Data</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:900px;">
+        <thead>
+          <tr>
+            <th>Date</th><th>Hour</th><th>RPM</th><th>Governor index</th>
+            <th>kW indicated</th><th>kW effective</th><th>g/kWh effective</th>
+            <th>Pmax. contr.</th><th>BHP</th><th>g/BHP</th><th>Speed setting bar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input class="date" placeholder="DD-MM-YYYY"></td>
+            <td><input placeholder="HH:MM"></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+          </tr>
+          <tr>
+            <td colspan="2"><strong>Load %</strong> <input style="width:60%;display:inline-block;"></td>
+            <td colspan="2"><strong>Total running hrs</strong> <input style="width:60%;display:inline-block;"></td>
+            <td colspan="7"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION: Temperature per Cylinder -->
+  <section class="sec">
+    <h3>Temperature per Cylinder</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:500px;">
+        <thead>
+          <tr>
+            <th style="width:120px;">Parameter</th>
+            <th>Cyl 1</th><th>Cyl 2</th><th>Cyl 3</th><th>Cyl 4</th><th>Cyl 5</th><th>Cyl 6</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Exhaust Gas Temperature (°C)</strong></td>
+            <td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td>
+          </tr>
+          <tr>
+            <td><strong>Cooling Water Temperature (°C)</strong></td>
+            <td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td>
+          </tr>
+          <tr>
+            <td><strong>Lubricating Oil Temperature (°C)</strong></td>
+            <td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- REMARK & SIGNATURE – pindah ke halaman 2     -->
+  <!-- ============================================ -->
+  <div class="page-break">
+    <section class="sec">
+      <h3>Remark / Catatan</h3>
+      <div class="remark-box">
+        <textarea placeholder="Tulis catatan tambahan di sini..."></textarea>
+      </div>
+    </section>
+
+    <!-- SIGNATURE -->
+    <section class="sig">
+      <b>Name &amp; Sign / Nama &amp; Tanda Tangan</b>
+      <div class="siggrid">
+        <div class="sigbox">
+          <b>Prepared by / Dibuat oleh,</b>
+          <div class="space">
+            <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+              <input id="sigup1" class="hidden" type="file" accept="image/*">
+            </label>
+            <div id="pv1" class="pv">
+              <img alt="signature">
+              <button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button>
+            </div>
+          </div>
+          <input class="nm" placeholder="Nama">
+          <div class="role">3rd Engineer</div>
+        </div>
+        <div class="sigbox">
+          <b>Checked &amp; Approved by / Diperiksa &amp; Disetujui oleh,</b>
+          <div class="space">
+            <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+              <input id="sigup2" class="hidden" type="file" accept="image/*">
+            </label>
+            <div id="pv2" class="pv">
+              <img alt="signature">
+              <button class="x no-print" onclick="clearSig('pv2','sigup2')">×</button>
+            </div>
+          </div>
+          <input class="nm" placeholder="Nama">
+          <div class="role">Chief Engineer</div>
+        </div>
+        <div class="sigbox">
+          <b>Knowledge by / Mengetahui,</b>
+          <div class="space">
+            <label class="btn no-print" style="font-size:10px; padding:4px 10px;">+ Add TTD
+              <input id="sigup3" class="hidden" type="file" accept="image/*">
+            </label>
+            <div id="pv3" class="pv">
+              <img alt="signature">
+              <button class="x no-print" onclick="clearSig('pv3','sigup3')">×</button>
+            </div>
+          </div>
+          <input class="nm" placeholder="Nama">
+          <div class="role">Master</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  // === Date formatting (DD-MM-YYYY) ===
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // === Signature handling ===
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+
+  initSig('sigup1', 'pv1');
+  initSig('sigup2', 'pv2');
+  initSig('sigup3', 'pv3');
+  window.clearSig = clearSig;
+
+  // === Dynamic title for print ===
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '044 Operating Result Auxiliary Engine';
+      var ship = document.getElementById('shipSelect');
+      var date = document.querySelector('.date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+      if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({type:'FORM_TITLE', title:title}, '*');
+      }
+    }
+    var ship = document.getElementById('shipSelect');
+    var date = document.querySelector('.date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
+
+  // === Hide placeholder text when printing (for select) ===
+  (function() {
+    function blankSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (!s.value) {
+          s.dataset.ph = s.options[s.selectedIndex].text;
+          s.options[s.selectedIndex].text = '';
+        }
+      });
+    }
+    function restoreSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (s.dataset.ph !== undefined) {
+          s.options[s.selectedIndex].text = s.dataset.ph;
+          delete s.dataset.ph;
+        }
+      });
+    }
+    window.addEventListener('beforeprint', blankSelects);
+    window.addEventListener('afterprint', restoreSelects);
+    if (window.matchMedia) {
+      window.matchMedia('print').addListener(function(m) {
+        m.matches ? blankSelects() : restoreSelects();
+      });
+    }
+  })();
+</script>
+</body>
+</html>
