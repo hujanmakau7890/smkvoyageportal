@@ -146,6 +146,33 @@
       font-weight: normal;
       margin: 0 2px;
     }
+    /* Perbaikan untuk baris Brand/Type agar tidak overflow */
+    .info-grid .oil-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .info-grid .oil-row .oil-item {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .info-grid .oil-row .oil-item label {
+      font-weight: bold;
+      min-width: 50px;
+      font-size: 9px;
+    }
+    .info-grid .oil-row .oil-item input {
+      flex: 1;
+      min-width: 30px;
+      border: 0;
+      border-bottom: 1px solid #000;
+      background: transparent;
+      font-size: 9px;
+      width: 40%;
+    }
     .tbl {
       width: 100%;
       border-collapse: collapse;
@@ -250,9 +277,6 @@
     .hidden {
       display: none !important;
     }
-    .page-break {
-      page-break-before: always;
-    }
     .remark-box {
       border: 1px solid #000;
       padding: 6px;
@@ -267,11 +291,12 @@
       padding: 4px;
       height: 60px;
     }
-    /* print styles */
+
+    /* ===== PRINT: SATU HALAMAN DENGAN JARAK ANTAR TABEL ===== */
     @media print {
       @page {
         size: A4 landscape;
-        margin: 5mm;
+        margin: 2.5mm;
       }
       .no-print {
         display: none !important;
@@ -282,44 +307,114 @@
       }
       .container {
         margin: 0;
-        padding: 6px;
+        padding: 2px;
         max-width: 100%;
         box-shadow: none;
         border-radius: 0;
       }
       .head {
-        padding: 4px;
+        padding: 2px;
       }
       .top {
-        min-height: 40px;
+        min-height: 28px;
         grid-template-columns: 22% 56% 22%;
       }
       .co { font-size: 10px; }
       .ttl { font-size: 12px; }
       .st { font-size: 8px; }
-      .grid { gap: 3px 10px; }
-      .f { font-size: 7.5px; }
-      .f input, .f select { font-size: 7.5px; }
-      .sec { padding: 4px; margin-top: 4px; }
-      .sec h3 { font-size: 8px; padding: 2px 6px; margin-bottom: 2px; }
-      .info-grid { font-size: 7.5px; }
-      .info-grid .item input { font-size: 7.5px; }
-      .tbl { font-size: 6.5px; }
-      .tbl th, .tbl td { padding: 1px 2px; }
-      .tbl input { font-size: 6.5px; min-height: 14px; }
-      .sig { padding: 4px; font-size: 7px; margin-top: 4px; }
+      .grid { gap: 2px 6px; margin-top: 3px; }
+      .f { font-size: 8px; }
+      .f input, .f select { font-size: 8px; }
+      
+      .sec {
+        padding: 3px;
+        margin-top: 2px !important;
+        margin-bottom: 4px !important;
+        border-width: 1px;
+        page-break-inside: avoid;
+      }
+      .sec h3 {
+        font-size: 9px;
+        padding: 2px 5px;
+        margin-bottom: 2px;
+      }
+      .info-grid {
+        font-size: 8.5px;
+        gap: 1px 8px;
+      }
+      .info-grid .item input {
+        font-size: 8.5px;
+      }
+      .info-grid .item label {
+        min-width: 60px;
+      }
+      .info-grid .oil-row .oil-item label {
+        font-size: 8px;
+        min-width: 40px;
+      }
+      .info-grid .oil-row .oil-item input {
+        font-size: 8px;
+        min-width: 20px;
+      }
+      .tbl {
+        font-size: 8.5px;
+        margin-top: 2px;
+      }
+      .tbl th, .tbl td {
+        padding: 0.5px 1.5px;
+        line-height: 1.2;
+      }
+      .tbl input {
+        font-size: 8.5px;
+        min-height: 12px;
+        padding: 0;
+      }
+      .sig {
+        padding: 3px;
+        font-size: 8.5px;
+        margin-top: 3px;
+        border-width: 1px;
+      }
+      .siggrid {
+        gap: 6px;
+        margin-top: 2px;
+      }
       .sigbox .space {
-        height: 40px;
+        height: 32px;
         border: none !important;
         background: #fafafa;
+        margin: 1px 0;
       }
-      .sigbox .space .pv img { max-height: 35px; }
-      .sigbox .nm { font-size: 7px; }
-      .sigbox .role { font-size: 7px; }
-      .remark-box textarea { height: 30px; font-size: 7px; }
+      .sigbox .space .pv img { max-height: 25px; }
+      .sigbox .nm { font-size: 8.5px; }
+      .sigbox .role { font-size: 8.5px; }
+      .remark-box {
+        padding: 3px;
+        font-size: 8.5px;
+        min-height: 18px;
+      }
+      .remark-box textarea {
+        height: 24px;
+        font-size: 8.5px;
+        padding: 2px;
+      }
       select option[value=""] { display: none !important; }
       input::placeholder, textarea::placeholder { color: transparent !important; }
+      .page-break {
+        page-break-before: auto !important;
+        page-break-after: auto !important;
+      }
+      .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .container > *:last-child {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+      }
     }
+
     @media screen and (max-width: 700px) {
       .top {
         grid-template-columns: 1fr;
@@ -425,13 +520,24 @@
       <div class="item"><label>Heat value kcal/kg :</label><input></div>
       <div class="item"><label>Density at 15°C :</label><input></div>
       <div class="item"><label>Sulphur % :</label><input></div>
-      <div class="item" style="grid-column:1/-1; display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
-        <div><label>Brand</label> <input placeholder="Cyl. Oil" style="width:100%;"></div>
-        <div><label>Type</label> <input placeholder="Cyl. Oil" style="width:100%;"></div>
-        <div><label>Brand</label> <input placeholder="Circulating Oil" style="width:100%;"></div>
-        <div><label>Type</label> <input placeholder="Circulating Oil" style="width:100%;"></div>
-        <div><label>Brand</label> <input placeholder="Turbo Oil" style="width:100%;"></div>
-        <div><label>Type</label> <input placeholder="Turbo Oil" style="width:100%;"></div>
+      
+      <!-- Baris Brand/Type untuk Cyl. Oil, Circulating Oil, Turbo Oil -->
+      <div class="oil-row">
+        <div class="oil-item">
+          <label>Cyl. Oil</label>
+          <input placeholder="Brand" style="flex:1; min-width:30px;">
+          <input placeholder="Type" style="flex:1; min-width:30px;">
+        </div>
+        <div class="oil-item">
+          <label>Circ. Oil</label>
+          <input placeholder="Brand" style="flex:1; min-width:30px;">
+          <input placeholder="Type" style="flex:1; min-width:30px;">
+        </div>
+        <div class="oil-item">
+          <label>Turbo Oil</label>
+          <input placeholder="Brand" style="flex:1; min-width:30px;">
+          <input placeholder="Type" style="flex:1; min-width:30px;">
+        </div>
       </div>
     </div>
   </section>
@@ -501,10 +607,8 @@
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- REMARK & SIGNATURE – pindah ke halaman 2     -->
-  <!-- ============================================ -->
-  <div class="page-break">
+  <!-- REMARK & SIGNATURE -->
+  <div>
     <section class="sec">
       <h3>Remark / Catatan</h3>
       <div class="remark-box">
