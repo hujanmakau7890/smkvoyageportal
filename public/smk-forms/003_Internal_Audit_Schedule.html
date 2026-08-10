@@ -57,8 +57,42 @@ document.getElementById('deleteRow').addEventListener('click',()=>{
 const upload=document.querySelector('.sig-upload'), preview=document.querySelector('.sig-preview'), sigLabel=document.querySelector('.ttd-btn'), sigImg=preview.querySelector('img');
 upload.addEventListener('change',e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{sigImg.src=x.target.result;sigLabel.classList.add('hidden');preview.style.display='flex'};r.readAsDataURL(f)});
 document.querySelector('.remove-sig').addEventListener('click',()=>{sigImg.src='';upload.value='';preview.style.display='none';sigLabel.classList.remove('hidden')});
-  // Send form title to parent window for print dialog
-  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
+  // Print title: base + vessel + report month (from form fields)
+  (function(){try{
+    var base=document.title;
+    function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
+    function findVessel(){
+      var d=document.querySelector('input.vessel,select.vessel');
+      if(d)return d;
+      var els=document.querySelectorAll('label.f,label.field');
+      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+        if(/vessel|kapal|nama kapal|ship'?s? name|name of vessel/.test(t)){
+          var inp=els[i].querySelector('input,select');if(inp)return inp}}
+      return null}
+    function findDate(){
+      var d=document.querySelector('input.date');
+      if(d)return d;
+      var els=document.querySelectorAll('label.f,label.field');
+      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+        if(/date|tanggal/.test(t)){
+          var inp=els[i].querySelector('input');if(inp)return inp}}
+      return null}
+    function monthName(mm){return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][mm-1]||''}
+    function updateTitle(){
+      var v=findVessel(),d=findDate();
+      var vs=v?esc(v.value):'';var ds=d?esc(d.value):'';
+      var t=base;
+      if(vs)t+=' - '+vs;
+      if(ds){var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if(m){var mo=parseInt(m[2],10),yr=m[3];
+          if(mo>=1&&mo<=12)t+=' - '+monthName(mo)+' '+yr}else t+=' - '+ds}
+      document.title=t;
+      window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}
+    var v=findVessel(),d=findDate();
+    if(v){v.addEventListener('change',updateTitle);v.addEventListener('input',updateTitle)}
+    if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
+    updateTitle();
+  }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
 </script>
 </body>
 </html>

@@ -2,6 +2,40 @@
 function formatDateInput(input){let v=input.value.replace(/\D/g,'').slice(0,8);if(v.length>2)v=v.slice(0,2)+'-'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5);input.value=v}
 function updateCertificateColor(input){input.classList.remove('cert-valid','cert-warning','cert-expired');if(!input.value.trim())return;const m=input.value.match(/^(\d{2})-(\d{2})-(\d{2}|\d{4})$/);if(!m)return;const year=m[3].length===2?2000+Number(m[3]):Number(m[3]);const month=Number(m[2]);const day=Number(m[1]);const expiry=new Date(year,month-1,day);if(expiry.getFullYear()!==year||expiry.getMonth()!==month-1||expiry.getDate()!==day)return;const now=new Date();now.setHours(0,0,0,0);const oneMonth=new Date(now);oneMonth.setMonth(oneMonth.getMonth()+1);if(expiry<now)input.classList.add('cert-expired');else if(expiry<=oneMonth)input.classList.add('cert-warning');else input.classList.add('cert-valid')}
 function row(n=''){let tr=document.createElement('tr');const certs=Array.from({length:11},()=>'<td><input class="cell cert-date" type="text" inputmode="numeric" placeholder="DD-MM-YYYY"></td>').join('');tr.innerHTML='<td><input class="cell" value="'+n+'"></td><td><input class="cell"></td><td><input class="cell"></td>'+certs+'<td><input class="cell"></td><td><input class="cell"></td>';b.appendChild(tr);tr.querySelectorAll('.cert-date').forEach(input=>input.addEventListener('input',()=>{formatDateInput(input);updateCertificateColor(input)}))}
-for(let i=1;i<=22;i++)row(i);add.onclick=()=>row();del.onclick=()=>{let r=b.querySelectorAll('tr');if(r.length>1)r[r.length-1].remove()};document.querySelector('.date').oninput=e=>formatDateInput(e.target);let u=document.querySelector('.up'),p=document.querySelector('.pv'),l=u.parentElement,im=p.querySelector('img');u.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader;r.onload=z=>{im.src=z.target.result;l.classList.add('hidden');p.classList.remove('hidden');p.style.display='flex'};r.readAsDataURL(f)};document.querySelector('.x').onclick=()=>{im.src='';u.value='';p.classList.add('hidden');p.style.display='none';l.classList.remove('hidden')}  // Send form title to parent window for print dialog
-  window.parent?.postMessage({type:'FORM_TITLE',title:document.title},'*');
+for(let i=1;i<=22;i++)row(i);add.onclick=()=>row();del.onclick=()=>{let r=b.querySelectorAll('tr');if(r.length>1)r[r.length-1].remove()};document.querySelector('.date').oninput=e=>formatDateInput(e.target);let u=document.querySelector('.up'),p=document.querySelector('.pv'),l=u.parentElement,im=p.querySelector('img');u.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader;r.onload=z=>{im.src=z.target.result;l.classList.add('hidden');p.classList.remove('hidden');p.style.display='flex'};r.readAsDataURL(f)};document.querySelector('.x').onclick=()=>{im.src='';u.value='';p.classList.add('hidden');p.style.display='none';l.classList.remove('hidden')}  // Print title: base + vessel + report month (from form fields)
+  (function(){try{
+    var base=document.title;
+    function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
+    function findVessel(){
+      var d=document.querySelector('input.vessel,select.vessel');
+      if(d)return d;
+      var els=document.querySelectorAll('label.f,label.field');
+      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+        if(/vessel|kapal|nama kapal|ship'?s? name|name of vessel/.test(t)){
+          var inp=els[i].querySelector('input,select');if(inp)return inp}}
+      return null}
+    function findDate(){
+      var d=document.querySelector('input.date');
+      if(d)return d;
+      var els=document.querySelectorAll('label.f,label.field');
+      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+        if(/date|tanggal/.test(t)){
+          var inp=els[i].querySelector('input');if(inp)return inp}}
+      return null}
+    function monthName(mm){return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][mm-1]||''}
+    function updateTitle(){
+      var v=findVessel(),d=findDate();
+      var vs=v?esc(v.value):'';var ds=d?esc(d.value):'';
+      var t=base;
+      if(vs)t+=' - '+vs;
+      if(ds){var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if(m){var mo=parseInt(m[2],10),yr=m[3];
+          if(mo>=1&&mo<=12)t+=' - '+monthName(mo)+' '+yr}else t+=' - '+ds}
+      document.title=t;
+      window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}
+    var v=findVessel(),d=findDate();
+    if(v){v.addEventListener('change',updateTitle);v.addEventListener('input',updateTitle)}
+    if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
+    updateTitle();
+  }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
 </script></body></html>
