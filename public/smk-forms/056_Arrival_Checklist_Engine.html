@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>056 ARRIVAL Checklist (Engine)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #e5e7eb; font-family: Arial, sans-serif; padding: 12px; }
+    .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 12px; }
+    .btn { border: 0; border-radius: 6px; padding: 8px 16px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
+    .head, .sec { border: 2px solid #000; padding: 8px; margin-top: 8px; }
+    .top { display: grid; grid-template-columns: 18% 62% 20%; border-bottom: 2px solid #000; min-height: 60px; align-items: center; }
+    .co { font-weight: bold; font-size: 14px; }
+    .ttl { font-weight: bold; font-size: 16px; text-align: center; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 10px; padding-right: 4px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 8px; }
+    .code span + span { border-left: 1px solid #000; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px 16px; margin-top: 6px; }
+    .f { display: flex; gap: 4px; font-size: 11px; font-weight: bold; align-items: baseline; }
+    .f input, .f select { flex: 1; min-width: 0; border: 0; border-bottom: 1px solid #000; background: #fff; padding: 2px 4px; font-size: 11px; }
+    .f .label { font-weight: bold; white-space: nowrap; }
+    .sec h3 { font-size: 12px; margin: 0 0 4px 0; background: #eee; padding: 4px 8px; }
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 10px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 4px 6px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; }
+    .tbl td:first-child { text-align: left; }
+    .tbl td .item-text { font-size: 10px; line-height: 1.3; }
+    .tbl input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+    .tbl input[type="text"],
+    .tbl input:not([type="checkbox"]) {
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-size: 10px;
+      padding: 2px 4px;
+      min-height: 24px;
+    }
+    .tbl input[type="text"]:focus,
+    .tbl input:not([type="checkbox"]):focus {
+      outline: 1px solid #1769d2;
+      background: #f0f8ff;
+    }
+    .sig { text-align: center; border: 2px solid #000; margin-top: 8px; padding: 8px; font-size: 10px; }
+    .siggrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 4px; }
+    .sigbox { border: 0; text-align: center; }
+    .sigbox .space { height: 50px; display: flex; align-items: center; justify-content: center; border: none; margin: 2px 0; background: #fafafa; }
+    .sigbox .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sigbox .space .pv img { max-height: 45px; max-width: 100%; }
+    .sigbox .space .pv .x { position: absolute; right: 2px; top: 2px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .sigbox .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 80%; font-size: 10px; margin-top: 2px; }
+    .sigbox .role { margin-top: 2px; font-weight: bold; font-size: 10px; }
+    .hidden { display: none !important; }
+    .remark-box { border: 1px solid #000; padding: 4px; font-size: 10px; min-height: 30px; }
+    .remark-box textarea { width: 100%; border: none; resize: vertical; font-size: 10px; padding: 3px; height: 35px; }
+    .sub-header { font-weight: bold; font-size: 10px; background: #e0e0e0; padding: 2px 4px; margin-top: 3px; text-align: left; }
+    .info-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 16px; margin: 4px 0; }
+    .info-row .item { display: flex; align-items: baseline; gap: 4px; font-size: 10px; }
+    .info-row .item label { font-weight: bold; white-space: nowrap; }
+    .info-row .item input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 10px;
+      padding: 2px 4px;
+      min-width: 40px;
+    }
+    .info-row .item input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .footer-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px 16px; margin: 6px 0; align-items: end; }
+    .footer-row .item { display: flex; align-items: baseline; gap: 4px; font-size: 10px; }
+    .footer-row .item label { font-weight: bold; white-space: nowrap; }
+    .footer-row .item input { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 10px; min-width: 50px; }
+
+    /* ===== PRINT STYLES - UKURAN LEBIH BESAR ===== */
+    @media print {
+      @page { size: A4; margin: 4mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 3px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 3px; }
+      .top { min-height: 30px; grid-template-columns: 18% 62% 20%; }
+      .co { font-size: 11px; }
+      .ttl { font-size: 14px; }
+      .st { font-size: 9px; }
+      .grid { gap: 1px 6px; margin-top: 2px; }
+      .f { font-size: 10px; }
+      .f input, .f select { font-size: 10px; }
+      .sec { padding: 3px; margin-top: 2px !important; margin-bottom: 4px !important; border-width: 1px; page-break-inside: avoid; }
+      .sec h3 { font-size: 10px; padding: 2px 4px; margin-bottom: 2px; }
+      .tbl { font-size: 8.5px; margin-top: 1px; }
+      .tbl th, .tbl td { padding: 1.5px 3px; }
+      .tbl td .item-text { font-size: 8.5px; }
+      .tbl input[type="checkbox"] { width: 13px; height: 13px; }
+      .tbl input[type="text"], .tbl input:not([type="checkbox"]) { font-size: 8.5px; min-height: 14px; padding: 0 2px; }
+      .sig { padding: 3px; font-size: 9px; margin-top: 3px; border-width: 1px; }
+      .sigbox .space { height: 35px; }
+      .sigbox .space .pv img { max-height: 28px; }
+      .sigbox .nm { font-size: 9px; }
+      .sigbox .role { font-size: 9px; }
+      .remark-box textarea { height: 22px; font-size: 8.5px; }
+      .sub-header { font-size: 8.5px; padding: 1px 3px; }
+      .info-row .item { font-size: 9px; }
+      .info-row .item input { font-size: 9px; }
+      .footer-row .item { font-size: 9px; }
+      .footer-row .item input { font-size: 9px; }
+      select option[value=""] { display: none !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; }
+      .container { height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+      .container > *:last-child { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+    }
+    @media screen and (max-width: 700px) {
+      .top { grid-template-columns: 1fr; text-align: center; border-bottom: 1px solid #000; }
+      .co, .ttl, .st { width: 100%; text-align: center; }
+      .st { align-items: center; padding-right: 0; }
+      .siggrid { grid-template-columns: 1fr; }
+      .tbl { font-size: 8px; }
+      .f { font-size: 10px; flex-wrap: wrap; }
+      .info-row { grid-template-columns: 1fr; }
+      .footer-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="tools no-print">
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+  </div>
+
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">056<br>ARRIVAL Checklist (Engine)</div>
+      <div class="st">
+        <div class="code"><span>S</span><span>SET</span></div>
+        <div>Release: &nbsp; Rev.0:</div>
+      </div>
+    </div>
+    <div class="grid">
+      <label class="f"><span class="label">Ship's name / Nama Kapal:</span><select id="shipSelect"><option value="">Pilih</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label>
+      <label class="f"><span class="label">Voyage No :</span><input></label>
+      <label class="f"><span class="label">Port of call :</span><input></label>
+    </div>
+  </header>
+
+  <!-- SECTION 1: Recommendation 24 h before arrival -->
+  <section class="sec">
+    <h3>Recommendation 24 h before arrival pilot station</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:600px;">
+        <thead>
+          <tr>
+            <th style="width:40%;">Item</th>
+            <th style="width:10%;">Checked</th>
+            <th style="width:50%;">Remark</th>
+          </tr>
+        </thead>
+        <tbody id="sec1-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 2: End of sea passage -->
+  <section class="sec">
+    <h3>End of sea passage - To be filled in by the Chief or Duty Engineer</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:600px;">
+        <thead>
+          <tr>
+            <th style="width:40%;">Item</th>
+            <th style="width:10%;">Checked</th>
+            <th style="width:50%;">Remark</th>
+          </tr>
+        </thead>
+        <tbody id="sec2-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Finish with Main Engine -->
+  <section class="sec">
+    <h3>Finish with Main Engine - to be filled in by the Chief or Duty Engineer</h3>
+    <div style="overflow-x:auto;">
+      <table class="tbl" style="min-width:600px;">
+        <thead>
+          <tr>
+            <th style="width:40%;">Item</th>
+            <th style="width:10%;">Checked</th>
+            <th style="width:50%;">Remark</th>
+          </tr>
+        </thead>
+        <tbody id="sec3-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- DATE / TIME / REMARK -->
+  <section class="sec">
+    <div class="info-row">
+      <div class="item"><label>Date :</label><input class="date" placeholder="DD-MM-YYYY"></div>
+      <div class="item"><label>Time :</label><input placeholder="HH:MM"></div>
+      <div class="item"><label>Remark :</label><input placeholder="Catatan tambahan"></div>
+    </div>
+  </section>
+
+  <!-- FINAL STATEMENT -->
+  <section class="sec">
+    <div style="font-size:11px; font-weight:bold; text-align:center; padding:4px 0;">
+      Filing in of this checklist is recorded and signed in Log book
+    </div>
+  </section>
+
+  <!-- SIGNATURE -->
+  <section class="sig">
+    <b>Name &amp; Sign / Nama &amp; Tanda Tangan</b>
+    <div class="siggrid">
+      <div class="sigbox">
+        <b>Date of FWE</b>
+        <div><input class="date" style="border:0;border-bottom:1px solid #000;width:120px;font-size:10px;text-align:center;" placeholder="DD-MM-YYYY"></div>
+        <div style="margin-top:4px;"><b>Time of FWE</b> <input style="border:0;border-bottom:1px solid #000;width:80px;font-size:10px;text-align:center;" placeholder="HH:MM"></div>
+      </div>
+      <div class="sigbox">
+        <b>Signed by Ch. Eng</b>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 8px;">+ TTD
+            <input id="sigup1" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv1" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Chief Engineer">
+        <div class="role">Chief Engineer</div>
+      </div>
+      <div class="sigbox">
+        <b>Signed by Master</b>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 8px;">+ TTD
+            <input id="sigup2" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv2" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv2','sigup2')">×</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Master">
+        <div class="role">Master</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ======= SECTION 1 ITEMS =======
+  var sec1Items = [
+    'Do you have permission from the port authority for immobilization M/E (e.g. exchange piston, check fuel pump timing M/C etc.)',
+    'Equipment, spares and tools prepared for a planned maintenance or repair',
+    'Check and testrun A/E',
+    'Check and testrun Aux. boiler, clean rotory cap of burner after testrun',
+    'Check fresh water generator and switch off',
+    'Change seachest from low to high',
+    'Check all watertide doors are closed',
+    'Check all E/R bilges are empty and bilge overbord valves are closed',
+    'All entries in oil record book correct and completed for inspection'
+  ];
+
+  // ======= SECTION 2 ITEMS =======
+  var sec2Items = [
+    'Is the E/R sufficiently manned',
+    'Switch A/E on and switch off shaft generator',
+    'Take corresponding hours / counter reading',
+    'Open preheating M/E if necessary',
+    'Is enough power supply available for manoeuvring with bow thruster, start add. A/E',
+    'Are all starting air compressors available for manoeuvring (switch from eco mode to normal mode)',
+    'Is bow thruster available and ready for manoeuvring'
+  ];
+
+  // ======= SECTION 3 ITEMS =======
+  var sec3Items = [
+    'Order from bridge received to finish with engine, switched main engine remote control to ECR',
+    'Switched off bow thruster and shaft generator if applicable',
+    'Reported fuel, lub oil and water stock to bridge',
+    'Opened all indicator cocks',
+    'Switched off all unnecessary units (power -, air supply) for standstill main engine',
+    'Switched on all necessary units for standstill main engine',
+    'Filling out of this checklist recorded and signed in logbook'
+  ];
+
+  // ======= POPULATE TABLES =======
+  function populateTable(tbodyId, items) {
+    var tbody = document.getElementById(tbodyId);
+    items.forEach(function(item) {
+      var row = '<tr>' +
+        '<td><span class="item-text">'+item+'</span></td>' +
+        '<td><input type="checkbox"></td>' +
+        '<td><input type="text" placeholder="catatan"></td>' +
+        '</tr>';
+      tbody.insertAdjacentHTML('beforeend', row);
+    });
+  }
+
+  populateTable('sec1-tbody', sec1Items);
+  populateTable('sec2-tbody', sec2Items);
+  populateTable('sec3-tbody', sec3Items);
+
+  // ======= DATE FORMATTING =======
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  window.clearSig = clearSig;
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '056 ARRIVAL Checklist (Engine)';
+      var ship = document.getElementById('shipSelect');
+      var date = document.querySelector('.date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+      if (window.parent && window.parent.postMessage) {
+        window.parent.postMessage({type:'FORM_TITLE', title:title}, '*');
+      }
+    }
+    var ship = document.getElementById('shipSelect');
+    var date = document.querySelector('.date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
+
+  // ======= HIDE PLACEHOLDER SAAT PRINT =======
+  (function() {
+    function blankSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (!s.value) {
+          s.dataset.ph = s.options[s.selectedIndex].text;
+          s.options[s.selectedIndex].text = '';
+        }
+      });
+    }
+    function restoreSelects() {
+      document.querySelectorAll('select').forEach(function(s) {
+        if (s.dataset.ph !== undefined) {
+          s.options[s.selectedIndex].text = s.dataset.ph;
+          delete s.dataset.ph;
+        }
+      });
+    }
+    window.addEventListener('beforeprint', blankSelects);
+    window.addEventListener('afterprint', restoreSelects);
+    if (window.matchMedia) {
+      window.matchMedia('print').addListener(function(m) {
+        m.matches ? blankSelects() : restoreSelects();
+      });
+    }
+  })();
+</script>
+</body>
+</html>

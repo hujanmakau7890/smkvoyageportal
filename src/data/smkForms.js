@@ -47,6 +47,7 @@ export const SMK_FORMS = [
   { code: "052", title: "Monthly Boiler Safety Check List", category: "Laporan Mesin", file: "052_Monthly_Boiler_Safety_Check_List.html" },
   { code: "054", title: "Steering Gear System Check List", category: "Laporan Mesin", file: "054_CHECKLIST_Steering_Gear_System.html" },
   { code: "055", title: "Departure Checklist (Engine)", category: "Laporan Mesin", file: "055_Departure_Checklist_Engine.html" },
+  { code: "056", title: "ARRIVAL Checklist (Engine)", category: "Laporan Mesin", file: "056_Arrival_Checklist_Engine.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
