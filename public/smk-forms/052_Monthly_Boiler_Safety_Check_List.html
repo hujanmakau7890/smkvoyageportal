@@ -143,6 +143,9 @@
       .check-group label { font-size: 7px; }
       .check-group input[type="radio"], .check-group input[type="checkbox"] { width: 10px; height: 10px; }
       select option[value=""] { display: none !important; }
+      select:has(option[value=""]:checked) { color: transparent !important; }
+      select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background: transparent !important; }
+      select::-ms-expand { display: none; }
       input::placeholder, textarea::placeholder { color: transparent !important; }
       .container {
         height: 100%;
@@ -396,11 +399,13 @@
         s.style.color = '';
       });
     }
-    window.addEventListener('beforeprint', blankSelects);
+    window.addEventListener('beforeprint', function() {
+      setTimeout(blankSelects, 10);
+    });
     window.addEventListener('afterprint', restoreSelects);
     if (window.matchMedia) {
       window.matchMedia('print').addListener(function(m) {
-        m.matches ? blankSelects() : restoreSelects();
+        m.matches ? setTimeout(blankSelects, 10) : restoreSelects();
       });
     }
   })();
