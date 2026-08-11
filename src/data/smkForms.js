@@ -45,6 +45,8 @@ export const SMK_FORMS = [
   { code: "049", title: "Crank Shaft Deflection Auxiliary Engine", category: "Laporan Mesin", file: "049_Crank_Shaft_Deflection_Aux_Engine.html" },
   { code: "051", title: "Weekly Boiler Check List", category: "Laporan Mesin", file: "051_Weekly_Boiler_Check_List.html" },
   { code: "052", title: "Monthly Boiler Safety Check List", category: "Laporan Mesin", file: "052_Monthly_Boiler_Safety_Check_List.html" },
+  { code: "054", title: "Steering Gear System Check List", category: "Laporan Mesin", file: "054_CHECKLIST_Steering_Gear_System.html" },
+  { code: "055", title: "Departure Checklist (Engine)", category: "Laporan Mesin", file: "055_Departure_Checklist_Engine.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
 ];
 
