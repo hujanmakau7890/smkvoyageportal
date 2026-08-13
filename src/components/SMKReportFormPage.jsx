@@ -178,7 +178,7 @@ export default function SMKReportFormPage() {
               const toolbar = parentDoc.createElement('div');
               toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;';
               const title = parentDoc.createElement('strong');
-              title.textContent = 'Preview - ' + build().replace(/\.pdf$/, '');
+              title.textContent = 'Preview PDF - ' + build().replace(/\.pdf$/, '');
               const closeBtn = parentDoc.createElement('button');
               closeBtn.textContent = 'Tutup Preview';
               closeBtn.style.cssText = 'border:0;background:#dc2626;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;';
@@ -186,9 +186,29 @@ export default function SMKReportFormPage() {
               toolbar.append(title, closeBtn);
               const previewIframe = parentDoc.createElement('iframe');
               previewIframe.style.cssText = 'flex:1;border:none;width:100%;background:#fff;';
-              previewIframe.src = window.location.href;
               modal.append(toolbar, previewIframe);
               parentDoc.body.appendChild(modal);
+              const pageEl = document.querySelector('.page') || document.querySelector('.p') || document.body;
+              if(window.html2pdf){
+                window.html2pdf().set({
+                  margin: 0,
+                  filename: build(),
+                  image: { type: 'jpeg', quality: 0.98 },
+                  html2canvas: { scale: 2, useCORS: true },
+                  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(pageEl).toPdf().get('pdf').then(function(pdf){
+                  return pdf.output('blob');
+                }).then(function(blob){
+                  const url = URL.createObjectURL(blob);
+                  previewIframe.src = url;
+                  setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
+                }).catch(function(){
+                  previewIframe.src = 'about:blank';
+                });
+              } else {
+                setT();
+                setTimeout(function(){ window.print(); }, 300);
+              }
             };
             btnDownload.onclick = function(){
               document.body.removeChild(overlay);
