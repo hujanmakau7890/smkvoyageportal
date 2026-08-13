@@ -47,7 +47,7 @@ export default function SMKReportFormPage() {
     const esc = (s) => (s || '').replace(/\s+/g, ' ').trim();
 
     function findVessel(doc) {
-      const q = doc.querySelector('input.vessel, select.vessel, #ship, #shipSelect, select[id*="ship" i], select[id*="vessel" i]');
+      const q = doc.querySelector('select#shipSelect, input#shipSelect, select#ship, input#ship, select.vessel, input.vessel, select[name*="ship" i], input[name*="ship" i], select[name*="vessel" i], input[name*="vessel" i]');
       if (q) return q;
       const labels = doc.querySelectorAll('label.f, label.field, label');
       for (let i = 0; i < labels.length; i++) {
@@ -57,11 +57,20 @@ export default function SMKReportFormPage() {
           if (inp) return inp;
         }
       }
+      const all = doc.querySelectorAll('select');
+      for (let i = 0; i < all.length; i++) {
+        const opts = all[i].options || [];
+        for (let j = 0; j < opts.length; j++) {
+          if (/sahabat|semangat|express|pratama|prakarsa|mavendra|selaras|segoro/.test((opts[j].text || '').toLowerCase())) {
+            return all[i];
+          }
+        }
+      }
       return null;
     }
 
     function findDate(doc) {
-      const q = doc.querySelector('input.date, input[type="date"], #date');
+      const q = doc.querySelector('input.date, input[type="date"], input#date, input[name*="date" i], input[name*="tanggal" i]');
       if (q) return q;
       const labels = doc.querySelectorAll('label.f, label.field, label');
       for (let i = 0; i < labels.length; i++) {
@@ -83,7 +92,7 @@ export default function SMKReportFormPage() {
           const base="${base}";
           function esc(s){return (s||"").replace(/\\s+/g," ").trim();}
           function findVessel(){
-            const q=document.querySelector('input.vessel,select.vessel,#ship,#shipSelect,select[id*="ship" i],select[id*="vessel" i]');
+            const q=document.querySelector('select#shipSelect, input#shipSelect, select#ship, input#ship, select.vessel, input.vessel, select[name*="ship" i], input[name*="ship" i], select[name*="vessel" i], input[name*="vessel" i]');
             if(q) return q;
             const labels=document.querySelectorAll('label.f,label.field,label');
             for(let i=0;i<labels.length;i++){
@@ -93,10 +102,17 @@ export default function SMKReportFormPage() {
                 if(inp) return inp;
               }
             }
+            const all=document.querySelectorAll('select');
+            for(let i=0;i<all.length;i++){
+              const opts=all[i].options || [];
+              for(let j=0;j<opts.length;j++){
+                if(/sahabat|semangat|express|pratama|prakarsa|mavendra|selaras|segoro/.test((opts[j].text||"").toLowerCase())) return all[i];
+              }
+            }
             return null;
           }
           function findDate(){
-            const q=document.querySelector('input.date,input[type="date"],#date');
+            const q=document.querySelector('input.date,input[type="date"],input#date,input[name*="date" i],input[name*="tanggal" i]');
             if(q) return q;
             const labels=document.querySelectorAll('label.f,label.field,label');
             for(let i=0;i<labels.length;i++){
