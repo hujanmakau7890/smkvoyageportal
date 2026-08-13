@@ -151,77 +151,46 @@ export default function SMKReportFormPage() {
             const name = build();
             const page = document.querySelector('.page') || document.querySelector('.p') || document.body;
             if(!page) return;
-            const overlay = document.createElement('div');
-            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999;';
-            const box = document.createElement('div');
-            box.style.cssText = 'background:#fff;padding:16px;border-radius:8px;display:flex;flex-direction:column;gap:8px;min-width:220px;box-shadow:0 10px 25px rgba(0,0,0,0.2);';
-            const title = document.createElement('div');
-            title.style.cssText = 'font-weight:bold;font-size:14px;margin-bottom:4px;';
-            title.textContent = 'Pilih Aksi';
-            const btnPreview = document.createElement('button');
-            btnPreview.textContent = 'Preview';
-            btnPreview.style.cssText = 'border:0;border-radius:6px;padding:10px;background:#1769d2;color:#fff;font-weight:bold;cursor:pointer;';
-            const btnPrint = document.createElement('button');
-            btnPrint.textContent = 'Cetak';
-            btnPrint.style.cssText = 'border:0;border-radius:6px;padding:10px;background:#15803d;color:#fff;font-weight:bold;cursor:pointer;';
-            const btnCancel = document.createElement('button');
-            btnCancel.textContent = 'Batal';
-            btnCancel.style.cssText = 'border:0;border-radius:6px;padding:10px;background:#6b7280;color:#fff;font-weight:bold;cursor:pointer;';
-            box.append(title, btnPreview, btnPrint, btnCancel);
-            overlay.appendChild(box);
-            document.body.appendChild(overlay);
-            btnPreview.onclick = function(){
-              document.body.removeChild(overlay);
-              const parentDoc = window.parent.document;
-              const modal = parentDoc.createElement('div');
-              modal.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;';
-              const toolbar = parentDoc.createElement('div');
-              toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;';
-              const titleEl = parentDoc.createElement('strong');
-              titleEl.textContent = 'Preview PDF - ' + build().replace(/\.pdf$/, '');
-              const closeBtn = parentDoc.createElement('button');
-              closeBtn.textContent = 'Tutup Preview';
-              closeBtn.style.cssText = 'border:0;background:#dc2626;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;';
-              closeBtn.onclick = function(){ parentDoc.body.removeChild(modal); };
-              toolbar.append(titleEl, closeBtn);
-              const previewIframe = parentDoc.createElement('iframe');
-              previewIframe.style.cssText = 'flex:1;border:none;width:100%;background:#fff;';
-              modal.append(toolbar, previewIframe);
-              parentDoc.body.appendChild(modal);
-              const pageEl = document.querySelector('.page') || document.querySelector('.p') || document.body;
-              if(window.html2pdf){
-                window.html2pdf().set({
-                  margin: 0,
-                  filename: build(),
-                  image: { type: 'jpeg', quality: 0.98 },
-                  html2canvas: { scale: 2, useCORS: true },
-                  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                }).from(pageEl).toPdf().get('pdf').then(function(pdf){
-                  return pdf.output('blob');
-                }).then(function(blob){
-                  var url = URL.createObjectURL(blob);
-                  var reader = new FileReader();
-                  reader.onload = function(e){
-                    previewIframe.src = e.target.result;
-                    setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
-                  };
-                  reader.readAsDataURL(blob);
-                }).catch(function(){
-                  previewIframe.src = 'about:blank';
-                });
-              } else {
-                setT();
-                setTimeout(function(){ window.print(); }, 300);
-              }
-            };
-            btnPrint.onclick = function(){
-              document.body.removeChild(overlay);
+            const parentDoc = window.parent.document;
+            const modal = parentDoc.createElement('div');
+            modal.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;';
+            const toolbar = parentDoc.createElement('div');
+            toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;';
+            const titleEl = parentDoc.createElement('strong');
+            titleEl.textContent = 'Preview PDF - ' + build().replace(/\.pdf$/, '');
+            const closeBtn = parentDoc.createElement('button');
+            closeBtn.textContent = 'Tutup Preview';
+            closeBtn.style.cssText = 'border:0;background:#dc2626;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;';
+            closeBtn.onclick = function(){ parentDoc.body.removeChild(modal); };
+            toolbar.append(titleEl, closeBtn);
+            const previewIframe = parentDoc.createElement('iframe');
+            previewIframe.style.cssText = 'flex:1;border:none;width:100%;background:#fff;';
+            modal.append(toolbar, previewIframe);
+            parentDoc.body.appendChild(modal);
+            if(window.html2pdf){
+              window.html2pdf().set({
+                margin: 0,
+                filename: name,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+              }).from(page).toPdf().get('pdf').then(function(pdf){
+                return pdf.output('blob');
+              }).then(function(blob){
+                var url = URL.createObjectURL(blob);
+                var reader = new FileReader();
+                reader.onload = function(e){
+                  previewIframe.src = e.target.result;
+                  setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
+                };
+                reader.readAsDataURL(blob);
+              }).catch(function(){
+                previewIframe.src = 'about:blank';
+              });
+            } else {
               setT();
               setTimeout(function(){ window.print(); }, 300);
-            };
-            btnCancel.onclick = function(){
-              document.body.removeChild(overlay);
-            };
+            }
           }
           document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
