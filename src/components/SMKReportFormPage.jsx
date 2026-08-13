@@ -74,6 +74,87 @@ export default function SMKReportFormPage() {
       return null;
     }
 
+    function injectIframeTitle(doc, form) {
+      if (!doc || !doc.head) return;
+      const base = `${form.code} ${form.title}`;
+      const script = doc.createElement('script');
+      script.textContent = `
+        (function(){
+          const base="${base}";
+          function esc(s){return (s||"").replace(/\\s+/g," ").trim();}
+          function findVessel(){
+            const q=document.querySelector('input.vessel,select.vessel,#ship,#shipSelect,select[id*="ship" i],select[id*="vessel" i]');
+            if(q) return q;
+            const labels=document.querySelectorAll('label.f,label.field,label');
+            for(let i=0;i<labels.length;i++){
+              const t=(labels[i].textContent||"").toLowerCase();
+              if(/vessel|kapal|nama kapal|ship'?s? name|name of vessel|ship name/.test(t)){
+                const inp=labels[i].querySelector('input,select');
+                if(inp) return inp;
+              }
+            }
+            return null;
+          }
+          function findDate(){
+            const q=document.querySelector('input.date,input[type="date"],#date');
+            if(q) return q;
+            const labels=document.querySelectorAll('label.f,label.field,label');
+            for(let i=0;i<labels.length;i++){
+              const t=(labels[i].textContent||"").toLowerCase();
+              if(/date|tanggal|bulan|tahun|month|year/.test(t)){
+                const inp=labels[i].querySelector('input');
+                if(inp) return inp;
+              }
+            }
+            return null;
+          }
+          function build(){
+            const MONTHS=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+            const vs=findVessel()?esc(findVessel().value):'';
+            const ds=findDate()?esc(findDate().value):'';
+            let t=base;
+            if(vs) t+=' - '+vs;
+            if(ds){
+              const m=ds.match(/^(\\d{2})-(\\d{2})-(\\d{4})$/);
+              if(m){
+                const mo=parseInt(m[2],10);
+                if(mo>=1 && mo<=12) t+=' - '+MONTHS[mo-1]+' '+m[3];
+                else t+=' - '+ds;
+              } else t+=' - '+ds;
+            }
+            return t;
+          }
+          function setT(){
+            try{ document.title=build(); }catch(e){}
+          }
+          const vessel=findVessel(), dateField=findDate();
+          if(vessel){ vessel.addEventListener('change',setT); vessel.addEventListener('input',setT); }
+          if(dateField){ dateField.addEventListener('change',setT); dateField.addEventListener('input',setT); }
+          setT();
+          const origPrint=window.print;
+          window.print=function(){
+            setT();
+            setTimeout(function(){ (origPrint||window.print)(); }, 50);
+          };
+          document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
+            const fn=btn.getAttribute('onclick')||'';
+            if(/print/.test(fn)){
+              btn.removeAttribute('onclick');
+              btn.addEventListener('click',function(){
+                setT();
+                setTimeout(function(){ (origPrint||window.print)(); }, 50);
+              });
+            }
+          });
+        })();
+      `;
+      try {
+        (doc.head || doc.documentElement).appendChild(script);
+      } catch (e) {
+        // ignore cross-origin
+      }
+    }
+
     function updateTitle() {
       try {
         const doc = iframe.contentDocument;
@@ -108,6 +189,7 @@ export default function SMKReportFormPage() {
       try {
         const doc = iframe.contentDocument;
         updateTitle();
+        injectIframeTitle(doc, selectedForm);
         // Recompute whenever the user types/picks values inside the form
         const v = findVessel(doc);
         const d = findDate(doc);
