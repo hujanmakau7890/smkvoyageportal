@@ -1,0 +1,20 @@
+_format_version: "2.1"
+services:
+- name: postgres
+  url: http://db:5432
+  routes:
+  - name: postgres
+    paths:
+    - /rest/v1
+    - /auth/v1
+    - /storage/v1
+    - /realtime/v1
+    - /edge-functions/v1
+    - /pg-meta/v1
+    - /database/v1
+    - /functions/v1
+    - /pg-query/v1
+consumers:
+- username: anon
+  keyauth_credentials:
+  - key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtZWxhc3RpYyIsInN1YiI6IjEyMzQ1IiwiaWF0IjoxNjk4MjAwMDAwfQ.dQ__sdQExampleKeyForLocalDevelopmentOnly

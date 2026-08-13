@@ -907,19 +907,32 @@ function Login({ onLogin }) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
+        console.error("Login auth error:", error);
         setErr(error.message === "Invalid login credentials" ? "Email atau password salah." : error.message);
-      } else if (data.user) {
-        const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-        const isShipAccount = profile?.role === 'kapal';
-        onLogin({
-          id: data.user.id, email: data.user.email,
-          name: profile?.full_name || email.split('@')[0],
-          role: profile?.role || 'master',
-          ship: isShipAccount ? (profile?.full_name || null) : null,
-        });
+        return;
       }
-    } catch (err) { setErr("Terjadi kesalahan."); }
-    finally { setLoading(false); }
+      if (!data.user) {
+        console.error("Login no user returned");
+        setErr("Login gagal: tidak ada data user.");
+        return;
+      }
+      const { data: profile, error: profileError } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+      if (profileError) {
+        console.error("Login profile error:", profileError);
+        setErr("Gagal memuat profil: " + profileError.message);
+        return;
+      }
+      const isShipAccount = profile?.role === 'kapal';
+      onLogin({
+        id: data.user.id, email: data.user.email,
+        name: profile?.full_name || email.split('@')[0],
+        role: profile?.role || 'master',
+        ship: isShipAccount ? (profile?.full_name || null) : null,
+      });
+    } catch (err) {
+      console.error("Login exception:", err);
+      setErr("Terjadi kesalahan jaringan.");
+    } finally { setLoading(false); }
   };
 
   return (
@@ -1594,13 +1607,11 @@ function ReportForm({ onSave, onCancel, editReport, onUpdate, allReports, user }
       steam: fref.current.steam != null && String(fref.current.steam).trim() !== "" ? String(fref.current.steam).trim() : null,
       avg_spd: fref.current.avg_spd ? parseFloat(fref.current.avg_spd) : null,
       ttl_avg_spd: fref.current.ttl_avg_spd ? parseFloat(fref.current.ttl_avg_spd) : null,
-  crs: fref.current.crs,
+      crs: fref.current.crs,
       manouvr_dist: fref.current.manouvr_dist ? parseFloat(fref.current.manouvr_dist) : null,
       lat: fref.current.lat,
       lon: fref.current.lon,
-      posisi: fref.current.posisi,
       spd: fref.current.spd ? parseFloat(fref.current.spd) : null,
-      crs: fref.current.crs,
       rpm: fref.current.rpm ? parseFloat(fref.current.rpm) : null,
       drun: fref.current.drun ? parseFloat(fref.current.drun) : null,
       drem: fref.current.drem ? parseFloat(fref.current.drem) : null,
@@ -5822,25 +5833,23 @@ export default function App() {
       // keys the rest of the app (TankSection, buildWA, fuel calculations,
       // etc.) expects directly on the report object.
       const transformed = (data || []).map(r => {
-        const events = r.events ? JSON.parse(r.events) : {};
-        const tanks = r.tanks ? JSON.parse(r.tanks) : {};
+        const events = r.events ? (typeof r.events === 'string' ? JSON.parse(r.events) : r.events) : {};
+        const tanks = r.tanks ? (typeof r.tanks === 'string' ? JSON.parse(r.tanks) : r.tanks) : {};
         const flatTanks = {};
         Object.entries(tanks).forEach(([key, val]) => {
           if (key.startsWith("tk_") && val && typeof val === "object") {
-            // val is { ohn: "...", sbe: "...", fwe: "..." } -> tk_<tank>_ohn etc
             Object.entries(val).forEach(([phaseKey, phaseVal]) => {
               flatTanks[`${key}_${phaseKey}`] = phaseVal;
             });
           } else {
-            // bk_<tank> and rob_<tank> are already flat scalar values
             flatTanks[key] = val;
           }
         });
         return {
           ...r,
-          cargoRows: r.cargo_rows ? JSON.parse(r.cargo_rows) : [],
-          ...events,    // spread events into root (ev_BOSV, ev_POB, etc)
-          ...flatTanks, // spread tanks into root (tk_mfo_fwe, bk_mfo, rob_mfo, etc)
+          cargoRows: r.cargo_rows ? (typeof r.cargo_rows === 'string' ? JSON.parse(r.cargo_rows) : r.cargo_rows) : [],
+          ...events,
+          ...flatTanks,
         };
       });
       setReports(transformed);

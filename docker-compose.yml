@@ -1,0 +1,50 @@
+services:
+  db:
+    image: supabase/postgres:15.1.0.78
+    container_name: smk_supabase_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 54322:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+
+  studio:
+    image: supabase/studio:20240513-1dece0b
+    container_name: smk_supabase_studio
+    restart: unless-stopped
+    ports:
+      - 54323:3000
+    environment:
+      SUPABASE_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtZWxhc3RpYyIsInN1YiI6IjEyMzQ1IiwiaWF0IjoxNjk4MjAwMDAwfQ.dQ__sdQExampleKeyForLocalDevelopmentOnly
+    depends_on:
+      db:
+        condition: service_healthy
+
+  kong:
+    image: supabase/kong:2.8.1
+    container_name: smk_supabase_kong
+    restart: unless-stopped
+    ports:
+      - 54321:8000
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/config/kong.yml
+      KONG_DNS_RESOLVER: 8.8.8.8
+    volumes:
+      - ./kong.yml:/kong/config/kong.yml:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
