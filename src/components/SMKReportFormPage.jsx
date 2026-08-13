@@ -70,7 +70,7 @@ export default function SMKReportFormPage() {
     }
 
     function findDate(doc) {
-      const q = doc.querySelector('input.date, input[type="date"], input#date, input[name*="date" i], input[name*="tanggal" i]');
+      const q = doc.querySelector('input.date, input[type="date"], input#date, input[name*="date" i], input[name*="tanggal" i], input.date-mask, .date-mask');
       if (q) return q;
       const labels = doc.querySelectorAll('label.f, label.field, label');
       for (let i = 0; i < labels.length; i++) {
@@ -112,7 +112,7 @@ export default function SMKReportFormPage() {
             return null;
           }
           function findDate(){
-            const q=document.querySelector('input.date,input[type="date"],input#date,input[name*="date" i],input[name*="tanggal" i]');
+            const q=document.querySelector('input.date,input[type="date"],input#date,input[name*="date" i],input[name*="tanggal" i],input.date-mask,.date-mask');
             if(q) return q;
             const labels=document.querySelectorAll('label.f,label.field,label');
             for(let i=0;i<labels.length;i++){
