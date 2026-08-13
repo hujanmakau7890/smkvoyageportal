@@ -199,9 +199,13 @@ export default function SMKReportFormPage() {
                 }).from(pageEl).toPdf().get('pdf').then(function(pdf){
                   return pdf.output('blob');
                 }).then(function(blob){
-                  const url = URL.createObjectURL(blob);
-                  previewIframe.src = url;
-                  setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
+                  var url = URL.createObjectURL(blob);
+                  var reader = new FileReader();
+                  reader.onload = function(e){
+                    previewIframe.src = e.target.result;
+                    setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
+                  };
+                  reader.readAsDataURL(blob);
                 }).catch(function(){
                   previewIframe.src = 'about:blank';
                 });
