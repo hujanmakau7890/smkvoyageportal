@@ -36,24 +36,194 @@ export default function SMKReportFormPage() {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  // Also read iframe title directly after load (same-origin)
+  // Build full document title: code + title + vessel + month year (from iframe fields)
   const formFile = selectedForm?.file;
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe || !formFile) return;
+
+    const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+    const esc = (s) => (s || '').replace(/\s+/g, ' ').trim();
+
+    function findVessel(doc) {
+      const q = doc.querySelector('input.vessel, select.vessel, #ship, #shipSelect, select[id*="ship" i], select[id*="vessel" i]');
+      if (q) return q;
+      const labels = doc.querySelectorAll('label.f, label.field, label');
+      for (let i = 0; i < labels.length; i++) {
+        const t = (labels[i].textContent || '').toLowerCase();
+        if (/vessel|kapal|nama kapal|ship'?s? name|name of vessel|ship name/.test(t)) {
+          const inp = labels[i].querySelector('input, select');
+          if (inp) return inp;
+        }
+      }
+      return null;
+    }
+
+    function findDate(doc) {
+      const q = doc.querySelector('input.date, input[type="date"], #date');
+      if (q) return q;
+      const labels = doc.querySelectorAll('label.f, label.field, label');
+      for (let i = 0; i < labels.length; i++) {
+        const t = (labels[i].textContent || '').toLowerCase();
+        if (/date|tanggal|bulan|tahun|month|year/.test(t)) {
+          const inp = labels[i].querySelector('input');
+          if (inp) return inp;
+        }
+      }
+      return null;
+    }
+
+    function updateTitle() {
+      try {
+        const doc = iframe.contentDocument;
+        if (!doc) return;
+        const base = `${selectedForm.code} ${selectedForm.title}`;
+        const v = findVessel(doc);
+        const d = findDate(doc);
+        const vs = v ? esc(v.value) : '';
+        const ds = d ? esc(d.value) : '';
+        let t = base;
+        if (vs) t += ' - ' + vs;
+        if (ds) {
+          const m = ds.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+          if (m) {
+            const mo = parseInt(m[2], 10);
+            if (mo >= 1 && mo <= 12) t += ' - ' + MONTHS[mo - 1] + ' ' + m[3];
+            else t += ' - ' + ds;
+          } else {
+            t += ' - ' + ds;
+          }
+        }
+        document.title = t;
+        if (doc && doc.title) doc.title = t;
+      } catch (e) {
+        // cross-origin or missing, keep default title
+      }
+    }
+
+    function injectPdfDownload(doc, form) {
+      if (!doc) return;
+      const base = `${form.code} ${form.title}`;
+      const script = doc.createElement('script');
+      script.textContent = `
+        (function() {
+          function esc(s){return (s||'').replace(/\\s+/g,' ').trim();}
+          function findVessel(){
+            const q=document.querySelector('input.vessel, select.vessel, #ship, #shipSelect, select[id*="ship" i], select[id*="vessel" i]');
+            if(q) return q;
+            const labels=document.querySelectorAll('label.f, label.field, label');
+            for(let i=0;i<labels.length;i++){
+              const t=(labels[i].textContent||'').toLowerCase();
+              if(/vessel|kapal|nama kapal|ship'?s? name|name of vessel|ship name/.test(t)){
+                const inp=labels[i].querySelector('input, select');
+                if(inp) return inp;
+              }
+            }
+            return null;
+          }
+          function findDate(){
+            const q=document.querySelector('input.date, input[type="date"], #date');
+            if(q) return q;
+            const labels=document.querySelectorAll('label.f, label.field, label');
+            for(let i=0;i<labels.length;i++){
+              const t=(labels[i].textContent||'').toLowerCase();
+              if(/date|tanggal|bulan|tahun|month|year/.test(t)){
+                const inp=labels[i].querySelector('input');
+                if(inp) return inp;
+              }
+            }
+            return null;
+          }
+          function buildFilename(){
+            const vs=findVessel()?esc(findVessel().value):'';
+            const ds=findDate()?esc(findDate().value):'';
+            const MONTHS=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+            let name="${base}";
+            if(vs) name+=' - '+vs;
+            if(ds){
+              const m=ds.match(/^(\\d{2})-(\\d{2})-(\\d{4})$/);
+              if(m){
+                const mo=parseInt(m[2],10);
+                if(mo>=1 && mo<=12) name+=' - '+MONTHS[mo-1]+' '+m[3];
+                else name+=' - '+ds;
+              } else name+=' - '+ds;
+            }
+            return name.replace(/[^a-zA-Z0-9_\\-\\s]/g,'').replace(/\\s+/g,'_') + '.pdf';
+          }
+          function setTitle(){
+            try{ document.title=buildFilename().replace(/\\.pdf$/,''); }catch(e){}
+          }
+          const vessel=findVessel(), dateField=findDate();
+          if(vessel){ vessel.addEventListener('change', setTitle); vessel.addEventListener('input', setTitle); }
+          if(dateField){ dateField.addEventListener('change', setTitle); dateField.addEventListener('input', setTitle); }
+          setTitle();
+          const origPrint=window.print;
+          window.print=function(){
+            setTitle();
+            if(origPrint) origPrint(); else window.print();
+          };
+          document.querySelectorAll('button[onclick*="print()"], .print-btn, button[onclick="window.print()"]').forEach(function(btn){
+            btn.removeAttribute('onclick');
+            btn.addEventListener('click', function(){
+              setTitle();
+              if(origPrint) origPrint(); else window.print();
+            });
+          });
+          if(window.html2pdf){
+            const page=document.querySelector('.page') || document.body;
+            const dl=document.createElement('button');
+            dl.textContent='⬇ Download PDF';
+            dl.style.cssText='border:0;border-radius:6px;padding:8px 14px;background:#15803d;color:#fff;font-weight:bold;cursor:pointer;margin-left:8px;font-size:14px;';
+            dl.addEventListener('click',function(){
+              setTitle();
+              const name=buildFilename();
+              window.html2pdf().set({
+                margin: 0,
+                filename: name,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+              }).from(page).save().catch(()=>{});
+            });
+            const toolbar=document.querySelector('.tools') || document.querySelector('.toolbar');
+            if(toolbar) toolbar.appendChild(dl);
+          }
+        })();
+      `;
+      try {
+        (doc.head || doc.documentElement).appendChild(script);
+        const lib = doc.createElement('script');
+        lib.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.14.0/html2pdf.bundle.min.js';
+        lib.async = true;
+        (doc.head || doc.documentElement).appendChild(lib);
+      } catch (e) {
+        // ignore cross-origin
+      }
+    }
+
     const onLoad = () => {
       try {
-        const iframeTitle = iframe.contentDocument?.title;
-        if (iframeTitle) {
-          document.title = iframeTitle;
-        }
+        const doc = iframe.contentDocument;
+        updateTitle();
+        injectPdfDownload(doc, selectedForm);
+        // Recompute whenever the user types/picks values inside the form
+        const v = findVessel(doc);
+        const d = findDate(doc);
+        if (v) { v.addEventListener('change', updateTitle); v.addEventListener('input', updateTitle); }
+        if (d) { d.addEventListener('change', updateTitle); d.addEventListener('input', updateTitle); }
       } catch (e) {
-        // cross-origin, ignore
+        // ignore
       }
     };
-    iframe.addEventListener("load", onLoad);
-    return () => iframe.removeEventListener("load", onLoad);
-  }, [formFile]);
+
+    iframe.addEventListener('load', onLoad);
+    // If iframe already loaded (cached), run immediately
+    try {
+      if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') onLoad();
+    } catch (e) { /* ignore */ }
+    return () => iframe.removeEventListener('load', onLoad);
+  }, [formFile, selectedForm]);
 
   const visibleForms = useMemo(() => {
     const query = search.trim().toLowerCase();
