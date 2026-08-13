@@ -172,8 +172,23 @@ export default function SMKReportFormPage() {
             document.body.appendChild(overlay);
             btnPreview.onclick = function(){
               document.body.removeChild(overlay);
-              setT();
-              setTimeout(function(){ window.print(); }, 300);
+              const parentDoc = window.parent.document;
+              const modal = parentDoc.createElement('div');
+              modal.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;';
+              const toolbar = parentDoc.createElement('div');
+              toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;';
+              const title = parentDoc.createElement('strong');
+              title.textContent = 'Preview - ' + build().replace(/\.pdf$/, '');
+              const closeBtn = parentDoc.createElement('button');
+              closeBtn.textContent = 'Tutup Preview';
+              closeBtn.style.cssText = 'border:0;background:#dc2626;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;';
+              closeBtn.onclick = function(){ parentDoc.body.removeChild(modal); };
+              toolbar.append(title, closeBtn);
+              const previewIframe = parentDoc.createElement('iframe');
+              previewIframe.style.cssText = 'flex:1;border:none;width:100%;background:#fff;';
+              previewIframe.src = window.location.href;
+              modal.append(toolbar, previewIframe);
+              parentDoc.body.appendChild(modal);
             };
             btnDownload.onclick = function(){
               document.body.removeChild(overlay);
