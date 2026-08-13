@@ -127,7 +127,7 @@
 <body>
 <div class="container">
   <div class="tools no-print">
-    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+    <button class="btn" onclick="if(typeof updateTitle==='function'){updateTitle();} setTimeout(function(){window.print();}, 80);">🖨️ Print / Simpan PDF</button>
   </div>
 
   <!-- HEADER -->
