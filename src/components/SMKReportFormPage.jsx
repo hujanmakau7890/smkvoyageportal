@@ -148,49 +148,8 @@ export default function SMKReportFormPage() {
           if(dateField){ dateField.addEventListener('change',setT); dateField.addEventListener('input',setT); }
           setT();
           function savePdf(){
-            const name = build();
-            const page = document.querySelector('.page') || document.querySelector('.p') || document.body;
-            if(!page) return;
-            const parentDoc = window.parent.document;
-            const modal = parentDoc.createElement('div');
-            modal.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;';
-            const toolbar = parentDoc.createElement('div');
-            toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;';
-            const titleEl = parentDoc.createElement('strong');
-            titleEl.textContent = 'Preview PDF - ' + build().replace(/\.pdf$/, '');
-            const closeBtn = parentDoc.createElement('button');
-            closeBtn.textContent = 'Tutup Preview';
-            closeBtn.style.cssText = 'border:0;background:#dc2626;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;';
-            closeBtn.onclick = function(){ parentDoc.body.removeChild(modal); };
-            toolbar.append(titleEl, closeBtn);
-            const previewIframe = parentDoc.createElement('iframe');
-            previewIframe.style.cssText = 'flex:1;border:none;width:100%;background:#fff;';
-            modal.append(toolbar, previewIframe);
-            parentDoc.body.appendChild(modal);
-            if(window.html2pdf){
-              window.html2pdf().set({
-                margin: 0,
-                filename: name,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-              }).from(page).toPdf().get('pdf').then(function(pdf){
-                return pdf.output('blob');
-              }).then(function(blob){
-                var url = URL.createObjectURL(blob);
-                var reader = new FileReader();
-                reader.onload = function(e){
-                  previewIframe.src = e.target.result;
-                  setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
-                };
-                reader.readAsDataURL(blob);
-              }).catch(function(){
-                previewIframe.src = 'about:blank';
-              });
-            } else {
-              setT();
-              setTimeout(function(){ window.print(); }, 300);
-            }
+            setT();
+            setTimeout(function(){ window.print(); }, 300);
           }
           document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
@@ -199,10 +158,6 @@ export default function SMKReportFormPage() {
               btn.addEventListener('click', savePdf);
             }
           });
-          var lib=document.createElement('script');
-          lib.src='/html2pdf.bundle.min.js';
-          lib.async=true;
-          (document.head||document.documentElement).appendChild(lib);
         })();
       `;
       try {
