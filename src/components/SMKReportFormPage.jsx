@@ -161,18 +161,20 @@ export default function SMKReportFormPage() {
           const origPrint=window.print;
           window.print=function(){
             setTitle();
-            if(origPrint) origPrint(); else window.print();
+            if(origPrint){ setTimeout(function(){ origPrint(); }, 60); } else { setTimeout(function(){ window.print(); }, 60); }
           };
           document.querySelectorAll('button[onclick*="print()"], .print-btn, button[onclick="window.print()"]').forEach(function(btn){
             btn.removeAttribute('onclick');
             btn.addEventListener('click', function(){
               setTitle();
-              if(origPrint) origPrint(); else window.print();
+              if(origPrint){ setTimeout(function(){ origPrint(); }, 60); } else { setTimeout(function(){ window.print(); }, 60); }
             });
           });
-          if(window.html2pdf){
+          function addDownloadBtn(){
+            if(!window.html2pdf || document.getElementById('pdf-dl-btn')) return;
             const page=document.querySelector('.page') || document.body;
             const dl=document.createElement('button');
+            dl.id='pdf-dl-btn';
             dl.textContent='⬇ Download PDF';
             dl.style.cssText='border:0;border-radius:6px;padding:8px 14px;background:#15803d;color:#fff;font-weight:bold;cursor:pointer;margin-left:8px;font-size:14px;';
             dl.addEventListener('click',function(){
@@ -184,11 +186,16 @@ export default function SMKReportFormPage() {
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-              }).from(page).save().catch(()=>{});
+              }).from(page).save().catch(function(){});
             });
-            const toolbar=document.querySelector('.tools') || document.querySelector('.toolbar');
-            if(toolbar) toolbar.appendChild(dl);
+            const toolbar=document.querySelector('.tools') || document.querySelector('.toolbar') || document.body;
+            toolbar.appendChild(dl);
           }
+          var t=0;
+          var checkLib=setInterval(function(){
+            if(window.html2pdf){ clearInterval(checkLib); addDownloadBtn(); }
+            else if(++t>40){ clearInterval(checkLib); addDownloadBtn(); }
+          }, 250);
         })();
       `;
       try {
