@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SMK_CATEGORIES, SMK_FORMS } from "../data/smkForms";
-import { supabase } from "../supabase";
 
 const colors = {
   text: "var(--c-text, #0f172a)",
@@ -32,61 +31,10 @@ export default function SMKReportFormPage() {
       if (event.data && event.data.type === "FORM_TITLE" && event.data.title) {
         document.title = event.data.title;
       }
-      if (event.data && event.data.type === "SMK_SAVE_PDF") {
-        handleSavePdf(event.data);
-      }
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, []);
-
-  // Convert data URL to Blob
-  function dataUrlToBlob(dataUrl) {
-    const [meta, b64] = dataUrl.split(",");
-    const mime = (meta.match(/data:(.*?);/) || [])[1] || "application/pdf";
-    const bin = atob(b64);
-    const arr = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-    return new Blob([arr], { type: mime });
-  }
-
-  // Save PDF from iframe to Supabase Storage + reports table
-  async function handleSavePdf(payload) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Login dulu untuk menyimpan ke Supabase.");
-        return;
-      }
-      const blob = dataUrlToBlob(payload.dataUrl);
-      const safeName = (payload.name || `smk_${Date.now()}.pdf`).replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `smk/${user.id}/${Date.now()}_${safeName}`;
-      const { error: upErr } = await supabase.storage.from("smk-pdf").upload(path, blob, {
-        contentType: "application/pdf",
-        upsert: false,
-      });
-      if (upErr) throw upErr;
-      const { data: { publicUrl } } = supabase.storage.from("smk-pdf").getPublicUrl(path);
-      const ts = payload.date
-        ? new Date(payload.date.replace(/(\d{2})-(\d{2})-(\d{4})/, "$3-$2-$1")).toISOString()
-        : new Date().toISOString();
-      const { error: insErr } = await supabase.from("reports").insert([
-        {
-          user_id: user.id,
-          ship: payload.ship || "SMK",
-          type: "SMK",
-          ts,
-          rmk: `${payload.formCode || ""} ${payload.formTitle || ""}`.trim(),
-          form_code: payload.formCode || null,
-          pdf_url: publicUrl,
-        },
-      ]);
-      if (insErr) throw insErr;
-      alert(`PDF tersimpan ke Supabase:\n${payload.name}\n\n${publicUrl}`);
-    } catch (err) {
-      alert("Gagal menyimpan PDF: " + err.message);
-    }
-  }
 
   // Build full document title: code + title + vessel + month year (from iframe fields)
   const formFile = selectedForm?.file;
@@ -201,96 +149,7 @@ export default function SMKReportFormPage() {
           setT();
           function savePdf(){
             setT();
-            const name = build();
-            const page = document.querySelector('.page') || document.querySelector('.p') || document.body;
-            if(!page) return;
-            const parentDoc = window.parent.document;
-            const modal = parentDoc.createElement('div');
-            modal.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;';
-            const toolbar = parentDoc.createElement('div');
-            toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;flex-wrap:wrap;gap:8px;';
-            const titleEl = parentDoc.createElement('strong');
-            titleEl.textContent = 'Preview PDF - ' + build().replace(/\.pdf$/, '');
-            const btnGroup = parentDoc.createElement('div');
-            btnGroup.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;';
-            const saveBtn = parentDoc.createElement('button');
-            saveBtn.textContent = 'Simpan ke Supabase';
-            saveBtn.style.cssText = 'border:0;background:#15803d;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;font-weight:bold;';
-            const printBtn = parentDoc.createElement('button');
-            printBtn.textContent = 'Cetak';
-            printBtn.style.cssText = 'border:0;background:#1769d2;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;font-weight:bold;';
-            const closeBtn = parentDoc.createElement('button');
-            closeBtn.textContent = 'Tutup';
-            closeBtn.style.cssText = 'border:0;background:#dc2626;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;';
-            btnGroup.append(saveBtn, printBtn, closeBtn);
-            toolbar.append(titleEl, btnGroup);
-            const bodyEl = parentDoc.createElement('div');
-            bodyEl.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;background:#ddd;position:relative;';
-            const statusEl = parentDoc.createElement('div');
-            statusEl.textContent = 'Menyiapkan PDF...';
-            statusEl.style.cssText = 'font:15px sans-serif;color:#333;';
-            bodyEl.appendChild(statusEl);
-            modal.append(toolbar, bodyEl);
-            parentDoc.body.appendChild(modal);
-            closeBtn.onclick = function(){ parentDoc.body.removeChild(modal); };
-            printBtn.onclick = function(){
-              parentDoc.body.removeChild(modal);
-              setTimeout(function(){ window.print(); }, 300);
-            };
-            let pdfBlob = null;
-            if(window.html2pdf){
-              window.html2pdf().set({
-                margin: 0,
-                filename: name,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-              }).from(page).toPdf().get('pdf').then(function(pdf){
-                return pdf.output('blob');
-              }).then(function(blob){
-                pdfBlob = blob;
-                const reader = new FileReader();
-                reader.onload = function(e){
-                  statusEl.style.display = 'none';
-                  const previewIframe = parentDoc.createElement('iframe');
-                  previewIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;background:#fff;';
-                  previewIframe.src = e.target.result;
-                  bodyEl.appendChild(previewIframe);
-                };
-                reader.readAsDataURL(blob);
-              }).catch(function(){
-                statusEl.textContent = 'Gagal generate PDF. Gunakan Cetak.';
-              });
-            } else {
-              statusEl.textContent = 'Library PDF belum siap. Gunakan Cetak.';
-            }
-            saveBtn.onclick = function(){
-              if(!pdfBlob){
-                statusEl.textContent = 'PDF belum siap, tunggu sebentar.';
-                return;
-              }
-              saveBtn.disabled = true;
-              saveBtn.textContent = 'Menyimpan...';
-              const reader = new FileReader();
-              reader.onload = function(e){
-                try{
-                  window.parent.postMessage({
-                    type: 'SMK_SAVE_PDF',
-                    name: name,
-                    dataUrl: e.target.result,
-                    ship: findVessel() ? esc(findVessel().value) : '',
-                    date: findDate() ? esc(findDate().value) : '',
-                    formCode: '${form.code}',
-                    formTitle: '${form.title.replace(/'/g, "\\'")}'
-                  }, '*');
-                  saveBtn.textContent = 'Tersimpan!';
-                }catch(err){
-                  saveBtn.textContent = 'Gagal';
-                  alert('Gagal: ' + err.message);
-                }
-              };
-              reader.readAsDataURL(pdfBlob);
-            };
+            setTimeout(function(){ window.print(); }, 300);
           }
           document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
@@ -299,10 +158,6 @@ export default function SMKReportFormPage() {
               btn.addEventListener('click', savePdf);
             }
           });
-          var lib=document.createElement('script');
-          lib.src='/html2pdf.bundle.min.js';
-          lib.async=true;
-          (document.head||document.documentElement).appendChild(lib);
         })();
       `;
       try {
