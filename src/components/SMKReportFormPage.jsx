@@ -159,10 +159,10 @@ export default function SMKReportFormPage() {
             title.style.cssText = 'font-weight:bold;font-size:14px;margin-bottom:4px;';
             title.textContent = 'Pilih Aksi';
             const btnPreview = document.createElement('button');
-            btnPreview.textContent = 'Preview / Print';
+            btnPreview.textContent = 'Preview';
             btnPreview.style.cssText = 'border:0;border-radius:6px;padding:10px;background:#1769d2;color:#fff;font-weight:bold;cursor:pointer;';
             const btnDownload = document.createElement('button');
-            btnDownload.textContent = 'Download PDF';
+            btnDownload.textContent = 'Simpan & Download PDF';
             btnDownload.style.cssText = 'border:0;border-radius:6px;padding:10px;background:#15803d;color:#fff;font-weight:bold;cursor:pointer;';
             const btnCancel = document.createElement('button');
             btnCancel.textContent = 'Batal';
