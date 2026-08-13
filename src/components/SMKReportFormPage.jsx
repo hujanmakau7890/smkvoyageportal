@@ -138,30 +138,42 @@ export default function SMKReportFormPage() {
                 else t+=' - '+ds;
               } else t+=' - '+ds;
             }
-            return t;
+            return t.replace(/[^a-zA-Z0-9_\\-\\s]/g,'').replace(/\\s+/g,'_') + '.pdf';
           }
           function setT(){
-            try{ document.title=build(); }catch(e){}
+            try{ document.title=build().replace(/\\.pdf$/,''); }catch(e){}
           }
           const vessel=findVessel(), dateField=findDate();
           if(vessel){ vessel.addEventListener('change',setT); vessel.addEventListener('input',setT); }
           if(dateField){ dateField.addEventListener('change',setT); dateField.addEventListener('input',setT); }
           setT();
-          const origPrint=window.print;
-          window.print=function(){
-            setT();
-            setTimeout(function(){ (origPrint||window.print)(); }, 300);
-          };
+          function savePdf(){
+            const name = build();
+            const page = document.querySelector('.page') || document.querySelector('.p') || document.body;
+            if(window.html2pdf){
+              window.html2pdf().set({
+                margin: 0,
+                filename: name,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+              }).from(page).save().catch(function(){});
+            } else {
+              setT();
+              setTimeout(function(){ window.print(); }, 300);
+            }
+          }
           document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
             if(/print/.test(fn)){
               btn.removeAttribute('onclick');
-              btn.addEventListener('click',function(){
-                setT();
-                setTimeout(function(){ (origPrint||window.print)(); }, 300);
-              });
+              btn.addEventListener('click', savePdf);
             }
           });
+          var lib=document.createElement('script');
+          lib.src='/html2pdf.bundle.min.js';
+          lib.async=true;
+          (document.head||document.documentElement).appendChild(lib);
         })();
       `;
       try {
