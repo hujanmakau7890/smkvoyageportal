@@ -150,7 +150,7 @@ export default function SMKReportFormPage() {
           const origPrint=window.print;
           window.print=function(){
             setT();
-            setTimeout(function(){ (origPrint||window.print)(); }, 50);
+            setTimeout(function(){ (origPrint||window.print)(); }, 300);
           };
           document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
@@ -158,7 +158,7 @@ export default function SMKReportFormPage() {
               btn.removeAttribute('onclick');
               btn.addEventListener('click',function(){
                 setT();
-                setTimeout(function(){ (origPrint||window.print)(); }, 50);
+                setTimeout(function(){ (origPrint||window.print)(); }, 300);
               });
             }
           });
