@@ -96,7 +96,9 @@ export default function SMKReportFormPage() {
           }
         }
         document.title = t;
-        if (doc && doc.title) doc.title = t;
+        const titleEl = doc.querySelector('title');
+        if (titleEl) titleEl.textContent = t;
+        if (doc && doc.title !== t) doc.title = t;
       } catch (e) {
         // cross-origin or missing, keep default title
       }
