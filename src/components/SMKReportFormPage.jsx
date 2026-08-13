@@ -204,8 +204,35 @@ export default function SMKReportFormPage() {
             const name = build();
             const page = document.querySelector('.page') || document.querySelector('.p') || document.body;
             if(!page) return;
+            if(window.html2pdf){
+              window.html2pdf().set({
+                margin: 0,
+                filename: name,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+              }).from(page).toPdf().get('pdf').then(function(pdf){
+                return pdf.output('blob');
+              }).then(function(blob){
+                var reader = new FileReader();
+                reader.onload = function(e){
+                  window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF', name: name, dataUrl: e.target.result,
+                    ship: findVessel() ? esc(findVessel().value) : '',
+                    date: findDate() ? esc(findDate().value) : '',
+                    formCode: '${form.code}',
+                    formTitle: '${form.title.replace(/'/g, "\\'")}'
+                  }, '*');
+                  setTimeout(function(){ window.print(); }, 800);
+                };
+                reader.readAsDataURL(blob);
+              }).catch(function(){ setTimeout(function(){ window.print(); }, 300); });
+              return;
+            }
+            setTimeout(function(){ window.print(); }, 300);
+            /* legacy preview code intentionally removed */
             const parentDoc = window.parent.document;
-            const modal = parentDoc.createElement('div');
+            const modal = parentDoc.createElement('div'); /* unreachable */
             modal.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;';
             const toolbar = parentDoc.createElement('div');
             toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;flex-wrap:wrap;gap:8px;';
