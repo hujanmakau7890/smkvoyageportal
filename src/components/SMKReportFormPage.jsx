@@ -150,18 +150,49 @@ export default function SMKReportFormPage() {
           function savePdf(){
             const name = build();
             const page = document.querySelector('.page') || document.querySelector('.p') || document.body;
-            if(window.html2pdf){
-              window.html2pdf().set({
-                margin: 0,
-                filename: name,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-              }).from(page).save().catch(function(){});
-            } else {
+            if(!page) return;
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999;';
+            const box = document.createElement('div');
+            box.style.cssText = 'background:#fff;padding:16px;border-radius:8px;display:flex;flex-direction:column;gap:8px;min-width:220px;box-shadow:0 10px 25px rgba(0,0,0,0.2);';
+            const title = document.createElement('div');
+            title.style.cssText = 'font-weight:bold;font-size:14px;margin-bottom:4px;';
+            title.textContent = 'Pilih Aksi';
+            const btnPreview = document.createElement('button');
+            btnPreview.textContent = 'Preview / Print';
+            btnPreview.style.cssText = 'border:0;border-radius:6px;padding:10px;background:#1769d2;color:#fff;font-weight:bold;cursor:pointer;';
+            const btnDownload = document.createElement('button');
+            btnDownload.textContent = 'Download PDF';
+            btnDownload.style.cssText = 'border:0;border-radius:6px;padding:10px;background:#15803d;color:#fff;font-weight:bold;cursor:pointer;';
+            const btnCancel = document.createElement('button');
+            btnCancel.textContent = 'Batal';
+            btnCancel.style.cssText = 'border:0;border-radius:6px;padding:8px;background:#6b7280;color:#fff;font-weight:bold;cursor:pointer;';
+            box.append(title, btnPreview, btnDownload, btnCancel);
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+            btnPreview.onclick = function(){
+              document.body.removeChild(overlay);
               setT();
               setTimeout(function(){ window.print(); }, 300);
-            }
+            };
+            btnDownload.onclick = function(){
+              document.body.removeChild(overlay);
+              if(window.html2pdf){
+                window.html2pdf().set({
+                  margin: 0,
+                  filename: name,
+                  image: { type: 'jpeg', quality: 0.98 },
+                  html2canvas: { scale: 2, useCORS: true },
+                  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(page).save().catch(function(){});
+              } else {
+                setT();
+                setTimeout(function(){ window.print(); }, 300);
+              }
+            };
+            btnCancel.onclick = function(){
+              document.body.removeChild(overlay);
+            };
           }
           document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
