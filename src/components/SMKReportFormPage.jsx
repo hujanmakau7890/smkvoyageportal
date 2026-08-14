@@ -52,7 +52,34 @@ export default function SMKReportFormPage() {
       const uploadUrl = (import.meta.env.VITE_UPLOAD_URL || "https://upload.voyageportal.my.id").replace(/\/+$/, "");
 
       const iframe = iframeRef.current;
-      const html = iframe?.contentDocument?.documentElement?.outerHTML || "";
+      const sourceDoc = iframe?.contentDocument;
+      let html = "";
+      if (sourceDoc) {
+        const clone = sourceDoc.documentElement.cloneNode(true);
+        // Jangan jalankan ulang script form saat Chromium merender HTML.
+        clone.querySelectorAll("script").forEach((node) => node.remove());
+        // Salin nilai kontrol form dari property aktif ke atribut HTML.
+        const srcFields = sourceDoc.querySelectorAll("input, textarea, select");
+        const dstFields = clone.querySelectorAll("input, textarea, select");
+        srcFields.forEach((src, i) => {
+          const dst = dstFields[i];
+          if (!dst) return;
+          if (src.tagName === "SELECT") {
+            Array.from(dst.options).forEach((opt, j) => {
+              opt.selected = Boolean(src.options[j]?.selected);
+              if (opt.selected) opt.setAttribute("selected", "selected");
+              else opt.removeAttribute("selected");
+            });
+          } else if (src.type === "checkbox" || src.type === "radio") {
+            if (src.checked) dst.setAttribute("checked", "checked");
+            else dst.removeAttribute("checked");
+          } else {
+            dst.setAttribute("value", src.value || "");
+            if (dst.tagName === "TEXTAREA") dst.textContent = src.value || "";
+          }
+        });
+        html = `<!doctype html>${clone.outerHTML}`;
+      }
 
       const res = await fetch(`${uploadUrl}/`, {
         method: "POST",
