@@ -71,7 +71,7 @@ export default function SMKReportFormPage() {
       const path = `${safeShip}/${year}/${month}/${safeName}`;
       const { error: upErr } = await supabase.storage.from("smk-pdf").upload(path, blob, {
         contentType: "application/pdf",
-        upsert: false,
+        upsert: true,
       });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from("smk-pdf").getPublicUrl(path);
