@@ -53,8 +53,7 @@ export default function SMKReportFormPage() {
   // Save PDF from iframe directly to Laporan folder via upload endpoint
   async function handleSavePdf(payload) {
     try {
-      const html = payload.html || null;
-      if (!html) throw new Error("HTML form tidak tersedia");
+      const blob = dataUrlToBlob(payload.dataUrl);
       const safeName = (payload.name || `smk_${Date.now()}.pdf`).replace(/[^a-zA-Z0-9._-]/g, "_");
       const safeShip = (payload.ship || "Tanpa_Nama_Kapal")
         .replace(/[^a-zA-Z0-9._-]/g, "_")
@@ -73,9 +72,8 @@ export default function SMKReportFormPage() {
           "X-Year": year,
           "X-Month": month,
           "X-Filename": safeName,
-          "Content-Type": "text/html; charset=utf-8",
         },
-        body: html,
+        body: blob,
       });
       const result = await res.json().catch(() => ({}));
       if (!res.ok || !result.ok) throw new Error(result.error || `HTTP ${res.status}`);
@@ -196,36 +194,125 @@ export default function SMKReportFormPage() {
           if(vessel){ vessel.addEventListener('change',setT); vessel.addEventListener('input',setT); }
           if(dateField){ dateField.addEventListener('change',setT); dateField.addEventListener('input',setT); }
           setT();
-          function syncFormValues(){
-            document.querySelectorAll('input,select,textarea').forEach(function(el){
-              if(el.tagName==='TEXTAREA'){ el.textContent = el.value; }
-              else if(el.tagName==='SELECT'){
-                Array.prototype.forEach.call(el.options,function(o){ o.selected = (o.value===el.value); });
-              }
-              else if(el.type==='checkbox'||el.type==='radio'){
-                if(el.checked) el.setAttribute('checked',''); else el.removeAttribute('checked');
-              }
-              else { el.setAttribute('value', el.value); }
-            });
-          }
-          function getHtml(){
-            syncFormValues();
-            return '<!DOCTYPE html>'+document.documentElement.outerHTML;
-          }
           function savePdf(){
             setT();
             const name = build();
-            try{
-              const html = getHtml();
-              window.parent.postMessage({
-                type: 'SMK_SAVE_PDF', name: name, html: html,
-                ship: findVessel() ? esc(findVessel().value) : '',
-                date: findDate() ? esc(findDate().value) : '',
-                formCode: '${form.code}',
-                formTitle: '${form.title.replace(/'/g, "\\'")}'
-              }, '*');
-            }catch(e){ /* tetap buka print */ }
-            setTimeout(function(){ window.print(); }, 800);
+            const page = document.querySelector('.page') || document.querySelector('.p') || document.body;
+            if(!page) return;
+            if(window.html2pdf){
+              window.html2pdf().set({
+                margin: 0,
+                filename: name,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+              }).from(page).toPdf().get('pdf').then(function(pdf){
+                return pdf.output('blob');
+              }).then(function(blob){
+                var reader = new FileReader();
+                reader.onload = function(e){
+                  window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF', name: name, dataUrl: e.target.result,
+                    ship: findVessel() ? esc(findVessel().value) : '',
+                    date: findDate() ? esc(findDate().value) : '',
+                    formCode: '${form.code}',
+                    formTitle: '${form.title.replace(/'/g, "\\'")}'
+                  }, '*');
+                  setTimeout(function(){ window.print(); }, 800);
+                };
+                reader.readAsDataURL(blob);
+              }).catch(function(){ setTimeout(function(){ window.print(); }, 300); });
+              return;
+            }
+            setTimeout(function(){ window.print(); }, 300);
+            /* legacy preview code intentionally removed */
+            const parentDoc = window.parent.document;
+            const modal = parentDoc.createElement('div'); /* unreachable */
+            modal.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99999;display:flex;flex-direction:column;';
+            const toolbar = parentDoc.createElement('div');
+            toolbar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #ccc;background:#f5f5f5;flex-shrink:0;flex-wrap:wrap;gap:8px;';
+            const titleEl = parentDoc.createElement('strong');
+            titleEl.textContent = 'Preview PDF - ' + build().replace(/\.pdf$/, '');
+            const btnGroup = parentDoc.createElement('div');
+            btnGroup.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;';
+            const saveBtn = parentDoc.createElement('button');
+            saveBtn.textContent = 'Simpan ke Supabase';
+            saveBtn.style.cssText = 'border:0;background:#15803d;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;font-weight:bold;';
+            const printBtn = parentDoc.createElement('button');
+            printBtn.textContent = 'Cetak';
+            printBtn.style.cssText = 'border:0;background:#1769d2;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;font-weight:bold;';
+            const closeBtn = parentDoc.createElement('button');
+            closeBtn.textContent = 'Tutup';
+            closeBtn.style.cssText = 'border:0;background:#dc2626;color:#fff;padding:8px 12px;border-radius:4px;cursor:pointer;';
+            btnGroup.append(saveBtn, printBtn, closeBtn);
+            toolbar.append(titleEl, btnGroup);
+            const bodyEl = parentDoc.createElement('div');
+            bodyEl.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;background:#ddd;position:relative;';
+            const statusEl = parentDoc.createElement('div');
+            statusEl.textContent = 'Menyiapkan PDF...';
+            statusEl.style.cssText = 'font:15px sans-serif;color:#333;';
+            bodyEl.appendChild(statusEl);
+            modal.append(toolbar, bodyEl);
+            parentDoc.body.appendChild(modal);
+            closeBtn.onclick = function(){ parentDoc.body.removeChild(modal); };
+            printBtn.onclick = function(){
+              parentDoc.body.removeChild(modal);
+              setTimeout(function(){ window.print(); }, 300);
+            };
+            let pdfBlob = null;
+            if(window.html2pdf){
+              window.html2pdf().set({
+                margin: 0,
+                filename: name,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+              }).from(page).toPdf().get('pdf').then(function(pdf){
+                return pdf.output('blob');
+              }).then(function(blob){
+                pdfBlob = blob;
+                const reader = new FileReader();
+                reader.onload = function(e){
+                  statusEl.style.display = 'none';
+                  const previewIframe = parentDoc.createElement('iframe');
+                  previewIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;background:#fff;';
+                  previewIframe.src = e.target.result;
+                  bodyEl.appendChild(previewIframe);
+                };
+                reader.readAsDataURL(blob);
+              }).catch(function(){
+                statusEl.textContent = 'Gagal generate PDF. Gunakan Cetak.';
+              });
+            } else {
+              statusEl.textContent = 'Library PDF belum siap. Gunakan Cetak.';
+            }
+            saveBtn.onclick = function(){
+              if(!pdfBlob){
+                statusEl.textContent = 'PDF belum siap, tunggu sebentar.';
+                return;
+              }
+              saveBtn.disabled = true;
+              saveBtn.textContent = 'Menyimpan...';
+              const reader = new FileReader();
+              reader.onload = function(e){
+                try{
+                  window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: name,
+                    dataUrl: e.target.result,
+                    ship: findVessel() ? esc(findVessel().value) : '',
+                    date: findDate() ? esc(findDate().value) : '',
+                    formCode: '${form.code}',
+                    formTitle: '${form.title.replace(/'/g, "\\'")}'
+                  }, '*');
+                  saveBtn.textContent = 'Tersimpan!';
+                }catch(err){
+                  saveBtn.textContent = 'Gagal';
+                  alert('Gagal: ' + err.message);
+                }
+              };
+              reader.readAsDataURL(pdfBlob);
+            };
           }
           document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
