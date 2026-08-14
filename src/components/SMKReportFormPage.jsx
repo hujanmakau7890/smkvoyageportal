@@ -75,22 +75,7 @@ export default function SMKReportFormPage() {
       });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from("smk-pdf").getPublicUrl(path);
-      const ts = payload.date
-        ? new Date(payload.date.replace(/(\d{2})-(\d{2})-(\d{4})/, "$3-$2-$1")).toISOString()
-        : new Date().toISOString();
-      const { error: insErr } = await supabase.from("reports").insert([
-        {
-          user_id: user.id,
-          ship: payload.ship || "SMK",
-          type: "SMK",
-          ts,
-          rmk: `${payload.formCode || ""} ${payload.formTitle || ""}`.trim(),
-          form_code: payload.formCode || null,
-          pdf_url: publicUrl,
-        },
-      ]);
-      if (insErr) throw insErr;
-      alert(`PDF tersimpan ke Supabase:\n${payload.name}\n\n${publicUrl}`);
+      alert(`PDF tersimpan ke Supabase Storage:\n${payload.name}\n\n${publicUrl}`);
     } catch (err) {
       alert("Gagal menyimpan PDF: " + err.message);
     }
