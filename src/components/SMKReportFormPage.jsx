@@ -68,6 +68,28 @@ export default function SMKReportFormPage() {
       });
       const result = await res.json().catch(() => ({}));
       if (!res.ok || !result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+
+      // Auto-download PDF
+      try {
+        const dlUrl = `${uploadUrl}/download?path=${encodeURIComponent(result.path)}`;
+        const dlRes = await fetch(dlUrl, {
+          headers: { "X-Token": "smk-laporan-2026" }
+        });
+        if (dlRes.ok) {
+          const blob = await dlRes.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = safeName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+      } catch (e) {
+        // ignore download failure
+      }
+
       alert(`PDF tersimpan ke Laporan:\n${result.path}`);
     } catch (err) {
       alert("Gagal menyimpan PDF: " + err.message);
