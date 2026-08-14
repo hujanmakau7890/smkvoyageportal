@@ -50,14 +50,9 @@ export default function SMKReportFormPage() {
     return new Blob([arr], { type: mime });
   }
 
-  // Save PDF from iframe to Supabase Storage + reports table
+  // Save PDF from iframe directly to Laporan folder via upload endpoint
   async function handleSavePdf(payload) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Login dulu untuk menyimpan ke Supabase.");
-        return;
-      }
       const blob = dataUrlToBlob(payload.dataUrl);
       const safeName = (payload.name || `smk_${Date.now()}.pdf`).replace(/[^a-zA-Z0-9._-]/g, "_");
       const safeShip = (payload.ship || "Tanpa_Nama_Kapal")
@@ -68,14 +63,21 @@ export default function SMKReportFormPage() {
       const dateMatch = String(payload.date || "").match(/^(\d{2})-(\d{2})-(\d{4})$/);
       const year = dateMatch ? dateMatch[3] : String(new Date().getFullYear());
       const month = dateMatch ? MONTHS[Number(dateMatch[2]) - 1] : MONTHS[new Date().getMonth()];
-      const path = `${safeShip}/${year}/${month}/${safeName}`;
-      const { error: upErr } = await supabase.storage.from("smk-pdf").upload(path, blob, {
-        contentType: "application/pdf",
-        upsert: true,
+      const uploadUrl = (import.meta.env.VITE_UPLOAD_URL || "https://upload.voyageportal.my.id").replace(/\/+$/, "");
+      const res = await fetch(`${uploadUrl}/`, {
+        method: "POST",
+        headers: {
+          "X-Token": "smk-laporan-2026",
+          "X-Ship": safeShip,
+          "X-Year": year,
+          "X-Month": month,
+          "X-Filename": safeName,
+        },
+        body: blob,
       });
-      if (upErr) throw upErr;
-      const { data: { publicUrl } } = supabase.storage.from("smk-pdf").getPublicUrl(path);
-      alert(`PDF tersimpan ke Supabase Storage:\n${payload.name}\n\n${publicUrl}`);
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || !result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+      alert(`PDF tersimpan ke Laporan:\n${result.path}`);
     } catch (err) {
       alert("Gagal menyimpan PDF: " + err.message);
     }
