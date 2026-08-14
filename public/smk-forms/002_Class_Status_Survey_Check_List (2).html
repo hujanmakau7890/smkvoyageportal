@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>002 Class Status Survey Check List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Sembunyikan elemen input bawaan browser secara absolut */
+        ::-webkit-calendar-picker-indicator,
+        ::-webkit-inner-spin-button,
+        ::-webkit-outer-spin-button,
+        ::-webkit-clear-button {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            -webkit-appearance: none !important;
+            position: absolute !important;
+            z-index: -9999 !important;
+        }
+
+        /* Print Styling */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            
+            table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                min-width: 0 !important;
+                display: table !important;
+            }
+            .table-responsive {
+                overflow: visible !important;
+                display: block !important;
+                width: 100% !important;
+            }
+            
+            th, td {
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                min-width: 0 !important;
+                padding: 1px !important;
+            }
+
+            /* Proposi kolom untuk cetak PDF */
+            th:nth-child(1), td:nth-child(1) { width: 5% !important; }
+            th:nth-child(2), td:nth-child(2) { width: 35% !important; }
+            th:nth-child(3), td:nth-child(3) { width: 15% !important; }
+            th:nth-child(4), td:nth-child(4) { width: 15% !important; }
+            th:nth-child(5), td:nth-child(5) { width: 15% !important; }
+            th:nth-child(6), td:nth-child(6) { width: 15% !important; }
+
+            .no-print { display: none !important; }
+            body { font-size: 10px; background-color: white; padding: 0 !important; margin: 0 !important; }
+            .print\:shadow-none { box-shadow: none !important; }
+            .print\:p-0 { padding: 0 !important; }
+            .max-w-4xl { max-width: 100% !important; }
+            
+            td input[type="text"] {
+                color: black !important;
+                font-size: 10px !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                min-height: 0 !important;
+                height: 100% !important;
+                border: none !important;
+            }
+
+            /* Override textarea border on print just like inputs */
+            td textarea {
+                color: black !important;
+                font-size: 10px !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                min-height: 0 !important;
+                height: auto !important;
+                border: none !important;
+                overflow: hidden !important;
+            }
+            ::-webkit-input-placeholder, :-moz-placeholder, ::-moz-placeholder, :-ms-input-placeholder {
+                color: transparent !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+            }
+            input::placeholder {
+                color: transparent !important;
+                opacity: 0 !important;
+            }
+
+            /* Kembalikan grid ke row untuk print header */
+            .print-row {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+            }
+            .print-row > div:nth-child(1) { width: 25% !important; text-align: left !important; }
+            .print-row > div:nth-child(2) { width: 50% !important; text-align: center !important; }
+            .print-row > div:nth-child(3) { width: 25% !important; text-align: right !important; }
+            .print-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
+            }
+            .print-right { text-align: right !important; }
+        }
+
+        /* Table Base Styling */
+        .text-xs { font-size: 0.70rem; line-height: 1.1rem; word-break: break-word; white-space: normal; }
+        .text-sm { font-size: 0.8rem; line-height: 1.2rem; word-break: break-word; white-space: normal; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 0;
+            font-size: 11px;
+            vertical-align: middle;
+            text-align: center;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+            padding: 4px;
+        }
+        td input[type="text"] {
+            width: 100%;
+            height: 100%;
+            min-height: 28px;
+            box-sizing: border-box;
+            border: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+            padding: 4px;
+        }
+
+        /* Responsive Mobile Styling */
+        @media screen and (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+                display: block;
+                width: 100%;
+            }
+            table.table-fixed {
+                table-layout: auto !important;
+                min-width: 750px; 
+            }
+            th, td {
+                min-width: 90px; 
+                white-space: nowrap; 
+            }
+            th:nth-child(2), td:nth-child(2) {
+                min-width: 250px;
+                white-space: normal; 
+            }
+            td input {
+                width: 100% !important;
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-200 p-4 sm:p-8 font-sans text-gray-800">
+    <div class="max-w-4xl mx-auto bg-white p-6 sm:p-10 shadow-lg print:shadow-none print:p-0">
+        <!-- Print Button -->
+        <div class="flex justify-end mb-6 no-print">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded flex items-center shadow transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="border-2 border-black p-2 mb-4">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-start border-b-2 border-black pb-2 mb-2 space-y-2 md:space-y-0 print-row relative">
+                <div class="w-full md:w-1/4 text-center md:text-left">
+                    <h1 class="text-sm font-bold uppercase leading-tight">PT Mentari Mas Multimoda</h1>
+                </div>
+                <div class="w-full md:w-1/2 text-center">
+                    <h2 class="text-base font-bold leading-tight">002<br>CHECKLIST KLASS STATUS SURVEY<br><span class="text-xs font-normal">CLASS STATUS SURVEY CHECK LIST</span></h2>
+                </div>
+                <div class="w-full md:w-1/4 text-center md:text-right text-xs font-semibold print-right relative">
+                    <!-- Status indicator like in Excel -->
+                    <div class="absolute -top-1 right-12 md:right-0 md:-top-2 border border-black flex print-right-box" style="right: 0;">
+                        <div class="w-6 h-6 border-r border-black flex items-center justify-center font-bold">S</div>
+                        <div class="px-2 h-6 flex items-center justify-center font-bold">SET</div>
+                    </div>
+                    
+                    <div class="mt-8 md:mt-6">
+                        <p>Release:</p>
+                        <p>Rev. 0:</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row md:grid md:grid-cols-2 gap-4 print-grid">
+                <div class="flex items-center">
+                    <label class="font-bold text-sm mr-2 w-10 md:w-16">MV :</label>
+                    <input type="text" class="flex-grow border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm font-bold uppercase">
+                </div>
+                <div class="flex items-center">
+                    <label class="font-bold text-sm mr-2 w-10 md:w-16 md:text-right print-right">Date :</label>
+                    <input type="text" placeholder="DD-MM-YYYY" class="flex-grow border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm date-mask">
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive mb-4">
+            <table class="table-fixed w-full">
+                <thead>
+                    <tr>
+                        <th class="w-[5%]">No.</th>
+                        <th class="w-[35%] text-left px-2">Type Survey<br><span class="font-normal text-[9px]">Survey Type</span></th>
+                        <th class="w-[15%]">Survey Terakhir<br><span class="font-normal text-[9px]">Last Survey</span></th>
+                        <th class="w-[15%]">Survey YAD 1<br><span class="font-normal text-[9px]">Next Survey 1</span></th>
+                        <th class="w-[15%]">Survey YAD 2<br><span class="font-normal text-[9px]">Next Survey 2</span></th>
+                        <th class="w-[15%]">Keterangan<br><span class="font-normal text-[9px]">Remarks</span></th>
+                    </tr>
+                </thead>
+                <tbody id="survey-tbody">
+                    <!-- JS Injection -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer / Signature -->
+        <div class="mt-8 mb-4">
+            <div class="flex justify-between items-end">
+                <div class="w-1/2">
+                    <p class="text-xs font-bold italic">* Selalu di update setiap ada perubahan data status survey / Always up date every change of survey status data</p>
+                </div>
+                <div class="w-1/3 text-center pt-2 flex flex-col justify-between">
+                    <p class="text-sm font-bold">Prepared by Master,<br><span class="font-normal text-xs">Signature & Stamp</span></p>
+                    
+                    <!-- Signature Component -->
+                    <div class="relative flex-grow flex items-center justify-center my-2 min-h-[4rem] sig-container">
+                        <label class="cursor-pointer text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-2 py-1 no-print text-gray-600 transition-colors">
+                            + Add TTD
+                            <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-002">
+                        </label>
+                        <div id="sig-preview-002" class="hidden relative w-full h-full flex items-center justify-center">
+                            <img src="" class="max-h-16 max-w-full object-contain" alt="Signature">
+                            <button type="button" class="absolute top-0 right-0 md:-right-4 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-002">&times;</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-sm uppercase px-1">
+                        <p class="text-xs font-bold mt-1">Name of Master</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const surveys = [
+            { no: "1", label: "Survey Pembaharuan / Special Survey", isIndent: false },
+            { no: "2", label: "Survey Tahunan / Annual Survey", isIndent: false },
+            { no: "3", label: "Survey Pengedokan / Docking Survey", isIndent: false },
+            { no: "4", label: "Survey Antara / Intermediate Survey", isIndent: false },
+            { no: "5", label: "Propeller Shaft Survey (Fwd + Aft)", isIndent: false },
+            { no: "6", label: "Boiler Survey", isIndent: false },
+            { no: "7", label: "Load Line Cert (ILLC)", isIndent: false },
+            { no: "", label: "* Periodica Load Line insp due with in", isIndent: true },
+            { no: "9", label: "Ship Management Certificate (SMC)", isIndent: false },
+            { no: "", label: "* Intermediate Verification", isIndent: true },
+            { no: "", label: "* Renewal Verification", isIndent: true }
+        ];
+
+        // Ensure we add blank rows to match Excel structure if needed, making it total 18 rows
+        const emptyRowsNeeded = 18 - surveys.length;
+        for(let i=0; i < emptyRowsNeeded; i++){
+            surveys.push({ no: "", label: "", isIndent: false });
+        }
+
+        const tbody = document.getElementById('survey-tbody');
+        const inputClass = "w-full focus:bg-gray-50";
+        const dateInputClass = "w-full focus:bg-gray-50 date-mask";
+        
+        surveys.forEach((item) => {
+            const tr = document.createElement('tr');
+            
+            // Format padding if it's an indented sub-item
+            const noInputClass = "w-full focus:bg-gray-50 text-center font-bold font-sans bg-transparent outline-none";
+            const labelInputClass = "w-full h-full focus:bg-gray-50 bg-transparent outline-none resize-none overflow-hidden " + 
+                (item.isIndent 
+                ? "text-[10px] sm:text-xs font-semibold leading-tight italic text-gray-700 pt-1" 
+                : "text-[10px] sm:text-xs font-semibold leading-tight pt-1");
+
+            // Use exact structure but replace static text with inputs/textareas that stretch
+            tr.innerHTML = `
+                <td class="p-2 align-middle">
+                    <input type="text" value="${item.no}" class="${noInputClass}">
+                </td>
+                <td class="align-middle ${item.isIndent ? 'pl-6' : 'px-2'}">
+                    <textarea class="${labelInputClass}" rows="2" style="min-height: 2.5rem;">${item.label}</textarea>
+                </td>
+                <td><input type="text" placeholder="DD-MM-YYYY" class="${dateInputClass}"></td>
+                <td><input type="text" placeholder="DD-MM-YYYY" class="${dateInputClass}"></td>
+                <td><input type="text" placeholder="DD-MM-YYYY" class="${dateInputClass}"></td>
+                <td><input type="text" class="${inputClass} text-left px-2" style="text-align: left;"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Auto-resize textareas to fit content
+        document.querySelectorAll('textarea').forEach(el => {
+            el.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            // Trigger once on load
+            if(el.value) {
+                el.style.height = (el.scrollHeight) + 'px';
+            }
+        });
+
+        // Date mask (DD-MM-YYYY)
+        document.querySelectorAll('.date-mask').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let v = e.target.value.replace(/\D/g, '');
+                if (v.length > 8) v = v.slice(0, 8);
+                if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+                if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+                e.target.value = v;
+            });
+        });
+
+        // Signature Upload Logic
+        document.querySelectorAll('.sig-upload').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const targetId = this.getAttribute('data-target');
+                    const previewDiv = document.getElementById(targetId);
+                    const containerDiv = previewDiv.closest('.sig-container');
+                    const img = previewDiv.querySelector('img');
+                    const label = containerDiv.querySelector('label');
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        img.src = event.target.result;
+                        label.classList.add('hidden');
+                        previewDiv.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        document.querySelectorAll('.remove-sig').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const previewDiv = document.getElementById(targetId);
+                const containerDiv = previewDiv.closest('.sig-container');
+                const img = previewDiv.querySelector('img');
+                const label = containerDiv.querySelector('label');
+                const fileInput = label.querySelector('.sig-upload');
+
+                img.src = '';
+                fileInput.value = '';
+                previewDiv.classList.add('hidden');
+                label.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
