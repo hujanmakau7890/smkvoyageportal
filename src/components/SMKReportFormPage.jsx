@@ -201,11 +201,12 @@ export default function SMKReportFormPage() {
             if(!page) return;
             if(window.html2pdf){
               window.html2pdf().set({
-                margin: 0,
+                margin: [5, 5, 5, 5],
                 filename: name,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', hotfixes: ['px_scaling'] },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
               }).from(page).toPdf().get('pdf').then(function(pdf){
                 return pdf.output('blob');
               }).then(function(blob){
@@ -262,11 +263,12 @@ export default function SMKReportFormPage() {
             let pdfBlob = null;
             if(window.html2pdf){
               window.html2pdf().set({
-                margin: 0,
+                margin: [5, 5, 5, 5],
                 filename: name,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', hotfixes: ['px_scaling'] },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
               }).from(page).toPdf().get('pdf').then(function(pdf){
                 return pdf.output('blob');
               }).then(function(blob){
