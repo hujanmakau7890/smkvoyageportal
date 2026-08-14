@@ -60,7 +60,15 @@ export default function SMKReportFormPage() {
       }
       const blob = dataUrlToBlob(payload.dataUrl);
       const safeName = (payload.name || `smk_${Date.now()}.pdf`).replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `smk/${user.id}/${Date.now()}_${safeName}`;
+      const safeShip = (payload.ship || "Tanpa_Nama_Kapal")
+        .replace(/[^a-zA-Z0-9._-]/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_|_$/g, "") || "Tanpa_Nama_Kapal";
+      const MONTHS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const dateMatch = String(payload.date || "").match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      const year = dateMatch ? dateMatch[3] : String(new Date().getFullYear());
+      const month = dateMatch ? MONTHS[Number(dateMatch[2]) - 1] : MONTHS[new Date().getMonth()];
+      const path = `${safeShip}/${year}/${month}/${safeName}`;
       const { error: upErr } = await supabase.storage.from("smk-pdf").upload(path, blob, {
         contentType: "application/pdf",
         upsert: false,
