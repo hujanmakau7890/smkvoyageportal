@@ -15,6 +15,7 @@ export default function SMKReportFormPage() {
   const [selectedForm, setSelectedForm] = useState(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("Semua");
+  const [successMessage, setSuccessMessage] = useState("");
   const iframeRef = useRef(null);
 
   useEffect(() => {
@@ -149,7 +150,8 @@ export default function SMKReportFormPage() {
         // ignore download failure
       }
 
-      alert(`PDF tersimpan ke Laporan:\n${result.path}`);
+      setSuccessMessage("Download & Upload file sukses");
+      setTimeout(() => setSuccessMessage(""), 5000);
     } catch (err) {
       alert("Gagal menyimpan PDF: " + err.message);
     }
@@ -355,6 +357,11 @@ export default function SMKReportFormPage() {
   if (selectedForm) {
     return (
       <div style={{ height: "calc(100vh - 92px)", display: "flex", flexDirection: "column", gap: 10 }}>
+        {successMessage && (
+          <div role="status" style={{ padding: "11px 14px", borderRadius: 8, background: "#dcfce7", border: "1px solid #86efac", color: "#166534", fontWeight: 700, fontSize: 13 }}>
+            {successMessage}
+          </div>
+        )}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
           <button
             type="button"
@@ -379,6 +386,11 @@ export default function SMKReportFormPage() {
 
   return (
     <div>
+      {successMessage && (
+        <div role="status" style={{ marginBottom: 12, padding: "11px 14px", borderRadius: 8, background: "#dcfce7", border: "1px solid #86efac", color: "#166534", fontWeight: 700, fontSize: 13 }}>
+          {successMessage}
+        </div>
+      )}
       <h2 style={{ margin: "0 0 5px", color: colors.text, fontSize: 20 }}>Buat Laporan SMK</h2>
       <p style={{ margin: "0 0 14px", color: colors.muted, fontSize: 12 }}>Pilih form laporan yang akan dibuat.</p>
 
