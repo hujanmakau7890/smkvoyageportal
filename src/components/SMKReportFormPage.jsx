@@ -93,31 +93,6 @@ export default function SMKReportFormPage() {
           }
         }
 
-        // Aturan umum untuk semua form saat Chromium membuat PDF:
-        // placeholder kosong dan panah native dropdown tidak ikut tercetak.
-        const printStyle = clone.ownerDocument.createElement("style");
-        printStyle.textContent = `
-          @media print {
-            input::placeholder, textarea::placeholder {
-              color: transparent !important;
-              opacity: 0 !important;
-            }
-            select {
-              appearance: none !important;
-              -webkit-appearance: none !important;
-              background-image: none !important;
-              color: inherit !important;
-            }
-          }
-        `;
-        (clone.head || clone.documentElement).appendChild(printStyle);
-        clone.querySelectorAll("select").forEach((select) => {
-          if (!select.value) {
-            const selected = select.options[select.selectedIndex];
-            if (selected) selected.textContent = "";
-          }
-        });
-
         const DEDUP_FORMS = new Set(["010_Risk_Assessment.html"]);
         if (selectedForm?.file && DEDUP_FORMS.has(selectedForm.file) && sourceDoc) {
           const tbody = clone.querySelector("tbody#rows");
