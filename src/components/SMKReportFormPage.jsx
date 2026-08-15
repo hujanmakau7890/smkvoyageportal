@@ -78,6 +78,38 @@ export default function SMKReportFormPage() {
             if (dst.tagName === "TEXTAREA") dst.textContent = src.value || "";
           }
         });
+
+        const LANDSCAPE_FORMS = new Set(["010_Risk_Assessment.html"]);
+        if (selectedForm?.file && LANDSCAPE_FORMS.has(selectedForm.file)) {
+          let styleEl = clone.querySelector("style[data-smk-orientation]");
+          if (!styleEl && sourceDoc) {
+            styleEl = sourceDoc.createElement("style");
+            styleEl.setAttribute("data-smk-orientation", "landscape");
+            (clone.head || clone.documentElement).appendChild(styleEl);
+          }
+          if (styleEl) {
+            styleEl.textContent = "@page { size: A4 landscape !important; margin: 7mm !important; }";
+          }
+        }
+
+        const DEDUP_FORMS = new Set(["010_Risk_Assessment.html"]);
+        if (selectedForm?.file && DEDUP_FORMS.has(selectedForm.file) && sourceDoc) {
+          const tbody = clone.querySelector("tbody#rows");
+          if (tbody) {
+            const seen = new Set();
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            for (let i = rows.length - 1; i >= 0; i--) {
+              const firstInput = rows[i].querySelector("td:first-child input");
+              const key = firstInput ? firstInput.getAttribute("value") : null;
+              if (key && seen.has(key)) {
+                rows[i].remove();
+              } else if (key) {
+                seen.add(key);
+              }
+            }
+          }
+        }
+
         html = `<!doctype html>${clone.outerHTML}`;
       }
 
