@@ -7,7 +7,8 @@ const CURRENT_YEAR = 2026;
 const ADMIN_EMAIL = "dwi.wahyu@mentarimas.id";
 
 const FORMS = [
-  {code:"009",   dept:"Deck",   pic:"Master", ket:"BLN"},
+  {code:"009 A", dept:"Deck",   pic:"Master", ket:"BLN"},
+  {code:"009 B", dept:"Deck",   pic:"Master", ket:"TRW"},
   {code:"018",   dept:"Deck",   pic:"CO",     ket:"BLN"},
   {code:"022",   dept:"Deck",   pic:"Master", ket:"BLN"},
   {code:"023",   dept:"Deck",   pic:"Master", ket:"BLN"},
