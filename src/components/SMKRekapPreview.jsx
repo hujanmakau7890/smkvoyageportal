@@ -326,6 +326,7 @@ function NeedApprovalView({ onApproveSuccess }) {
   const [loading, setLoading] = useState(true);
   const [filesByVessel, setFilesByVessel] = useState({});
   const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
   const baseUrl = uploadUrl.replace(/\/+$/, "");
@@ -382,7 +383,8 @@ function NeedApprovalView({ onApproveSuccess }) {
           dateStr: dateStr,
         });
         
-        alert(`File berhasil di-approve!\n\n(Debug) Data direkap:\nKapal: ${vesselName}\nForm: ${formCode}\nBulan: ${dateStr}`);
+        setSuccessMsg("Approval sukses!");
+        setTimeout(() => setSuccessMsg(""), 3000);
       } catch (e) {
         console.warn("[Approve] Rekap update failed:", e.message);
         alert(`File di-approve, TAPI gagal update rekap:\n${e.message}`);
@@ -416,7 +418,14 @@ function NeedApprovalView({ onApproveSuccess }) {
   if (error) return <div style={{padding: 20, color: "red"}}>Error: {error}</div>;
 
   return (
-    <div style={{padding: 20, background: "#f8fafc"}}>
+    <div style={{padding: 20, background: "#f8fafc", position: "relative"}}>
+      {successMsg && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div role="status" style={{ padding: "20px 32px", borderRadius: 12, background: "#dcfce7", border: "2px solid #4ade80", color: "#166534", fontWeight: 800, fontSize: 18, boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+            ✓ {successMsg}
+          </div>
+        </div>
+      )}
       <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16}}>
         <h2 style={{fontSize: 18, fontWeight: 800, color: "#1e3a5f", margin: 0}}>📋 Menunggu Persetujuan (Need Approval)</h2>
         <button onClick={fetchFiles} style={{padding: "6px 12px", fontSize: 12, borderRadius: 4, border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer"}}>↻ Refresh</button>

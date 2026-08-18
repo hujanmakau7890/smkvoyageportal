@@ -398,8 +398,10 @@ export default function SMKReportFormPage() {
     return (
       <div style={{ height: "calc(100vh - 92px)", display: "flex", flexDirection: "column", gap: 10 }}>
         {successMessage && (
-          <div role="status" style={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", zIndex: 20, padding: "11px 18px", borderRadius: 8, background: "rgba(15, 23, 42, 0.92)", border: "1px solid #4ade80", color: "#86efac", fontWeight: 700, fontSize: 13, boxShadow: "0 4px 16px rgba(0,0,0,0.25)", whiteSpace: "nowrap" }}>
-            {successMessage}
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div role="status" style={{ padding: "20px 32px", borderRadius: 12, background: "#dcfce7", border: "2px solid #4ade80", color: "#166534", fontWeight: 800, fontSize: 18, boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+              ✓ {successMessage}
+            </div>
           </div>
         )}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
@@ -427,8 +429,10 @@ export default function SMKReportFormPage() {
   return (
     <div>
       {successMessage && (
-        <div role="status" style={{ marginBottom: 12, padding: "11px 14px", borderRadius: 8, background: "#dcfce7", border: "1px solid #86efac", color: "#166534", fontWeight: 700, fontSize: 13 }}>
-          {successMessage}
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div role="status" style={{ padding: "20px 32px", borderRadius: 12, background: "#dcfce7", border: "2px solid #4ade80", color: "#166534", fontWeight: 800, fontSize: 18, boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }}>
+            ✓ {successMessage}
+          </div>
         </div>
       )}
       <h2 style={{ margin: "0 0 5px", color: colors.text, fontSize: 20 }}>Buat Laporan SMK</h2>
