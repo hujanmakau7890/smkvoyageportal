@@ -282,6 +282,12 @@ export default function SMKReportFormPage() {
           if(dateField){ dateField.addEventListener('change',setT); dateField.addEventListener('input',setT); }
           setT();
           function savePdf(){
+            const vessel=findVessel();
+            const val=vessel?esc(vessel.value):"";
+            if(!val){
+              alert('Isi nama kapal sebelum menyimpan/print PDF.');
+              return;
+            }
             setT();
             const name = build();
             window.parent.postMessage({
@@ -296,7 +302,15 @@ export default function SMKReportFormPage() {
             const fn=btn.getAttribute('onclick')||'';
             if(/print/.test(fn)){
               btn.removeAttribute('onclick');
-              btn.addEventListener('click', savePdf);
+              btn.addEventListener('click', function(){
+                const vessel=findVessel();
+                const val=vessel?esc(vessel.value):"";
+                if(!val){
+                  alert('Isi nama kapal sebelum menyimpan/print PDF.');
+                  return;
+                }
+                savePdf();
+              });
             }
           });
         })();
