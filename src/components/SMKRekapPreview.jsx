@@ -4,6 +4,7 @@ import { supabase } from "../supabase";
 const VESSELS = ["Express","Mavendra","Prakarsa","Pratama","Segoro","Selaras","Sahabat","Semangat"];
 const MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const CURRENT_YEAR = 2026;
+const ADMIN_EMAIL = "dwi.wahyu@mentarimas.id";
 
 const FORMS = [
   {code:"009",   dept:"Deck",   pic:"Master", ket:"BLN"},
@@ -127,16 +128,20 @@ function PICCards({rows}){
   </div>;
 }
 
-function Cell({status}){
+function Cell({status, isAdmin, vessel, code, month, onToggle}){
   const st=status==="C"?{background:"#bbf7d0",color:"#14532d",fontWeight:700}
     :status==="S"?{background:"#fef9c3",color:"#713f12",fontWeight:600}:{color:"#d1d5db"};
-  return <td style={{textAlign:"center",fontSize:11,padding:"4px 2px",border:"1px solid #e5e7eb",...st}}>{status||"–"}</td>;
+  const clickable = isAdmin && status && code && vessel && month;
+  return <td onClick={clickable?()=>onToggle({vessel,code,month,status}):undefined}
+    style={{textAlign:"center",fontSize:11,padding:clickable?"6px 2px":"4px 2px",border:"1px solid #e5e7eb",...st,cursor:clickable?"pointer":"default"}}>
+    {status||"–"}
+  </td>;
 }
 
 const TH={padding:"6px 5px",textAlign:"center",fontWeight:600,color:"#374151",border:"1px solid #e5e7eb",fontSize:11};
 const TD={padding:"5px 6px",border:"1px solid #f1f5f9",fontSize:11};
 
-function VesselTable({vessel,data}){
+function VesselTable({vessel,data,isAdmin,onToggle}){
   const [deptF,setDeptF]=useState("Semua");
   const vRows=data.filter(d=>d.vessel===vessel);
   const lookup={};
@@ -157,6 +162,7 @@ function VesselTable({vessel,data}){
         </div>
         <div style={{fontSize:32,fontWeight:800,color:pct>=90?"#34d399":pct>=75?"#fbbf24":"#f87171",lineHeight:1}}>{pct}%</div>
       </div>
+      {isAdmin && <div style={{fontSize:10,color:"#fbbf24",marginTop:4}}>Admin edit mode aktif — klik cell C/S untuk toggle</div>}
       <PICCards rows={vRows}/>
     </div>
     <div style={{background:"#f8fafc",padding:"8px 16px",display:"flex",gap:6,borderBottom:"1px solid #e5e7eb",alignItems:"center"}}>
@@ -323,6 +329,8 @@ export default function SMKRekap(){
   const [data,setData]=useState([]);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState(null);
+  const [adminEmail,setAdminEmail]=useState("");
+  const [checkingAdmin,setCheckingAdmin]=useState(true);
   const [lastUpd,setLastUpd]=useState(null);
 
   const fetchData=useCallback(async ()=>{
@@ -346,6 +354,8 @@ export default function SMKRekap(){
     setLoading(false);
   },[year]);
 
+  const isAdmin = adminEmail?.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
+
   useEffect(()=>{
     fetchData();
     const channel = supabase.channel("smk_rekap_rt")
@@ -354,11 +364,29 @@ export default function SMKRekap(){
     return ()=> supabase.removeChannel(channel);
   },[fetchData]);
 
+  useEffect(()=>{
+    (async()=>{
+      const { data:{ session } } = await supabase.auth.getSession();
+      setAdminEmail(session?.user?.email || "");
+      setCheckingAdmin(false);
+    })();
+  },[]);
+
   const total=data.length, done=data.filter(d=>d.status==="C").length;
   const pctAll=total?Math.round(done/total*100):0;
   const curM=new Date().getMonth()+1;
   const curMD=data.filter(d=>d.month===curM);
   const curPct=curMD.length?Math.round(curMD.filter(d=>d.status==="C").length/curMD.length*100):0;
+
+  const handleToggle=useCallback(async ({vessel,code,month})=>{
+    const row = data.find(r=>r.vessel===vessel && r.form_code===code && r.month===month);
+    if(!row) return;
+    const next = row.status==="C" ? "S" : "C";
+    const { error } = await supabase.from("smk_rekap")
+      .update({ status: next })
+      .match({ vessel, form_code: code, month, year });
+    if(!error) setData(prev=>prev.map(r=>r.vessel===vessel && r.form_code===code && r.month===month ? {...r,status:next} : r));
+  },[data]);
 
   return(
     <div style={{fontFamily:"'Segoe UI',system-ui,sans-serif",background:"#f0f4f8",minHeight:"100vh",display:"flex",flexDirection:"column"}}>
@@ -432,7 +460,7 @@ export default function SMKRekap(){
         <div style={{background:"#fff",borderRadius:10,boxShadow:"0 1px 4px rgba(0,0,0,.08)",overflow:"hidden"}}>
           {active==="Semua"
             ? <SummaryView data={data}/>
-            : <VesselTable vessel={active} data={data}/>}
+            : <VesselTable vessel={active} data={data} isAdmin={isAdmin} onToggle={handleToggle}/>}
         </div>
       </div>
     </div>
