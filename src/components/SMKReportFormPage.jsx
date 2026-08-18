@@ -156,8 +156,9 @@ export default function SMKReportFormPage() {
 
       // --- LOGIC: Memindahkan Form Tertentu ke Need Approval ---
       try {
-        const REQUIRE_APPROVAL_FORMS = ["059 A", "059 B", "059 C"]; // Tambahkan form lain di sini jika perlu
-        const currentFormCode = payload.formCode || selectedForm?.code || "";
+        const REQUIRE_APPROVAL_FORMS = ["059A", "059B", "059C"]; // Format tanpa spasi/strip
+        const rawFormCode = payload.formCode || selectedForm?.code || "";
+        const currentFormCode = rawFormCode.replace(/[\s-]/g, "").toUpperCase();
 
         if (REQUIRE_APPROVAL_FORMS.includes(currentFormCode) && result.path) {
           const oldPath = result.path;
