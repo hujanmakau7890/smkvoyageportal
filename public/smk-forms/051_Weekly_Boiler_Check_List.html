@@ -168,7 +168,26 @@
       .f { font-size: 8px; flex-wrap: wrap; }
       .check-group { flex-direction: column; align-items: flex-start; }
     }
-  </style>
+
+        @media print {
+          /* SMK: hide empty placeholders and select arrows in print */
+          input::placeholder,
+          textarea::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+          }
+          select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: none !important;
+          }
+          select:has(option:checked[value=""]) {
+            color: transparent !important;
+            text-shadow: none !important;
+          }
+        }
+
+</style>
 </head>
 <body>
 <div class="container">

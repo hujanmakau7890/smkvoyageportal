@@ -122,7 +122,26 @@
       .info-row { grid-template-columns: 1fr; }
       .footer-row { grid-template-columns: 1fr 1fr; }
     }
-  </style>
+
+        @media print {
+          /* SMK: hide empty placeholders and select arrows in print */
+          input::placeholder,
+          textarea::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+          }
+          select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: none !important;
+          }
+          select:has(option:checked[value=""]) {
+            color: transparent !important;
+            text-shadow: none !important;
+          }
+        }
+
+</style>
 </head>
 <body>
 <div class="container">

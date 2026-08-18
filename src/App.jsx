@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 import NCDatabase from "./NCDatabase";
 import SMKReportFormPage from "./components/SMKReportFormPage";
+import SMKRekapPreview from "./components/SMKRekapPreview";
 // --- XLSX FOR EXPORT ---
 const XLSX_CDN = "https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js";
 let XLSX = null;
@@ -5876,7 +5877,7 @@ export default function App() {
   const smkNav = [
     { id:"smk-manual", l:"Prosedur Manual", i:"📘" },
     { id:"smk-new", l:"Buat Laporan SMK", i:"📝" },
-    { id:"smk-log", l:"Laporan SMK", i:"📋" },
+    { id:"smk-log", l:"Rekap Laporan SMK", i:"📋" },
   ];
   const isSmkPage = smkNav.some(n => n.id === page);
 
@@ -6031,7 +6032,7 @@ export default function App() {
           {page==="nc"        && <NCDatabase theme={theme} user={user} />}
           {page==="smk-manual" && <div><h2>Prosedur Manual</h2></div>}
           {page==="smk-new"    && <SMKReportFormPage />}
-          {page==="smk-log"    && <div><h2>Laporan SMK</h2></div>}
+          {page==="smk-log"    && <SMKRekapPreview />}
         </main>
       </div>
       {viewing && <Modal report={viewing} onClose={() => setViewing(null)} onEdit={() => startEdit(viewing)} onDelete={deleteReport} allReports={visibleReports}/>}

@@ -171,7 +171,26 @@
                 min-width: 80px;
             }
         }
-    </style>
+
+        @media print {
+          /* SMK: hide empty placeholders and select arrows in print */
+          input::placeholder,
+          textarea::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+          }
+          select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: none !important;
+          }
+          select:has(option:checked[value=""]) {
+            color: transparent !important;
+            text-shadow: none !important;
+          }
+        }
+
+</style>
 </head>
 <body class="bg-gray-200 p-4 sm:p-8 font-sans text-gray-800">
     <div class="max-w-4xl mx-auto bg-white p-6 sm:p-10 shadow-lg print:shadow-none print:p-0">

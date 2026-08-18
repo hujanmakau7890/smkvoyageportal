@@ -164,6 +164,25 @@ body{margin:0;background:#e5e7eb;font-family:Arial}
   .nm      { border: 0; border-bottom: 1px solid #000; text-align: center; width: 85%; font-size: 8pt; }
   .role    { margin-top: 2px; font-size: 8pt; }
 }
+
+        @media print {
+          /* SMK: hide empty placeholders and select arrows in print */
+          input::placeholder,
+          textarea::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+          }
+          select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: none !important;
+          }
+          select:has(option:checked[value=""]) {
+            color: transparent !important;
+            text-shadow: none !important;
+          }
+        }
+
 </style>
 </head>
 <body>

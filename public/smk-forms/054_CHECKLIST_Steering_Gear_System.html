@@ -7,6 +7,25 @@
 *{box-sizing:border-box}body{margin:0;background:#e5e7eb;font-family:Arial,sans-serif;color:#111}.page{max-width:1000px;margin:18px auto;background:#fff;padding:18px;box-shadow:0 3px 14px #999}.tools{text-align:right;margin-bottom:10px}.btn{border:0;border-radius:6px;padding:9px 15px;background:#1769d2;color:#fff;font-weight:bold;cursor:pointer}.head,.section{border:2px solid #000;padding:8px;margin-top:8px}.top{display:grid;grid-template-columns:25% 52% 23%;border-bottom:2px solid #000;min-height:70px}.company{font-weight:bold;font-size:13px}.title{text-align:center;font-weight:bold;font-size:14px;line-height:1.35}.status{display:flex;flex-direction:column;align-items:flex-end;gap:7px;padding-right:10px;font-size:10px}.code{display:flex;border:1px solid #000}.code span{padding:4px 8px}.code span+span{border-left:1px solid #000}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin-top:8px}.field{display:flex;gap:6px;font-size:10px;font-weight:bold;align-items:center}.field input,.field select{flex:1;min-width:0;border:0;border-bottom:1px solid #000;background:#fff;padding:3px;font-size:10px}.instruction{font-size:9px;font-style:italic;margin:6px 0}.tbl{width:100%;border-collapse:collapse;font-size:9px;table-layout:fixed}.tbl th,.tbl td{border:1px solid #000;padding:3px;vertical-align:middle}.tbl th{background:#f3f4f6;text-align:center}.tbl th:nth-child(1),.tbl td:nth-child(1){width:5%;text-align:center}.tbl th:nth-child(2),.tbl td:nth-child(2){width:57%;text-align:left}.tbl th:nth-child(3),.tbl td:nth-child(3){width:13%;text-align:center}.tbl th:nth-child(4),.tbl td:nth-child(4){width:25%;text-align:left}.tbl td:nth-child(2){font-weight:normal}.eng{display:block;font-style:italic;font-size:8px}.check{width:15px;height:15px}.note{width:100%;min-height:25px;border:0;background:transparent;resize:none;font:inherit}.sub{font-weight:bold;font-size:9px}.sig{border:2px solid #000;margin-top:8px;padding:7px;text-align:center;font-size:9px}.siggrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:5px}.sigspace{height:55px;display:flex;align-items:center;justify-content:center;position:relative}.sigspace img{max-width:100%;max-height:50px;object-fit:contain}.sigspace .remove-ttd{position:absolute;right:0;top:0;width:18px;height:18px;border:0;border-radius:50%;background:#dc2626;color:#fff;cursor:pointer}.sig input{width:90%;border:0;border-bottom:1px solid #000;text-align:center;padding:3px}.hidden{display:none!important}
 @media(max-width:700px){.page{margin:0;padding:10px;box-shadow:none}.top{display:flex;flex-direction:column;align-items:center;gap:6px}.company,.title,.status{width:100%;text-align:center}.status{align-items:flex-end}.meta{grid-template-columns:1fr}.tbl{font-size:10px}.tbl .eng{font-size:9px}}
 @media print{@page{size:A4 portrait;margin:6mm}.no-print{display:none!important}body{background:#fff}.page{margin:0;padding:0;max-width:none;box-shadow:none}.top{display:grid!important}.tbl{font-size:8px}.tbl th,.tbl td{padding:2px}.tbl .eng{font-size:7px}.note{font-size:8px;min-height:20px}.field,.field input,.field select{font-size:8px}.company{font-size:10px}.title{font-size:11px}.status{font-size:8px}.instruction{font-size:7px}.sig{break-inside:avoid}.sigspace{height:48px}select{appearance:none!important;-webkit-appearance:none!important;-moz-appearance:none!important;background:transparent!important;color:inherit}select::-ms-expand{display:none}input::placeholder,textarea::placeholder{color:transparent!important;opacity:0!important}.sig input::placeholder{color:transparent!important;opacity:0!important}}
+
+        @media print {
+          /* SMK: hide empty placeholders and select arrows in print */
+          input::placeholder,
+          textarea::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+          }
+          select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: none !important;
+          }
+          select:has(option:checked[value=""]) {
+            color: transparent !important;
+            text-shadow: none !important;
+          }
+        }
+
 </style></head>
 <body><main class="page">
 <div class="tools no-print"><button class="btn" onclick="print()">Print / Simpan PDF</button></div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SMK_CATEGORIES, SMK_FORMS } from "../data/smkForms";
 import { supabase } from "../supabase";
+import { markFormCompleted } from "./SMKRekapPreview";
 
 const colors = {
   text: "var(--c-text, #0f172a)",
@@ -37,7 +38,7 @@ export default function SMKReportFormPage() {
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+  }, [handleSavePdf]);
 
   async function handleSavePdf(payload) {
     try {
@@ -152,6 +153,19 @@ export default function SMKReportFormPage() {
 
       setSuccessMessage("Download & Upload file sukses");
       setTimeout(() => setSuccessMessage(""), 3000);
+
+      try {
+        await markFormCompleted(supabase, {
+          vessel: payload.ship || safeShip,
+          formCode: payload.formCode || selectedForm?.code || "",
+          dateStr: payload.date || "",
+        });
+      } catch (e) {
+        const msg = e?.message || String(e);
+        console.warn("[SMK] Rekap update failed:", msg);
+        setSuccessMessage("Download & Upload file sukses. Rekap gagal: " + msg);
+        setTimeout(() => setSuccessMessage(""), 5000);
+      }
     } catch (err) {
       alert("Gagal menyimpan PDF: " + err.message);
     }
