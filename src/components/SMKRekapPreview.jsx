@@ -619,6 +619,11 @@ export async function markFormCompleted(supabaseClient, { vessel, formCode, date
     console.warn("[SMK Rekap] Vessel tidak dikenali:", vessel);
     return;
   }
+  
+  // Normalisasi kode form agar cocok dengan grid (misal "059-A" atau "059A" jadi "059 A")
+  let cleanCode = (formCode || "").replace(/[\s-]/g, "").toUpperCase();
+  const matchedForm = FORMS.find(f => f.code.replace(/[\s-]/g, "").toUpperCase() === cleanCode);
+  const finalFormCode = matchedForm ? matchedForm.code : formCode.trim();
   const raw = dateStr||"";
   let year = CURRENT_YEAR, month = null;
   let m = raw.match(/(\d{4})[\/\-](\d{1,2})/);
@@ -639,7 +644,7 @@ export async function markFormCompleted(supabaseClient, { vessel, formCode, date
     .from("smk_rekap")
     .upsert({
       vessel: matchedVessel,
-      form_code: formCode.trim(),
+      form_code: finalFormCode,
       year,
       month,
       status: "C",
