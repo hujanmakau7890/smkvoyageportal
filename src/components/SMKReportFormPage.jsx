@@ -159,7 +159,7 @@ export default function SMKReportFormPage() {
         // ignore download failure
       }
 
-      setSuccessMessage("Download & Upload file sukses");
+      setSuccessMessage("Download & Upload sukses!");
       setTimeout(() => setSuccessMessage(""), 3000);
 
       // Hanya update rekap ke "C" untuk form yang TIDAK butuh approval.
