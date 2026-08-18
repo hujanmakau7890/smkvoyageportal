@@ -7,8 +7,8 @@ const CURRENT_YEAR = 2026;
 const ADMIN_EMAIL = "dwi.wahyu@mentarimas.id";
 
 const FORMS = [
-  {code:"009 A", dept:"Deck",   pic:"Master", ket:"BLN"},
-  {code:"009 B", dept:"Deck",   pic:"Master", ket:"TRW"},
+  {code:"009-A", dept:"Deck",   pic:"Master", ket:"BLN"},
+  {code:"009-B", dept:"Deck",   pic:"Master", ket:"TRW"},
   {code:"018",   dept:"Deck",   pic:"CO",     ket:"BLN"},
   {code:"022",   dept:"Deck",   pic:"Master", ket:"BLN"},
   {code:"023",   dept:"Deck",   pic:"Master", ket:"BLN"},
@@ -129,12 +129,13 @@ function PICCards({rows}){
 }
 
 function Cell({status, isAdmin, vessel, code, month, onToggle}){
-  const st=status==="C"?{background:"#bbf7d0",color:"#14532d",fontWeight:700}
-    :status==="S"?{background:"#fef9c3",color:"#713f12",fontWeight:600}:{color:"#d1d5db"};
-  const clickable = isAdmin && status && code && vessel && month;
-  return <td onClick={clickable?()=>onToggle({vessel,code,month,status}):undefined}
+  const dispStatus = status || "S";
+  const st = dispStatus==="C" ? {background:"#bbf7d0",color:"#14532d",fontWeight:700}
+    : {background:"#fef9c3",color:"#713f12",fontWeight:600};
+  const clickable = isAdmin && code && vessel && month;
+  return <td onClick={clickable?()=>onToggle({vessel,code,month,status:dispStatus}):undefined}
     style={{textAlign:"center",fontSize:11,padding:clickable?"6px 2px":"4px 2px",border:"1px solid #e5e7eb",...st,cursor:clickable?"pointer":"default"}}>
-    {status||"–"}
+    {dispStatus}
   </td>;
 }
 
@@ -532,13 +533,17 @@ export default function SMKRekap(){
 
   const handleToggle=useCallback(async ({vessel,code,month})=>{
     const row = data.find(r=>r.vessel===vessel && r.form_code===code && r.month===month);
-    if(!row) return;
-    const next = row.status==="C" ? "S" : "C";
+    const next = (row && row.status==="C") ? "S" : "C";
     const { error } = await supabase.from("smk_rekap")
-      .update({ status: next })
-      .match({ vessel, form_code: code, month, year });
-    if(!error) setData(prev=>prev.map(r=>r.vessel===vessel && r.form_code===code && r.month===month ? {...r,status:next} : r));
-  },[data]);
+      .upsert({ vessel, form_code: code, month, year, status: next, updated_at: new Date().toISOString() }, { onConflict: "vessel,form_code,year,month" });
+    if(!error) {
+      if(row) {
+        setData(prev=>prev.map(r=>r.vessel===vessel && r.form_code===code && r.month===month ? {...r,status:next} : r));
+      } else {
+        setData(prev=>[...prev, { vessel, form_code: code, month, year, status: next }]);
+      }
+    }
+  },[data, year]);
 
   return(
     <div style={{fontFamily:"'Segoe UI',system-ui,sans-serif",background:"#f0f4f8",minHeight:"100vh",display:"flex",flexDirection:"column"}}>
