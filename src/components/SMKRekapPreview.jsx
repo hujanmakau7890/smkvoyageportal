@@ -206,7 +206,7 @@ function VesselTable({vessel,data,isAdmin,onToggle}){
               <td style={{...TD,textAlign:"center",color:"#9ca3af"}}>{f.ket}</td>
               {MO.map((_,mi)=>{
                 if(!sc2[mi]) return <td key={mi} style={{...TD,textAlign:"center",color:"#e5e7eb"}}>·</td>;
-                return <Cell key={mi} status={lookup[f.code]?.[mi+1]||""}/>;
+                return <Cell key={mi} status={lookup[f.code]?.[mi+1]||""} isAdmin={isAdmin} vessel={vessel} code={f.code} month={mi+1} onToggle={onToggle}/>;
               })}
             </tr>;
           })}
