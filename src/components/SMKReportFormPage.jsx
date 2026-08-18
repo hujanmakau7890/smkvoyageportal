@@ -154,6 +154,30 @@ export default function SMKReportFormPage() {
       setSuccessMessage("Download & Upload file sukses");
       setTimeout(() => setSuccessMessage(""), 3000);
 
+      // --- LOGIC: Memindahkan Form Tertentu ke Need Approval ---
+      try {
+        const REQUIRE_APPROVAL_FORMS = ["059 A", "059 B", "059 C"]; // Tambahkan form lain di sini jika perlu
+        const currentFormCode = payload.formCode || selectedForm?.code || "";
+
+        if (REQUIRE_APPROVAL_FORMS.includes(currentFormCode) && result.path) {
+          const oldPath = result.path;
+          const fileName = oldPath.split('/').pop();
+          // Gunakan original ship name (bukan safeShip yang ada underscore) agar UI folder lebih rapi
+          const shipFolderName = payload.ship || "Tanpa Nama Kapal"; 
+          const newPath = `Need Approval/${shipFolderName}/${fileName}`;
+          
+          const { error: moveErr } = await supabase.storage.from("smk-pdf").move(oldPath, newPath);
+          if (moveErr) {
+            console.warn("Gagal memindah file ke Need Approval:", moveErr);
+          } else {
+            console.log("File dipindah ke Need Approval:", newPath);
+          }
+        }
+      } catch (err) {
+        console.warn("Error saat memproses Need Approval:", err);
+      }
+      // ---------------------------------------------------------
+
       try {
         await markFormCompleted(supabase, {
           vessel: payload.ship || safeShip,
