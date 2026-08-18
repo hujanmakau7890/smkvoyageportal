@@ -162,17 +162,21 @@ export default function SMKReportFormPage() {
       setSuccessMessage("Download & Upload file sukses");
       setTimeout(() => setSuccessMessage(""), 3000);
 
-      try {
-        await markFormCompleted(supabase, {
-          vessel: payload.ship || safeShip,
-          formCode: payload.formCode || selectedForm?.code || "",
-          dateStr: payload.date || "",
-        });
-      } catch (e) {
-        const msg = e?.message || String(e);
-        console.warn("[SMK] Rekap update failed:", msg);
-        setSuccessMessage("Download & Upload file sukses. Rekap gagal: " + msg);
-        setTimeout(() => setSuccessMessage(""), 5000);
+      // Hanya update rekap ke "C" untuk form yang TIDAK butuh approval.
+      // Form yang butuh approval akan di-update ke "C" saat SI meng-approve.
+      if (xDestination !== "Need Approval") {
+        try {
+          await markFormCompleted(supabase, {
+            vessel: payload.ship || safeShip,
+            formCode: payload.formCode || selectedForm?.code || "",
+            dateStr: payload.date || "",
+          });
+        } catch (e) {
+          const msg = e?.message || String(e);
+          console.warn("[SMK] Rekap update failed:", msg);
+          setSuccessMessage("Download & Upload file sukses. Rekap gagal: " + msg);
+          setTimeout(() => setSuccessMessage(""), 5000);
+        }
       }
     } catch (err) {
       alert("Gagal menyimpan PDF: " + err.message);

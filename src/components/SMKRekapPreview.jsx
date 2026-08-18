@@ -328,28 +328,19 @@ function NeedApprovalView() {
   const [filesByVessel, setFilesByVessel] = useState({});
   const [error, setError] = useState(null);
 
+  const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
+  const baseUrl = uploadUrl.replace(/\/+$/, "");
+
   const fetchFiles = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Fetch folders (vessels) inside 'Need Approval'
-      const { data: folders, error: folderErr } = await supabase.storage.from("smk-pdf").list("Need Approval");
-      if (folderErr) throw folderErr;
-
-      const grouped = {};
-      for (const folder of folders || []) {
-        if (!folder.id && folder.name === ".emptyFolderPlaceholder") continue;
-        
-        // Fetch files for each vessel folder
-        const { data: files, error: filesErr } = await supabase.storage.from("smk-pdf").list(`Need Approval/${folder.name}`);
-        if (!filesErr && files) {
-          const validFiles = files.filter(f => f.name !== ".emptyFolderPlaceholder" && f.name !== ".DS_Store" && !f.name.startsWith("."));
-          if (validFiles.length > 0) {
-            grouped[folder.name] = validFiles;
-          }
-        }
-      }
-      setFilesByVessel(grouped);
+      const res = await fetch(`${baseUrl}/list-need-approval`, {
+        headers: { "X-Token": "smk-laporan-2026" }
+      });
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error || "Gagal memuat daftar");
+      setFilesByVessel(result.data || {});
     } catch (err) {
       setError(err.message);
     } finally {
@@ -361,16 +352,39 @@ function NeedApprovalView() {
     fetchFiles();
   }, []);
 
-  const handleApprove = async (vessel, fileName) => {
-    if (!window.confirm(`Approve file ${fileName}?\nFile akan dipindah ke Laporan/${vessel}/${fileName}`)) return;
+  const handleApprove = async (vessel, file) => {
+    if (!window.confirm(`Approve file ${file.name}?\nFile akan dipindah ke Laporan.`)) return;
     
     setLoading(true);
     try {
-      const oldPath = `Need Approval/${vessel}/${fileName}`;
-      const newPath = `Laporan/${vessel}/${fileName}`;
-      
-      const { error: moveErr } = await supabase.storage.from("smk-pdf").move(oldPath, newPath);
-      if (moveErr) throw moveErr;
+      const res = await fetch(`${baseUrl}/approve?path=${encodeURIComponent(file.path)}`, {
+        headers: { "X-Token": "smk-laporan-2026" }
+      });
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error || "Gagal approve");
+
+      // Update rekap SMK ke "C" setelah approve
+      try {
+        // Ekstrak form code dari nama file (misal: 059-A_Lashing_... -> 059-A)
+        const codeMatch = file.name.match(/^(\d{3}[-\s]?[A-Za-z]?)/);
+        const formCode = codeMatch ? codeMatch[1].replace(/_/g, " ").trim() : "";
+        // Ekstrak bulan dari path (misal: .../2026/Agustus/file.pdf)
+        const pathParts = file.path.split("/");
+        const monthName = pathParts.length >= 4 ? pathParts[pathParts.length - 2] : "";
+        const yearStr = pathParts.length >= 4 ? pathParts[pathParts.length - 3] : "";
+        const dateStr = monthName && yearStr ? `${yearStr}/${monthName}` : "";
+        
+        // Nama vessel dari folder (misal: Express_Mas -> Express Mas)
+        const vesselName = vessel.replace(/_/g, " ");
+        
+        await markFormCompleted(supabase, {
+          vessel: vesselName,
+          formCode: formCode,
+          dateStr: dateStr,
+        });
+      } catch (e) {
+        console.warn("[Approve] Rekap update failed:", e.message);
+      }
 
       alert("File berhasil di-approve dan dipindahkan ke folder Laporan!");
       await fetchFiles();
@@ -380,10 +394,19 @@ function NeedApprovalView() {
     }
   };
 
-  const handleView = async (vessel, fileName) => {
-    const { data } = supabase.storage.from("smk-pdf").getPublicUrl(`Need Approval/${vessel}/${fileName}`);
-    if (data?.publicUrl) {
-      window.open(data.publicUrl, "_blank");
+  const handleView = async (vessel, file) => {
+    try {
+      const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(file.path)}`;
+      const dlRes = await fetch(dlUrl, {
+        headers: { "X-Token": "smk-laporan-2026" }
+      });
+      if (dlRes.ok) {
+        const blob = await dlRes.blob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+      }
+    } catch (e) {
+      alert("Gagal membuka file: " + e.message);
     }
   };
 
@@ -405,7 +428,7 @@ function NeedApprovalView() {
         Object.entries(filesByVessel).map(([vessel, files]) => (
           <div key={vessel} style={{background: "#fff", borderRadius: 8, padding: 16, marginBottom: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.05)", border: "1px solid #e5e7eb"}}>
             <h3 style={{fontSize: 15, fontWeight: 700, marginBottom: 12, color: "#334155", display: "flex", alignItems: "center", gap: 8}}>
-              🚢 {vessel.toUpperCase()} <span style={{fontSize: 12, fontWeight: 500, color: "#94a3b8", background: "#f1f5f9", padding: "2px 6px", borderRadius: 12}}>{files.length} file</span>
+              🚢 {vessel.replace(/_/g, " ").toUpperCase()} <span style={{fontSize: 12, fontWeight: 500, color: "#94a3b8", background: "#f1f5f9", padding: "2px 6px", borderRadius: 12}}>{files.length} file</span>
             </h3>
             <div style={{overflowX: "auto"}}>
               <table style={{width: "100%", borderCollapse: "collapse", fontSize: 13}}>
@@ -422,8 +445,8 @@ function NeedApprovalView() {
                       <td style={{padding: "10px 12px", color: "#1e40af", fontWeight: 600}}>{f.name}</td>
                       <td style={{padding: "10px 12px", color: "#64748b"}}>{new Date(f.created_at).toLocaleString('id-ID')}</td>
                       <td style={{padding: "10px 12px", display: "flex", gap: 8}}>
-                        <button onClick={() => handleView(vessel, f.name)} style={{padding: "5px 10px", background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: 4, cursor: "pointer", fontSize: 12, color: "#334155", fontWeight: 500}}>Lihat</button>
-                        <button onClick={() => handleApprove(vessel, f.name)} style={{padding: "5px 10px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: 600}}>✓ Approve</button>
+                        <button onClick={() => handleView(vessel, f)} style={{padding: "5px 10px", background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: 4, cursor: "pointer", fontSize: 12, color: "#334155", fontWeight: 500}}>Lihat</button>
+                        <button onClick={() => handleApprove(vessel, f)} style={{padding: "5px 10px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: 600}}>✓ Approve</button>
                       </td>
                     </tr>
                   ))}
