@@ -353,8 +353,6 @@ function NeedApprovalView({ onApproveSuccess }) {
   }, []);
 
   const handleApprove = async (vessel, file) => {
-    if (!window.confirm(`Approve file ${file.name}?\nFile akan dipindah ke Laporan.`)) return;
-    
     setLoading(true);
     try {
       const res = await fetch(`${baseUrl}/approve?path=${encodeURIComponent(file.path)}`, {
