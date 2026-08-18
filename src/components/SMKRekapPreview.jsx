@@ -370,6 +370,10 @@ export default function SMKRekap(){
       setAdminEmail(session?.user?.email || "");
       setCheckingAdmin(false);
     })();
+    const sub = supabase.auth.onAuthStateChange((_e, session)=>{
+      setAdminEmail(session?.user?.email || "");
+    });
+    return ()=> sub.data.subscription.unsubscribe();
   },[]);
 
   const total=data.length, done=data.filter(d=>d.status==="C").length;
