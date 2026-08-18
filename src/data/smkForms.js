@@ -42,7 +42,6 @@ export const SMK_FORMS = [
   { code: "046", title: "Voyage Main Engine & Machinery Report - 4 Stroke", category: "Laporan Mesin", file: "046_Voyage_Main_Engine_Machinery_Report_4_Stroke.html" },
   { code: "047", title: "Voyage Main Engine & Machinery Report - 2 Stroke", category: "Laporan Mesin", file: "047_Voyage_Main_Engine_Machinery_Report_2_Stroke.html" },
   { code: "048", title: "Crank Shaft Deflection Main Engine", category: "Laporan Mesin", file: "048_Crank_Shaft_Deflection_Main_Engine.html" },
-  { code: "049", title: "Crank Shaft Deflection Auxiliary Engine", category: "Laporan Mesin", file: "049_Crank_Shaft_Deflection_Aux_Engine.html" },
   { code: "051", title: "Weekly Boiler Check List", category: "Laporan Mesin", file: "051_Weekly_Boiler_Check_List.html" },
   { code: "052", title: "Monthly Boiler Safety Check List", category: "Laporan Mesin", file: "052_Monthly_Boiler_Safety_Check_List.html" },
   { code: "053", title: "Checklist Pemeriksaan Alarm", category: "Checklist", file: "053_CHECKLIST_Pemeriksaan_Alarm.html" },

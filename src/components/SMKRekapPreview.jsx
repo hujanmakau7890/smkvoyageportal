@@ -26,7 +26,6 @@ const FORMS = [
   {code:"045",   dept:"Engine", pic:"2E",     ket:"BLN"},
   {code:"046",   dept:"Engine", pic:"2E",     ket:"Voy"},
   {code:"048",   dept:"Engine", pic:"2E",     ket:"SMT"},
-  {code:"049",   dept:"Engine", pic:"CE",     ket:"SMT"},
   {code:"059 A", dept:"Deck",   pic:"CO",     ket:"BLN"},
   {code:"059 B", dept:"Engine", pic:"CE",     ket:"TRW"},
   {code:"059 C", dept:"Deck",   pic:"CO",     ket:"BLN"},
@@ -205,7 +204,7 @@ function VesselTable({vessel,data,isAdmin,onToggle}){
               <td style={{...TD,textAlign:"center",fontWeight:600,color:"#374151"}}>{f.pic}</td>
               <td style={{...TD,textAlign:"center",color:"#9ca3af"}}>{f.ket}</td>
               {MO.map((_,mi)=>{
-                if(!sc2[mi]) return <td key={mi} style={{...TD,textAlign:"center",background:"#1e3a5f",color:"#ffffff",fontWeight:700}}>X</td>;
+                if(!sc2[mi]) return <td key={mi} style={{...TD,textAlign:"center",background:"#db2777",color:"#ffffff",fontWeight:700}}>X</td>;
                 return <Cell key={mi} status={lookup[f.code]?.[mi+1]||""} isAdmin={isAdmin} vessel={vessel} code={f.code} month={mi+1} onToggle={onToggle}/>;
               })}
             </tr>;
@@ -588,7 +587,7 @@ export default function SMKRekap(){
 
       {/* Legend */}
       <div style={{padding:"7px 20px",background:"#fff",borderBottom:"1px solid #e5e7eb",display:"flex",gap:16,fontSize:11,flexWrap:"wrap",alignItems:"center"}}>
-        {[["#bbf7d0","#14532d","C = Completed"],["#fef9c3","#713f12","S = Scheduled"],["#1e3a5f","#ffffff","X = Tidak dijadwalkan"]].map(([b,f,lbl])=>(
+        {[["#bbf7d0","#14532d","C = Completed"],["#fef9c3","#713f12","S = Scheduled"],["#db2777","#ffffff","X = Tidak dijadwalkan"]].map(([b,f,lbl])=>(
           <div key={lbl} style={{display:"flex",alignItems:"center",gap:5}}>
             <div style={{width:14,height:14,borderRadius:3,background:b,border:`1px solid ${f}44`}}/>
             <span style={{color:"#374151"}}>{lbl}</span>
