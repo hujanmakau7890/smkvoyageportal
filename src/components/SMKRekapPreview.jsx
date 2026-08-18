@@ -381,11 +381,13 @@ function NeedApprovalView() {
           formCode: formCode,
           dateStr: dateStr,
         });
+        
+        alert(`File berhasil di-approve!\n\n(Debug) Data direkap:\nKapal: ${vesselName}\nForm: ${formCode}\nBulan: ${dateStr}`);
       } catch (e) {
         console.warn("[Approve] Rekap update failed:", e.message);
+        alert(`File di-approve, TAPI gagal update rekap:\n${e.message}`);
       }
 
-      alert("File berhasil di-approve dan dipindahkan ke folder Laporan!");
       await fetchFiles();
     } catch (err) {
       alert("Gagal approve file: " + err.message);
@@ -633,7 +635,12 @@ export async function markFormCompleted(supabaseClient, { vessel, formCode, date
     if(m){ year = +m[3]; month = +m[2]; }
   }
   if(!month){
-    const idx = MO.findIndex(mn => raw.toLowerCase().includes(mn.toLowerCase()));
+    const indonesianMonths = ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "agu", "sep", "okt", "nov", "des"];
+    const englishMonths = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    
+    let idx = indonesianMonths.findIndex(mn => raw.toLowerCase().includes(mn));
+    if(idx < 0) idx = englishMonths.findIndex(mn => raw.toLowerCase().includes(mn));
+    
     if(idx>=0) month = idx+1;
   }
   if(!month){
