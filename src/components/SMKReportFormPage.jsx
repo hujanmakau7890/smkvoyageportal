@@ -84,10 +84,12 @@ export default function SMKReportFormPage() {
         const LANDSCAPE_FORMS = new Set(["010_Risk_Assessment.html"]);
         if (selectedForm?.file && LANDSCAPE_FORMS.has(selectedForm.file)) {
           let styleEl = clone.querySelector("style[data-smk-orientation]");
-          if (!styleEl && sourceDoc) {
-            styleEl = sourceDoc.createElement("style");
+          if (!styleEl) {
+            const ownerDoc = clone.ownerDocument || sourceDoc;
+            styleEl = ownerDoc.createElement("style");
             styleEl.setAttribute("data-smk-orientation", "landscape");
-            (clone.head || clone.documentElement).appendChild(styleEl);
+            const target = clone.querySelector("head") || clone;
+            target.appendChild(styleEl);
           }
           if (styleEl) {
             styleEl.textContent = "@page { size: A4 landscape !important; margin: 7mm !important; }";
