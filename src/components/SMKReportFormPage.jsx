@@ -115,6 +115,11 @@ export default function SMKReportFormPage() {
         html = `<!doctype html>${clone.outerHTML}`;
       }
 
+      // Determine destination: forms yang butuh approval masuk ke "Need Approval"
+      const REQUIRE_APPROVAL_FORMS = ["059A", "059B", "059C"];
+      const rawCode = (payload.formCode || selectedForm?.code || "").replace(/[\s-]/g, "").toUpperCase();
+      const xDestination = REQUIRE_APPROVAL_FORMS.includes(rawCode) ? "Need Approval" : "Laporan";
+
       const res = await fetch(`${uploadUrl}/`, {
         method: "POST",
         headers: {
@@ -123,6 +128,7 @@ export default function SMKReportFormPage() {
           "X-Year": year,
           "X-Month": month,
           "X-Filename": safeName,
+          "X-Destination": xDestination,
           "Content-Type": "text/html; charset=utf-8",
         },
         body: html,
@@ -153,31 +159,6 @@ export default function SMKReportFormPage() {
 
       setSuccessMessage("Download & Upload file sukses");
       setTimeout(() => setSuccessMessage(""), 3000);
-
-      // --- LOGIC: Memindahkan Form Tertentu ke Need Approval ---
-      try {
-        const REQUIRE_APPROVAL_FORMS = ["059A", "059B", "059C"]; // Format tanpa spasi/strip
-        const rawFormCode = payload.formCode || selectedForm?.code || "";
-        const currentFormCode = rawFormCode.replace(/[\s-]/g, "").toUpperCase();
-
-        if (REQUIRE_APPROVAL_FORMS.includes(currentFormCode) && result.path) {
-          const oldPath = result.path;
-          const fileName = oldPath.split('/').pop();
-          // Gunakan original ship name (bukan safeShip yang ada underscore) agar UI folder lebih rapi
-          const shipFolderName = payload.ship || "Tanpa Nama Kapal"; 
-          const newPath = `Need Approval/${shipFolderName}/${fileName}`;
-          
-          const { error: moveErr } = await supabase.storage.from("smk-pdf").move(oldPath, newPath);
-          if (moveErr) {
-            console.warn("Gagal memindah file ke Need Approval:", moveErr);
-          } else {
-            console.log("File dipindah ke Need Approval:", newPath);
-          }
-        }
-      } catch (err) {
-        console.warn("Error saat memproses Need Approval:", err);
-      }
-      // ---------------------------------------------------------
 
       try {
         await markFormCompleted(supabase, {
