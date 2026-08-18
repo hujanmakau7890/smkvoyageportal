@@ -322,7 +322,7 @@ function SummaryView({data}){
   </div>;
 }
 
-function NeedApprovalView() {
+function NeedApprovalView({ onApproveSuccess }) {
   const [loading, setLoading] = useState(true);
   const [filesByVessel, setFilesByVessel] = useState({});
   const [error, setError] = useState(null);
@@ -389,6 +389,7 @@ function NeedApprovalView() {
       }
 
       await fetchFiles();
+      if (onApproveSuccess) onApproveSuccess();
     } catch (err) {
       alert("Gagal approve file: " + err.message);
       setLoading(false);
@@ -602,7 +603,7 @@ export default function SMKRekap(){
       <div style={{flex:1,padding:16}}>
         <div style={{background:"#fff",borderRadius:10,boxShadow:"0 1px 4px rgba(0,0,0,.08)",overflow:"hidden"}}>
           {active === "Need Approval" ? (
-            <NeedApprovalView />
+            <NeedApprovalView onApproveSuccess={fetchData} />
           ) : active === "Semua" ? (
             <SummaryView data={data} />
           ) : (
@@ -628,11 +629,14 @@ export async function markFormCompleted(supabaseClient, { vessel, formCode, date
   const finalFormCode = matchedForm ? matchedForm.code : formCode.trim();
   const raw = dateStr||"";
   let year = CURRENT_YEAR, month = null;
+  const yearMatch = raw.match(/(\d{4})/);
+  if(yearMatch) year = parseInt(yearMatch[1], 10);
+  
   let m = raw.match(/(\d{4})[\/\-](\d{1,2})/);
-  if(m){ year = +m[1]; month = +m[2]; }
+  if(m){ month = +m[2]; }
   else{
     m = raw.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-    if(m){ year = +m[3]; month = +m[2]; }
+    if(m){ month = +m[2]; }
   }
   if(!month){
     const indonesianMonths = ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "agu", "sep", "okt", "nov", "des"];
@@ -658,6 +662,11 @@ export async function markFormCompleted(supabaseClient, { vessel, formCode, date
       submitted_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     },{ onConflict: "vessel,form_code,year,month" });
-  if(error) console.error("[SMK Rekap] Gagal update:", error);
-  else console.log(`[SMK Rekap] ✓ ${matchedVessel} | Form ${formCode} | ${month}/${year} → C`);
+  if(error) {
+    console.error("[SMK Rekap] Gagal update:", error);
+    throw error;
+  }
+  else {
+    console.log(`[SMK Rekap] ✓ ${matchedVessel} | Form ${finalFormCode} | ${month}/${year} → C`);
+  }
 }
