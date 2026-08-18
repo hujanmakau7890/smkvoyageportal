@@ -323,6 +323,120 @@ function SummaryView({data}){
   </div>;
 }
 
+function NeedApprovalView() {
+  const [loading, setLoading] = useState(true);
+  const [filesByVessel, setFilesByVessel] = useState({});
+  const [error, setError] = useState(null);
+
+  const fetchFiles = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Fetch folders (vessels) inside 'Need Approval'
+      const { data: folders, error: folderErr } = await supabase.storage.from("smk-pdf").list("Need Approval");
+      if (folderErr) throw folderErr;
+
+      const grouped = {};
+      for (const folder of folders || []) {
+        if (!folder.id && folder.name === ".emptyFolderPlaceholder") continue;
+        
+        // Fetch files for each vessel folder
+        const { data: files, error: filesErr } = await supabase.storage.from("smk-pdf").list(`Need Approval/${folder.name}`);
+        if (!filesErr && files) {
+          const validFiles = files.filter(f => f.name !== ".emptyFolderPlaceholder" && f.name !== ".DS_Store" && !f.name.startsWith("."));
+          if (validFiles.length > 0) {
+            grouped[folder.name] = validFiles;
+          }
+        }
+      }
+      setFilesByVessel(grouped);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFiles();
+  }, []);
+
+  const handleApprove = async (vessel, fileName) => {
+    if (!window.confirm(`Approve file ${fileName}?\nFile akan dipindah ke Laporan/${vessel}/${fileName}`)) return;
+    
+    setLoading(true);
+    try {
+      const oldPath = `Need Approval/${vessel}/${fileName}`;
+      const newPath = `Laporan/${vessel}/${fileName}`;
+      
+      const { error: moveErr } = await supabase.storage.from("smk-pdf").move(oldPath, newPath);
+      if (moveErr) throw moveErr;
+
+      alert("File berhasil di-approve dan dipindahkan ke folder Laporan!");
+      await fetchFiles();
+    } catch (err) {
+      alert("Gagal approve file: " + err.message);
+      setLoading(false);
+    }
+  };
+
+  const handleView = async (vessel, fileName) => {
+    const { data } = supabase.storage.from("smk-pdf").getPublicUrl(`Need Approval/${vessel}/${fileName}`);
+    if (data?.publicUrl) {
+      window.open(data.publicUrl, "_blank");
+    }
+  };
+
+  if (loading && Object.keys(filesByVessel).length === 0) return <div style={{padding: 20}}>Memuat daftar file...</div>;
+  if (error) return <div style={{padding: 20, color: "red"}}>Error: {error}</div>;
+
+  return (
+    <div style={{padding: 20, background: "#f8fafc"}}>
+      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16}}>
+        <h2 style={{fontSize: 18, fontWeight: 800, color: "#1e3a5f", margin: 0}}>📋 Menunggu Persetujuan (Need Approval)</h2>
+        <button onClick={fetchFiles} style={{padding: "6px 12px", fontSize: 12, borderRadius: 4, border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer"}}>↻ Refresh</button>
+      </div>
+      
+      {Object.keys(filesByVessel).length === 0 ? (
+        <div style={{padding: 20, background: "#fff", borderRadius: 8, textAlign: "center", color: "#64748b", border: "1px dashed #cbd5e1"}}>
+          Tidak ada laporan yang menunggu persetujuan.
+        </div>
+      ) : (
+        Object.entries(filesByVessel).map(([vessel, files]) => (
+          <div key={vessel} style={{background: "#fff", borderRadius: 8, padding: 16, marginBottom: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.05)", border: "1px solid #e5e7eb"}}>
+            <h3 style={{fontSize: 15, fontWeight: 700, marginBottom: 12, color: "#334155", display: "flex", alignItems: "center", gap: 8}}>
+              🚢 {vessel.toUpperCase()} <span style={{fontSize: 12, fontWeight: 500, color: "#94a3b8", background: "#f1f5f9", padding: "2px 6px", borderRadius: 12}}>{files.length} file</span>
+            </h3>
+            <div style={{overflowX: "auto"}}>
+              <table style={{width: "100%", borderCollapse: "collapse", fontSize: 13}}>
+                <thead>
+                  <tr style={{textAlign: "left", color: "#64748b", background: "#f8fafc"}}>
+                    <th style={{padding: "8px 12px", borderBottom: "2px solid #e2e8f0"}}>Nama File</th>
+                    <th style={{padding: "8px 12px", borderBottom: "2px solid #e2e8f0", width: 140}}>Tanggal Upload</th>
+                    <th style={{padding: "8px 12px", borderBottom: "2px solid #e2e8f0", width: 160}}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {files.map(f => (
+                    <tr key={f.name} style={{borderBottom: "1px solid #f1f5f9"}}>
+                      <td style={{padding: "10px 12px", color: "#1e40af", fontWeight: 600}}>{f.name}</td>
+                      <td style={{padding: "10px 12px", color: "#64748b"}}>{new Date(f.created_at).toLocaleString('id-ID')}</td>
+                      <td style={{padding: "10px 12px", display: "flex", gap: 8}}>
+                        <button onClick={() => handleView(vessel, f.name)} style={{padding: "5px 10px", background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: 4, cursor: "pointer", fontSize: 12, color: "#334155", fontWeight: 500}}>Lihat</button>
+                        <button onClick={() => handleApprove(vessel, f.name)} style={{padding: "5px 10px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: 600}}>✓ Approve</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
 export default function SMKRekap(){
   const [active,setActive]=useState("Semua");
   const [year,setYear]=useState(CURRENT_YEAR);
@@ -438,13 +552,13 @@ export default function SMKRekap(){
 
       {/* Tabs */}
       <div style={{background:"#fff",borderBottom:"2px solid #e2e8f0",display:"flex",overflowX:"auto",padding:"0 12px"}}>
-        {["Semua",...VESSELS].map(v=>(
+        {["Semua",...VESSELS,"Need Approval"].map(v=>(
           <button key={v} onClick={()=>setActive(v)}
             style={{padding:"11px 14px",fontSize:12,fontWeight:active===v?700:500,
               color:active===v?"#1e40af":"#6b7280",background:"none",border:"none",
               borderBottom:`3px solid ${active===v?"#1e40af":"transparent"}`,
               cursor:"pointer",whiteSpace:"nowrap"}}>
-            {v==="Semua"?"📊 Semua Kapal":v}
+            {v==="Semua"?"📊 Semua Kapal":v==="Need Approval"?"⏳ Need Approval":v}
           </button>
         ))}
       </div>
@@ -463,9 +577,13 @@ export default function SMKRekap(){
       {/* Content */}
       <div style={{flex:1,padding:16}}>
         <div style={{background:"#fff",borderRadius:10,boxShadow:"0 1px 4px rgba(0,0,0,.08)",overflow:"hidden"}}>
-          {active==="Semua"
-            ? <SummaryView data={data}/>
-            : <VesselTable vessel={active} data={data} isAdmin={isAdmin} onToggle={handleToggle}/>}
+          {active === "Need Approval" ? (
+            <NeedApprovalView />
+          ) : active === "Semua" ? (
+            <SummaryView data={data} />
+          ) : (
+            <VesselTable vessel={active} data={data} isAdmin={isAdmin} onToggle={handleToggle} />
+          )}
         </div>
       </div>
     </div>
