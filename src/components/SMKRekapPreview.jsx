@@ -370,10 +370,11 @@ export default function SMKRekap(){
       setAdminEmail(session?.user?.email || "");
       setCheckingAdmin(false);
     })();
-    const sub = supabase.auth.onAuthStateChange((_e, session)=>{
+    const interval = setInterval(async ()=>{
+      const { data:{ session } } = await supabase.auth.getSession();
       setAdminEmail(session?.user?.email || "");
-    });
-    return ()=> sub.data.subscription.unsubscribe();
+    }, 2000);
+    return ()=> clearInterval(interval);
   },[]);
 
   const total=data.length, done=data.filter(d=>d.status==="C").length;
