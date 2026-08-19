@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>068 - Correction Chart Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 1000px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 14px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; margin-bottom: 16px; }
+    .info-row .item { display: flex; align-items: baseline; gap: 6px; }
+    .info-row .item label { font-weight: bold; white-space: normal; }
+    .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 0; outline: none; }
+    .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    
+    .instructions { font-size: 11px; margin-bottom: 12px; border: 1px solid #000; padding: 8px; background: #fafafa; }
+    .instructions h4 { margin-bottom: 4px; font-size: 12px; }
+    .instructions ol { padding-left: 20px; margin: 0; }
+    .instructions li { margin-bottom: 2px; }
+    
+    .tbl-container { overflow-x: auto; margin-bottom: 8px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 11px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 4px 6px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 10px; padding: 6px 4px; }
+    .tbl input[type="text"] { width: 100%; border: 0; background: transparent; font-size: 11px; padding: 2px; outline: none; font-family: inherit; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .center { text-align: center; }
+    
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 8mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl { font-size: 9px; }
+      .tbl th { font-size: 9px; }
+      .tbl td { padding: 3px; }
+      .tbl input { font-size: 9px; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-row { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+      .info-row .item { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .info-row .item input, .info-row .item select { width: 100%; border-bottom: 1px solid #ccc; padding: 6px 0; }
+      .page { padding: 12px; }
+      .tbl { min-width: 700px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">068 CORRECTION CHART NOTES</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-row">
+      <div class="item"><label>MV / Nama Kapal :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Tanggal / Date :</label><input class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+    </div>
+
+    <div class="instructions">
+      <h4>Instruksi / Instructions :</h4>
+      <ol>
+        <li>Catatan dibuat secepatnya setelah menerima publikasi BPI/NTM yang terbaru. <i>(Notes made as soon possible after received new latest BPI/NTM)</i></li>
+        <li>Koreksi dilakukan oleh Mualim II dan di cek oleh Nakhoda. <i>(Correction chart do it by 2nd Officer and checked by Master)</i></li>
+      </ol>
+    </div>
+
+    <div class="tbl-container">
+      <table class="tbl" id="main-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:4%;">NO.</th>
+            <th rowspan="2" style="width:14%;">NO. BPI/NTM</th>
+            <th rowspan="2" style="width:12%;">TANGGAL TERIMA<br><i>RECEIVED DATE</i></th>
+            <th rowspan="2" style="width:12%;">TANGGAL KOREKSI<br><i>CORRECTION DATE</i></th>
+            <th colspan="2" style="width:26%;">NO PETA YANG DI KOREKSI<br><i>CORRECTION CHART NO</i></th>
+            <th rowspan="2" style="width:16%;">PARAF MUALIM II<br><i>INITIAL 2ND OFF.</i></th>
+            <th rowspan="2" style="width:16%;">TANDA TANGAN NAKHODA<br><i>SIGNED MASTER</i></th>
+          </tr>
+          <tr>
+            <th style="width:13%;">Indonesia Chart</th>
+            <th style="width:13%;">British Chart</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center row-no">1</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">2</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">3</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">4</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">5</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">6</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">7</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">8</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">9</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">10</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">11</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">12</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">13</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">14</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">15</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">16</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">17</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">18</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">19</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">20</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">21</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">22</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">23</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">24</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="center row-no">25</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('main-table');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="no-print" style="margin-bottom:20px;">
+      <button class="btn" style="padding:6px 12px; font-size:11px;" onclick="addRow('main-table')">+ Tambah Baris / Add Row</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function attachMask(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  }
+  document.querySelectorAll('.date-mask').forEach(attachMask);
+
+  function updateRows(tableId) {
+    var rows = document.querySelectorAll('#' + tableId + ' tbody tr');
+    rows.forEach(function(r, idx) {
+      var td = r.querySelector('.row-no');
+      if(td) td.innerText = idx + 1;
+    });
+  }
+
+  function addRow(tableId) {
+    var tbody = document.querySelector('#' + tableId + ' tbody');
+    var tr = document.createElement('tr');
+    tr.innerHTML = `
+            <td class="center row-no"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="..."></td>
+            <td><input type="text" class="center" placeholder="Nama/Paraf"></td>
+            <td style="position:relative;">
+              <input type="text" class="center" placeholder="Nama/Paraf" style="padding-right:15px;">
+              <button class="no-print" type="button" onclick="this.closest('tr').remove(); updateRows('${tableId}');" style="position:absolute; top:2px; right:2px; background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; width:16px; height:16px; font-size:9px; font-weight:bold;">X</button>
+            </td>
+    `;
+    tbody.appendChild(tr);
+    tr.querySelectorAll('.date-mask').forEach(attachMask);
+    updateRows(tableId);
+  }
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [8, 8, 8, 8],
+      filename:     '068_Correction_Chart_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>

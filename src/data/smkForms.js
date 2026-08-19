@@ -62,6 +62,7 @@ export const SMK_FORMS = [
   { code: "065", title: "Checklist Pemeriksaan Sekoci & Perlengkapannya", category: "Laporan Deck", file: "065_Checklist_Sekoci.html" },
   { code: "066", title: "Safety Equipment Examination Checklist", category: "Laporan Deck", file: "066_Safety_Equipment_Checklist.html" },
   { code: "067", title: "Fire Fighting Equipments Examination Checklist", category: "Laporan Deck", file: "067_Fire_Equipment_Checklist.html" },
+  { code: "068", title: "Correction Chart Notes", category: "Laporan Deck", file: "068_Correction_Chart.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
