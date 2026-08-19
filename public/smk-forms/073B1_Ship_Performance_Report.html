@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>073 B1 - Ship Performance Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 1100px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 15px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .section-title { font-weight: bold; font-size: 12px; margin: 16px 0 8px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+    
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 16px; font-size: 12px; margin-bottom: 12px; }
+    .grid-4 .item { display: flex; flex-direction: column; gap: 2px; }
+    .grid-4 .item label { font-weight: bold; color: #444; font-size: 11px; }
+    .grid-4 .item input, .grid-4 .item select { border: 1px solid #ccc; padding: 4px; font-size: 12px; outline: none; }
+    .grid-4 .item input:focus, .grid-4 .item select:focus { border-color: #1769d2; }
+
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; border: 1px solid #000; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 10px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; }
+    .tbl input[type="text"] { width: 100%; border: 0; background: transparent; font-size: 10px; text-align: center; outline: none; }
+    
+    .footer-section { margin-top: 24px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; justify-content: center; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 11px; font-weight: bold; margin-bottom: 8px; }
+    .sig-item .space { height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; position: relative; }
+    .sig-item .space .btn { padding: 4px 8px; font-size: 9px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 60px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 90%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 11px; padding: 4px; outline: none; font-weight: bold; margin-bottom: 4px; }
+    .sig-item .role { font-size: 10px; font-weight: bold; }
+    .hidden { display: none !important; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; width: 100%; }
+      .no-print { display: none !important; }
+      @page { size: A4 landscape; margin: 8mm; }
+      .tbl { font-size: 8px; }
+      .tbl input { font-size: 8px; }
+      input::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+      .grid-4 .item input, .grid-4 .item select { border: none; border-bottom: 1px solid #000; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .grid-4 { grid-template-columns: 1fr 1fr; }
+      .tbl { min-width: 1200px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">073 B1 - SHIP PERFORMANCE REPORT</div>
+        <div class="st">
+          <div class="code"><span>CS</span><span>BLN</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- VESSEL GENERAL INFO -->
+    <div class="section-title">A. GENERAL SHIP'S INFORMATION</div>
+    <div class="grid-4">
+      <div class="item">
+        <label>Ship's Name</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>IMO Number</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Ship's Type</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Power ME</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Gross Ton (GT)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Nett Ton (NT)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Deadweight (DWT)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Nominal TEUs</label><input type="text" placeholder="..."></div>
+    </div>
+
+    <!-- STANDARD PERFORMANCE -->
+    <div class="section-title">B. STANDARD CONSUMPTION & PERFORMANCE</div>
+    <div class="grid-4">
+      <div class="item"><label>Speed Service (Knot)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>RPM</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>ME Cons. (MT/Day)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>ME Cons. Type</label><input type="text" placeholder="e.g MFO/HSD"></div>
+      <div class="item"><label>AE Cons. Sailing (MT/Day)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>AE Cons. Anchor (MT/Day)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Manouv Total (MT/Hr)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Fresh Water (MT/Day)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>LO Sys (L/Day)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>LO Cyl (L/Day)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>LO 1xAE (L/Day)</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Reporting Month</label><input type="text" placeholder="MM-YYYY"></div>
+    </div>
+
+    <!-- VOYAGE PERFORMANCE LOG -->
+    <div class="section-title">C. VOYAGE PERFORMANCE LOG (CONTINUOUSLY)</div>
+    <div class="tbl-container">
+      <table class="tbl" id="voy-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:3%;">No</th>
+            <th rowspan="2" style="width:6%;">Voy No</th>
+            <th rowspan="2" style="width:7%;">Route</th>
+            <th rowspan="2" style="width:4%;">Draft<br>(m)</th>
+            <th colspan="2" style="width:14%;">Time Info (Hrs)</th>
+            <th colspan="2" style="width:14%;">Distance & Speed</th>
+            <th colspan="5" style="width:30%;">Consumption (MT / Ltr)</th>
+            <th rowspan="2" style="width:6%;">Fresh Water<br>(MT)</th>
+            <th rowspan="2" style="width:6%;">Ballast<br>(Ton)</th>
+            <th rowspan="2" class="no-print" style="width:3%;">Act</th>
+          </tr>
+          <tr>
+            <th>Steaming<br>(BOSV-EOSV)</th>
+            <th>Anchor /<br>Manouv</th>
+            <th>Dist<br>(NM)</th>
+            <th>Speed<br>(Knot)</th>
+            <th>Fuel<br>MFO (MT)</th>
+            <th>Fuel<br>HSD (MT)</th>
+            <th>LO Sys<br>(Ltr)</th>
+            <th>LO Cyl<br>(Ltr)</th>
+            <th>Sludge<br>(Ltr)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-no">1</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">2</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">3</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">4</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">5</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">6</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">7</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">8</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">9</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">10</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">11</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+          <tr>
+            <td class="row-no">12</td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="no-print" style="margin-bottom:20px;">
+      <button class="btn" style="padding:6px 12px; font-size:11px;" onclick="addRow('voy-table')">+ Tambah Voy Log</button>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Prepared by,</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Chief Engineer</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Acknowledged by,</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Master</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Reviewed by,</div>
+          <div class="space" id="sp-3">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Superintendent / Fleet Manager</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  function updateRows(tableId) {
+    var rows = document.querySelectorAll('#' + tableId + ' tbody tr');
+    rows.forEach(function(r, idx) {
+      var td = r.querySelector('.row-no');
+      if(td) td.innerText = idx + 1;
+    });
+  }
+
+  function addRow(tableId) {
+    var tbody = document.querySelector('#' + tableId + ' tbody');
+    var tr = document.createElement('tr');
+    tr.innerHTML = `
+            <td class="row-no"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('${tableId}');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
+    `;
+    tbody.appendChild(tr);
+    updateRows(tableId);
+  }
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [8, 8, 8, 8],
+      filename:     '073B1_Ship_Performance_' + v + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
