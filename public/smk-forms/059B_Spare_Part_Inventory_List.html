@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>059-B Spare Part Inventory List</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+.page { max-width: 1450px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+.toolbar { text-align: right; margin-bottom: 16px; }
+.btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+.btn.red { background: #dc2626; }
+.header { border: 2px solid #000; padding: 8px; margin-bottom: 10px; }
+.header-top { display: grid; grid-template-columns: 23% 54% 23%; align-items: start; border-bottom: 2px solid #000; padding: 4px 0 10px; min-height: 86px; }
+.company { font-size: 14px; font-weight: 700; text-transform: uppercase; }
+.title { text-align: center; font-size: 15px; font-weight: 700; line-height: 1.35; white-space: pre-wrap;}
+.status { display: flex; flex-direction: column; align-items: flex-end; gap: 9px; padding-right: 16px; font-size: 11px; }
+.status-box { display: inline-flex; border: 1px solid #000; font-weight: 700; }
+.status-box span { padding: 5px 8px; }
+.status-box span + span { border-left: 1px solid #000; }
+.release { white-space: nowrap; text-align: right; }
+.meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; padding-top: 8px; }
+.field { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; }
+.field input, .field select { flex: 1; min-width: 0; border: 0; border-bottom: 1px solid #000; outline: 0; padding: 4px; background: transparent; }
+.table-wrap { width: 100%; overflow-x: auto; }
+table { width: 100%; min-width: 900px; border-collapse: collapse; table-layout: fixed; }
+th, td { border: 1px solid #000; padding: 3px; text-align: center; vertical-align: middle; font-size: 10px; }
+th { background: #f3f4f6; padding: 6px; }
+.cell { display: block; width: 100%; min-height: 24px; border: 0; outline: 0; background: transparent; text-align: center; font: 10px Arial; }
+.cell.left { text-align: left; padding-left: 4px; }
+.foot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; border: 2px solid #000; margin-top: 12px; padding: 10px; text-align: center; }
+.sig-title, .role { font-size: 10px; font-weight: 700; line-height: 1.35; }
+.sig-space { height: 80px; display: flex; align-items: center; justify-content: center; position: relative;}
+.sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+.sig-preview img { max-width: 100%; max-height: 70px; object-fit: contain; }
+.remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+.sig-name { width: 100%; border: 0; border-bottom: 1px solid #000; outline: 0; text-align: center; padding: 4px; }
+.hidden { display: none !important; }
+
+@media (max-width: 768px) {
+  .page { margin: 0; padding: 12px; box-shadow: none; }
+  .header-top { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+  .company, .title, .status { width: 100%; text-align: center; }
+  .status { align-items: flex-end; }
+  .meta { grid-template-columns: 1fr; gap: 9px; }
+  .foot { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 5px; }
+}
+@media print {
+  @page { size: A4 portrait; margin: 7mm; }
+  .no-print { display: none !important; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  .page { width: 100%; max-width: none; margin: 0; padding: 0; box-shadow: none; }
+  .header-top { display: grid !important; grid-template-columns: 23% 54% 23% !important; }
+  .meta { grid-template-columns: 1fr 1fr !important; }
+  table { width: 100% !important; min-width: 0 !important; }
+  th, td { font-size: 8px !important; padding: 2px !important; overflow: hidden; }
+  .cell { min-height: 18px !important; font-size: 8px !important; }
+  .cell::placeholder, .field input::placeholder { color: transparent !important; opacity: 0 !important; }
+  select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+  .sig-space { height: 58px; }
+  .sig-preview:not(.hidden) { display: flex !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="toolbar no-print">
+    <button class="btn" onclick="window.print()">🖨 Print / Simpan PDF</button>
+  </div>
+  <header class="header">
+    <div class="header-top">
+      <div class="company">PT Mentari Mas Multimoda</div>
+      <div class="title" id="form-title">059-B1 SPARE PARTS INVENTORY LIST MAIN ENGINE (ME)</div>
+      <div class="status">
+        <div class="status-box"><span>CS</span><span>BLN</span></div>
+        <div class="release">Release : 11 Dec 2017<br>Rev.04 : 15 Sep 2021</div>
+      </div>
+    </div>
+    <div class="meta">
+      <label class="field">MV: 
+        <select class="vessel">
+          <option value="">Pilih kapal</option>
+          <option>Express Mas</option>
+          <option>Mavendra Mas</option>
+          <option>Prakarsa Mas</option>
+          <option>Pratama Mas</option>
+          <option>Semangat Mas</option>
+          <option>Segoro Mas</option>
+          <option>Sahabat Mas</option>
+          <option>Selaras Mas</option>
+        </select>
+      </label>
+      <label class="field">Date of Report: <input class="date-mask date" type="text" placeholder="DD-MM-YYYY"></label>
+      <label class="field no-print">Category: 
+        <select id="category-select"></select>
+      </label>
+    </div>
+  </header>
+  
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2" style="width:30px">No.</th>
+          <th rowspan="2" style="width:200px">Spare Parts Name</th>
+          <th rowspan="2" style="width:120px">Parts No.</th>
+          <th colspan="2">ROB Last Report</th>
+          <th colspan="2">Supply in Month</th>
+          <th colspan="2">ROB Month of Report</th>
+          <th rowspan="2" style="width:120px">Remarks</th>
+          <th rowspan="2" class="no-print" style="width:40px">Act</th>
+        </tr>
+        <tr>
+          <th>Recond</th>
+          <th>New</th>
+          <th>Recond</th>
+          <th>New</th>
+          <th>Recond</th>
+          <th>New</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  
+  <div class="toolbar no-print" style="margin-top:10px;text-align:left;">
+    <button class="btn" type="button" id="add-row-btn">+ Add Row</button>
+  </div>
+  
+  <div style="font-size: 10px; font-weight: bold; margin-top: 8px;">
+    * Pls fill details same with in Manual Book of <span id="manual-book-label">Main Engine</span>
+  </div>
+  
+  <section class="foot" id="signatures"></section>
+</div>
+
+<script>
+const formData = {"1. ME": {"title": "059-B1 SPARE PARTS INVENTORY LIST MAIN ENGINE (ME)", "parts": ["Nozzle tip", "Injector Assy", "Plunger Barrel", "Feul Pump Assy", "Exhaust valve", "Intake valve", "Sitting ", "Spring for Cyl Head", "Cyl Head Complete", "O ring Cyl Head", "Ring Piston No 1", "Ring Piston No 2", "Ring Piston No 3", "Scapper Ring", "Piston Crown", "Piston Skirt", "Small Bush ", "Piston Rod", "Bolt Piston Rod", "Crank Pin Bearing", "Main Bearing"]}, "2. AE": {"title": "059-B2 SPARE PARTS INVENTORY LIST AUXILIARY ENGINE (AE)", "parts": ["Nozzle Tip", "Injector Assy", "Cyl Head", "Ring Piston", "Piston", "Con rod", "Crank Pin Bearing", "Main Bearing"]}, "3. Emergency Generator": {"title": "059-B3 SPARE PARTS INVENTORY LIST EMERGENCY GENERATOR", "parts": ["Nozzle Tip", "Injector Assy", "Cyl Head", "Ring Piston", "Piston", "Con rod", "Crank Pin Bearing", "Main Bearing"]}, "4. Boiler": {"title": "059-B4 SPARE PARTS INVENTORY LIST BOILER ECHONOMIZER", "parts": ["Safety Valve", "Nozzle Boiler", "Gelas duga", "Valve"]}, "5. MFO Purifier": {"title": "059-B5 SPARE PARTS INVENTORY LIST MFO PURIFIER", "parts": ["O Ring", "Bowl", "Disc"]}, "6. LO Purifier": {"title": "059-B6 SPARE PARTS INVENTORY LIST LO PURIFIER", "parts": ["O Ring", "Bowl", "Disc"]}, "7. Pumps & Special Tools": {"title": "059-B7 SPARE PARTS INVENTORY LIST PUMPS & SPECIAL TOOLS", "parts": ["Impeler", "Shaft", "Mechanical Seal", "Bearing"]}, "8. Crane": {"title": "059-B8 SPARE PARTS INVENTORY LIST CRANE", "parts": ["Hydraulic Hose", "Oil Filter"]}, "9. Turbo Charge": {"title": "059-B9 SPARE PARTS INVENTORY LIST TURBO CHARGE", "parts": ["Impeler", "Shaft", "Mechanical Seal", "Bearing"]}, "10. Electrical": {"title": "059-B10 SPARE PARTS INVENTORY LIST ELECTRICAL & ELECTRICAL TOOLS", "parts": ["Hydraulic Hose", "Oil Filter"]}, "11. Genset": {"title": "059-B11 SPARE PARTS INVENTORY LIST ADDITIONAL GENSET", "parts": []}, "12. Critical": {"title": "059 - B12 CRITICAL SPARE PARTS LIST", "parts": ["Cylinder Liner", "Piston", "Piston Ring Set", "Connecting Rod", "Fuel Injector", "Main Bearing", "Exhaust Valve Spindle", "Inlet Valve", "Cylinder Head", "Injection Pump", "Connecting Rod Bearing", "Starting Air Valve", "Cylinder Head", "Fuel Injector", "L.O. Pump", "Sea Water Pump", "Fresh Water Pump", "Governor Automatic Control", "AVR", "Injection Pump", "Turbocharger", "Compressor unit", "Hydraulic Pump", "Limit Switch", "Solenoid Valve", "Cylinder Seal Kit", "Accumulator Bladder", "Bearing VTR", "Sealing Bush", "Kassa Filter", "Special tools for TC", "Mechanical Seal", "Impeller", "Bearing", "Mechanical Seal", "Impeller", "Motor Starter", "Shaft Seal", "Impeller", "Gear Set", "Shaft & Seal", "Circuit Breaker", "Contactors", "Starter Battery", "Bulb / Driver"]}};
+const categories = Object.keys(formData);
+const categorySelect = document.getElementById('category-select');
+const formTitle = document.getElementById('form-title');
+const tbody = document.getElementById('rows');
+const manualBookLabel = document.getElementById('manual-book-label');
+
+categories.forEach(cat => {
+  const opt = document.createElement('option');
+  opt.value = cat;
+  opt.textContent = cat;
+  categorySelect.appendChild(opt);
+});
+
+function createRow(index, partName) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="row-num">${index}</td>
+    <td><input class="cell left" type="text" value="${partName || ''}" placeholder="Spare Part Name"></td>
+    <td><input class="cell" type="text" placeholder="Part No"></td>
+    <td><input class="cell" type="number"></td>
+    <td><input class="cell" type="number"></td>
+    <td><input class="cell" type="number"></td>
+    <td><input class="cell" type="number"></td>
+    <td><input class="cell" type="number"></td>
+    <td><input class="cell" type="number"></td>
+    <td><input class="cell" type="text"></td>
+    <td class="no-print"><button class="btn red" style="padding:4px 8px" onclick="this.closest('tr').remove(); updateRowNumbers();">X</button></td>
+  `;
+  return tr;
+}
+
+function updateRowNumbers() {
+  document.querySelectorAll('#rows tr').forEach((tr, i) => {
+    tr.querySelector('.row-num').textContent = i + 1;
+  });
+}
+
+function renderTable() {
+  const cat = categorySelect.value;
+  const dataCat = formData[cat];
+  
+  formTitle.innerHTML = dataCat.title.replace(' INVENTORY LIST ', '<br>INVENTORY LIST<br>');
+  manualBookLabel.textContent = cat;
+  
+  tbody.innerHTML = '';
+  let parts = dataCat.parts;
+  if (!parts || parts.length === 0) {
+    parts = ['', '', '', '', ''];
+  }
+  
+  parts.forEach((p, i) => {
+    tbody.appendChild(createRow(i + 1, p));
+  });
+  
+  for(let i=0; i<3; i++) {
+    tbody.appendChild(createRow(tbody.children.length + 1, ''));
+  }
+}
+
+categorySelect.addEventListener('change', renderTable);
+document.getElementById('add-row-btn').addEventListener('click', () => {
+  tbody.appendChild(createRow(tbody.children.length + 1, ''));
+});
+
+const roles = [
+  ['Reported by Chief Engineer', 'Dilaporkan oleh KKM'],
+  ['Checked by Master', 'Diperiksa oleh Nakhoda'],
+  ['Recheck by SI / FM', 'Diperiksa kembali oleh SI / FM']
+];
+const box = document.getElementById('signatures');
+roles.forEach(([a, b]) => {
+  const s = document.createElement('div');
+  s.innerHTML = `
+    <div class="sig-title">${a}<br>${b}</div>
+    <div class="sig-space">
+      <label class="btn no-print">+ Add TTD<input class="upload hidden" type="file" accept="image/*"></label>
+      <div class="sig-preview hidden">
+        <img alt="">
+        <button class="remove no-print" type="button">×</button>
+      </div>
+    </div>
+    <input class="sig-name" type="text">
+    <div class="role">Signed & Name</div>
+  `;
+  box.appendChild(s);
+  const up = s.querySelector('.upload'), pv = s.querySelector('.sig-preview'), lab = s.querySelector('.btn'), im = pv.querySelector('img');
+  up.onchange = e => {
+    const f = e.target.files[0];
+    if (!f || !f.type.startsWith('image/')) return;
+    const r = new FileReader();
+    r.onload = x => {
+      im.src = x.target.result;
+      lab.classList.add('hidden');
+      pv.classList.remove('hidden');
+    };
+    r.readAsDataURL(f);
+  };
+  s.querySelector('.remove').onclick = () => {
+    im.src = ''; up.value = '';
+    pv.classList.add('hidden'); lab.classList.remove('hidden');
+  };
+});
+
+function mask(e) {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+  if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+  if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+  e.target.value = v;
+}
+document.querySelector('.date-mask').oninput = mask;
+
+function updateTitle() {
+  const v = document.querySelector('.vessel').value;
+  const d = document.querySelector('.date').value;
+  const cat = categorySelect.value;
+  let t = "059-B " + cat + " Spare Parts";
+  if (v) t += ' - ' + v;
+  if (d) t += ' - ' + d;
+  document.title = t;
+  if (window.parent) window.parent.postMessage({ type: 'FORM_TITLE', title: t }, '*');
+}
+document.querySelector('.vessel').addEventListener('change', updateTitle);
+document.querySelector('.date').addEventListener('input', updateTitle);
+categorySelect.addEventListener('change', updateTitle);
+
+renderTable();
+updateTitle();
+</script>
+</body>
+</html>
