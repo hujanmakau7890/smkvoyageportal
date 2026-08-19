@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>059-E Monthly Chemical Cons</title>
+<style>
+  body { font-family: 'Arial', sans-serif; font-size: 11px; margin: 0; padding: 20px; color: #333; background: #fff; }
+  * { box-sizing: border-box; }
+  .page { max-width: 900px; margin: 0 auto; background: #fff; }
+  .header { display: flex; flex-direction: column; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+  .company { font-size: 16px; font-weight: bold; width: 25%; }
+  .title { text-align: center; font-size: 16px; font-weight: bold; flex: 1; }
+  .status { display: flex; flex-direction: column; align-items: flex-end; width: 25%; font-size: 10px; }
+  .status-box { border: 1px solid #000; padding: 2px; display: flex; margin-bottom: 5px; }
+  .status-box span { padding: 2px 5px; border-right: 1px solid #000; font-weight: bold; }
+  .status-box span:last-child { border-right: none; }
+  .meta { display: flex; justify-content: space-between; }
+  .field { display: flex; align-items: center; gap: 5px; font-weight: bold; }
+  select, input, textarea { border: 1px solid #ccc; font-family: inherit; font-size: inherit; background: transparent; padding: 3px; }
+  input.date-mask { width: 100px; text-align: center; }
+  input[type="text"] { width: 100%; border: none; outline: none; background: transparent; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+  th { background: #f0f0f0; font-weight: bold; }
+  .row-label { text-align: left; font-weight: bold; }
+  .editable-head { width: 100%; height: 3em; resize: none; border: none; background: transparent; text-align: center; font-weight: bold; outline: none; font-family: inherit; font-size: inherit;}
+  .foot { display: flex; justify-content: space-around; margin-top: 30px; }
+  .sign-box { text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100px; }
+  .sign-line { border-top: 1px solid #000; width: 150px; padding-top: 5px; }
+  .btn { padding: 8px 12px; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+  @media print {
+    body { padding: 0; }
+    .no-print { display: none !important; }
+    input, select, textarea { border: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="toolbar no-print" style="margin-bottom: 10px;">
+    <button class="btn print-btn">🖨 Print / Simpan PDF</button>
+  </div>
+  <header class="header">
+    <div class="header-top">
+      <div class="company">PT MENTARI MAS MULTIMODA</div>
+      <div class="title">
+        059-E<br>MONTHLY CHEMICAL - OXYGEN - LPG - ACCYTELIN - NITROGEN CONSUMPTION
+      </div>
+      <div class="status">
+        <div class="status-box"><span>CS</span><span>BLN</span></div>
+        <div class="release">Release : &nbsp; Rev. 1 :</div>
+      </div>
+    </div>
+    <div class="meta">
+      <label class="field">MV: 
+        <select class="vessel">
+          <option value="">Pilih kapal</option>
+          <option>Express Mas</option>
+          <option>Mavendra Mas</option>
+          <option>Prakarsa Mas</option>
+          <option>Pratama Mas</option>
+          <option>Semangat Mas</option>
+          <option>Segoro Mas</option>
+          <option>Sahabat Mas</option>
+          <option>Selaras Mas</option>
+        </select>
+      </label>
+      <label class="field">Date of Report: <input class="date-mask date" type="text" placeholder="DD-MM-YYYY"></label>
+    </div>
+  </header>
+  
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">KIND OF CHEMICAL</th>
+        <th rowspan="2">Satuan</th>
+        <th rowspan="2">ROB Last Month</th>
+        <th rowspan="2">Last Supply</th>
+        <th rowspan="2">Consumption</th>
+        <th colspan="2">ROB this month</th>
+      </tr>
+      <tr>
+        <th>FULL</th>
+        <th>EMPTY</th>
+      </tr>
+    </thead>
+    <tbody id="rows">
+    </tbody>
+  </table>
+
+  <div style="margin-top: 20px;">
+    <strong>Remarks:</strong>
+    <textarea style="width: 100%; height: 60px; border: 1px solid #000; margin-top: 5px;"></textarea>
+  </div>
+
+  <section class="foot">
+    <div class="sign-box">
+      <div>Reported by Chief Engineer,</div>
+      <div class="sign-line"><input type="text" placeholder="Name" style="text-align: center;"></div>
+    </div>
+    <div class="sign-box">
+      <div>Checked by Master,</div>
+      <div class="sign-line"><input type="text" placeholder="Name" style="text-align: center;"></div>
+    </div>
+    <div class="sign-box">
+      <div>Rechecked by SI / FM,</div>
+      <div class="sign-line"><input type="text" placeholder="Name" style="text-align: center;"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const items = [
+  {name: 'Oxygen', unit: 'Cylinder'},
+  {name: 'Accytelin', unit: 'Cylinder'},
+  {name: 'LPG', unit: 'Cylinder'},
+  {name: 'Freon R...', unit: 'Cylinder'},
+  {name: 'Nitrogen', unit: 'Cylinder'},
+  {name: 'Boiler Phospate test Kid', unit: 'Boxes'},
+  {name: 'Chlorate LMP Test Kid', unit: 'Boxes'},
+  {name: 'Full Range PH Strip', unit: 'Boxes'},
+  {name: 'Arcel', unit: 'Liters'},
+  {name: 'etc', unit: ''}
+];
+
+const tbody = document.getElementById('rows');
+items.forEach(item => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="row-label">${item.name}</td>
+    <td>${item.unit || '<input type="text">'}</td>
+    <td><input type="text"></td>
+    <td><input type="text"></td>
+    <td><input type="text"></td>
+    <td><input type="text"></td>
+    <td><input type="text"></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+function mask(e) {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+  if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,9);
+  e.target.value = v;
+}
+document.querySelector('.date-mask').addEventListener('input', mask);
+</script>
+</body>
+</html>
