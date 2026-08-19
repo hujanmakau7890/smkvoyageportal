@@ -73,6 +73,7 @@ export const SMK_FORMS = [
   { code: "074C", title: "Checklist Peralihan Perwira Jaga (O.O.W)", category: "Laporan Deck", file: "074C_Checklist_OOW.html" },
   { code: "075", title: "Fleet Status Weekly Report", category: "Laporan Deck", file: "075_Fleet_Status_Weekly_Report.html" },
   { code: "076", title: "Hot Work Permit", category: "Laporan Deck", file: "076_Hot_Work_Permit.html" },
+  { code: "077", title: "Permit Entering Enclosed Space", category: "Laporan Deck", file: "077_Permit_Enclosed_Space.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
