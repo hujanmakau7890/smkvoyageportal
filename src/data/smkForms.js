@@ -54,6 +54,8 @@ export const SMK_FORMS = [
   { code: "059-D", title: "Monthly Fuel & Lubricating Oil Consumption Summary", category: "Konsumsi", file: "059D_Monthly_Fuel_Lube_Cons.html" },
   { code: "059-E", title: "Monthly Chemical Consumption", category: "Konsumsi", file: "059E_Monthly_Chemical_Cons.html" },
   { code: "059-F", title: "Monthly Fresh Water Consumption", category: "Konsumsi", file: "059F_Monthly_Fresh_Water_Cons.html" },
+  { code: "059-G", title: "Navigation Equipments, Publication Book & Chart Inventory", category: "Inventaris", file: "059G_Nav_Pub_Chart.html" },
 ];
 
-export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
+export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))  { code: "059-G", title: "Navigation Equipments, Publication Book & Chart Inventory", category: "Inventaris", file: "059G_Nav_Pub_Chart.html" },
+];

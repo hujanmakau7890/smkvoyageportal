@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>059-G Nav, Pub & Chart</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 1450px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .toolbar { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 15px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
+    .info-row .item { display: flex; align-items: baseline; gap: 6px; }
+    .info-row .item label { font-weight: bold; }
+    .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 0; outline: none; }
+    .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    
+    .section-title { font-weight: bold; font-size: 12px; margin-top: 24px; margin-bottom: 4px; padding: 4px 8px; background: #dbeafe; border-left: 4px solid #1769d2; }
+    
+    .tbl { width: 100%; min-width: 1000px; border-collapse: collapse; font-size: 10px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 2px 3px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; font-size: 10px; }
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: left; font-size: 10px; padding: 2px 3px; min-height: 20px; outline: none; font-family: inherit; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .tbl input[readonly] { cursor: default; }
+    
+    .footer-section { margin-top: 24px; padding-top: 10px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: end; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 11px; font-weight: bold; margin-bottom: 8px; }
+    .sig-item .space { height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 60px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; cursor: pointer; }
+    .sig-item .nm { width: 90%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 11px; padding: 2px; outline: none; }
+    .sig-item .role { font-size: 10px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+    
+    .page-break { page-break-before: always; }
+    
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 landscape; margin: 8mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl { min-width: 0 !important; font-size: 8.5px; }
+      .tbl th { font-size: 8px; }
+      .tbl td { padding: 1px 2px; }
+      .tbl input { font-size: 8.5px; min-height: 16px; }
+      .sig-item .space { height: 40px; }
+      .sig-item .space .pv img { max-height: 35px; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; }
+      .st { align-items: center; }
+      .info-row { grid-template-columns: 1fr; }
+      .info-row .item label { white-space: normal; }
+      .info-row .item input, .info-row .item select { font-size: 11px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 9px; }
+      .tbl td, .tbl th { padding: 1px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print" style="text-align:right; padding:10px;">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <!-- HEADER -->
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">059-G1, G2, G3<br>NAVIGATION EQUIP, PUBLICATION & CHART INV<br><span style="font-weight:normal; font-size:10px">DAFTAR INVENTARIS NAVIGASI, BUKU PUBLIKASI, PETA</span></div>
+        <div class="st">
+          <div class="code"><span>CS</span><span>TRW</span></div>
+          <div>Release: &nbsp; Rev.01</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="item"><label>MV / Nama Kapal :</label>
+          <select id="vessel">
+            <option value="">Pilih Kapal</option>
+            <option value="Sahabat Mas">Sahabat Mas</option>
+            <option value="Semangat Mas">Semangat Mas</option>
+            <option value="Express Mas">Express Mas</option>
+            <option value="Pratama Mas">Pratama Mas</option>
+            <option value="Prakarsa Mas">Prakarsa Mas</option>
+            <option value="Mavendra Mas">Mavendra Mas</option>
+            <option value="Selaras Mas">Selaras Mas</option>
+            <option value="Segoro Mas">Segoro Mas</option>
+          </select>
+        </div>
+        <div class="item"><label>Date of Report :</label><input class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+      </div>
+    </header>
+
+    <!-- 059-G1 NAVIGATION EQUIPMENTS -->
+    <div class="section-title">059-G1 NAVIGATION EQUIPMENTS INVENTORY LIST</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="nav-table">
+        <thead>
+          <tr>
+            <th style="width:3%;">No</th>
+            <th style="width:20%;">NAMA BARANG</th>
+            <th style="width:10%;">Merk</th>
+            <th style="width:9%;">Type</th>
+            <th style="width:9%;">Serial No</th>
+            <th style="width:9%;">Condition</th>
+            <th style="width:3%;">No</th>
+            <th style="width:19%;">NAMA BARANG</th>
+            <th style="width:9%;">Merk</th>
+            <th style="width:9%;">Type</th>
+            <th style="width:9%;">Serial No</th>
+            <th style="width:9%;">Condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style='text-align:center;'>1</td>
+            <td><input type='text' value='Magnetic Compass'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>25</td>
+            <td><input type='text' value='Wheather Faximile'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>2</td>
+            <td><input type='text' value='Master Gyro'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>26</td>
+            <td><input type='text' value='Echosunder'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>3</td>
+            <td><input type='text' value='Auto Pilot'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>27</td>
+            <td><input type='text' value='VDR'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>4</td>
+            <td><input type='text' value='Repeater Wing Bridge Stbd'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>28</td>
+            <td><input type='text' value='NAME OF EQUIPMENT'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>5</td>
+            <td><input type='text' value='Repeater Wing Bridge Port'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>29</td>
+            <td><input type='text' value='ECDIS'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>6</td>
+            <td><input type='text' value='Repeater for Auto Pilot'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>30</td>
+            <td><input type='text' value='Baromether'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>7</td>
+            <td><input type='text' value='Wind Indicator (Anemometer)'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>31</td>
+            <td><input type='text' value='Thermometer'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>8</td>
+            <td><input type='text' value='Rudder Angle Indicator'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>32</td>
+            <td><input type='text' value='Speed Log'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>9</td>
+            <td><input type='text' value='RPM Indicator'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>33</td>
+            <td><input type='text' value='Two Way Radio GMDSS'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>10</td>
+            <td><input type='text' value='Thermometer'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>34</td>
+            <td><input type='text' value='Two Way Radio GMDSS'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>11</td>
+            <td><input type='text' value='Barometer'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>35</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>12</td>
+            <td><input type='text' value='Radar (Arpa) No 1'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>36</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>13</td>
+            <td><input type='text' value='Radar (Arpa) No 2'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>37</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>14</td>
+            <td><input type='text' value='BNWAS (Bridge Navigational Warning Alarm System'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>38</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>15</td>
+            <td><input type='text' value='GPS No 1'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>39</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>16</td>
+            <td><input type='text' value='GPS No 2'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>40</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>17</td>
+            <td><input type='text' value='VHF DSC No 1'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>41</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>18</td>
+            <td><input type='text' value='VHF DSC No 2'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>42</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>19</td>
+            <td><input type='text' value='Inmarsat C No 1 (LRIT)'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>43</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>20</td>
+            <td><input type='text' value='Inmarsat C No 2'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>44</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>21</td>
+            <td><input type='text' value='Printer Inmarsat C'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>45</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>22</td>
+            <td><input type='text' value='NBDP'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>46</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>23</td>
+            <td><input type='text' value='MF/ HF Radio'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>47</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>24</td>
+            <td><input type='text' value='Navtex'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>48</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGE BREAK FOR PDF -->
+    <div class="page-break"></div>
+
+    <!-- 059-G2 PUBLICATION BOOK -->
+    <div class="section-title">059-G2 PUBLICATION BOOK INVENTORY LIST</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="pub-table">
+        <thead>
+          <tr>
+            <th style="width:3%;">No</th><th style="width:17%;">PUBLICATION BOOK</th><th style="width:5%;">Thn Edisi</th>
+            <th style="width:3%;">No</th><th style="width:17%;">PUBLICATION BOOK</th><th style="width:5%;">Thn Edisi</th>
+            <th style="width:3%;">No</th><th style="width:17%;">PUBLICATION BOOK</th><th style="width:5%;">Thn Edisi</th>
+            <th style="width:3%;">No</th><th style="width:17%;">PUBLICATION BOOK</th><th style="width:5%;">Thn Edisi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style='text-align:center;'>1</td>
+            <td><input type='text' value='Solas'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>25</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>49</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>73</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>2</td>
+            <td><input type='text' value='Marpol'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>26</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>50</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>74</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>3</td>
+            <td><input type='text' value='STCW'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>27</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>51</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>75</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>4</td>
+            <td><input type='text' value='ISM Code'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>28</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>52</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>76</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>5</td>
+            <td><input type='text' value='ISPS Code'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>29</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>53</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>77</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>6</td>
+            <td><input type='text' value='IMDG Code'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>30</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>54</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>78</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>7</td>
+            <td><input type='text' value='Tide Table of Indonesia Archiprlago'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>31</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>55</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>79</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>8</td>
+            <td><input type='text' value='Tidal Stream Table Indonesia'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>32</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>56</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>80</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>9</td>
+            <td><input type='text' value='Buku Kepanduan Bahari'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>33</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>57</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>81</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>10</td>
+            <td><input type='text' value='Daftar Suar Indonesia'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>34</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>58</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>82</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>11</td>
+            <td><input type='text' value='Daftar Stasiun Radio Pantai'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>35</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>59</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>83</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>12</td>
+            <td><input type='text' value='Almanak Nautika'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>36</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>60</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>84</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>13</td>
+            <td><input type='text' value='SOPEP Book'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>37</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>61</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>85</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>14</td>
+            <td><input type='text' value='Garbage record book'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>38</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>62</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>86</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>15</td>
+            <td><input type='text' value='Garbage Management Plan'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>39</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>63</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>87</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>16</td>
+            <td><input type='text' value='IMDG Code'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>40</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>64</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>88</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>17</td>
+            <td><input type='text' value='etc'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>41</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>65</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>89</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>18</td>
+            <td><input type='text' value='Two Way Radio GMDSS'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>42</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>66</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>90</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>19</td>
+            <td><input type='text' value='Two Way Radio GMDSS'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>43</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>67</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>91</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>20</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>44</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>68</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>92</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>21</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>45</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>69</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>93</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>22</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>46</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>70</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>94</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>23</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>47</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>71</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>95</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>24</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>48</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>72</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>96</td>
+            <td><input type='text' value=''></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGE BREAK FOR PDF -->
+    <div class="page-break"></div>
+
+    <!-- 059-G3 CHART INVENTORY -->
+    <div class="section-title">059-G3 CHART INVENTORY LIST</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="chart-table">
+        <thead>
+          <tr>
+            <th style="width:4%;">No</th><th style="width:16%;">No Peta</th><th style="width:5%;">Thn Edisi</th>
+            <th style="width:4%;">No</th><th style="width:16%;">No Peta</th><th style="width:5%;">Thn Edisi</th>
+            <th style="width:4%;">No</th><th style="width:16%;">No Peta</th><th style="width:5%;">Thn Edisi</th>
+            <th style="width:4%;">No</th><th style="width:16%;">No Peta</th><th style="width:5%;">Thn Edisi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style='text-align:center;'>1</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>28</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>55</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>82</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>2</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>29</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>56</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>83</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>3</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>30</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>57</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>84</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>4</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>31</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>58</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>85</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>5</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>32</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>59</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>86</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>6</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>33</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>60</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>87</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>7</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>34</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>61</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>88</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>8</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>35</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>62</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>89</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>9</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>36</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>63</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>90</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>10</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>37</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>64</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>91</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>11</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>38</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>65</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>92</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>12</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>39</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>66</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>93</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>13</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>40</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>67</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>94</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>14</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>41</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>68</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>95</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>15</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>42</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>69</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>96</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>16</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>43</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>70</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>97</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>17</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>44</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>71</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>98</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>18</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>45</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>72</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>99</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>19</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>46</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>73</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>100</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>20</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>47</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>74</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>101</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>21</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>48</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>75</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>102</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>22</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>49</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>76</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>103</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>23</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>50</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>77</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>104</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>24</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>51</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>78</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>105</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>25</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>52</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>79</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>106</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>26</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>53</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>80</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>107</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+          <tr>
+            <td style='text-align:center;'>27</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>54</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>81</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td style='text-align:center;'>108</td>
+            <td><input type='text' style='text-align:center;'></td>
+            <td><input type='text' style='text-align:center;'></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Prepared by 2nd Officer,</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Checked by Chief Officer,</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Knowledge by Master,</div>
+          <div class="space" id="sp-3">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  // Signature handlers
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  // Date mask
+  document.getElementById('date').addEventListener('input', function(e) {
+    var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+    if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  });
+
+  // Dynamic Title Update based on Vessel Selection
+  document.getElementById('vessel').addEventListener('change', function(e) {
+    var v = e.target.value;
+    var base = "059-G1, G2, G3<br>NAVIGATION EQUIP, PUBLICATION & CHART INV<br><span style='font-weight:normal; font-size:10px'>DAFTAR INVENTARIS NAVIGASI, BUKU PUBLIKASI, PETA</span>";
+    document.getElementById('form-title').innerHTML = v ? base + "<br><span style='font-size:12px; color:#1769d2;'>" + v.toUpperCase() + "</span>" : base;
+  });
+
+  // PDF Export
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       8,
+      filename:     '059G_Nav_Pub_Chart_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
