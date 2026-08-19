@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>070 - Bridge Checklist in Poor Visibility</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 900px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 14px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 20px; font-size: 13px; }
+    .info-grid .item { display: flex; align-items: center; gap: 8px; }
+    .info-grid .item label { font-weight: bold; white-space: nowrap; }
+    .info-grid .item input, .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; }
+    .info-grid .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-grid .item input:focus, .info-grid .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 8px 10px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 13px; }
+    .center { text-align: center; }
+    
+    .notes-section { margin-top: 20px; border: 1px solid #000; padding: 12px; }
+    .notes-section label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 13px; }
+    .notes-section textarea { width: 100%; border: none; outline: none; font-size: 13px; font-family: inherit; resize: vertical; min-height: 80px; }
+    
+    .footer-section { margin-top: 30px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; justify-content: center; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+    
+    /* Custom Radio Buttons */
+    input[type="radio"] { transform: scale(1.2); cursor: pointer; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 6px 8px; font-size: 12px; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 12px; }
+      .info-grid .item { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .info-grid .item input, .info-grid .item select { width: 100%; border-bottom: 1px solid #ccc; padding: 6px 0; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .page { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">070 BRIDGE CHECKLIST IN POOR VISIBILITY</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item"><label>MV :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date & Time of Report :</label><input type="text" placeholder="DD-MM-YYYY HH:MM"></div>
+      <div class="item"><label>Position of Poor visibility :</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Next Port :</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Voy No :</label><input type="text" placeholder="..."></div>
+    </div>
+
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:7%;">No</th>
+            <th rowspan="2" style="width:73%;">Uraian / Discription</th>
+            <th colspan="2" style="width:20%;">Checked</th>
+          </tr>
+          <tr>
+            <th style="width:10%;">Yes</th>
+            <th style="width:10%;">No</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#f9fafb; font-weight:bold;">
+            <td class="center">1</td>
+            <td colspan="3">Perlengkapan berikut siap dioperasikan / Equipment(s) ready for operation :</td>
+          </tr>
+          <tr>
+            <td class="center">1.1</td>
+            <td>&nbsp;&nbsp; Radar, ARPA or other equipments facilities</td>
+            <td class="center"><input type="radio" name="q1" value="Yes"></td>
+            <td class="center"><input type="radio" name="q1" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">1.2</td>
+            <td>&nbsp;&nbsp; Pengemudian Manual / Steering in manual</td>
+            <td class="center"><input type="radio" name="q2" value="Yes"></td>
+            <td class="center"><input type="radio" name="q2" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">1.3</td>
+            <td>&nbsp;&nbsp; VHF</td>
+            <td class="center"><input type="radio" name="q3" value="Yes"></td>
+            <td class="center"><input type="radio" name="q3" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">1.4</td>
+            <td>&nbsp;&nbsp; Peralatan sinyal kabut / Fog signal</td>
+            <td class="center"><input type="radio" name="q4" value="Yes"></td>
+            <td class="center"><input type="radio" name="q4" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">1.5</td>
+            <td>&nbsp;&nbsp; Lampu-lampu Navigasi / Navigation Light</td>
+            <td class="center"><input type="radio" name="q5" value="Yes"></td>
+            <td class="center"><input type="radio" name="q5" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">2</td>
+            <td>Pengamat telah ditempatkan<br>Observer in position</td>
+            <td class="center"><input type="radio" name="q6" value="Yes"></td>
+            <td class="center"><input type="radio" name="q6" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">3</td>
+            <td>Nahkoda dan kamar mesin telah diberitahu<br>Master & Engine room was inform</td>
+            <td class="center"><input type="radio" name="q7" value="Yes"></td>
+            <td class="center"><input type="radio" name="q7" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">4</td>
+            <td>Persyaratan Colreg 1972 telah dipenuhi khususnya yang berhubungan dengan pengaturan kecepatan<br>The requairment of Corleg 1972 have been met expecially with regard speed setting</td>
+            <td class="center"><input type="radio" name="q8" value="Yes"></td>
+            <td class="center"><input type="radio" name="q8" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">5</td>
+            <td>Jika posisi kapal dalam keraguan, apakah kemungkinan lego jangkar dipertimbangkan ?<br>Of ship's position in doubt, there is possibly for considere le go anchor</td>
+            <td class="center"><input type="radio" name="q9" value="Yes"></td>
+            <td class="center"><input type="radio" name="q9" value="No"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notes-section">
+      <label>Catatan / Note :</label>
+      <textarea placeholder="Tambahkan catatan jika ada..."></textarea>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Prepared by Officer on Duty,</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Checked by Master,</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+
+  // Radio button toggle uncheck
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.addEventListener('pointerdown', function() { r.dataset.was = r.checked ? '1' : '0'; });
+    r.addEventListener('click', function() {
+      if(r.dataset.was === '1') { r.checked = false; r.dataset.was = '0'; }
+    });
+  });
+
+  function attachAutoResize(ta) {
+    ta.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  }
+  document.querySelectorAll('textarea').forEach(attachAutoResize);
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '070_Checklist_Poor_Visibility_' + v + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.notes-section'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
