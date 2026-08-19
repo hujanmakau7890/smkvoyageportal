@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>075 - Fleet Status Weekly Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 1000px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 15px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 16px; font-size: 13px; }
+    .info-grid .item { display: flex; align-items: center; gap: 8px; }
+    .info-grid .item label { font-weight: bold; white-space: nowrap; width: 130px; }
+    .info-grid .item input, .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; }
+    
+    .section-title { font-weight: bold; font-size: 13px; margin: 20px 0 10px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+    
+    .status-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; font-size: 13px; border: 1px solid #000; padding: 12px; }
+    .status-grid .item { display: flex; flex-direction: column; gap: 4px; }
+    .status-grid .item label { font-weight: bold; }
+    .status-grid .item select, .status-grid .item input { border: 1px solid #ccc; padding: 6px; font-size: 13px; outline: none; }
+    
+    .legend-box { border: 1px dashed #666; padding: 8px; font-size: 11px; margin-bottom: 12px; background: #f9fafb; display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-box div { flex: 1; min-width: 250px; }
+    .legend-box b { color: #1769d2; }
+    
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 6px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; }
+    .tbl td select { width: 100%; border: none; outline: none; background: transparent; font-size: 12px; }
+    .tbl td input { width: 100%; border: none; outline: none; background: transparent; font-size: 12px; }
+    .cat-row { background: #e5e7eb; font-weight: bold; text-align: left; }
+    
+    .comments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .c-box { border: 1px solid #000; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+    .c-box label { font-weight: bold; }
+    .c-box .row-flex { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed #ccc; padding-bottom: 4px; }
+    .c-box .row-flex input { border: none; outline: none; text-align: right; width: 120px; font-size: 12px; }
+    .c-box textarea { width: 100%; border: 1px solid #ccc; min-height: 80px; padding: 6px; outline: none; font-family: inherit; font-size: 12px; resize: vertical; }
+
+    .footer-section { margin-top: 24px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; justify-content: center; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+      .tbl th, .tbl td { padding: 4px; font-size: 11px; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .info-grid, .status-grid, .comments-grid { grid-template-columns: 1fr; }
+      .info-grid .item label { width: auto; }
+      .tbl { min-width: 500px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">075 FLEET STATUS WEEKLY REPORT</div>
+        <div class="st">
+          <div class="code"><span>CS</span><span>WKY</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item"><label>Vessel's Name</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date of Report</label><input type="text" placeholder="DD-MM-YYYY"></div>
+      <div class="item"><label>Master Name</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Week No.</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Chief Eng. Name</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>SI In Charge</label><input type="text" placeholder="..."></div>
+    </div>
+
+    <div class="status-grid">
+      <div class="item">
+        <label>Vessel Situation</label>
+        <select>
+          <option>Normal</option>
+          <option>Dry-dock</option>
+          <option>Lay up</option>
+          <option>Stoppage</option>
+          <option>Damage</option>
+        </select>
+      </div>
+      <div class="item">
+        <label>General Status</label>
+        <select>
+          <option>Status Normal</option>
+          <option>Status Warning</option>
+          <option>Status Critical</option>
+        </select>
+      </div>
+      <div class="item">
+        <label>Manning Status</label>
+        <select>
+          <option>YIR > 2 Years</option>
+          <option>YIR btwn 1 and 2 years</option>
+          <option>YIR < 1 Year</option>
+          <option>DSA & Crew issues</option>
+        </select>
+      </div>
+      <div class="item">
+        <label>Trade Route / Operation</label>
+        <input type="text" placeholder="...">
+      </div>
+    </div>
+
+    <div class="section-title">TECHNICAL & SAFETY SITUATION</div>
+    <div class="legend-box">
+      <div><b>0</b> = Normal</div>
+      <div><b>1</b> = Normal waiting important spare / service</div>
+      <div><b>2</b> = Degraded Running - Nominal performance</div>
+      <div><b>3</b> = Degraded Running and Performance</div>
+      <div><b>4</b> = Out of Service</div>
+      <div><b>5</b> = Not Fitted on this Vessel</div>
+    </div>
+    
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:40%;">System / Machinery</th>
+            <th style="width:15%;">Tech Status<br>(0-5)</th>
+            <th style="width:45%;">Technical / Safety Issues (Remarks)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3" class="cat-row">Propulsion & Energy</td></tr>
+          <tr>
+            <td style="padding-left:16px;">Main Engine</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Aux Engine 1</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Aux Engine 2</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Aux Engine 3</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Aux Engine 4</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Emergency Generator</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Aux. Boiler / Thermal Oil System</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Pump</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Purifier</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="3" class="cat-row">Operation</td></tr>
+          <tr>
+            <td style="padding-left:16px;">Hold and Hatch Cover</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Cargo Crane</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Ballast / Heeling</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="3" class="cat-row">Safety & Flag</td></tr>
+          <tr>
+            <td style="padding-left:16px;">LSA</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Fire Fighting & detection</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Hull Structure Integrity</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Flag & Class</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="3" class="cat-row">Navcom & Maneuvering</td></tr>
+          <tr>
+            <td style="padding-left:16px;">NavCom</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Bow Thruster</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Deck machinery</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td style="padding-left:16px;">Steering Gear</td>
+            <td style="text-align:center;">
+              <select>
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="comments-grid">
+      <div class="c-box">
+        <label>Special Dates & Comments</label>
+        <div class="row-flex">Last SI visit: <input type="text" placeholder="DD-MM-YYYY"></div>
+        <div class="row-flex">Next SI visit: <input type="text" placeholder="DD-MM-YYYY"></div>
+        <div class="row-flex">Last SSE IA: <input type="text" placeholder="DD-MM-YYYY"></div>
+        <div class="row-flex">Next SSE IA: <input type="text" placeholder="DD-MM-YYYY"></div>
+        <div class="row-flex">Last Prop Cleaning: <input type="text" placeholder="DD-MM-YYYY"></div>
+        <div class="row-flex">Last Hull Cleaning: <input type="text" placeholder="DD-MM-YYYY"></div>
+        <div class="row-flex">Last DD (Dry-dock): <input type="text" placeholder="DD-MM-YYYY"></div>
+        <div class="row-flex">Next DD (Dry-dock): <input type="text" placeholder="DD-MM-YYYY"></div>
+      </div>
+      <div class="c-box">
+        <label>SI / FM Comments (Fleet Manager)</label>
+        <textarea placeholder="Enter comments here..."></textarea>
+      </div>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Prepared by (Master),</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Master</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Acknowledged by (Chief Engineer),</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Chief Engineer</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '075_Fleet_Status_Weekly_Report_' + v + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.comments-grid'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>

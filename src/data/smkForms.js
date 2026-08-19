@@ -71,6 +71,7 @@ export const SMK_FORMS = [
   { code: "074A", title: "Arrival Checklist (Deck)", category: "Laporan Deck", file: "074A_Arrival_Checklist.html" },
   { code: "074B", title: "Bridge Checklist Ship to Ship", category: "Laporan Deck", file: "074B_Bridge_Checklist_STS.html" },
   { code: "074C", title: "Checklist Peralihan Perwira Jaga (O.O.W)", category: "Laporan Deck", file: "074C_Checklist_OOW.html" },
+  { code: "075", title: "Fleet Status Weekly Report", category: "Laporan Deck", file: "075_Fleet_Status_Weekly_Report.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
