@@ -79,6 +79,7 @@ export const SMK_FORMS = [
   { code: "079B", title: "Handover Check List Crew Rating", category: "Laporan Deck", file: "079B_Handover_Crew_Rating.html" },
   { code: "080A", title: "Master Handling Over Report", category: "Laporan Deck", file: "080A_Master_Handover.html" },
   { code: "080A1", title: "Quality Management Review", category: "Laporan Deck", file: "080A1_Quality_Management_Review.html" },
+  { code: "080B", title: "Chief Engineer Handover Report", category: "Laporan Deck", file: "080B_CE_Handover.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
