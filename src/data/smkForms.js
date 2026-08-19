@@ -84,6 +84,7 @@ export const SMK_FORMS = [
   { code: "080D", title: "2nd Engineer Handover Report", category: "Laporan Mesin", file: "080D_2nd_Engineer_Handover.html" },
   { code: "081A", title: "Running Store Order Form", category: "Kebutuhan Kapal & Spare Part", file: "081A_Running_Store_Order.html" },
   { code: "081B", title: "Spare Parts Order Form", category: "Kebutuhan Kapal & Spare Part", file: "081B_Spare_Parts_Order.html" },
+  { code: "081C", title: "Distribution List (Goods/Documents)", category: "Kebutuhan Kapal & Spare Part", file: "081C_Distribution_List.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
