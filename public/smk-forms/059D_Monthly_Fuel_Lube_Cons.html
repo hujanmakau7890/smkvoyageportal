@@ -315,25 +315,25 @@
         <tr>
           <td class="td-rowno">9</td>
           <td class="td-label">Consumption</td>
-          <td><input type="number" id="mfo-cons" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
-          <td><input type="number" id="hsd-cons" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
-          <td><input type="number" id="cyl-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
-          <td><input type="number" id="set-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
-          <td><input type="number" id="sump-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
-          <td><input type="number" id="stor-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
-          <td><input type="number" id="sae-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="text" id="mfo-cons" readonly tabindex="-1" placeholder="0.0"></td>
+          <td><input type="text" id="hsd-cons" readonly tabindex="-1" placeholder="0.0"></td>
+          <td><input type="text" id="cyl-cons" readonly tabindex="-1" placeholder="0.0"></td>
+          <td><input type="text" id="set-cons" readonly tabindex="-1" placeholder="0.0"></td>
+          <td><input type="text" id="sump-cons" readonly tabindex="-1" placeholder="0.0"></td>
+          <td><input type="text" id="stor-cons" readonly tabindex="-1" placeholder="0.0"></td>
+          <td><input type="text" id="sae-cons" readonly tabindex="-1" placeholder="0.0"></td>
         </tr>
         <!-- Row 10: Stock End (auto, hijau) -->
         <tr>
           <td class="td-rowno" style="background:#dcfce7;">10</td>
           <td class="td-label" style="background:#dcfce7;font-weight:bold;">Stock on end of this month</td>
-          <td class="td-stock-end"><input type="text" id="mfo-end" readonly tabindex="-1" placeholder="0.000"></td>
-          <td class="td-stock-end"><input type="text" id="hsd-end" readonly tabindex="-1" placeholder="0.000"></td>
-          <td class="td-stock-end"><input type="text" id="cyl-end" readonly tabindex="-1" placeholder="0.0"></td>
-          <td class="td-stock-end"><input type="text" id="set-end" readonly tabindex="-1" placeholder="0.0"></td>
-          <td class="td-stock-end"><input type="text" id="sump-end" readonly tabindex="-1" placeholder="0.0"></td>
-          <td class="td-stock-end"><input type="text" id="stor-end" readonly tabindex="-1" placeholder="0.0"></td>
-          <td class="td-stock-end"><input type="text" id="sae-end" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-stock-end"><input type="number" id="mfo-end" min="0" step="0.01" placeholder="0.00" oninput="calcStockSummary()"></td>
+          <td class="td-stock-end"><input type="number" id="hsd-end" min="0" step="0.01" placeholder="0.00" oninput="calcStockSummary()"></td>
+          <td class="td-stock-end"><input type="number" id="cyl-end" min="0" step="0.01" placeholder="0.00" oninput="calcStockSummary()"></td>
+          <td class="td-stock-end"><input type="number" id="set-end" min="0" step="0.01" placeholder="0.00" oninput="calcStockSummary()"></td>
+          <td class="td-stock-end"><input type="number" id="sump-end" min="0" step="0.01" placeholder="0.00" oninput="calcStockSummary()"></td>
+          <td class="td-stock-end"><input type="number" id="stor-end" min="0" step="0.01" placeholder="0.00" oninput="calcStockSummary()"></td>
+          <td class="td-stock-end"><input type="number" id="sae-end" min="0" step="0.01" placeholder="0.00" oninput="calcStockSummary()"></td>
         </tr>
       </tbody>
     </table>
