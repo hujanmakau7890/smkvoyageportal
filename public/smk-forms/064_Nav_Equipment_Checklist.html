@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>064 - Navigation Equipment Examination Checklist</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 900px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 14px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
+    .info-row .item { display: flex; align-items: baseline; gap: 6px; }
+    .info-row .item label { font-weight: bold; white-space: nowrap; }
+    .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 0; outline: none; }
+    .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    
+    .tbl-container { margin-top: 14px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 4px 6px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 12px; }
+    
+    .sec-row { background: #e5e7eb; font-weight: bold; font-size: 11px; }
+    .item-row td { padding: 3px 6px; }
+    .col-q { width: 80%; }
+    .col-y { width: 10%; text-align: center; }
+    .col-n { width: 10%; text-align: center; }
+    
+    .inline-input { border: 0; border-bottom: 1px dotted #000; background: transparent; width: 120px; outline: none; font-size: 11px; font-family: inherit; }
+    .inline-input.long { width: 200px; }
+    
+    .notes-section { margin-top: 14px; border: 1px solid #000; padding: 8px; }
+    .notes-section label { font-weight: bold; display: block; margin-bottom: 4px; font-size: 12px; }
+    .notes-section textarea { width: 100%; border: none; outline: none; font-size: 12px; font-family: inherit; resize: vertical; min-height: 80px; }
+    
+    .footer-section { margin-top: 24px; padding-top: 10px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; justify-content: center; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 11px; font-weight: bold; margin-bottom: 8px; }
+    .sig-item .space { height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; position: relative; }
+    .sig-item .space .btn { padding: 4px 8px; font-size: 9px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 60px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 90%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 11px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 10px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+    
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 8mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl { font-size: 10px; }
+      .tbl th { font-size: 10px; }
+      .sec-row { font-size: 9px; }
+      .inline-input { font-size: 10px; }
+      .notes-section { padding: 4px; }
+      .notes-section textarea { font-size: 10px; min-height: 60px; }
+      .sig-item .space { height: 50px; }
+      .sig-item .space .pv img { max-height: 45px; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; }
+      .st { align-items: center; }
+      .info-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <!-- HEADER -->
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">064 NAVIGATION EQUIPMENT EXAMINATION CHECK LIST</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>BLN</span></div>
+          <div>Release: &nbsp; Rev.0:</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="item"><label>MV / Nama Kapal :</label>
+          <select id="vessel">
+            <option value="">Pilih Kapal</option>
+            <option value="Sahabat Mas">Sahabat Mas</option>
+            <option value="Semangat Mas">Semangat Mas</option>
+            <option value="Express Mas">Express Mas</option>
+            <option value="Pratama Mas">Pratama Mas</option>
+            <option value="Prakarsa Mas">Prakarsa Mas</option>
+            <option value="Mavendra Mas">Mavendra Mas</option>
+            <option value="Selaras Mas">Selaras Mas</option>
+            <option value="Segoro Mas">Segoro Mas</option>
+          </select>
+        </div>
+        <div class="item"><label>Date of Inspection :</label><input class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+      </div>
+    </header>
+
+    <!-- TABLE -->
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="col-q" rowspan="2">JENIS PEMERIKSAAN / KIND of INSPECTION</th>
+            <th colspan="2">CHECKED</th>
+          </tr>
+          <tr>
+            <th class="col-y">Yes</th>
+            <th class="col-n">No</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="sec-row">
+            <td colspan="3">EMERGENCY POWER</td>
+          </tr>
+          <tr class="item-row">
+            <td>Daily general check for battery condition / Check secara keseluruhan kondisi Accu</td>
+            <td class="col-y"><input type="radio" name="q1" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q1" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Battery storage room clean & tidy / Ruang accu kondisi besih & rapi</td>
+            <td class="col-y"><input type="radio" name="q2" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q2" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Batteray in good working properly / Kondisi Accu bekerja normal</td>
+            <td class="col-y"><input type="radio" name="q3" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q3" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Last Battery renewed (marking) / Terakhir Accu diganti (ditulis tanggal mulai penggunaan) <input type="text" class="inline-input"></td>
+            <td class="col-y"><input type="radio" name="q4" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q4" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Daily change charger battery done / Penggatian charger accu setiap hari dilakukan</td>
+            <td class="col-y"><input type="radio" name="q5" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q5" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Switch Triangle in good condition / Pengisian accu dg triangle switch berfungsi baik</td>
+            <td class="col-y"><input type="radio" name="q6" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q6" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Volt & Ampere meter in panel in good condition</td>
+            <td class="col-y"><input type="radio" name="q7" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q7" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">RADAR ARPA</td>
+          </tr>
+          <tr class="item-row">
+            <td>Scanner free spanning / Scanner bebas berputar</td>
+            <td class="col-y"><input type="radio" name="q8" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q8" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Last magnetron replace for : / Terakhir penggantian magnetron :</td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">a. Radar No 1 <span style='display:inline-block; width:20px;'></span> Last Magnetron Replaced :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">b. Radar No 2 <span style='display:inline-block; width:20px;'></span> Last Magnetron Replaced :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Radar Log always up date / Radar Log selalu ter up date</td>
+            <td class="col-y"><input type="radio" name="q9" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q9" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Poster Blank sector Radar was fitted / Blank sektor radar sudah terpasang</td>
+            <td class="col-y"><input type="radio" name="q10" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q10" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Keyboard & lamp in good condition / Tombol tombol keyboard & lampu lampu panel bagus</td>
+            <td class="col-y"><input type="radio" name="q11" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q11" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">RADIO VHF</td>
+          </tr>
+          <tr class="item-row">
+            <td>Power supply in good working order / Power supply kondisi baik</td>
+            <td class="col-y"><input type="radio" name="q12" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q12" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Tested equipment used DC power periodically / Pengetesan VHF dg DC Power dilakukan berkala</td>
+            <td class="col-y"><input type="radio" name="q13" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q13" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Communication used VHF GMDSS Log Book always up date</td>
+            <td class="col-y"><input type="radio" name="q14" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q14" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">E P I R B</td>
+          </tr>
+          <tr class="item-row">
+            <td>Tested transmit EPIRB in periodically by crew / Test transmit Epirb secara berkala oleh crew (every 1 month)</td>
+            <td class="col-y"><input type="radio" name="q15" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q15" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Annual tested Epirb by vendor / Test epirb oleh vendor setahun sekali</td>
+            <td class="col-y"><input type="radio" name="q16" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q16" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Last Annual Test Epirb by Vendor :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">HRU Epirb expired date :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Battery Epirb expired date :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">MAGNETIC COMPASS (Compass Standard)</td>
+          </tr>
+          <tr class="item-row">
+            <td>Error Magnetic Compass always take it / Kesalahan Compass Standard selalu diambil</td>
+            <td class="col-y"><input type="radio" name="q17" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q17" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Record error magnetic compass always up date / Catatan error kompas standard up date</td>
+            <td class="col-y"><input type="radio" name="q18" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q18" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Last Calibration Certificate :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Magnetic Compass water in normal condition / Air kompas standard kondisi normal</td>
+            <td class="col-y"><input type="radio" name="q19" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q19" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Light of magnetic compass in good working / lampu kompas standard bekerja bagus</td>
+            <td class="col-y"><input type="radio" name="q20" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q20" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">GYRO COMPASS ( MASTER GYRO), REPEATER</td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Last Annual service Gyro Compass :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition of Gyro Compass in good condition</td>
+            <td class="col-y"><input type="radio" name="q21" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q21" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition repater(s) in good condition</td>
+            <td class="col-y"><input type="radio" name="q22" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q22" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Sincronize between Gyro Compass & repeater work properly</td>
+            <td class="col-y"><input type="radio" name="q23" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q23" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">S A R T</td>
+          </tr>
+          <tr class="item-row">
+            <td>Tested SART periodically by crew and detect 12 dot by Radar 9 Ghz (monthly)</td>
+            <td class="col-y"><input type="radio" name="q24" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q24" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>Annual tested by vendor / Test oleh vendor setahun sekali</td>
+            <td class="col-y"><input type="radio" name="q25" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q25" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Last Annual Test by Vendor :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Battery SART Expired date :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">TWO-WAY RADIO GMDSS APPARATUS</td>
+          </tr>
+          <tr class="item-row">
+            <td colspan="3">Battery Expired Date :  <input type="text" class="inline-input long"></td>
+          </tr>
+          <tr class="item-row">
+            <td>GMDSS Radio No 1</td>
+            <td class="col-y"><input type="radio" name="q26" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q26" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>GMDSS Radio No 2</td>
+            <td class="col-y"><input type="radio" name="q27" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q27" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>GMDSS Radio No 3</td>
+            <td class="col-y"><input type="radio" name="q28" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q28" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">G P S</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition GPS No 1 in working properly</td>
+            <td class="col-y"><input type="radio" name="q29" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q29" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>General Condition GPS No 2 in working properly</td>
+            <td class="col-y"><input type="radio" name="q30" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q30" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>General Condition GPS No 3 working properly</td>
+            <td class="col-y"><input type="radio" name="q31" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q31" value="No"></td>
+          </tr>
+          <tr class="item-row">
+            <td>GPS Log always up date</td>
+            <td class="col-y"><input type="radio" name="q32" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q32" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">E C D I S</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q33" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q33" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">A I S</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q34" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q34" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">ECHOSUNDER</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q35" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q35" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">WHEATER FAXIMILE</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q36" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q36" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">N A V T E X Reciever</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q37" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q37" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">INMARSAT C</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q38" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q38" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">AUTO PILOT</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q39" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q39" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">RUDDER ANGLE INDICATOR</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q40" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q40" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">WIND INDICATOR</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q41" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q41" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">BAROMETER</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q42" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q42" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">THERMOMETER</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q43" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q43" value="No"></td>
+          </tr>
+          <tr class="sec-row">
+            <td colspan="3">NAVIGATION LIGHT & ANCHOR LIGHT</td>
+          </tr>
+          <tr class="item-row">
+            <td>General condition in working properly</td>
+            <td class="col-y"><input type="radio" name="q44" value="Yes"></td>
+            <td class="col-n"><input type="radio" name="q44" value="No"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="notes-section">
+      <label>Catatan / Notes :</label>
+      <textarea placeholder="Tambahkan catatan jika ada..."></textarea>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Inspection by 2nd Officer,</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Checked by Chief Officer,</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Knowledge by Master,</div>
+          <div class="space" id="sp-3">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  // Signature handlers
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  // Date masks
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // Radio button uncheck feature
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.addEventListener('pointerdown', function() {
+      r.dataset.was = r.checked ? '1' : '0';
+    });
+    r.addEventListener('click', function() {
+      if(r.dataset.was === '1') {
+        r.checked = false;
+        r.dataset.was = '0';
+      }
+    });
+  });
+
+  // Textarea auto-resize
+  function attachAutoResize(ta) {
+    ta.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  }
+  document.querySelectorAll('textarea').forEach(attachAutoResize);
+
+  // PDF Export
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [10, 8, 10, 8],
+      filename:     '064_Nav_Equip_Checklist_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.notes-section'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
