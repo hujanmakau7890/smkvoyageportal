@@ -289,6 +289,9 @@
         </tbody>
       </table>
     </div>
+    <div class="no-print" style="margin-top: 8px;">
+      <button class="btn" style="padding: 6px 12px; font-size: 11px; cursor: pointer;" onclick="addRow()">+ Tambah Baris</button>
+    </div>
 
     <!-- FOOTER / SIGNATURES -->
     <div class="footer-section no-break">
@@ -354,15 +357,40 @@
   initSig('up-1', 'pv-1');
   initSig('up-2', 'pv-2');
 
-  // Date masks
-  document.querySelectorAll('.date-mask').forEach(function(el) {
+  function attachMask(el) {
     el.addEventListener('input', function(e) {
       var v = e.target.value.replace(/\D/g, '').slice(0, 8);
       if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
       if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
       e.target.value = v;
     });
-  });
+  }
+
+  function attachAutoResize(ta) {
+    ta.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  }
+
+  // Date masks
+  document.querySelectorAll('.date-mask').forEach(attachMask);
+
+  // Textarea auto-resize
+  document.querySelectorAll('textarea').forEach(attachAutoResize);
+
+  function addRow() {
+    var tbody = document.querySelector('#main-table tbody');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>' +
+                   '<td><input type="text" placeholder="..."></td>' +
+                   '<td><input type="text" placeholder="..."></td>' +
+                   '<td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>' +
+                   '<td><textarea rows="2" placeholder="Keterangan..."></textarea></td>';
+    tbody.appendChild(tr);
+    attachMask(tr.querySelector('.date-mask'));
+    tr.querySelectorAll('textarea').forEach(attachAutoResize);
+  }
 
   // Dynamic Title & Role Update
   document.getElementById('vessel').addEventListener('change', updateTitle);
@@ -391,13 +419,7 @@
     }
   }
 
-  // Textarea auto-resize
-  document.querySelectorAll('textarea').forEach(function(ta) {
-    ta.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-    });
-  });
+
 
   // PDF Export
   document.getElementById('photoUpload').addEventListener('change', function(e) {
