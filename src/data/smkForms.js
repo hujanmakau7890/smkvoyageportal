@@ -65,6 +65,7 @@ export const SMK_FORMS = [
   { code: "068", title: "Correction Chart Notes", category: "Laporan Deck", file: "068_Correction_Chart.html" },
   { code: "069", title: "Checklist in Bad Weather (Bridge)", category: "Laporan Deck", file: "069_Checklist_Bad_Weather.html" },
   { code: "070", title: "Bridge Checklist in Poor Visibility", category: "Laporan Deck", file: "070_Checklist_Poor_Visibility.html" },
+  { code: "071", title: "Departure Checklist (Deck)", category: "Laporan Deck", file: "071_Departure_Checklist.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
