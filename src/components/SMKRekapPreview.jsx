@@ -364,10 +364,32 @@ function CariLaporanView() {
     }
   };
 
-  const handleDownload = (path) => {
-    const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
-    const baseUrl = uploadUrl.replace(/\/+$/, "");
-    window.open(`${baseUrl}/download?path=${encodeURIComponent(path)}`, '_blank');
+  const handleDownload = async (path) => {
+    try {
+      const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
+      const baseUrl = uploadUrl.replace(/\/+$/, "");
+      const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(path)}`;
+      
+      const res = await fetch(dlUrl, {
+        headers: { "X-Token": "smk-laporan-2026" }
+      });
+      
+      if (!res.ok) throw new Error("Gagal mengunduh PDF");
+      
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      
+      // Auto-download using anchor tag to avoid popup blockers and save with original name
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = path.split('/').pop() || "laporan.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert("Error download: " + e.message);
+    }
   };
 
   return (
