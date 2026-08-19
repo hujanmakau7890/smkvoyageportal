@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>080A - Master Handover Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 950px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 16px; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 16px; font-size: 13px; }
+    .info-grid .item { display: flex; align-items: center; gap: 8px; }
+    .info-grid .item label { font-weight: bold; white-space: nowrap; width: 100px; }
+    .info-grid .item input, .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; }
+    
+    .section-title { font-weight: bold; font-size: 13px; margin: 20px 0 10px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 12px; }
+    .tbl td input[type="text"] { width: 100%; border: none; outline: none; font-family: inherit; font-size: 12px; background: transparent; }
+    .center { text-align: center; }
+    .section-row { background: #e5e7eb; font-weight: bold; }
+    
+    .bunker-tbl { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+    .bunker-tbl th, .bunker-tbl td { border: 1px solid #666; padding: 4px; text-align: center; }
+    .bunker-tbl th { background: #eee; }
+    .bunker-tbl td input { width: 100%; text-align: center; border: none; outline: none; background: transparent; font-size: 11px; }
+    
+    .statement-box { border: 1px solid #000; padding: 12px; font-size: 13px; margin-bottom: 20px; background: #f9fafb; line-height: 1.6; }
+    .statement-box input { border: 0; border-bottom: 1px dashed #000; background: transparent; text-align: center; font-size: 13px; outline: none; font-weight: bold; }
+    
+    .q-box { border: 1px solid #000; padding: 12px; font-size: 12px; margin-bottom: 20px; }
+    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .q-grid > div { border-right: 1px dashed #ccc; padding-right: 20px; }
+    .q-grid > div:last-child { border-right: none; padding-right: 0; }
+    .q-title { font-weight: bold; margin-bottom: 8px; text-decoration: underline; }
+    .q-opts label { display: block; margin-bottom: 6px; cursor: pointer; }
+    
+    .footer-section { margin-top: 20px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; justify-content: center; margin-bottom: 20px; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+
+    input[type="radio"], input[type="checkbox"] { transform: scale(1.2); cursor: pointer; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 4px 6px; font-size: 10px; }
+      .statement-box, .q-box { font-size: 11px; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 12px; }
+      .info-grid .item { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .info-grid .item input, .info-grid .item select { width: 100%; border-bottom: 1px solid #ccc; padding: 6px 0; }
+      .q-grid, .footer-grid { grid-template-columns: 1fr; }
+      .q-grid > div { border-right: none; border-bottom: 1px dashed #ccc; padding-bottom: 12px; padding-right: 0; }
+      .page { padding: 12px; }
+      .tbl { min-width: 600px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">080-A MASTER HANDLING OVER REPORT</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item"><label>MV :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Port :</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Date :</label><input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+      <div class="item"></div>
+    </div>
+
+    <div class="section-title">A. Handover Checklist & General Status</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:5%;">No</th>
+            <th style="width:35%;">Topic / Description</th>
+            <th style="width:10%;">Done / Yes</th>
+            <th style="width:50%;">Remarks / Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">1</td>
+            <td>Vessel’s Certificates</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">2</td>
+            <td>Crew’s Certificates</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">3</td>
+            <td>Documentation</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">4</td>
+            <td>Schedule, T/C Specialist</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">5</td>
+            <td>Hull Insurance, P&I</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">6</td>
+            <td>Reporting</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">7</td>
+            <td>Class Status Survey</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">8</td>
+            <td>Fleet Instructions</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">9</td>
+            <td>Food Allowances</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">10</td>
+            <td>Bonus</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">11</td>
+            <td>Docking</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">12</td>
+            <td>Garbage & Sludge Disposal (ports, record books)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">13</td>
+            <td>Requisition (AMT-Ordering System)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">14</td>
+            <td><b>Bunker & Stock</b><br><span style="font-size:10px; font-weight:normal;">Fuel Oil & Lube Oil Stock</span></td>
+            <td class="center"><input type="checkbox"></td>
+            <td style="padding:4px;">
+              <table class="bunker-tbl">
+                <tr><th>Item</th><th>Sounding</th><th>Log Book</th></tr>
+                <tr><td>HFO - HS (mt)</td><td><input type="text"></td><td><input type="text"></td></tr>
+                <tr><td>HFO - LS (mt)</td><td><input type="text"></td><td><input type="text"></td></tr>
+                <tr><td>MDO / MGO (mt)</td><td><input type="text"></td><td><input type="text"></td></tr>
+                <tr><td>L.O. M/E (ltr)</td><td><input type="text"></td><td><input type="text"></td></tr>
+                <tr><td>L.O. A/E (ltr)</td><td><input type="text"></td><td><input type="text"></td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td class="center">15</td>
+            <td>SEEMP</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">16</td>
+            <td>Fresh Water (Stock, capacity)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">17</td>
+            <td>Cargo Gear</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">18</td>
+            <td>Lashing Material</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">19</td>
+            <td>Anchor - Mooring Equipment</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">20</td>
+            <td>Ballast & Heeling Plant</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">21</td>
+            <td>Loading Condition</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">22</td>
+            <td>Radio Service</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">23</td>
+            <td>Radio Stations</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">24</td>
+            <td>Seaworthiness</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">25</td>
+            <td>Manouvering (Ship & engine condition)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">26</td>
+            <td>Nautical Equip</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">27</td>
+            <td>Navigations (Charts, handbooks)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">28</td>
+            <td>Ship Safety, LSA, FFA</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">29</td>
+            <td>Burglary</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">30</td>
+            <td>Smuggling (Alcohol, Drugs)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">31</td>
+            <td>Stowaways</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">32</td>
+            <td>Security System</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">33</td>
+            <td>On - Off Signer</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">34</td>
+            <td>Tasks</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">35</td>
+            <td>Clearance (inwards, outwards)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">36</td>
+            <td>Laundry</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">37</td>
+            <td>Overtime</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">38</td>
+            <td>Accidents</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">39</td>
+            <td>Passengers</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">40</td>
+            <td>Vaccinations</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">41</td>
+            <td>Performance Reports (Form 038)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">42</td>
+            <td>Provision Store</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">43</td>
+            <td>GLSM System (version, updates)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">44</td>
+            <td>Hand Over of Master Key(s)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">45</td>
+            <td>SMS (QM) Review (Form 080 A1)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">46</td>
+            <td>Narcotics (stock, expiry, record book)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">B. Inventaris & Alat Keselamatan Kamar Nakhoda</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:40%;">Item</th>
+            <th style="width:10%;">Yes</th>
+            <th style="width:10%;">No</th>
+            <th style="width:40%;">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" class="section-row">47. Inventaris Kamar / Room Inventory</td></tr>
+          <tr>
+            <td>Kasur / Mattress</td>
+            <td class="center"><input type="radio" name="qi1" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi1" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Bantal / Cushion</td>
+            <td class="center"><input type="radio" name="qi2" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi2" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sarung Bantal / Pillowcase</td>
+            <td class="center"><input type="radio" name="qi3" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi3" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sprai / Bed linen</td>
+            <td class="center"><input type="radio" name="qi4" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi4" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kulkas / Refrigerator</td>
+            <td class="center"><input type="radio" name="qi5" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi5" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Meja / Table</td>
+            <td class="center"><input type="radio" name="qi6" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi6" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kursi / Chair</td>
+            <td class="center"><input type="radio" name="qi7" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi7" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sofa</td>
+            <td class="center"><input type="radio" name="qi8" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi8" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Staples</td>
+            <td class="center"><input type="radio" name="qi9" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi9" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Calculator</td>
+            <td class="center"><input type="radio" name="qi10" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi10" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Lampu Senter / Flash light</td>
+            <td class="center"><input type="radio" name="qi11" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi11" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pelubang Kertas / Hole puncher</td>
+            <td class="center"><input type="radio" name="qi12" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi12" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Daily Work Report</td>
+            <td class="center"><input type="radio" name="qi13" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi13" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Selimut / Blanket</td>
+            <td class="center"><input type="radio" name="qi14" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi14" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">48. Alat Keselamatan / Emergency Equipment</td></tr>          <tr>
+            <td>Life Jacket</td>
+            <td class="center"><input type="radio" name="qi15" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi15" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td> - Peluit / Whistle</td>
+            <td class="center"><input type="radio" name="qi16" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi16" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td> - Lampu / Torch</td>
+            <td class="center"><input type="radio" name="qi17" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi17" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Helmet</td>
+            <td class="center"><input type="radio" name="qi18" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi18" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">49. Others / Lain-lain</td></tr>          <tr>
+            <td><input type="text" placeholder="..."></td>
+            <td class="center"><input type="radio" name="qi19" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi19" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="..."></td>
+            <td class="center"><input type="radio" name="qi20" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi20" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="font-size:11px; margin-bottom:20px; font-style:italic;">
+      <b>Enclosures:</b> Plan of dents including last update, fault report/ warranty record list, stevedore damage list. Vessels condition report including Photo CD consisting of following: 1. Main Deck PS/STB, 2. All cross bays, 3. Mooring stations, 4. Superstructure including all cabins, 5. Galley and Provision rooms, 6. All cargo holds with cross bays and bilges, 7. Passage Ways, 8. Engine room general (e.g. ISM – Code, next Internal/External Audit; Implementation of EN ISO 9001/2000 and 14001; Regulations of ISPS – Code)
+    </div>
+
+    <!-- STATEMENT -->
+    <div class="statement-box">
+      <strong>PERNYATAAN (STATEMENT) :</strong><br><br>
+      Pada hari <input type="text" style="width:120px;" placeholder="..."> 
+      tanggal <input type="text" class="date-mask" style="width:100px;" placeholder="DD-MM-YYYY"> 
+      pukul <input type="text" style="width:80px;" placeholder="HH:MM"> 
+      telah dilakukan serah terima jabatan di Pelabuhan <input type="text" style="width:150px;" placeholder="..."> 
+      dengan hasil <input type="text" style="width:150px;" placeholder="..."> 
+      antara Nakhoda saat ini dengan Nakhoda pengganti (baru). 
+      Dengan penandatangan serah terima ini, seluruh tugas dan tanggung jawab sepenuhnya beralih dari Nakhoda saat ini kepada Nakhoda pengganti (baru).<br><br>
+      <i>If a hand over has taken place and we do not receive any reply or comment within three weeks the hand over shall be handled as fully accepted and confirmed from on signing Master.</i>
+    </div>
+
+    <!-- QUESTIONS / CONFIRMATIONS -->
+    <div class="q-box">
+      <div class="q-grid">
+        <div>
+          <div class="q-title">Diisi oleh Nakhoda Pengganti (Baru) :</div>
+          <div style="margin-bottom:6px;">Apakah Anda familiar dengan Kapal yang digantikan :</div>
+          <div class="q-opts">
+            <label><input type="radio" name="qc1" value="YA"> YA, tidak diperlukan pendampingan (double up)</label>
+            <label><input type="radio" name="qc1" value="TIDAK"> TIDAK, diperlukan pendampingan (double up) 3 – 5 hari.</label>
+          </div>
+        </div>
+        <div>
+          <div class="q-title">Diisi oleh Nakhoda Lama (Master) :</div>
+          <div style="margin-bottom:6px;">Penulisan "Hand Over Command" pada Log Book :</div>
+          <div class="q-opts">
+            <label><input type="radio" name="qc2" value="SUDAH"> SUDAH</label>
+            <label><input type="radio" name="qc2" value="BELUM"> BELUM, Segera dilengkapi !!!</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Master (Nakhoda Lama)</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">The New Master (Nakhoda Pengganti)</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+
+  // Radio button toggle uncheck
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.addEventListener('pointerdown', function() { r.dataset.was = r.checked ? '1' : '0'; });
+    r.addEventListener('click', function() {
+      if(r.dataset.was === '1') { r.checked = false; r.dataset.was = '0'; }
+    });
+  });
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '080A_Master_Handling_Over_Report_' + v + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.statement-box', '.q-box'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
