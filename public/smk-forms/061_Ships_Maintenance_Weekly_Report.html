@@ -48,6 +48,13 @@
     .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
     .hidden { display: none !important; }
     
+    .photos { margin-top: 30px; padding-top: 14px; border-top: 2px solid #000; }
+    .photos-title { font-weight: bold; font-size: 13px; margin-bottom: 12px; text-align: center; }
+    .photo-controls { text-align: center; margin-bottom: 16px; }
+    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .photo-item { border: 1px dashed #999; padding: 4px; display: flex; align-items: center; justify-content: center; background: #fafafa; height: 350px; }
+    .photo-item img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    
     @media print {
       body { background: #fff; }
       .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
@@ -63,6 +70,9 @@
       .tbl input, .tbl textarea { font-size: 10px; }
       .sig-item .space { height: 60px; }
       .sig-item .space .pv img { max-height: 55px; }
+      .photos { page-break-before: always; border: none; padding-top: 0; margin-top: 0; }
+      .photo-grid { gap: 8px; }
+      .photo-item { border: 1px solid #000; height: 320px; }
     }
     
     @media screen and (max-width: 768px) {
@@ -72,6 +82,8 @@
       .info-row.two-col { grid-template-columns: 1fr; }
       .info-row .item label { white-space: normal; }
       .footer-grid { grid-template-columns: 1fr; }
+      .photo-grid { grid-template-columns: 1fr; }
+      .photo-item { height: 250px; }
     }
   </style>
 </head>
@@ -303,6 +315,14 @@
         </div>
       </div>
     </div>
+    <!-- DOKUMENTASI FOTO -->
+    <section class="photos">
+      <div class="photos-title">DOKUMENTASI / LAMPIRAN FOTO</div>
+      <div class="photo-controls no-print">
+        <label class="btn" style="cursor:pointer;">+ Tambah Foto<input id="photoUpload" class="hidden" type="file" multiple accept="image/*"></label>
+      </div>
+      <div class="photo-grid" id="photoGrid"></div>
+    </section>
   </div>
 </div>
 
@@ -380,6 +400,22 @@
   });
 
   // PDF Export
+  document.getElementById('photoUpload').addEventListener('change', function(e) {
+    var grid = document.getElementById('photoGrid');
+    grid.innerHTML = '';
+    Array.from(e.target.files).forEach(function(f) {
+      if(!f.type.startsWith('image/')) return;
+      var rd = new FileReader();
+      rd.onload = function(x) {
+        var d = document.createElement('div');
+        d.className = 'photo-item';
+        d.innerHTML = '<img src="' + x.target.result + '">';
+        grid.appendChild(d);
+      };
+      rd.readAsDataURL(f);
+    });
+  });
+
   function savePDF() {
     var v = document.getElementById('vessel').value || 'UnknownVessel';
     var d = document.getElementById('date').value || 'NoDate';
