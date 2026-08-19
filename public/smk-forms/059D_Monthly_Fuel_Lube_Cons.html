@@ -7,8 +7,8 @@
   body { font-family: 'Arial', sans-serif; font-size: 11px; margin: 0; padding: 20px; color: #333; background: #fff; }
   * { box-sizing: border-box; }
   .page { max-width: 900px; margin: 0 auto; background: #fff; }
-  .header { display: flex; flex-direction: column; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+  .header { display: flex; flex-direction: column; border: 2px solid #000; padding: 10px; margin-bottom: 20px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px; }
   .company { font-size: 16px; font-weight: bold; width: 25%; }
   .title { text-align: center; font-size: 14px; font-weight: bold; flex: 1; }
   .status { display: flex; flex-direction: column; align-items: flex-end; width: 25%; font-size: 10px; }
@@ -33,6 +33,16 @@
     .no-print { display: none !important; }
     input, select, textarea { border: none !important; }
   }
+
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; }
+  .sig-preview { position: relative; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
+  .sig-preview img { max-height: 50px; max-width: 100%; object-fit: contain; }
+  .sig-preview.hidden, .btn.hidden { display: none !important; }
+  .remove { position: absolute; top: -5px; right: 0; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-weight: bold; padding: 0; }
+  .upload { display: none; }
+  .sig-name { border: none; border-bottom: 1px solid #000; outline: none; width: 100%; text-align: center; margin-top: 5px; }
+  .role { font-size: 9px; font-weight: bold; margin-top: 2px; }
+    
 </style>
 </head>
 <body>
@@ -40,34 +50,19 @@
   <div class="toolbar no-print" style="margin-bottom: 10px;">
     <button class="btn print-btn">🖨 Print / Simpan PDF</button>
   </div>
-  <header class="header">
-    <div class="header-top">
-      <div class="company">PT MENTARI MAS MULTIMODA</div>
-      <div class="title">
-        059-D<br>MONTHLY FUEL & LUBRICATING OIL CONSUMPTION SUMMARY<br>RINGKASAN KONSUMSI BULANAN BAHAN BAKAR & MINYAK PELUMAS
-      </div>
-      <div class="status">
-        <div class="status-box"><span>CS</span><span>BLN</span></div>
-        <div class="release">Release : &nbsp; Rev. 3 :</div>
-      </div>
-    </div>
-    <div class="meta">
-      <label class="field">MV: 
-        <select class="vessel">
-          <option value="">Pilih kapal</option>
-          <option>Express Mas</option>
-          <option>Mavendra Mas</option>
-          <option>Prakarsa Mas</option>
-          <option>Pratama Mas</option>
-          <option>Semangat Mas</option>
-          <option>Segoro Mas</option>
-          <option>Sahabat Mas</option>
-          <option>Selaras Mas</option>
-        </select>
-      </label>
-      <label class="field">Date: <input class="date-mask date" type="text" placeholder="DD-MM-YYYY"></label>
-    </div>
-  </header>
+  
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 2px solid #000;">
+    
+    <tbody id="fuel-table">
+      <tr>
+        <td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td>
+        <td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td>
+        <td><input type="text" class="f-tot" readonly></td>
+      </tr>
+    </tbody>
+
+  </table>
+
 
   <table>
     <thead>
@@ -86,13 +81,14 @@
         <th>Total</th>
       </tr>
     </thead>
-    <tbody>
+    
+    <tbody id="lube-table">
       <tr>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td>
+        <td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td>
+        <td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td><td><input type="text" class="l-tot" readonly></td>
       </tr>
     </tbody>
+
   </table>
 
   <table>
@@ -134,56 +130,65 @@
         <th>Storage Tk</th>
       </tr>
     </thead>
-    <tbody>
+    
+    <tbody id="calc-table">
       <tr>
         <td class="row-label">Stock on the end of last month on:</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" class="c-mfo r-last"></td><td><input type="text" class="c-hsd r-last"></td><td><input type="text" class="c-cy r-last"></td>
+        <td><input type="text" class="c-set r-last"></td><td><input type="text" class="c-sump r-last"></td><td><input type="text" class="c-sto r-last"></td><td><input type="text" class="c-sae r-last"></td>
       </tr>
       <tr>
-        <td class="row-label">Bunkering / Supply</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="row-label">Bunkering / Supply 1</td>
+        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
+        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
       </tr>
       <tr>
-        <td class="row-label">Correction</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="row-label">Bunkering / Supply 2</td>
+        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
+        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
+      </tr>
+      <tr>
+        <td class="row-label">Bunkering / Supply 3</td>
+        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
+        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
+      </tr>
+      <tr>
+        <td class="row-label">Bunkering / Supply 4</td>
+        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
+        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
+      </tr>
+      <tr>
+        <td class="row-label">Correction 1</td>
+        <td><input type="text" class="c-mfo r-cor"></td><td><input type="text" class="c-hsd r-cor"></td><td><input type="text" class="c-cy r-cor"></td>
+        <td><input type="text" class="c-set r-cor"></td><td><input type="text" class="c-sump r-cor"></td><td><input type="text" class="c-sto r-cor"></td><td><input type="text" class="c-sae r-cor"></td>
+      </tr>
+      <tr>
+        <td class="row-label">Correction 2</td>
+        <td><input type="text" class="c-mfo r-cor"></td><td><input type="text" class="c-hsd r-cor"></td><td><input type="text" class="c-cy r-cor"></td>
+        <td><input type="text" class="c-set r-cor"></td><td><input type="text" class="c-sump r-cor"></td><td><input type="text" class="c-sto r-cor"></td><td><input type="text" class="c-sae r-cor"></td>
       </tr>
       <tr>
         <td class="row-label">Total</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" class="c-mfo r-tot" readonly></td><td><input type="text" class="c-hsd r-tot" readonly></td><td><input type="text" class="c-cy r-tot" readonly></td>
+        <td><input type="text" class="c-set r-tot" readonly></td><td><input type="text" class="c-sump r-tot" readonly></td><td><input type="text" class="c-sto r-tot" readonly></td><td><input type="text" class="c-sae r-tot" readonly></td>
       </tr>
       <tr>
         <td class="row-label">Consumption</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" class="c-mfo r-cons"></td><td><input type="text" class="c-hsd r-cons"></td><td><input type="text" class="c-cy r-cons"></td>
+        <td><input type="text" class="c-set r-cons"></td><td><input type="text" class="c-sump r-cons"></td><td><input type="text" class="c-sto r-cons"></td><td><input type="text" class="c-sae r-cons"></td>
       </tr>
       <tr>
         <td class="row-label">Stock on the end of this month on:</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" class="c-mfo r-end" readonly></td><td><input type="text" class="c-hsd r-end" readonly></td><td><input type="text" class="c-cy r-end" readonly></td>
+        <td><input type="text" class="c-set r-end" readonly></td><td><input type="text" class="c-sump r-end" readonly></td><td><input type="text" class="c-sto r-end" readonly></td><td><input type="text" class="c-sae r-end" readonly></td>
       </tr>
     </tbody>
+
   </table>
 
   <p style="font-size: 10px; font-style: italic;">* Sounding Sump Tk: always in last port at the end of each month, ME stopped, pumps stop and Volume always corrected of trims</p>
 
-  <section class="foot">
-    <div class="sign-box">
-      <div>Reported by Chief Engineer,</div>
-      <div class="sign-line"><input type="text" placeholder="Name" style="text-align: center;"></div>
-    </div>
-    <div class="sign-box">
-      <div>Checked by Master,</div>
-      <div class="sign-line"><input type="text" placeholder="Name" style="text-align: center;"></div>
-    </div>
-    <div class="sign-box">
-      <div>Rechecked by SI / FM,</div>
-      <div class="sign-line"><input type="text" placeholder="Name" style="text-align: center;"></div>
-    </div>
-  </section>
+  <section class="foot" id="signatures"></section>
 </div>
 
 <script>
@@ -194,6 +199,52 @@ function mask(e) {
   e.target.value = v;
 }
 document.querySelector('.date-mask').addEventListener('input', mask);
+
+const roles=[['Reported by Chief Engineer/Officer'],['Checked by Master'],['Rechecked by SI / FM']],box=document.getElementById('signatures');roles.forEach(([a])=>{const s=document.createElement('div');s.className='sign-box';s.innerHTML=`<div style="font-weight:bold">${a}</div><div class="sig-space"><label class="btn no-print">+ Add TTD<input class="upload hidden" type="file" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div><input class="sig-name" type="text" placeholder="Name"><div class="role">Signed & Name</div>`;box.appendChild(s);const up=s.querySelector('.upload'),pv=s.querySelector('.sig-preview'),lab=s.querySelector('.btn'),im=pv.querySelector('img');up.onchange=e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{im.src=x.target.result;lab.classList.add('hidden');pv.classList.remove('hidden');};r.readAsDataURL(f)};s.querySelector('.remove').onclick=()=>{im.src='';up.value='';pv.classList.add('hidden');lab.classList.remove('hidden')}});
+
+
+const calcTable = document.getElementById('calc-table');
+if (calcTable) {
+  const cols = ['c-mfo', 'c-hsd', 'c-cy', 'c-set', 'c-sump', 'c-sto', 'c-sae'];
+  function parseNum(val) { const n = parseFloat(val); return isNaN(n) ? 0 : n; }
+  function calc() {
+    cols.forEach(c => {
+      const last = parseNum(calcTable.querySelector(`.${c}.r-last`).value);
+      const sups = Array.from(calcTable.querySelectorAll(`.${c}.r-sup`)).reduce((acc, el) => acc + parseNum(el.value), 0);
+      const cors = Array.from(calcTable.querySelectorAll(`.${c}.r-cor`)).reduce((acc, el) => acc + parseNum(el.value), 0);
+      const cons = parseNum(calcTable.querySelector(`.${c}.r-cons`).value);
+      
+      const tot = last + sups + cors;
+      const end = tot - cons;
+      
+      calcTable.querySelector(`.${c}.r-tot`).value = tot ? tot.toFixed(2) : '';
+      calcTable.querySelector(`.${c}.r-end`).value = end ? end.toFixed(2) : '';
+    });
+  }
+  calcTable.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calc));
+}
+
+
+const fuelTable = document.getElementById('fuel-table');
+if (fuelTable) {
+  function calcFuel() {
+    let tot = 0;
+    fuelTable.querySelectorAll('.f-val').forEach(el => tot += parseNum(el.value));
+    fuelTable.querySelector('.f-tot').value = tot ? tot.toFixed(2) : '';
+  }
+  fuelTable.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcFuel));
+}
+
+const lubeTable = document.getElementById('lube-table');
+if (lubeTable) {
+  function calcLube() {
+    let tot = 0;
+    lubeTable.querySelectorAll('.l-val').forEach(el => tot += parseNum(el.value));
+    lubeTable.querySelector('.l-tot').value = tot ? tot.toFixed(2) : '';
+  }
+  lubeTable.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcLube));
+}
+
 </script>
 </body>
 </html>
