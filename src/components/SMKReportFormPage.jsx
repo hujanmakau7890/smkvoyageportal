@@ -118,20 +118,23 @@ export default function SMKReportFormPage() {
       }
 
       // Determine destination: forms yang butuh approval masuk ke "Need Approval"
-      const REQUIRE_APPROVAL_FORMS = ["059A", "059B", "059C"];
-      const rawCode = (payload.formCode || selectedForm?.code || "").replace(/[\s-]/g, "").toUpperCase();
-      const xDestination = REQUIRE_APPROVAL_FORMS.includes(rawCode) ? "Need Approval" : "Laporan";
+      const REQUIRE_APPROVAL_FORMS = ['059A', '059B', '059C'];
+      const rawCode = (payload.formCode || selectedForm?.code || '').replace(/[\s-]/g, '').toUpperCase();
+      const xDestination = REQUIRE_APPROVAL_FORMS.includes(rawCode) ? 'Need Approval' : 'Laporan';
+      if (!xDestination || !safeShip || !safeName) {
+        throw new Error(`Missing metadata: destination=${xDestination}, ship=${safeShip}, name=${safeName}`);
+      }
 
       const res = await fetch(`${uploadUrl}/`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "X-Token": "smk-laporan-2026",
-          "X-Ship": safeShip,
-          "X-Year": year,
-          "X-Month": month,
-          "X-Filename": safeName,
-          "X-Destination": xDestination,
-          "Content-Type": "text/html; charset=utf-8",
+          'X-Token': 'smk-laporan-2026',
+          'X-Ship': safeShip,
+          'X-Year': year,
+          'X-Month': month,
+          'X-Filename': safeName,
+          'X-Destination': xDestination,
+          'Content-Type': 'text/html; charset=utf-8',
         },
         body: html,
       });
@@ -274,7 +277,9 @@ export default function SMKReportFormPage() {
             const MONTHS=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
             const vs=findVessel()?esc(findVessel().value):'';
             const ds=findDate()?esc(findDate().value):'';
+            const catSel=document.getElementById('category-select');
             let t=base;
+            if(catSel && catSel.value) t += ' ' + catSel.value;
             if(vs) t+=' - '+vs;
             if(ds){
               const m=ds.match(/^(\\d{2})-(\\d{2})-(\\d{4})$/);
@@ -289,9 +294,10 @@ export default function SMKReportFormPage() {
           function setT(){
             try{ document.title=build().replace(/\\.pdf$/,''); }catch(e){}
           }
-          const vessel=findVessel(), dateField=findDate();
+          const vessel=findVessel(), dateField=findDate(), catSel=document.getElementById('category-select');
           if(vessel){ vessel.addEventListener('change',setT); vessel.addEventListener('input',setT); }
           if(dateField){ dateField.addEventListener('change',setT); dateField.addEventListener('input',setT); }
+          if(catSel){ catSel.addEventListener('change',setT); }
           setT();
           function savePdf(){
             const vessel=findVessel();
@@ -328,6 +334,7 @@ export default function SMKReportFormPage() {
         })();
       `;
       try {
+        if (!doc || !doc.head) return;
         (doc.head || doc.documentElement).appendChild(script);
       } catch (e) {
         // ignore cross-origin
