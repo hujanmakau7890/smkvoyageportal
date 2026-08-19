@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>076 - Hot Work Permit</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 900px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 16px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 20px; font-size: 13px; }
+    .info-grid .item { display: flex; align-items: center; gap: 8px; }
+    .info-grid .item label { font-weight: bold; white-space: nowrap; width: 180px; }
+    .info-grid .item input, .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; }
+    
+    .full-row { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; }
+    .full-row label { font-weight: bold; font-size: 13px; }
+    .full-row textarea { width: 100%; border: 1px solid #000; font-family: inherit; font-size: 13px; outline: none; padding: 8px; min-height: 60px; resize: vertical; }
+    
+    .section-title { font-weight: bold; font-size: 13px; margin: 16px 0 8px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 8px 10px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 13px; }
+    .center { text-align: center; }
+    
+    .notes-section { margin-top: 20px; border: 1px solid #000; padding: 12px; }
+    .notes-section label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 13px; }
+    .notes-section textarea { width: 100%; border: none; outline: none; font-size: 13px; font-family: inherit; resize: vertical; min-height: 60px; }
+    
+    .footer-section { margin-top: 30px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; justify-content: center; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+    
+    input[type="radio"] { transform: scale(1.2); cursor: pointer; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 6px 8px; font-size: 12px; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+      .full-row textarea { border: none; border-bottom: 1px solid #000; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 12px; }
+      .info-grid .item { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .info-grid .item label { width: auto; }
+      .info-grid .item input, .info-grid .item select { width: 100%; border-bottom: 1px solid #ccc; padding: 6px 0; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .page { padding: 12px; }
+      .tbl { min-width: 500px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">076 HOT WORK PERMIT</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item"><label>MV (Vessel Name) :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date of Permit Issued :</label><input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+      
+      <div class="item"><label>Permit Issued to : Mr.</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>At Port / at Sea :</label><input type="text" placeholder="..."></div>
+      
+      <div class="item"><label>Totally Person in Team :</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Name of space entering :</label><input type="text" placeholder="..."></div>
+      
+      <div class="item"><label>Person in Charge attendance :</label><input type="text" placeholder="..."></div>
+      <div class="item"></div>
+
+      <div class="full-row">
+        <label>Jenis Pekerjaan / Kind of Job :</label>
+        <textarea placeholder="..."></textarea>
+      </div>
+    </div>
+
+    <div class="section-title">CHECKLIST KESELAMATAN (SAFETY CHECKLIST)</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:6%;">No</th>
+            <th rowspan="2" style="width:70%;">Uraian / Description</th>
+            <th colspan="2" style="width:24%;">Checked</th>
+          </tr>
+          <tr>
+            <th style="width:12%;">Yes</th>
+            <th style="width:12%;">No</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">1</td>
+            <td>Apakah ijin kerja panas telah di dapat dari petugas pelabuhan.<br><i>Hot work permit was issued from Port Authority</i></td>
+            <td class="center"><input type="radio" name="q1" value="Yes"></td>
+            <td class="center"><input type="radio" name="q1" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">2</td>
+            <td>Area kerja panas telah dibersihkan dari barang yang mudah terbakar.<br><i>Hot work working area was clean from inflamable goods</i></td>
+            <td class="center"><input type="radio" name="q2" value="Yes"></td>
+            <td class="center"><input type="radio" name="q2" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">3</td>
+            <td>Ruangan dan ruang sebelahnya telah bebas dari gas / di inert.<br><i>Working space & side space was free gas</i></td>
+            <td class="center"><input type="radio" name="q3" value="Yes"></td>
+            <td class="center"><input type="radio" name="q3" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">4</td>
+            <td>Tidak sedang berlangsung operasi pemindahan minyak, pembersihan tangki, pembebasan gas atau pemindahan ballast<br><i>No bunker, tranfer fuel, cleaning tank, or ballasting</i></td>
+            <td class="center"><input type="radio" name="q4" value="Yes"></td>
+            <td class="center"><input type="radio" name="q4" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">5</td>
+            <td>Semua kran cairan dan uap telah diisolasi.<br><i>All fluid valves was insulated</i></td>
+            <td class="center"><input type="radio" name="q5" value="Yes"></td>
+            <td class="center"><input type="radio" name="q5" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">6</td>
+            <td>Perlengkapan kebakaran disiapkan dan saluran pemadam kebakaran telah bertekanan.<br><i>Fire equipments was prepared & fire line was have pressure</i></td>
+            <td class="center"><input type="radio" name="q6" value="Yes"></td>
+            <td class="center"><input type="radio" name="q6" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">7</td>
+            <td>Petugas Pemadam kebakaran yang tertera dalam sijil telah siap.<br><i>Fire watch man was ready</i></td>
+            <td class="center"><input type="radio" name="q7" value="Yes"></td>
+            <td class="center"><input type="radio" name="q7" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">8</td>
+            <td>Troli keselamatan (safety trolley) telah disiagakan.<br><i>Safety trolley was ready</i></td>
+            <td class="center"><input type="radio" name="q8" value="Yes"></td>
+            <td class="center"><input type="radio" name="q8" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">9</td>
+            <td>Sudah ada komunikasi antara petugas Pemadam kebakaran dengan anjungan.<br><i>Communication between firewatchman with bridge was ready</i></td>
+            <td class="center"><input type="radio" name="q9" value="Yes"></td>
+            <td class="center"><input type="radio" name="q9" value="No"></td>
+          </tr>
+          <tr>
+            <td class="center">10</td>
+            <td>Prosedur darurat telah didiskusikan dengan semua team<br><i>Emergency procedure was discuss with all team</i></td>
+            <td class="center"><input type="radio" name="q10" value="Yes"></td>
+            <td class="center"><input type="radio" name="q10" value="No"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notes-section">
+      <label>Catatan yang perlu diperhatikan / Notes need attention :</label>
+      <textarea placeholder="Tambahkan catatan..."></textarea>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Supervisor Officer</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Signed & Name">
+          <div class="role">Officer</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Signed by Ch Engineer,</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name of Ch. Eng">
+          <div class="role">Chief Engineer</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Signed by Master</div>
+          <div class="space" id="sp-3">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name of Master">
+          <div class="role">Master</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  // Radio button toggle uncheck
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.addEventListener('pointerdown', function() { r.dataset.was = r.checked ? '1' : '0'; });
+    r.addEventListener('click', function() {
+      if(r.dataset.was === '1') { r.checked = false; r.dataset.was = '0'; }
+    });
+  });
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  function attachAutoResize(ta) {
+    ta.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  }
+  document.querySelectorAll('textarea').forEach(attachAutoResize);
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '076_Hot_Work_Permit_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.notes-section'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
