@@ -1,200 +1,346 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>059-E Monthly Chemical Cons</title>
-<style>
-  body { font-family: 'Arial', sans-serif; font-size: 11px; margin: 0; padding: 20px; color: #333; background: #fff; }
-  * { box-sizing: border-box; }
-  .page { max-width: 900px; margin: 0 auto; background: #fff; }
-  .header { display: flex; flex-direction: column; border: 2px solid #000; padding: 10px; margin-bottom: 20px; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-  .company { font-size: 16px; font-weight: bold; width: 25%; }
-  .title { text-align: center; font-size: 16px; font-weight: bold; flex: 1; }
-  .status { display: flex; flex-direction: column; align-items: flex-end; width: 25%; font-size: 10px; }
-  .status-box { border: 1px solid #000; padding: 2px; display: flex; margin-bottom: 5px; }
-  .status-box span { padding: 2px 5px; border-right: 1px solid #000; font-weight: bold; }
-  .status-box span:last-child { border-right: none; }
-  .meta { display: flex; justify-content: space-between; }
-  .field { display: flex; align-items: center; gap: 5px; font-weight: bold; }
-  select, input, textarea { border: 1px solid #ccc; font-family: inherit; font-size: inherit; background: transparent; padding: 3px; }
-  input.date-mask { width: 100px; text-align: center; }
-  input[type="text"] { width: 100%; border: none; outline: none; background: transparent; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-  th, td { border: 1px solid #000; padding: 6px; text-align: center; }
-  th { background: #f0f0f0; font-weight: bold; }
-  .row-label { text-align: left; font-weight: bold; }
-  .editable-head { width: 100%; height: 3em; resize: none; border: none; background: transparent; text-align: center; font-weight: bold; outline: none; font-family: inherit; font-size: inherit;}
-  .foot { display: flex; justify-content: space-around; margin-top: 30px; }
-  .sign-box { text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100px; }
-  .sign-line { border-top: 1px solid #000; width: 150px; padding-top: 5px; }
-  .btn { padding: 8px 12px; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-  @media print {
-    body { padding: 0; }
-    .no-print { display: none !important; }
-    input, select, textarea { border: none !important; }
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>059E Monthly Chemical Consumption</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; padding: 20px; display: flex; justify-content: center; }
+    .container { max-width: 1100px; width: 100%; background: #fff; padding: 24px 28px 30px 28px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; padding: 10px 20px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
 
-  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; }
-  .sig-preview { position: relative; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
-  .sig-preview img { max-height: 50px; max-width: 100%; object-fit: contain; }
-  .sig-preview.hidden, .btn.hidden { display: none !important; }
-  .remove { position: absolute; top: -5px; right: 0; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-weight: bold; padding: 0; }
-  .upload { display: none; }
-  .sig-name { border: none; border-bottom: 1px solid #000; outline: none; width: 100%; text-align: center; margin-top: 5px; }
-  .role { font-size: 9px; font-weight: bold; margin-top: 2px; }
-    
-</style>
+    .head { border: 2px solid #000; padding: 10px 14px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .co { font-weight: bold; font-size: 13px; }
+    .ttl { font-weight: bold; font-size: 16px; text-align: center; line-height: 1.3; }
+    .ttl small { font-size: 13px; display: block; font-weight: normal; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; font-size: 10px; gap: 2px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 12px; }
+    .code span + span { border-left: 1px solid #000; }
+
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
+    .info-row .item { display: flex; align-items: baseline; gap: 6px; }
+    .info-row .item label { font-weight: bold; white-space: nowrap; }
+    .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 60px; outline: none; }
+    .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9.5px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 2px 3px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; font-size: 8.5px; }
+    .tbl td:first-child { width: 28px; }
+    .tbl td:nth-child(2) { text-align: left; width: 20%; }
+    .tbl td:nth-child(3) { width: 9%; }
+    .tbl td:nth-child(4) { width: 9%; }
+    .tbl td:nth-child(5) { width: 9%; }
+    .tbl td:nth-child(6) { width: 9%; }
+    .tbl td:nth-child(7) { width: 9%; }
+    .tbl td:nth-child(8) { width: 9%; }
+    .tbl td:nth-child(9) { text-align: left; width: 12%; }
+
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 9.5px; padding: 1px 2px; min-height: 20px; outline: none; font-family: inherit; }
+    .tbl td:nth-child(2) input { text-align: left; }
+    .tbl td:nth-child(9) input { text-align: left; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .tbl td:first-child input { font-weight: bold; text-align: center; cursor: default; }
+
+    .remarks-section { margin-top: 10px; }
+    .remarks-section label { font-weight: bold; font-size: 12px; display: block; margin-bottom: 4px; }
+    .remarks-section textarea { width: 100%; border: 1px solid #000; font-size: 11px; padding: 4px 6px; resize: vertical; font-family: Arial, Helvetica, sans-serif; outline: none; background: transparent; min-height: 50px; }
+    .remarks-section textarea:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+
+    .footer-section { margin-top: 12px; padding-top: 10px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: end; }
+    .footer-grid .sig-item { text-align: center; }
+    .footer-grid .sig-item .label { font-weight: bold; font-size: 11px; }
+    .footer-grid .sig-item .space { height: 50px; display: flex; align-items: center; justify-content: center; border: 1px dashed #aaa; margin: 4px 0; background: #fafafa; position: relative; }
+    .footer-grid .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .footer-grid .sig-item .space .pv img { max-height: 45px; max-width: 100%; }
+    .footer-grid .sig-item .space .pv .x { position: absolute; right: 2px; top: 2px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .footer-grid .sig-item .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 85%; font-size: 11px; margin-top: 2px; outline: none; background: transparent; }
+    .footer-grid .sig-item .nm:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .footer-grid .sig-item .role { font-weight: bold; font-size: 10px; margin-top: 2px; }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      @page { size: A4 portrait; margin: 5mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 3px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 3px 6px; }
+      .top { padding-bottom: 3px; margin-bottom: 3px; }
+      .co { font-size: 10px; }
+      .ttl { font-size: 13px; }
+      .ttl small { font-size: 10px; }
+      .st { font-size: 7px; }
+      .info-row { font-size: 10px; }
+      .info-row .item input, .info-row .item select { font-size: 10px; }
+      .tbl { font-size: 7px; margin-top: 3px; }
+      .tbl th { font-size: 6.5px; }
+      .tbl td { padding: 1px 2px; }
+      .tbl input { font-size: 7px; min-height: 14px; }
+      .remarks-section label { font-size: 9px; }
+      .remarks-section textarea { font-size: 8px; min-height: 35px; }
+      .footer-grid .sig-item .label { font-size: 8px; }
+      .footer-grid .sig-item .space { height: 30px; border: 1px solid #000; }
+      .footer-grid .sig-item .space .pv img { max-height: 25px; }
+      .footer-grid .sig-item .nm { font-size: 8px; }
+      .footer-grid .sig-item .role { font-size: 7px; }
+      select option[value=""] { display: none !important; }
+      input::placeholder { color: transparent !important; }
+      textarea::placeholder { color: transparent !important; }
+    }
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; }
+      .st { align-items: center; }
+      .info-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 7px; }
+      .tbl td, .tbl th { padding: 1px; }
+    }
+  </style>
 </head>
 <body>
-<div class="page">
-  <div class="toolbar no-print" style="margin-bottom: 10px;">
-    <button class="btn print-btn">🖨 Print / Simpan PDF</button>
-  </div>
-  
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 2px solid #000;">
-    <tbody>
-      <tr>
-        <td rowspan="2" style="width: 25%; font-size: 16px; font-weight: bold; text-align: center; border: 1px solid #000; padding: 10px;">
-          PT MENTARI MAS MULTIMODA
-        </td>
-        <td rowspan="2" style="width: 50%; font-size: 16px; font-weight: bold; text-align: center; border: 1px solid #000; padding: 10px;">
-          059-E<br>MONTHLY CHEMICAL - OXYGEN - LPG - ACCYTELIN - NITROGEN CONSUMPTION
-        </td>
-        <td style="width: 25%; font-size: 10px; font-weight: bold; border: 1px solid #000; padding: 5px; text-align: right;">
-          <div style="display: inline-flex; border: 1px solid #000;">
-            <span style="padding: 2px 5px; border-right: 1px solid #000;">CS</span>
-            <span style="padding: 2px 5px;">BLN</span>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td style="font-size: 10px; border: 1px solid #000; padding: 5px;">
-          Release : &nbsp; Rev. 1 :
-        </td>
-      </tr>
-      <tr>
-        <td colspan="3" style="border: 1px solid #000; padding: 5px;">
-          <div style="display: flex; justify-content: space-between; font-weight: bold;">
-            <label style="display: flex; gap: 5px; align-items: center;">MV: 
-              <select class="vessel" style="border: 1px solid #ccc; padding: 3px;">
-                <option value="">Pilih kapal</option>
-                <option>Express Mas</option>
-                <option>Mavendra Mas</option>
-                <option>Prakarsa Mas</option>
-                <option>Pratama Mas</option>
-                <option>Semangat Mas</option>
-                <option>Segoro Mas</option>
-                <option>Sahabat Mas</option>
-                <option>Selaras Mas</option>
-              </select>
-            </label>
-            <label style="display: flex; gap: 5px; align-items: center;">Date: 
-              <input class="date-mask date" type="text" placeholder="DD-MM-YYYY" style="width: 100px; text-align: center; border: 1px solid #ccc; padding: 3px;">
-            </label>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  
-  <table>
-    <thead>
-      <tr>
-        <th rowspan="2">KIND OF CHEMICAL</th>
-        <th rowspan="2">Satuan</th>
-        <th rowspan="2">ROB Last Month</th>
-        <th rowspan="2">Last Supply</th>
-        <th rowspan="2">Consumption</th>
-        <th colspan="2">ROB this month</th>
-      </tr>
-      <tr>
-        <th>FULL</th>
-        <th>EMPTY</th>
-      </tr>
-    </thead>
-    <tbody id="rows">
-    </tbody>
-  </table>
-
-  <div style="margin-top: 20px;">
-    <strong>Remarks:</strong>
-    <textarea style="width: 100%; height: 60px; border: 1px solid #000; margin-top: 5px;"></textarea>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">📄 Print / Simpan PDF</button>
   </div>
 
-  <section class="foot" id="signatures"></section>
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">059-E<br>MONTHLY CHEMICAL - OXYGEN - LPG - ACCYTELIN - NITROGEN CONSUMPTION<small>Monthly Chemical Consumption Report</small></div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>BLN</span></div>
+        <div>Release: &nbsp; Rev.01:</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="item"><label>MV / Nama Kapal :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date of Report :</label><input class="date" id="date" placeholder="DD-MM-YYYY"></div>
+    </div>
+  </header>
+
+  <!-- TABLE -->
+  <div style="overflow-x:auto;">
+    <table class="tbl" id="chem-table">
+      <thead>
+        <tr>
+          <th style="width:28px;">No.</th>
+          <th style="width:20%;">Kind of Chemical</th>
+          <th style="width:9%;">Satuan</th>
+          <th style="width:9%;">ROB Last Month</th>
+          <th style="width:9%;">Last Supply</th>
+          <th style="width:9%;">Consumption</th>
+          <th style="width:9%;">ROB This Month<br/><span style="font-weight:normal;font-size:7px;">(FULL)</span></th>
+          <th style="width:9%;">ROB This Month<br/><span style="font-weight:normal;font-size:7px;">(EMPTY)</span></th>
+          <th style="width:12%;">Remarks</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- REMARKS AREA -->
+  <div class="remarks-section">
+    <label>Remarks :</label>
+    <textarea id="global-remarks" placeholder="Catatan tambahan..."></textarea>
+  </div>
+
+  <!-- FOOTER / SIGNATURE -->
+  <div class="footer-section">
+    <div class="footer-grid">
+      <div class="sig-item">
+        <div class="label">Reported by Chief Engineer,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup1" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv1" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv1','sigup1')">x</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Chief Engineer">
+        <div class="role">Chief Engineer</div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Checked by Master,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup2" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv2" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv2','sigup2')">x</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Master">
+        <div class="role">Master</div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Rechecked by SI / FM,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup3" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv3" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv3','sigup3')">x</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama SI / FM">
+        <div class="role">SI / FM</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-const items = [
-  {name: 'Oxygen', unit: 'Cylinder'},
-  {name: 'Accytelin', unit: 'Cylinder'},
-  {name: 'LPG', unit: 'Cylinder'},
-  {name: 'Freon R...', unit: 'Cylinder'},
-  {name: 'Nitrogen', unit: 'Cylinder'},
-  {name: 'Boiler Phospate test Kid', unit: 'Boxes'},
-  {name: 'Chlorate LMP Test Kid', unit: 'Boxes'},
-  {name: 'Full Range PH Strip', unit: 'Boxes'},
-  {name: 'Arcel', unit: 'Liters'},
-  {name: 'etc', unit: ''}
-];
+  // ======= CHEMICAL DATA =======
+  var chemicals = [
+    { name: 'Oxygen',                    satuan: 'Cylinder' },
+    { name: 'Accytelin',                 satuan: 'Cylinder' },
+    { name: 'LPG',                       satuan: 'Cylinder' },
+    { name: 'Freon R...',                satuan: 'Cylinder' },
+    { name: 'Nitrogen',                  satuan: 'Cylinder' },
+    { name: 'Boiler Phospate Test Kid',  satuan: 'Boxes'    },
+    { name: 'Chlorate LMP Test Kid',     satuan: 'Boxes'    },
+    { name: 'Full Range PH Strip',       satuan: 'Boxes'    },
+    { name: 'Arcel',                     satuan: 'Liters'   },
+    { name: 'etc',                       satuan: ''         }
+  ];
 
-const tbody = document.getElementById('rows');
-items.forEach(item => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td class="row-label">${item.name}</td>
-    <td>${item.unit || '<input type="text">'}</td>
-    <td><input type="text"></td>
-    <td><input type="text"></td>
-    <td><input type="text"></td>
-    <td><input type="text"></td>
-    <td><input type="text"></td>
-  `;
-  tbody.appendChild(tr);
-});
+  // ======= POPULATE TABLE =======
+  var tbody = document.getElementById('table-body');
 
-function mask(e) {
-  let v = e.target.value.replace(/\D/g, '');
-  if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
-  if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,9);
-  e.target.value = v;
-}
-document.querySelector('.date-mask').addEventListener('input', mask);
+  chemicals.forEach(function(chem, idx) {
+    var no = idx + 1;
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><input type="text" value="' + no + '" readonly style="font-weight:bold;text-align:center;cursor:default;"></td>' +
+      '<td><input type="text" value="' + chem.name + '" style="text-align:left;"></td>' +
+      '<td><input type="text" value="' + chem.satuan + '" placeholder="satuan"></td>' +
+      '<td><input type="text" placeholder="qty"></td>' +
+      '<td><input type="text" placeholder="qty"></td>' +
+      '<td><input type="text" placeholder="qty"></td>' +
+      '<td><input type="text" placeholder="qty"></td>' +
+      '<td><input type="text" placeholder="qty"></td>' +
+      '<td><input type="text" placeholder="catatan" style="text-align:left;"></td>';
+    tbody.appendChild(tr);
+  });
 
-const roles=[['Reported by Chief Engineer/Officer'],['Checked by Master'],['Rechecked by SI / FM']],box=document.getElementById('signatures');roles.forEach(([a])=>{const s=document.createElement('div');s.className='sign-box';s.innerHTML=`<div style="font-weight:bold">${a}</div><div class="sig-space"><label class="btn no-print">+ Add TTD<input class="upload hidden" type="file" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div><input class="sig-name" type="text" placeholder="Name"><div class="role">Signed & Name</div>`;box.appendChild(s);const up=s.querySelector('.upload'),pv=s.querySelector('.sig-preview'),lab=s.querySelector('.btn'),im=pv.querySelector('img');up.onchange=e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{im.src=x.target.result;lab.classList.add('hidden');pv.classList.remove('hidden');};r.readAsDataURL(f)};s.querySelector('.remove').onclick=()=>{im.src='';up.value='';pv.classList.add('hidden');lab.classList.remove('hidden')}});
-
-
-function parseNum(val) { const n = parseFloat(val); return isNaN(n) ? 0 : n; }
-const tbodyE = document.getElementById('rows');
-if (tbodyE) {
-  function calcE() {
-    tbodyE.querySelectorAll('tr').forEach(tr => {
-      const inputs = tr.querySelectorAll('input[type="text"]');
-      if (inputs.length >= 6) {
-        // inputs[0] is unit (maybe)
-        // inputs[1] is ROB Last Month
-        // inputs[2] is Last Supply
-        // inputs[3] is Consumption
-        // inputs[4] is ROB this month (FULL)
-        // inputs[5] is ROB this month (EMPTY)
-        
-        // Wait, the columns are: Kind | Satuan | Last Month | Last Supply | Consumption | FULL | EMPTY
-        // inputs[0] is in td[1]
-        const last = parseNum(inputs[1].value);
-        const sup = parseNum(inputs[2].value);
-        const cons = parseNum(inputs[3].value);
-        
-        const rob = last + sup - cons;
-        // inputs[4].value = rob ? rob.toFixed(2) : ''; 
-        // Not auto-filling because FULL and EMPTY might be separate physical counts.
-      }
+  // ======= DATE MASK =======
+  function applyDateMask(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
     });
   }
-  tbodyE.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcE));
-}
 
+  document.querySelectorAll('.date').forEach(applyDateMask);
+  document.querySelectorAll('.date-mask').forEach(applyDateMask);
+
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  initSig('sigup3','pv3');
+  window.clearSig = clearSig;
+
+  // ======= SAVE PDF =======
+  function savePDF() {
+    var element = document.getElementById('form-container');
+    var ship = document.getElementById('vessel').value || 'Unknown';
+    var date = document.getElementById('date').value || 'unknown';
+    var filename = '059E_Monthly_Chemical_Cons_' + ship.replace(/\s/g,'_') + '_' + date + '.pdf';
+    var opt = {
+      margin: [0.3, 0.3, 0.3, 0.3],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '059E Monthly Chemical Consumption';
+      var ship = document.getElementById('vessel');
+      var date = document.getElementById('date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+    }
+    var ship = document.getElementById('vessel');
+    var date = document.getElementById('date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
 </script>
 </body>
 </html>

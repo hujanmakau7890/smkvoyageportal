@@ -1,204 +1,465 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>059-F Monthly Fresh Water Cons</title>
-<style>
-  body { font-family: 'Arial', sans-serif; font-size: 11px; margin: 0; padding: 20px; color: #333; background: #fff; }
-  * { box-sizing: border-box; }
-  .page { max-width: 900px; margin: 0 auto; background: #fff; }
-  .header { display: flex; flex-direction: column; border: 2px solid #000; padding: 10px; margin-bottom: 20px; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-  .company { font-size: 16px; font-weight: bold; width: 25%; }
-  .title { text-align: center; font-size: 16px; font-weight: bold; flex: 1; }
-  .status { display: flex; flex-direction: column; align-items: flex-end; width: 25%; font-size: 10px; }
-  .status-box { border: 1px solid #000; padding: 2px; display: flex; margin-bottom: 5px; }
-  .status-box span { padding: 2px 5px; border-right: 1px solid #000; font-weight: bold; }
-  .status-box span:last-child { border-right: none; }
-  .meta { display: flex; justify-content: space-between; }
-  .field { display: flex; align-items: center; gap: 5px; font-weight: bold; }
-  select, input, textarea { border: 1px solid #ccc; font-family: inherit; font-size: inherit; background: transparent; padding: 3px; }
-  input.date-mask { width: 100px; text-align: center; }
-  input[type="text"] { width: 100%; border: none; outline: none; background: transparent; text-align: center; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-  th, td { border: 1px solid #000; padding: 6px; text-align: center; }
-  th { background: #f0f0f0; font-weight: bold; }
-  .row-label { text-align: left; font-weight: bold; }
-  .foot { display: flex; justify-content: space-around; margin-top: 30px; }
-  .sign-box { text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100px; }
-  .sign-line { border-top: 1px solid #000; width: 150px; padding-top: 5px; }
-  .btn { padding: 8px 12px; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-  @media print {
-    body { padding: 0; }
-    .no-print { display: none !important; }
-    input, select, textarea { border: none !important; }
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>059F Monthly Fresh Water Consumption</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; padding: 20px; display: flex; justify-content: center; }
+    .container { max-width: 900px; width: 100%; background: #fff; padding: 24px 28px 30px 28px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; padding: 10px 20px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
 
-  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; }
-  .sig-preview { position: relative; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
-  .sig-preview img { max-height: 50px; max-width: 100%; object-fit: contain; }
-  .sig-preview.hidden, .btn.hidden { display: none !important; }
-  .remove { position: absolute; top: -5px; right: 0; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-weight: bold; padding: 0; }
-  .upload { display: none; }
-  .sig-name { border: none; border-bottom: 1px solid #000; outline: none; width: 100%; text-align: center; margin-top: 5px; }
-  .role { font-size: 9px; font-weight: bold; margin-top: 2px; }
-    
-</style>
+    .head { border: 2px solid #000; padding: 10px 14px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .co { font-weight: bold; font-size: 13px; }
+    .ttl { font-weight: bold; font-size: 16px; text-align: center; line-height: 1.3; }
+    .ttl small { font-size: 13px; display: block; font-weight: normal; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; font-size: 10px; gap: 2px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 12px; }
+    .code span + span { border-left: 1px solid #000; }
+
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
+    .info-row .item { display: flex; align-items: baseline; gap: 6px; }
+    .info-row .item label { font-weight: bold; white-space: nowrap; }
+    .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 60px; outline: none; }
+    .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+
+    .tbl { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 3px 4px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; font-size: 11px; }
+    .tbl .section-title { background: #d1e3f8; font-weight: bold; text-align: center; font-size: 12px; padding: 5px; }
+    .tbl .row-label { text-align: left; padding-left: 6px; font-size: 11px; }
+    .tbl .readonly-cell { background: #f9fafb; font-weight: bold; }
+    .tbl .total-row { background: #eff6ff; font-weight: bold; }
+    .tbl .result-row { background: #ecfdf5; font-weight: bold; }
+
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 11px; padding: 1px 2px; min-height: 22px; outline: none; font-family: inherit; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .tbl input[readonly] { cursor: default; font-weight: bold; color: #1a1a1a; }
+
+    .note { font-size: 10px; color: #555; margin-top: 8px; font-style: italic; }
+
+    .footer-section { margin-top: 12px; padding-top: 10px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: end; }
+    .footer-grid .sig-item { text-align: center; }
+    .footer-grid .sig-item .label { font-weight: bold; font-size: 11px; }
+    .footer-grid .sig-item .space { height: 50px; display: flex; align-items: center; justify-content: center; border: 1px dashed #aaa; margin: 4px 0; background: #fafafa; position: relative; }
+    .footer-grid .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .footer-grid .sig-item .space .pv img { max-height: 45px; max-width: 100%; }
+    .footer-grid .sig-item .space .pv .x { position: absolute; right: 2px; top: 2px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .footer-grid .sig-item .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 85%; font-size: 11px; margin-top: 2px; outline: none; background: transparent; }
+    .footer-grid .sig-item .nm:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .footer-grid .sig-item .role { font-weight: bold; font-size: 10px; margin-top: 2px; }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      @page { size: A4 portrait; margin: 5mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 3px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 3px 6px; }
+      .top { padding-bottom: 3px; margin-bottom: 3px; }
+      .co { font-size: 10px; }
+      .ttl { font-size: 13px; }
+      .ttl small { font-size: 10px; }
+      .st { font-size: 7px; }
+      .info-row { font-size: 10px; }
+      .info-row .item input, .info-row .item select { font-size: 10px; }
+      .tbl { font-size: 8.5px; margin-top: 3px; }
+      .tbl th { font-size: 8px; }
+      .tbl td { padding: 1px 2px; }
+      .tbl input { font-size: 8.5px; min-height: 16px; }
+      .note { font-size: 8px; }
+      .footer-grid .sig-item .label { font-size: 8px; }
+      .footer-grid .sig-item .space { height: 30px; border: 1px solid #000; }
+      .footer-grid .sig-item .space .pv img { max-height: 25px; }
+      .footer-grid .sig-item .nm { font-size: 8px; }
+      .footer-grid .sig-item .role { font-size: 7px; }
+      select option[value=""] { display: none !important; }
+      input::placeholder { color: transparent !important; }
+    }
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; }
+      .st { align-items: center; }
+      .info-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 9px; }
+      .tbl td, .tbl th { padding: 1px; }
+    }
+  </style>
 </head>
 <body>
-<div class="page">
-  <div class="toolbar no-print" style="margin-bottom: 10px;">
-    <button class="btn print-btn">🖨 Print / Simpan PDF</button>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
   </div>
-  
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 2px solid #000;">
-    
-    <tbody id="fw-sup">
-      <tr><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" class="w-vol"></td></tr>
-      <tr><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" class="w-vol"></td></tr>
-      <tr><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" class="w-vol"></td></tr>
-    </tbody>
 
-  </table>
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">059-F<br>MONTHLY FRESH WATER CONSUMPTION</div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>BLN</span></div>
+        <div>Release: &nbsp; Rev.01</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="item"><label>MV / Nama Kapal :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date of Report :</label><input class="date" id="date" placeholder="DD-MM-YYYY"></div>
+    </div>
+  </header>
 
-
-  <table>
+  <!-- TABLE 1: FRESH WATER STOCK / SUPPLIED -->
+  <table class="tbl" style="margin-top:14px;">
     <thead>
       <tr>
-        <th colspan="4">FRESH WATER Stock / SUPPLIED (MT)</th>
+        <td colspan="4" class="section-title">FRESH WATER Stock / SUPPLIED (MT)</td>
       </tr>
       <tr>
-        <th>Port</th>
-        <th>Date</th>
-        <th>Sounding</th>
-        <th>Volume</th>
-      </tr>
-    </thead>
-    
-    <tbody id="fw-calc">
-      <tr>
-        <td class="row-label">Stock on the end of last month on:</td>
-        <td><input type="text" class="c-p r-last"></td><td><input type="text" class="c-c r-last"></td><td><input type="text" class="c-s r-last"></td><td><input type="text" class="c-t r-last" readonly></td>
-      </tr>
-      <tr>
-        <td class="row-label">Supply</td>
-        <td><input type="text" class="c-p r-sup"></td><td><input type="text" class="c-c r-sup"></td><td><input type="text" class="c-s r-sup"></td><td><input type="text" class="c-t r-sup" readonly></td>
-      </tr>
-      <tr>
-        <td class="row-label">Correction</td>
-        <td><input type="text" class="c-p r-cor"></td><td><input type="text" class="c-c r-cor"></td><td><input type="text" class="c-s r-cor"></td><td><input type="text" class="c-t r-cor" readonly></td>
-      </tr>
-      <tr>
-        <td class="row-label">Total</td>
-        <td><input type="text" class="c-p r-tot" readonly></td><td><input type="text" class="c-c r-tot" readonly></td><td><input type="text" class="c-s r-tot" readonly></td><td><input type="text" class="c-t r-tot" readonly></td>
-      </tr>
-      <tr>
-        <td class="row-label">Consumption</td>
-        <td><input type="text" class="c-p r-cons"></td><td><input type="text" class="c-c r-cons"></td><td><input type="text" class="c-s r-cons"></td><td><input type="text" class="c-t r-cons" readonly></td>
-      </tr>
-      <tr>
-        <td class="row-label">Stock on the end of this month on:</td>
-        <td><input type="text" class="c-p r-end" readonly></td><td><input type="text" class="c-c r-end" readonly></td><td><input type="text" class="c-s r-end" readonly></td><td><input type="text" class="c-t r-end" readonly></td>
-      </tr>
-    </tbody>
-
-  </table>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Description</th>
-        <th>FW Tk Port</th>
-        <th>FW Tk Center</th>
-        <th>FW Tk Stbd</th>
-        <th>Total</th>
+        <th style="width:30%;">Port</th>
+        <th style="width:20%;">Date</th>
+        <th style="width:25%;">Sounding</th>
+        <th style="width:25%;">Volume (MT)</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td class="row-label">Stock on the end of last month on:</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" id="sup-port-1" placeholder="pelabuhan"></td>
+        <td><input type="text" id="sup-date-1" placeholder="DD-MM-YYYY" class="date-mask"></td>
+        <td><input type="text" id="sup-snd-1" placeholder="0.00"></td>
+        <td><input type="text" id="sup-vol-1" placeholder="0.00" oninput="calcSupplyTotal()"></td>
       </tr>
       <tr>
-        <td class="row-label">Supply</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" id="sup-port-2" placeholder="pelabuhan"></td>
+        <td><input type="text" id="sup-date-2" placeholder="DD-MM-YYYY" class="date-mask"></td>
+        <td><input type="text" id="sup-snd-2" placeholder="0.00"></td>
+        <td><input type="text" id="sup-vol-2" placeholder="0.00" oninput="calcSupplyTotal()"></td>
       </tr>
       <tr>
-        <td class="row-label">Correction</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" id="sup-port-3" placeholder="pelabuhan"></td>
+        <td><input type="text" id="sup-date-3" placeholder="DD-MM-YYYY" class="date-mask"></td>
+        <td><input type="text" id="sup-snd-3" placeholder="0.00"></td>
+        <td><input type="text" id="sup-vol-3" placeholder="0.00" oninput="calcSupplyTotal()"></td>
       </tr>
       <tr>
-        <td class="row-label">Total</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" id="sup-port-4" placeholder="pelabuhan"></td>
+        <td><input type="text" id="sup-date-4" placeholder="DD-MM-YYYY" class="date-mask"></td>
+        <td><input type="text" id="sup-snd-4" placeholder="0.00"></td>
+        <td><input type="text" id="sup-vol-4" placeholder="0.00" oninput="calcSupplyTotal()"></td>
       </tr>
       <tr>
-        <td class="row-label">Consumption</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td><input type="text" id="sup-port-5" placeholder="pelabuhan"></td>
+        <td><input type="text" id="sup-date-5" placeholder="DD-MM-YYYY" class="date-mask"></td>
+        <td><input type="text" id="sup-snd-5" placeholder="0.00"></td>
+        <td><input type="text" id="sup-vol-5" placeholder="0.00" oninput="calcSupplyTotal()"></td>
       </tr>
-      <tr>
-        <td class="row-label">Stock on the end of this month on:</td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      <tr class="total-row">
+        <td colspan="3" class="row-label" style="font-weight:bold;">Total Volume</td>
+        <td><input type="text" id="sup-vol-total" readonly tabindex="-1"></td>
       </tr>
     </tbody>
   </table>
 
-  <p style="font-size: 10px; font-style: italic;">* Stock on the end of months must be put sounding figure and always corrected by trims</p>
+  <!-- TABLE 2: SUMMARY -->
+  <table class="tbl" style="margin-top:14px;">
+    <thead>
+      <tr>
+        <td colspan="5" class="section-title">Summary</td>
+      </tr>
+      <tr>
+        <th style="width:32%;">Description</th>
+        <th style="width:17%;">FW Tk Port<br><span style="font-weight:normal;font-size:9px;">(MT)</span></th>
+        <th style="width:17%;">FW Tk Center<br><span style="font-weight:normal;font-size:9px;">(MT)</span></th>
+        <th style="width:17%;">FW Tk Stbd<br><span style="font-weight:normal;font-size:9px;">(MT)</span></th>
+        <th style="width:17%;">Total<br><span style="font-weight:normal;font-size:9px;">(MT)</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="row-label">Stock on the end of last month on :</td>
+        <td><input type="text" id="fw-port-last" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-center-last" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-stbd-last" placeholder="0.00" oninput="calcSummary()"></td>
+        <td class="readonly-cell"><input type="text" id="fw-total-last" readonly tabindex="-1"></td>
+      </tr>
+      <tr>
+        <td class="row-label">Supply</td>
+        <td class="readonly-cell"><input type="text" id="fw-port-supply" readonly tabindex="-1" placeholder="&#8212;"></td>
+        <td class="readonly-cell"><input type="text" id="fw-center-supply" readonly tabindex="-1" placeholder="&#8212;"></td>
+        <td class="readonly-cell"><input type="text" id="fw-stbd-supply" readonly tabindex="-1" placeholder="&#8212;"></td>
+        <td class="readonly-cell"><input type="text" id="fw-total-supply" readonly tabindex="-1"></td>
+      </tr>
+      <tr>
+        <td class="row-label">Correction</td>
+        <td><input type="text" id="fw-port-corr" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-center-corr" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-stbd-corr" placeholder="0.00" oninput="calcSummary()"></td>
+        <td class="readonly-cell"><input type="text" id="fw-total-corr" readonly tabindex="-1"></td>
+      </tr>
+      <tr class="total-row">
+        <td class="row-label">Total</td>
+        <td><input type="text" id="fw-port-tot" readonly tabindex="-1"></td>
+        <td><input type="text" id="fw-center-tot" readonly tabindex="-1"></td>
+        <td><input type="text" id="fw-stbd-tot" readonly tabindex="-1"></td>
+        <td class="readonly-cell"><input type="text" id="fw-total-tot" readonly tabindex="-1"></td>
+      </tr>
+      <tr>
+        <td class="row-label">Consumption</td>
+        <td><input type="text" id="fw-port-cons" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-center-cons" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-stbd-cons" placeholder="0.00" oninput="calcSummary()"></td>
+        <td class="readonly-cell"><input type="text" id="fw-total-cons" readonly tabindex="-1"></td>
+      </tr>
+      <tr class="result-row">
+        <td class="row-label">Stock on the end of this month *</td>
+        <td><input type="text" id="fw-port-end" readonly tabindex="-1"></td>
+        <td><input type="text" id="fw-center-end" readonly tabindex="-1"></td>
+        <td><input type="text" id="fw-stbd-end" readonly tabindex="-1"></td>
+        <td class="readonly-cell"><input type="text" id="fw-total-end" readonly tabindex="-1"></td>
+      </tr>
+    </tbody>
+  </table>
 
-  <section class="foot" id="signatures"></section>
+  <div class="note">* Stock on the end of months must be put sounding figure and always corrected by trims</div>
+
+  <!-- FOOTER / SIGNATURE -->
+  <div class="footer-section">
+    <div class="footer-grid">
+      <div class="sig-item">
+        <div class="label">Reported by Chief Officer,<br><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup1" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv1" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv1','sigup1')">&#215;</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Chief Officer">
+        <div class="role">Chief Officer</div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Checked by Master,<br><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup2" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv2" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv2','sigup2')">&#215;</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Master">
+        <div class="role">Master</div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Rechecked by SI / FM,<br><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup3" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv3" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv3','sigup3')">&#215;</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama SI / FM">
+        <div class="role">SI / FM</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-function mask(e) {
-  let v = e.target.value.replace(/\D/g, '');
-  if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
-  if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,9);
-  e.target.value = v;
-}
-document.querySelector('.date-mask').addEventListener('input', mask);
-
-const roles=[['Reported by Chief Engineer/Officer'],['Checked by Master'],['Rechecked by SI / FM']],box=document.getElementById('signatures');roles.forEach(([a])=>{const s=document.createElement('div');s.className='sign-box';s.innerHTML=`<div style="font-weight:bold">${a}</div><div class="sig-space"><label class="btn no-print">+ Add TTD<input class="upload hidden" type="file" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div><input class="sig-name" type="text" placeholder="Name"><div class="role">Signed & Name</div>`;box.appendChild(s);const up=s.querySelector('.upload'),pv=s.querySelector('.sig-preview'),lab=s.querySelector('.btn'),im=pv.querySelector('img');up.onchange=e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{im.src=x.target.result;lab.classList.add('hidden');pv.classList.remove('hidden');};r.readAsDataURL(f)};s.querySelector('.remove').onclick=()=>{im.src='';up.value='';pv.classList.add('hidden');lab.classList.remove('hidden')}});
-
-
-function parseNum(val) { const n = parseFloat(val); return isNaN(n) ? 0 : n; }
-const fwCalc = document.getElementById('fw-calc');
-const fwSup = document.getElementById('fw-sup');
-if (fwCalc) {
-  const cols = ['c-p', 'c-c', 'c-s'];
-  function calcFw() {
-    // calculate horizontal total
-    ['r-last', 'r-sup', 'r-cor', 'r-cons'].forEach(r => {
-      let t = 0;
-      cols.forEach(c => t += parseNum(fwCalc.querySelector(`.${c}.${r}`).value));
-      fwCalc.querySelector(`.c-t.${r}`).value = t ? t.toFixed(2) : '';
+  // ======= DATE MASK =======
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
     });
-    
-    // calculate vertical total & end
-    [...cols, 'c-t'].forEach(c => {
-      const last = parseNum(fwCalc.querySelector(`.${c}.r-last`).value);
-      const sup = parseNum(fwCalc.querySelector(`.${c}.r-sup`).value);
-      const cor = parseNum(fwCalc.querySelector(`.${c}.r-cor`).value);
-      const cons = parseNum(fwCalc.querySelector(`.${c}.r-cons`).value);
-      
-      const tot = last + sup + cor;
-      const end = tot - cons;
-      
-      fwCalc.querySelector(`.${c}.r-tot`).value = tot ? tot.toFixed(2) : '';
-      fwCalc.querySelector(`.${c}.r-end`).value = end ? end.toFixed(2) : '';
+  });
+
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // ======= CALCULATION HELPERS =======
+  function num(id) {
+    var val = parseFloat(document.getElementById(id).value);
+    return isNaN(val) ? 0 : val;
+  }
+  function setVal(id, v) {
+    var el = document.getElementById(id);
+    if (v === 0 && el.value === '') { el.value = ''; return; }
+    el.value = v.toFixed(2);
+  }
+
+  // ======= TABLE 1: SUPPLY TOTAL =======
+  function calcSupplyTotal() {
+    var total = num('sup-vol-1') + num('sup-vol-2') + num('sup-vol-3') + num('sup-vol-4') + num('sup-vol-5');
+    document.getElementById('sup-vol-total').value = total > 0 ? total.toFixed(2) : '';
+    // Push total supply into summary supply row total
+    document.getElementById('fw-total-supply').value = total > 0 ? total.toFixed(2) : '';
+    calcSummary();
+  }
+
+  // ======= TABLE 2: SUMMARY CALCULATIONS =======
+  function calcSummary() {
+    var supplyTotal = parseFloat(document.getElementById('fw-total-supply').value) || 0;
+
+    var lastPort   = num('fw-port-last');
+    var lastCtr    = num('fw-center-last');
+    var lastStbd   = num('fw-stbd-last');
+    var corrPort   = num('fw-port-corr');
+    var corrCtr    = num('fw-center-corr');
+    var corrStbd   = num('fw-stbd-corr');
+    var consPort   = num('fw-port-cons');
+    var consCtr    = num('fw-center-cons');
+    var consStbd   = num('fw-stbd-cons');
+
+    // Last month row total
+    var lastTotal  = lastPort + lastCtr + lastStbd;
+    document.getElementById('fw-total-last').value = lastTotal > 0 ? lastTotal.toFixed(2) : '';
+
+    // Correction row total
+    var corrTotal  = corrPort + corrCtr + corrStbd;
+    document.getElementById('fw-total-corr').value = corrTotal !== 0 ? corrTotal.toFixed(2) : '';
+
+    // Supply per-tank cells are blank (supply entered as whole tank total from table 1)
+    // Total row per tank = Last + Correction (supply not split per tank)
+    var totPort    = lastPort  + corrPort;
+    var totCtr     = lastCtr   + corrCtr;
+    var totStbd    = lastStbd  + corrStbd;
+    var totTotal   = lastTotal + supplyTotal + corrTotal;
+
+    document.getElementById('fw-port-tot').value   = totPort  !== 0 ? totPort.toFixed(2)  : '';
+    document.getElementById('fw-center-tot').value = totCtr   !== 0 ? totCtr.toFixed(2)   : '';
+    document.getElementById('fw-stbd-tot').value   = totStbd  !== 0 ? totStbd.toFixed(2)  : '';
+    document.getElementById('fw-total-tot').value  = totTotal !== 0 ? totTotal.toFixed(2) : '';
+
+    // Consumption row total
+    var consTotal  = consPort + consCtr + consStbd;
+    document.getElementById('fw-total-cons').value = consTotal !== 0 ? consTotal.toFixed(2) : '';
+
+    // Stock end of month per tank = (Last + Correction) - Consumption
+    var endPort    = totPort  - consPort;
+    var endCtr     = totCtr   - consCtr;
+    var endStbd    = totStbd  - consStbd;
+    var endTotal   = totTotal - consTotal;
+
+    document.getElementById('fw-port-end').value   = (endPort  !== 0 || consPort  !== 0 || lastPort  !== 0) ? endPort.toFixed(2)  : '';
+    document.getElementById('fw-center-end').value = (endCtr   !== 0 || consCtr   !== 0 || lastCtr   !== 0) ? endCtr.toFixed(2)   : '';
+    document.getElementById('fw-stbd-end').value   = (endStbd  !== 0 || consStbd  !== 0 || lastStbd  !== 0) ? endStbd.toFixed(2)  : '';
+    document.getElementById('fw-total-end').value  = (endTotal !== 0 || consTotal !== 0 || lastTotal !== 0 || supplyTotal !== 0) ? endTotal.toFixed(2) : '';
+  }
+
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
     });
   }
-  fwCalc.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcFw));
-  
-  if(fwSup) {
-    function calcSup() {
-      let tot = 0;
-      fwSup.querySelectorAll('.w-vol').forEach(el => tot += parseNum(el.value));
-      const s = fwCalc.querySelector('.c-t.r-sup');
-      if (s) { s.value = tot ? tot.toFixed(2) : ''; calcFw(); }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
+  }
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  initSig('sigup3','pv3');
+  window.clearSig = clearSig;
+
+  // ======= SAVE PDF =======
+  function savePDF() {
+    var element = document.getElementById('form-container');
+    var ship = document.getElementById('vessel').value || 'Unknown';
+    var date = document.getElementById('date').value || 'unknown';
+    var filename = '059F_Monthly_Fresh_Water_Cons_' + ship.replace(/\s/g,'_') + '_' + date + '.pdf';
+    var opt = {
+      margin: [0.3, 0.3, 0.3, 0.3],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
     }
-    fwSup.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcSup));
-  }
-}
-
+    function updateTitle() {
+      var base = '059F Monthly Fresh Water Consumption';
+      var ship = document.getElementById('vessel');
+      var date = document.getElementById('date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+    }
+    var ship = document.getElementById('vessel');
+    var date = document.getElementById('date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
 </script>
 </body>
 </html>

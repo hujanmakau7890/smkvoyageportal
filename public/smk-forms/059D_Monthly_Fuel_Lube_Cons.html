@@ -1,250 +1,531 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>059-D Monthly Fuel Lube Cons</title>
-<style>
-  body { font-family: 'Arial', sans-serif; font-size: 11px; margin: 0; padding: 20px; color: #333; background: #fff; }
-  * { box-sizing: border-box; }
-  .page { max-width: 900px; margin: 0 auto; background: #fff; }
-  .header { display: flex; flex-direction: column; border: 2px solid #000; padding: 10px; margin-bottom: 20px; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-  .company { font-size: 16px; font-weight: bold; width: 25%; }
-  .title { text-align: center; font-size: 14px; font-weight: bold; flex: 1; }
-  .status { display: flex; flex-direction: column; align-items: flex-end; width: 25%; font-size: 10px; }
-  .status-box { border: 1px solid #000; padding: 2px; display: flex; margin-bottom: 5px; }
-  .status-box span { padding: 2px 5px; border-right: 1px solid #000; font-weight: bold; }
-  .status-box span:last-child { border-right: none; }
-  .meta { display: flex; justify-content: space-between; }
-  .field { display: flex; align-items: center; gap: 5px; font-weight: bold; }
-  select, input, textarea { border: 1px solid #ccc; font-family: inherit; font-size: inherit; background: transparent; padding: 3px; }
-  input.date-mask { width: 100px; text-align: center; }
-  input[type="text"] { width: 100%; border: none; outline: none; background: transparent; text-align: center; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-  th, td { border: 1px solid #000; padding: 4px; text-align: center; }
-  th { background: #f0f0f0; font-weight: bold; }
-  .row-label { text-align: left; font-weight: bold; }
-  .foot { display: flex; justify-content: space-around; margin-top: 30px; }
-  .sign-box { text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100px; }
-  .sign-line { border-top: 1px solid #000; width: 150px; padding-top: 5px; }
-  .btn { padding: 8px 12px; background: #0284c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-  @media print {
-    body { padding: 0; }
-    .no-print { display: none !important; }
-    input, select, textarea { border: none !important; }
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>059D Monthly Fuel &amp; Lube Oil Consumption</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; padding: 20px; display: flex; justify-content: center; }
+    .container { max-width: 1200px; width: 100%; background: #fff; padding: 24px 28px 30px 28px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; padding: 10px 20px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
+    .btn:hover { background: #0d47a1; }
 
-  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; }
-  .sig-preview { position: relative; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
-  .sig-preview img { max-height: 50px; max-width: 100%; object-fit: contain; }
-  .sig-preview.hidden, .btn.hidden { display: none !important; }
-  .remove { position: absolute; top: -5px; right: 0; background: #dc2626; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-weight: bold; padding: 0; }
-  .upload { display: none; }
-  .sig-name { border: none; border-bottom: 1px solid #000; outline: none; width: 100%; text-align: center; margin-top: 5px; }
-  .role { font-size: 9px; font-weight: bold; margin-top: 2px; }
-    
-</style>
+    .head { border: 2px solid #000; padding: 10px 14px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .co { font-weight: bold; font-size: 13px; }
+    .ttl { font-weight: bold; font-size: 16px; text-align: center; line-height: 1.3; }
+    .ttl small { font-size: 13px; display: block; font-weight: normal; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; font-size: 10px; gap: 2px; }
+    .code { display: flex; border: 1px solid #000; font-weight: bold; }
+    .code span { padding: 2px 12px; }
+    .code span + span { border-left: 1px solid #000; }
+
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
+    .info-row .item { display: flex; align-items: baseline; gap: 6px; }
+    .info-row .item label { font-weight: bold; white-space: nowrap; }
+    .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 60px; outline: none; }
+    .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+
+    .section-title { font-weight: bold; font-size: 12px; margin-top: 14px; margin-bottom: 4px; padding: 3px 6px; background: #dbeafe; border-left: 4px solid #1769d2; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 9.5px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 2px 3px; vertical-align: middle; text-align: center; }
+    .tbl th { background: #f3f4f6; font-weight: bold; font-size: 8.5px; }
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 9.5px; padding: 1px 2px; min-height: 20px; outline: none; font-family: inherit; }
+    .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .tbl input[readonly] { cursor: default; }
+    .tbl .td-total { background: #fef9c3; font-weight: bold; }
+    .tbl .td-stock-end { background: #dcfce7; font-weight: bold; }
+    .tbl .td-label { text-align: left; font-weight: bold; font-size: 9px; padding-left: 5px; }
+    .tbl .td-rowno { width: 24px; font-weight: bold; background: #f3f4f6; }
+
+    .footer-section { margin-top: 12px; padding-top: 10px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: end; }
+    .footer-grid .sig-item { text-align: center; }
+    .footer-grid .sig-item .label { font-weight: bold; font-size: 11px; }
+    .footer-grid .sig-item .space { height: 50px; display: flex; align-items: center; justify-content: center; border: 1px dashed #aaa; margin: 4px 0; background: #fafafa; position: relative; }
+    .footer-grid .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .footer-grid .sig-item .space .pv img { max-height: 45px; max-width: 100%; }
+    .footer-grid .sig-item .space .pv .x { position: absolute; right: 2px; top: 2px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
+    .footer-grid .sig-item .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 85%; font-size: 11px; margin-top: 2px; outline: none; background: transparent; }
+    .footer-grid .sig-item .nm:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    .footer-grid .sig-item .role { font-weight: bold; font-size: 10px; margin-top: 2px; }
+
+    .note-footer { margin-top: 8px; font-size: 9px; font-style: italic; color: #555; border-top: 1px solid #ccc; padding-top: 5px; }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      @page { size: A4 landscape; margin: 5mm; }
+      .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { margin: 0; padding: 3px; max-width: 100%; box-shadow: none; border-radius: 0; }
+      .head { padding: 3px 6px; }
+      .top { padding-bottom: 3px; margin-bottom: 3px; }
+      .co { font-size: 10px; }
+      .ttl { font-size: 13px; }
+      .ttl small { font-size: 10px; }
+      .st { font-size: 7px; }
+      .info-row { font-size: 10px; }
+      .info-row .item input, .info-row .item select { font-size: 10px; }
+      .section-title { font-size: 9px; margin-top: 6px; margin-bottom: 2px; padding: 2px 4px; }
+      .tbl { font-size: 7px; margin-top: 2px; }
+      .tbl th { font-size: 6.5px; }
+      .tbl td { padding: 1px 2px; }
+      .tbl input { font-size: 7px; min-height: 14px; }
+      .footer-grid .sig-item .label { font-size: 8px; }
+      .footer-grid .sig-item .space { height: 30px; border: 1px solid #000; }
+      .footer-grid .sig-item .space .pv img { max-height: 25px; }
+      .footer-grid .sig-item .nm { font-size: 8px; }
+      .footer-grid .sig-item .role { font-size: 7px; }
+      .note-footer { font-size: 7px; }
+      select option[value=""] { display: none !important; }
+      input::placeholder { color: transparent !important; }
+    }
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; }
+      .st { align-items: center; }
+      .info-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .tbl { font-size: 7px; }
+      .tbl td, .tbl th { padding: 1px; }
+    }
+  </style>
 </head>
 <body>
-<div class="page">
-  <div class="toolbar no-print" style="margin-bottom: 10px;">
-    <button class="btn print-btn">🖨 Print / Simpan PDF</button>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
   </div>
-  
-  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 2px solid #000;">
-    
-    <tbody id="fuel-table">
-      <tr>
-        <td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td>
-        <td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td><td><input type="text" class="f-val"></td>
-        <td><input type="text" class="f-tot" readonly></td>
-      </tr>
-    </tbody>
 
-  </table>
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top">
+      <div class="co">PT MENTARI MAS MULTIMODA</div>
+      <div class="ttl">059-D<br>MONTHLY FUEL &amp; LUBRICATING OIL CONSUMPTION SUMMARY
+        <small>Monthly Fuel &amp; Lube Oil Consumption</small>
+      </div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>BLN</span></div>
+        <div>Release: &nbsp; Rev.03</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="item"><label>MV / Nama Kapal :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date of Report :</label><input class="date" id="date" placeholder="DD-MM-YYYY"></div>
+    </div>
+  </header>
 
+  <!-- TABLE 1: Fuel Oil Consumption -->
+  <div class="section-title">Fuel Oil Consumption This Month (MT)</div>
+  <div style="overflow-x:auto;">
+    <table class="tbl" id="tbl-fuel">
+      <thead>
+        <tr>
+          <th style="width:9%;">Main Engine 1</th>
+          <th style="width:9%;">Main Engine 2</th>
+          <th style="width:9%;">AE 1</th>
+          <th style="width:9%;">AE 2</th>
+          <th style="width:9%;">AE 3</th>
+          <th style="width:9%;">AE 4</th>
+          <th style="width:9%;">Emer Gen<br/><span style="font-weight:normal;font-size:7px;">(E. Gen)</span></th>
+          <th style="width:9%;">Aux Boiler</th>
+          <th style="width:9%;background:#fef9c3;">Total (MT)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="number" id="fo-me1" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td><input type="number" id="fo-me2" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td><input type="number" id="fo-ae1" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td><input type="number" id="fo-ae2" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td><input type="number" id="fo-ae3" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td><input type="number" id="fo-ae4" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td><input type="number" id="fo-egen" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td><input type="number" id="fo-boiler" min="0" step="0.001" placeholder="0.000" oninput="calcFuelTotal()"></td>
+          <td class="td-total"><input type="text" id="fo-total" readonly tabindex="-1" placeholder="0.000"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th colspan="9">Fuel Oil Consumption This Month for Equipments below (MT)</th>
-      </tr>
-      <tr>
-        <th>Main Engine 1</th>
-        <th>Main Engine 2</th>
-        <th>AE 1</th>
-        <th>AE 2</th>
-        <th>AE 3</th>
-        <th>AE 4</th>
-        <th>Emer Gen (E. Gen)</th>
-        <th>Aux Boiler</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    
-    <tbody id="lube-table">
-      <tr>
-        <td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td>
-        <td><input type="text" class="l-val"></td><td><input type="text" class="l-val"></td><td><input type="text" class="l-tot" readonly></td>
-      </tr>
-    </tbody>
+  <!-- TABLE 2: Lube Oil Consumption -->
+  <div class="section-title">Lube Oil Consumption This Month (Liters)</div>
+  <div style="overflow-x:auto;">
+    <table class="tbl" id="tbl-lube">
+      <thead>
+        <tr>
+          <th style="width:12%;">Main Engine 1</th>
+          <th style="width:12%;">Main Engine 2</th>
+          <th style="width:12%;">AE 1</th>
+          <th style="width:12%;">AE 2</th>
+          <th style="width:12%;">AE 3</th>
+          <th style="width:12%;">Emer Gen<br/><span style="font-weight:normal;font-size:7px;">(E. Gen)</span></th>
+          <th style="width:12%;background:#fef9c3;">Total (Liters)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="number" id="lo-me1" min="0" step="0.1" placeholder="0.0" oninput="calcLubeTotal()"></td>
+          <td><input type="number" id="lo-me2" min="0" step="0.1" placeholder="0.0" oninput="calcLubeTotal()"></td>
+          <td><input type="number" id="lo-ae1" min="0" step="0.1" placeholder="0.0" oninput="calcLubeTotal()"></td>
+          <td><input type="number" id="lo-ae2" min="0" step="0.1" placeholder="0.0" oninput="calcLubeTotal()"></td>
+          <td><input type="number" id="lo-ae3" min="0" step="0.1" placeholder="0.0" oninput="calcLubeTotal()"></td>
+          <td><input type="number" id="lo-egen" min="0" step="0.1" placeholder="0.0" oninput="calcLubeTotal()"></td>
+          <td class="td-total"><input type="text" id="lo-total" readonly tabindex="-1" placeholder="0.0"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  </table>
+  <!-- TABLE 3: Stock/Consumption Summary -->
+  <div class="section-title">Stock / Consumption Summary</div>
+  <div style="overflow-x:auto;">
+    <table class="tbl" id="tbl-stock">
+      <thead>
+        <tr>
+          <th style="width:20px;">No.</th>
+          <th style="width:20%;">Description</th>
+          <th>MFO / LSFO<br/><span style="font-weight:normal;font-size:7px;">(MT)</span></th>
+          <th>HSD (GO)<br/><span style="font-weight:normal;font-size:7px;">(MT)</span></th>
+          <th>Cylinder Oil<br/><span style="font-weight:normal;font-size:7px;">(Liters)</span></th>
+          <th>Circulation Oil<br/>Settling Tk<br/><span style="font-weight:normal;font-size:7px;">(Liters)</span></th>
+          <th>Circulation Oil<br/>Sump Tk *<br/><span style="font-weight:normal;font-size:7px;">(Liters)</span></th>
+          <th>Circulation Oil<br/>Storage Tk<br/><span style="font-weight:normal;font-size:7px;">(Liters)</span></th>
+          <th>SAE 70<br/><span style="font-weight:normal;font-size:7px;">(Liters)</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1: Last Month -->
+        <tr>
+          <td class="td-rowno">1</td>
+          <td class="td-label">Stock on the end of last month on:</td>
+          <td><input type="number" id="mfo-last" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-last" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-last" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-last" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-last" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-last" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-last" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 2: Supply 1 -->
+        <tr>
+          <td class="td-rowno">2</td>
+          <td class="td-label">Bunkering / Supply 1</td>
+          <td><input type="number" id="mfo-sup1" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-sup1" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-sup1" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-sup1" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-sup1" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-sup1" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-sup1" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 3: Supply 2 -->
+        <tr>
+          <td class="td-rowno">3</td>
+          <td class="td-label">Bunkering / Supply 2</td>
+          <td><input type="number" id="mfo-sup2" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-sup2" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-sup2" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-sup2" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-sup2" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-sup2" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-sup2" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 4: Supply 3 -->
+        <tr>
+          <td class="td-rowno">4</td>
+          <td class="td-label">Bunkering / Supply 3</td>
+          <td><input type="number" id="mfo-sup3" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-sup3" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-sup3" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-sup3" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-sup3" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-sup3" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-sup3" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 5: Supply 4 -->
+        <tr>
+          <td class="td-rowno">5</td>
+          <td class="td-label">Bunkering / Supply 4</td>
+          <td><input type="number" id="mfo-sup4" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-sup4" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-sup4" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-sup4" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-sup4" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-sup4" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-sup4" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 6: Correction 1 -->
+        <tr>
+          <td class="td-rowno">6</td>
+          <td class="td-label">Correction 1</td>
+          <td><input type="number" id="mfo-cor1" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-cor1" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-cor1" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-cor1" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-cor1" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-cor1" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-cor1" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 7: Correction 2 -->
+        <tr>
+          <td class="td-rowno">7</td>
+          <td class="td-label">Correction 2</td>
+          <td><input type="number" id="mfo-cor2" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-cor2" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-cor2" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-cor2" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-cor2" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-cor2" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-cor2" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 8: Total (auto, kuning) -->
+        <tr>
+          <td class="td-rowno" style="background:#fef9c3;">8</td>
+          <td class="td-label" style="background:#fef9c3;font-weight:bold;">Total</td>
+          <td class="td-total"><input type="text" id="mfo-tot" readonly tabindex="-1" placeholder="0.000"></td>
+          <td class="td-total"><input type="text" id="hsd-tot" readonly tabindex="-1" placeholder="0.000"></td>
+          <td class="td-total"><input type="text" id="cyl-tot" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-total"><input type="text" id="set-tot" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-total"><input type="text" id="sump-tot" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-total"><input type="text" id="stor-tot" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-total"><input type="text" id="sae-tot" readonly tabindex="-1" placeholder="0.0"></td>
+        </tr>
+        <!-- Row 9: Consumption -->
+        <tr>
+          <td class="td-rowno">9</td>
+          <td class="td-label">Consumption</td>
+          <td><input type="number" id="mfo-cons" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="hsd-cons" min="0" step="0.001" placeholder="0.000" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="cyl-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="set-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sump-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="stor-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+          <td><input type="number" id="sae-cons" min="0" step="0.1" placeholder="0.0" oninput="calcStockSummary()"></td>
+        </tr>
+        <!-- Row 10: Stock End (auto, hijau) -->
+        <tr>
+          <td class="td-rowno" style="background:#dcfce7;">10</td>
+          <td class="td-label" style="background:#dcfce7;font-weight:bold;">Stock on end of this month</td>
+          <td class="td-stock-end"><input type="text" id="mfo-end" readonly tabindex="-1" placeholder="0.000"></td>
+          <td class="td-stock-end"><input type="text" id="hsd-end" readonly tabindex="-1" placeholder="0.000"></td>
+          <td class="td-stock-end"><input type="text" id="cyl-end" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-stock-end"><input type="text" id="set-end" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-stock-end"><input type="text" id="sump-end" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-stock-end"><input type="text" id="stor-end" readonly tabindex="-1" placeholder="0.0"></td>
+          <td class="td-stock-end"><input type="text" id="sae-end" readonly tabindex="-1" placeholder="0.0"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th colspan="7">Lube Oil Consumption This Month for Equipments below (Liters)</th>
-      </tr>
-      <tr>
-        <th>Main Engine 1</th>
-        <th>Main Engine 2</th>
-        <th>AE 1</th>
-        <th>AE 2</th>
-        <th>AE 3</th>
-        <th>Emer Gen (E. Gen)</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- NOTE -->
+  <div class="note-footer">
+    * Sounding Sump Tk: always in last port at the end of each month, ME stopped, pumps stop and Volume always corrected of trims
+  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th rowspan="2" style="width: 25%;">Description</th>
-        <th rowspan="2">MFO / LSFO (MT)</th>
-        <th rowspan="2">HSD (GO) (MT)</th>
-        <th rowspan="2">Cylinder Oil (Liters)</th>
-        <th colspan="3">Circulation Oil (Liters)</th>
-        <th rowspan="2">Sae 70 (Liters)</th>
-      </tr>
-      <tr>
-        <th>Settling Tk</th>
-        <th>Sump Tk</th>
-        <th>Storage Tk</th>
-      </tr>
-    </thead>
-    
-    <tbody id="calc-table">
-      <tr>
-        <td class="row-label">Stock on the end of last month on:</td>
-        <td><input type="text" class="c-mfo r-last"></td><td><input type="text" class="c-hsd r-last"></td><td><input type="text" class="c-cy r-last"></td>
-        <td><input type="text" class="c-set r-last"></td><td><input type="text" class="c-sump r-last"></td><td><input type="text" class="c-sto r-last"></td><td><input type="text" class="c-sae r-last"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Bunkering / Supply 1</td>
-        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
-        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Bunkering / Supply 2</td>
-        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
-        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Bunkering / Supply 3</td>
-        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
-        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Bunkering / Supply 4</td>
-        <td><input type="text" class="c-mfo r-sup"></td><td><input type="text" class="c-hsd r-sup"></td><td><input type="text" class="c-cy r-sup"></td>
-        <td><input type="text" class="c-set r-sup"></td><td><input type="text" class="c-sump r-sup"></td><td><input type="text" class="c-sto r-sup"></td><td><input type="text" class="c-sae r-sup"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Correction 1</td>
-        <td><input type="text" class="c-mfo r-cor"></td><td><input type="text" class="c-hsd r-cor"></td><td><input type="text" class="c-cy r-cor"></td>
-        <td><input type="text" class="c-set r-cor"></td><td><input type="text" class="c-sump r-cor"></td><td><input type="text" class="c-sto r-cor"></td><td><input type="text" class="c-sae r-cor"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Correction 2</td>
-        <td><input type="text" class="c-mfo r-cor"></td><td><input type="text" class="c-hsd r-cor"></td><td><input type="text" class="c-cy r-cor"></td>
-        <td><input type="text" class="c-set r-cor"></td><td><input type="text" class="c-sump r-cor"></td><td><input type="text" class="c-sto r-cor"></td><td><input type="text" class="c-sae r-cor"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Total</td>
-        <td><input type="text" class="c-mfo r-tot" readonly></td><td><input type="text" class="c-hsd r-tot" readonly></td><td><input type="text" class="c-cy r-tot" readonly></td>
-        <td><input type="text" class="c-set r-tot" readonly></td><td><input type="text" class="c-sump r-tot" readonly></td><td><input type="text" class="c-sto r-tot" readonly></td><td><input type="text" class="c-sae r-tot" readonly></td>
-      </tr>
-      <tr>
-        <td class="row-label">Consumption</td>
-        <td><input type="text" class="c-mfo r-cons"></td><td><input type="text" class="c-hsd r-cons"></td><td><input type="text" class="c-cy r-cons"></td>
-        <td><input type="text" class="c-set r-cons"></td><td><input type="text" class="c-sump r-cons"></td><td><input type="text" class="c-sto r-cons"></td><td><input type="text" class="c-sae r-cons"></td>
-      </tr>
-      <tr>
-        <td class="row-label">Stock on the end of this month on:</td>
-        <td><input type="text" class="c-mfo r-end" readonly></td><td><input type="text" class="c-hsd r-end" readonly></td><td><input type="text" class="c-cy r-end" readonly></td>
-        <td><input type="text" class="c-set r-end" readonly></td><td><input type="text" class="c-sump r-end" readonly></td><td><input type="text" class="c-sto r-end" readonly></td><td><input type="text" class="c-sae r-end" readonly></td>
-      </tr>
-    </tbody>
-
-  </table>
-
-  <p style="font-size: 10px; font-style: italic;">* Sounding Sump Tk: always in last port at the end of each month, ME stopped, pumps stop and Volume always corrected of trims</p>
-
-  <section class="foot" id="signatures"></section>
+  <!-- FOOTER / SIGNATURE -->
+  <div class="footer-section">
+    <div class="footer-grid">
+      <div class="sig-item">
+        <div class="label">Reported by Chief Engineer,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup1" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv1" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv1','sigup1')">&times;</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Chief Engineer">
+        <div class="role">Chief Engineer</div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Checked by Master,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup2" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv2" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv2','sigup2')">&times;</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama Master">
+        <div class="role">Master</div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Rechecked by SI / FM,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="space">
+          <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
+            <input id="sigup3" class="hidden" type="file" accept="image/*">
+          </label>
+          <div id="pv3" class="pv">
+            <img alt="signature">
+            <button class="x no-print" onclick="clearSig('pv3','sigup3')">&times;</button>
+          </div>
+        </div>
+        <input class="nm" placeholder="Nama SI / FM">
+        <div class="role">SI / FM</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-function mask(e) {
-  let v = e.target.value.replace(/\D/g, '');
-  if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
-  if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,9);
-  e.target.value = v;
-}
-document.querySelector('.date-mask').addEventListener('input', mask);
+  // ======= DATE MASK =======
+  document.querySelectorAll('.date').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
 
-const roles=[['Reported by Chief Engineer/Officer'],['Checked by Master'],['Rechecked by SI / FM']],box=document.getElementById('signatures');roles.forEach(([a])=>{const s=document.createElement('div');s.className='sign-box';s.innerHTML=`<div style="font-weight:bold">${a}</div><div class="sig-space"><label class="btn no-print">+ Add TTD<input class="upload hidden" type="file" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div><input class="sig-name" type="text" placeholder="Name"><div class="role">Signed & Name</div>`;box.appendChild(s);const up=s.querySelector('.upload'),pv=s.querySelector('.sig-preview'),lab=s.querySelector('.btn'),im=pv.querySelector('img');up.onchange=e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=x=>{im.src=x.target.result;lab.classList.add('hidden');pv.classList.remove('hidden');};r.readAsDataURL(f)};s.querySelector('.remove').onclick=()=>{im.src='';up.value='';pv.classList.add('hidden');lab.classList.remove('hidden')}});
+  // ======= HELPERS =======
+  function val(id) {
+    var el = document.getElementById(id);
+    if (!el) return 0;
+    var n = parseFloat(el.value);
+    return isNaN(n) ? 0 : n;
+  }
 
+  // ======= TABLE 1: Fuel Oil Total =======
+  function calcFuelTotal() {
+    var total = val('fo-me1') + val('fo-me2') + val('fo-ae1') + val('fo-ae2') +
+                val('fo-ae3') + val('fo-ae4') + val('fo-egen') + val('fo-boiler');
+    document.getElementById('fo-total').value = total > 0 ? total.toFixed(3) : '';
+  }
 
-const calcTable = document.getElementById('calc-table');
-if (calcTable) {
-  const cols = ['c-mfo', 'c-hsd', 'c-cy', 'c-set', 'c-sump', 'c-sto', 'c-sae'];
-  function parseNum(val) { const n = parseFloat(val); return isNaN(n) ? 0 : n; }
-  function calc() {
-    cols.forEach(c => {
-      const last = parseNum(calcTable.querySelector(`.${c}.r-last`).value);
-      const sups = Array.from(calcTable.querySelectorAll(`.${c}.r-sup`)).reduce((acc, el) => acc + parseNum(el.value), 0);
-      const cors = Array.from(calcTable.querySelectorAll(`.${c}.r-cor`)).reduce((acc, el) => acc + parseNum(el.value), 0);
-      const cons = parseNum(calcTable.querySelector(`.${c}.r-cons`).value);
-      
-      const tot = last + sups + cors;
-      const end = tot - cons;
-      
-      calcTable.querySelector(`.${c}.r-tot`).value = tot ? tot.toFixed(2) : '';
-      calcTable.querySelector(`.${c}.r-end`).value = end ? end.toFixed(2) : '';
+  // ======= TABLE 2: Lube Oil Total =======
+  function calcLubeTotal() {
+    var total = val('lo-me1') + val('lo-me2') + val('lo-ae1') + val('lo-ae2') +
+                val('lo-ae3') + val('lo-egen');
+    document.getElementById('lo-total').value = total > 0 ? total.toFixed(1) : '';
+  }
+
+  // ======= TABLE 3: Stock/Consumption Summary =======
+  function calcStockSummary() {
+    var cols = ['mfo','hsd','cyl','set','sump','stor','sae'];
+    var decs = { mfo:3, hsd:3, cyl:1, set:1, sump:1, stor:1, sae:1 };
+
+    cols.forEach(function(c) {
+      var dec = decs[c];
+      var last = val(c+'-last');
+      var sup1 = val(c+'-sup1');
+      var sup2 = val(c+'-sup2');
+      var sup3 = val(c+'-sup3');
+      var sup4 = val(c+'-sup4');
+      var cor1 = val(c+'-cor1');
+      var cor2 = val(c+'-cor2');
+      var total = last + sup1 + sup2 + sup3 + sup4 + cor1 + cor2;
+      var cons  = val(c+'-cons');
+      var end   = total - cons;
+
+      var totEl = document.getElementById(c+'-tot');
+      var endEl = document.getElementById(c+'-end');
+      if (totEl) totEl.value = total !== 0 ? total.toFixed(dec) : '';
+      if (endEl) endEl.value = end !== 0 ? end.toFixed(dec) : '';
     });
   }
-  calcTable.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calc));
-}
 
-
-const fuelTable = document.getElementById('fuel-table');
-if (fuelTable) {
-  function calcFuel() {
-    let tot = 0;
-    fuelTable.querySelectorAll('.f-val').forEach(el => tot += parseNum(el.value));
-    fuelTable.querySelector('.f-tot').value = tot ? tot.toFixed(2) : '';
+  // ======= SIGNATURE =======
+  function initSig(upId, pvId) {
+    var up = document.getElementById(upId);
+    var pv = document.getElementById(pvId);
+    up.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        pv.querySelector('img').src = ev.target.result;
+        up.parentElement.classList.add('hidden');
+        pv.style.display = 'flex';
+        pv.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
   }
-  fuelTable.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcFuel));
-}
-
-const lubeTable = document.getElementById('lube-table');
-if (lubeTable) {
-  function calcLube() {
-    let tot = 0;
-    lubeTable.querySelectorAll('.l-val').forEach(el => tot += parseNum(el.value));
-    lubeTable.querySelector('.l-tot').value = tot ? tot.toFixed(2) : '';
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    var up = document.getElementById(upId);
+    pv.querySelector('img').src = '';
+    up.value = '';
+    pv.style.display = 'none';
+    pv.classList.add('hidden');
+    up.parentElement.classList.remove('hidden');
   }
-  lubeTable.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calcLube));
-}
+  initSig('sigup1','pv1');
+  initSig('sigup2','pv2');
+  initSig('sigup3','pv3');
+  window.clearSig = clearSig;
 
+  // ======= SAVE PDF =======
+  function savePDF() {
+    var element = document.getElementById('form-container');
+    var ship = document.getElementById('vessel').value || 'Unknown';
+    var date = document.getElementById('date').value || 'unknown';
+    var filename = '059D_Monthly_Fuel_Lube_Cons_' + ship.replace(/\s/g,'_') + '_' + date + '.pdf';
+    var opt = {
+      margin: [0.3, 0.3, 0.3, 0.3],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+
+  // ======= DYNAMIC TITLE =======
+  (function() {
+    function getMonthName(mm) {
+      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      return names[mm-1] || '';
+    }
+    function updateTitle() {
+      var base = '059D Monthly Fuel & Lube Oil Consumption';
+      var ship = document.getElementById('vessel');
+      var date = document.getElementById('date');
+      var parts = [];
+      if (ship && ship.value) parts.push(ship.value);
+      if (date && date.value) {
+        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (m) {
+          var mo = parseInt(m[2],10);
+          var yr = m[3];
+          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+        } else {
+          parts.push(date.value);
+        }
+      }
+      var title = base;
+      if (parts.length) title += ' - ' + parts.join(' - ');
+      document.title = title;
+    }
+    var ship = document.getElementById('vessel');
+    var date = document.getElementById('date');
+    if (ship) ship.addEventListener('change', updateTitle);
+    if (date) date.addEventListener('input', updateTitle);
+    updateTitle();
+  })();
 </script>
 </body>
 </html>
