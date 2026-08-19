@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>080C - Chief Officer Handover Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 950px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 16px; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 16px; font-size: 13px; }
+    .info-grid .item { display: flex; align-items: center; gap: 8px; }
+    .info-grid .item label { font-weight: bold; white-space: nowrap; width: 100px; }
+    .info-grid .item input, .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; }
+    
+    .section-title { font-weight: bold; font-size: 13px; margin: 20px 0 10px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 12px; }
+    .tbl td input[type="text"] { width: 100%; border: none; outline: none; font-family: inherit; font-size: 12px; background: transparent; }
+    .center { text-align: center; }
+    .section-row { background: #e5e7eb; font-weight: bold; }
+    
+    .statement-box { border: 1px solid #000; padding: 12px; font-size: 13px; margin-bottom: 20px; background: #f9fafb; line-height: 1.6; }
+    .statement-box input { border: 0; border-bottom: 1px dashed #000; background: transparent; text-align: center; font-size: 13px; outline: none; font-weight: bold; }
+    
+    .footer-section { margin-top: 20px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; justify-content: center; margin-bottom: 20px; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+
+    input[type="radio"], input[type="checkbox"] { transform: scale(1.2); cursor: pointer; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 4px 6px; font-size: 10px; }
+      .statement-box { font-size: 11px; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 12px; }
+      .info-grid .item { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .info-grid .item input, .info-grid .item select { width: 100%; border-bottom: 1px solid #ccc; padding: 6px 0; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .page { padding: 12px; }
+      .tbl { min-width: 600px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">080-C CHIEF OFFICER HAND OVER REPORT</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.1</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item"><label>MV :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Port :</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Date :</label><input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+      <div class="item"></div>
+    </div>
+
+    <!-- PART A: GENERAL CHECKLIST -->
+    <div class="section-title">A. General Information & Checklist</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:5%;">No</th>
+            <th style="width:40%;">Topic / Description</th>
+            <th style="width:10%;">Checked</th>
+            <th style="width:45%;">Remarks / Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">1</td>
+            <td>Hull (Condition)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">2</td>
+            <td>Cargo Holds (Condition)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">3</td>
+            <td>Cargo Gear (Condition / Certificates / Safe Working Load / Test Dates)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">4</td>
+            <td>Anchor-Mooring-Equipment (Condition / Certificates)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">5</td>
+            <td>Pilot Ladders and Gangways (Condition / Spare Parts/Wires / Certificates)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">6</td>
+            <td>Loading Condition (Vessel Specifics)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">7</td>
+            <td>Gas Detection Equipment (Tubes and Multi-Gas Detector), BLOWER Portable</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">8</td>
+            <td>Keys and Miscellaneous (Ships Cameras etc.)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">9</td>
+            <td>SMS QM Documentation (Updates and New Releases), INTERNAL MEMO</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">10</td>
+            <td>Passenger (if available)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">11</td>
+            <td>Crew Evaluation</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">12</td>
+            <td>Inspections (Superintendent / Class / PSC / Flag State / Insurance)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PART B: INVENTORIES -->
+    <div class="section-title">B. Inventories & Store Condition</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:40%;">Item</th>
+            <th style="width:10%;">Yes</th>
+            <th style="width:10%;">No</th>
+            <th style="width:40%;">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" class="section-row">14. Lashing Gear Inventory</td></tr>
+          <tr><td colspan="4" class="section-row">14. Lashing Gear Inventory</td></tr>
+          <tr>
+            <td>Turnbuckle Frame Body</td>
+            <td class="center"><input type="radio" name="qi1" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi1" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Turnbuckle Pipe Body</td>
+            <td class="center"><input type="radio" name="qi2" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi2" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Turnbuckle Jaw and Jaw</td>
+            <td class="center"><input type="radio" name="qi3" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi3" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Turnbuckle Eye and Eye</td>
+            <td class="center"><input type="radio" name="qi4" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi4" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Lashing Rods Short</td>
+            <td class="center"><input type="radio" name="qi5" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi5" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Lashing Rods Long</td>
+            <td class="center"><input type="radio" name="qi6" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi6" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Extension Hook</td>
+            <td class="center"><input type="radio" name="qi7" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi7" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Single Rods</td>
+            <td class="center"><input type="radio" name="qi8" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi8" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Twist lock</td>
+            <td class="center"><input type="radio" name="qi9" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi9" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Stacking Coe</td>
+            <td class="center"><input type="radio" name="qi10" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi10" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Foundations</td>
+            <td class="center"><input type="radio" name="qi11" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi11" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Extension Wire Hook</td>
+            <td class="center"><input type="radio" name="qi12" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi12" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Bridge Fitting</td>
+            <td class="center"><input type="radio" name="qi13" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi13" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Box For Twist lock and Bridge fitting</td>
+            <td class="center"><input type="radio" name="qi14" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi14" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">15. Anchor-Mooring-Equipment Inventory</td></tr>
+          <tr>
+            <td>Anchor Starboard side</td>
+            <td class="center"><input type="radio" name="qi15" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi15" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Anchor Portside</td>
+            <td class="center"><input type="radio" name="qi16" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi16" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Anchor Black Ball</td>
+            <td class="center"><input type="radio" name="qi17" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi17" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Heaving Line FWD</td>
+            <td class="center"><input type="radio" name="qi18" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi18" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Heaving Line AFT</td>
+            <td class="center"><input type="radio" name="qi19" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi19" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Mooring Line FWD</td>
+            <td class="center"><input type="radio" name="qi20" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi20" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Mooring Line AFT</td>
+            <td class="center"><input type="radio" name="qi21" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi21" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Rat Guard</td>
+            <td class="center"><input type="radio" name="qi22" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi22" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Monkey Ladder</td>
+            <td class="center"><input type="radio" name="qi23" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi23" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pilot Ladder</td>
+            <td class="center"><input type="radio" name="qi24" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi24" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Anchor Stopper with Turnbuckle</td>
+            <td class="center"><input type="radio" name="qi25" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi25" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">16. Bosun Store</td></tr>
+          <tr>
+            <td>Double and Angle Scrapper</td>
+            <td class="center"><input type="radio" name="qi26" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi26" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pipe Wrench Straight</td>
+            <td class="center"><input type="radio" name="qi27" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi27" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sledge Hammer</td>
+            <td class="center"><input type="radio" name="qi28" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi28" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Chipping Hammer</td>
+            <td class="center"><input type="radio" name="qi29" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi29" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Hand Saw</td>
+            <td class="center"><input type="radio" name="qi30" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi30" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Trolley</td>
+            <td class="center"><input type="radio" name="qi31" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi31" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Square shovel</td>
+            <td class="center"><input type="radio" name="qi32" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi32" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Hose band</td>
+            <td class="center"><input type="radio" name="qi33" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi33" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Chain Block</td>
+            <td class="center"><input type="radio" name="qi34" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi34" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Grease Gun (Lever/Push type)</td>
+            <td class="center"><input type="radio" name="qi35" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi35" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Oil Gun</td>
+            <td class="center"><input type="radio" name="qi36" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi36" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Rubber Hammer</td>
+            <td class="center"><input type="radio" name="qi37" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi37" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Grinding Discs</td>
+            <td class="center"><input type="radio" name="qi38" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi38" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Wire Clip</td>
+            <td class="center"><input type="radio" name="qi39" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi39" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Claw, Chisel and Bars</td>
+            <td class="center"><input type="radio" name="qi40" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi40" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Universal Cleat</td>
+            <td class="center"><input type="radio" name="qi41" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi41" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Wire/Nylon Deck Brushes</td>
+            <td class="center"><input type="radio" name="qi42" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi42" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Deck Rubber mats</td>
+            <td class="center"><input type="radio" name="qi43" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi43" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Long Handed Brooms</td>
+            <td class="center"><input type="radio" name="qi44" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi44" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Spare Paint Roller</td>
+            <td class="center"><input type="radio" name="qi45" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi45" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Shackles (Bow/Anchor/Counter)</td>
+            <td class="center"><input type="radio" name="qi46" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi46" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Bound Wood Blocks</td>
+            <td class="center"><input type="radio" name="qi47" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi47" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Gangway Ladder</td>
+            <td class="center"><input type="radio" name="qi48" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi48" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Wire/Rope Cargo Net Sling</td>
+            <td class="center"><input type="radio" name="qi49" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi49" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Gang Way Safety Net</td>
+            <td class="center"><input type="radio" name="qi50" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi50" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Lifeboat Cover</td>
+            <td class="center"><input type="radio" name="qi51" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi51" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Tyre/Ball Shape Fender</td>
+            <td class="center"><input type="radio" name="qi52" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi52" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sand, Sawdust, Cement</td>
+            <td class="center"><input type="radio" name="qi53" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi53" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Hatch Cover Rubber Packing</td>
+            <td class="center"><input type="radio" name="qi54" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi54" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Toilet tank/cistern spare</td>
+            <td class="center"><input type="radio" name="qi55" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi55" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">17. Paint Store</td></tr>
+          <tr>
+            <td>Temas - Blue</td>
+            <td class="center"><input type="radio" name="qi56" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi56" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>White</td>
+            <td class="center"><input type="radio" name="qi57" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi57" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Black</td>
+            <td class="center"><input type="radio" name="qi58" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi58" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Red Lead</td>
+            <td class="center"><input type="radio" name="qi59" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi59" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Green</td>
+            <td class="center"><input type="radio" name="qi60" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi60" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Yellow</td>
+            <td class="center"><input type="radio" name="qi61" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi61" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Blue</td>
+            <td class="center"><input type="radio" name="qi62" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi62" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Grey</td>
+            <td class="center"><input type="radio" name="qi63" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi63" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Buff</td>
+            <td class="center"><input type="radio" name="qi64" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi64" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Orange</td>
+            <td class="center"><input type="radio" name="qi65" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi65" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Thinner 21 - 06</td>
+            <td class="center"><input type="radio" name="qi66" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi66" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Thinner 91 - 92</td>
+            <td class="center"><input type="radio" name="qi67" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi67" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">18. SOPEP Inventory Deck</td></tr>
+          <tr>
+            <td>Sorbent Pads 480 x 430 mm</td>
+            <td class="center"><input type="radio" name="qi68" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi68" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sorbent Boom 100 x 3000 mm</td>
+            <td class="center"><input type="radio" name="qi69" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi69" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sorbent Rolls 100 x 480 mm</td>
+            <td class="center"><input type="radio" name="qi70" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi70" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Jet Spray</td>
+            <td class="center"><input type="radio" name="qi71" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi71" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Safety Boots</td>
+            <td class="center"><input type="radio" name="qi72" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi72" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Plastic Box</td>
+            <td class="center"><input type="radio" name="qi73" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi73" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Oil Spill Kit Gloves</td>
+            <td class="center"><input type="radio" name="qi74" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi74" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Oil Spill Kit 1 Time Suit</td>
+            <td class="center"><input type="radio" name="qi75" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi75" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Oil Spill Kit Bag 1000 Ltr.</td>
+            <td class="center"><input type="radio" name="qi76" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi76" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">19. Miscellaneous / Others (Documentation & Tools)</td></tr>
+          <tr>
+            <td>Gas Detector</td>
+            <td class="center"><input type="radio" name="qi77" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi77" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Stability Calculation Book</td>
+            <td class="center"><input type="radio" name="qi78" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi78" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Manual Book ISM Code, BWM Plan</td>
+            <td class="center"><input type="radio" name="qi79" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi79" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Cargo List Book</td>
+            <td class="center"><input type="radio" name="qi80" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi80" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sounding tape</td>
+            <td class="center"><input type="radio" name="qi81" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi81" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Planned Maintenance Program</td>
+            <td class="center"><input type="radio" name="qi82" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi82" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Calculator, Flashlight, Staples, Puncher</td>
+            <td class="center"><input type="radio" name="qi83" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi83" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Ballast order book, ballast record book</td>
+            <td class="center"><input type="radio" name="qi84" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi84" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Cargo Hold Condition & Check book</td>
+            <td class="center"><input type="radio" name="qi85" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi85" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Daily Sounding ballast & FW record book</td>
+            <td class="center"><input type="radio" name="qi86" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi86" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Log Book , Garbage Record Book</td>
+            <td class="center"><input type="radio" name="qi87" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi87" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Passenger Book</td>
+            <td class="center"><input type="radio" name="qi88" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi88" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Computer & Printer</td>
+            <td class="center"><input type="radio" name="qi89" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi89" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Television</td>
+            <td class="center"><input type="radio" name="qi90" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi90" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Wood saws, Shovel, Hammer</td>
+            <td class="center"><input type="radio" name="qi91" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi91" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Screwdriver, Grinding Machine</td>
+            <td class="center"><input type="radio" name="qi92" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi92" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pompa Celup / Spare pump</td>
+            <td class="center"><input type="radio" name="qi93" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi93" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Staircase, Peranca</td>
+            <td class="center"><input type="radio" name="qi94" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi94" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Wire brush, Chipping, Brush Roller</td>
+            <td class="center"><input type="radio" name="qi95" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi95" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">20. Galley</td></tr>
+          <tr>
+            <td>Dining plate / Small plate</td>
+            <td class="center"><input type="radio" name="qi96" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi96" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Table spoon / Fork</td>
+            <td class="center"><input type="radio" name="qi97" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi97" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Glass</td>
+            <td class="center"><input type="radio" name="qi98" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi98" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Big/Medium/Small bowl</td>
+            <td class="center"><input type="radio" name="qi99" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi99" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Big/Small Saucepan</td>
+            <td class="center"><input type="radio" name="qi100" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi100" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Big/Small Frying pan</td>
+            <td class="center"><input type="radio" name="qi101" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi101" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Teacup</td>
+            <td class="center"><input type="radio" name="qi102" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi102" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Meat/Kitchen knives</td>
+            <td class="center"><input type="radio" name="qi103" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi103" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Rice spoon / Ladle / Sodet</td>
+            <td class="center"><input type="radio" name="qi104" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi104" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Aluminium basin / Cake dough bowl</td>
+            <td class="center"><input type="radio" name="qi105" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi105" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Jepitan Gorengan / Napkin</td>
+            <td class="center"><input type="radio" name="qi106" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi106" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Blender (National/Maspion/Potato)</td>
+            <td class="center"><input type="radio" name="qi107" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi107" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Rice Cooker / Magic Jar</td>
+            <td class="center"><input type="radio" name="qi108" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi108" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Ice Box / Fridge</td>
+            <td class="center"><input type="radio" name="qi109" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi109" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Oven</td>
+            <td class="center"><input type="radio" name="qi110" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi110" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Ironing board / Wall clock</td>
+            <td class="center"><input type="radio" name="qi111" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi111" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">21. Inventaris Kamar / Room Inventory (Chief Officer)</td></tr>
+          <tr>
+            <td>Kasur / Mattress</td>
+            <td class="center"><input type="radio" name="qi112" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi112" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Bantal / Cushion</td>
+            <td class="center"><input type="radio" name="qi113" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi113" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sarung Bantal / Pillowcase</td>
+            <td class="center"><input type="radio" name="qi114" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi114" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sprai / Bed linen</td>
+            <td class="center"><input type="radio" name="qi115" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi115" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kulkas / Refrigerator</td>
+            <td class="center"><input type="radio" name="qi116" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi116" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Meja / Table</td>
+            <td class="center"><input type="radio" name="qi117" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi117" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kursi / Chair</td>
+            <td class="center"><input type="radio" name="qi118" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi118" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sofa</td>
+            <td class="center"><input type="radio" name="qi119" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi119" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>CPU</td>
+            <td class="center"><input type="radio" name="qi120" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi120" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Staples, Calculator, Hole puncher</td>
+            <td class="center"><input type="radio" name="qi121" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi121" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Lampu Senter / Flash light</td>
+            <td class="center"><input type="radio" name="qi122" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi122" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kertas Karbon / Carbon paper</td>
+            <td class="center"><input type="radio" name="qi123" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi123" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Daily Work Report</td>
+            <td class="center"><input type="radio" name="qi124" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi124" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Selimut / Blanket</td>
+            <td class="center"><input type="radio" name="qi125" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi125" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">22. Alat Keselamatan / Emergency Equipment</td></tr>
+          <tr>
+            <td>Life Jacket</td>
+            <td class="center"><input type="radio" name="qi126" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi126" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td> - Peluit / Whistle</td>
+            <td class="center"><input type="radio" name="qi127" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi127" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td> - Lampu / Torch</td>
+            <td class="center"><input type="radio" name="qi128" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi128" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Helmet</td>
+            <td class="center"><input type="radio" name="qi129" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi129" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- STATEMENT -->
+    <div class="statement-box">
+      <strong>PERNYATAAN (STATEMENT) :</strong><br><br>
+      Pada hari <input type="text" style="width:120px;" placeholder="..."> 
+      tanggal <input type="text" class="date-mask" style="width:100px;" placeholder="DD-MM-YYYY"> 
+      pukul <input type="text" style="width:80px;" placeholder="HH:MM"> 
+      telah dilakukan serah terima jabatan di Pelabuhan <input type="text" style="width:150px;" placeholder="..."> 
+      dengan hasil <input type="text" style="width:150px;" placeholder="..."> 
+      antara Mualim I (Chief Officer) saat ini dengan Mualim I pengganti (baru). 
+      Dengan penandatangan serah terima ini, seluruh tugas dan tanggung jawab sepenuhnya beralih dari Chief Officer saat ini kepada Chief Officer pengganti (baru).<br><br>
+      <i>If a hand over has taken place and we do not receive any reply or comment within three weeks the hand over shall be handled as fully accepted and confirmed from on signing Master.</i>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Chief Officer (Mualim I Lama)</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">New Chief Officer</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">Knowledge by The Master</div>
+          <div class="space" id="sp-3">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  // Radio button toggle uncheck
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.addEventListener('pointerdown', function() { r.dataset.was = r.checked ? '1' : '0'; });
+    r.addEventListener('click', function() {
+      if(r.dataset.was === '1') { r.checked = false; r.dataset.was = '0'; }
+    });
+  });
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '080C_Chief_Officer_Handover_' + v + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.statement-box'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
