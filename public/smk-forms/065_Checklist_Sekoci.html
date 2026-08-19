@@ -22,7 +22,7 @@
     
     .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
     .info-row .item { display: flex; align-items: baseline; gap: 6px; }
-    .info-row .item label { font-weight: bold; white-space: nowrap; }
+    .info-row .item label { font-weight: bold;  }
     .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 0; outline: none; }
     .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
     .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
@@ -93,23 +93,23 @@
           <div>Release: &nbsp; Rev.02</div>
         </div>
       </div>
-      <div class="info-row">
-        <div class="item"><label>MV / Nama Kapal :</label>
-          <select id="vessel">
-            <option value="">Pilih Kapal</option>
-            <option value="Sahabat Mas">Sahabat Mas</option>
-            <option value="Semangat Mas">Semangat Mas</option>
-            <option value="Express Mas">Express Mas</option>
-            <option value="Pratama Mas">Pratama Mas</option>
-            <option value="Prakarsa Mas">Prakarsa Mas</option>
-            <option value="Mavendra Mas">Mavendra Mas</option>
-            <option value="Selaras Mas">Selaras Mas</option>
-            <option value="Segoro Mas">Segoro Mas</option>
-          </select>
-        </div>
-        <div class="item"><label>Date of Inspection :</label><input class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
-      </div>
     </header>
+    <div class="info-row">
+      <div class="item"><label>MV / Nama Kapal :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date of Inspection :</label><input class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+    </div>
 
     <div class="section-title">A. PENGETESAN & KONDISI FISIK (TESTING & PHYSICAL CONDITION)</div>
     <div class="tbl-container">
