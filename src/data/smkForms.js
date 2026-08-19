@@ -76,6 +76,7 @@ export const SMK_FORMS = [
   { code: "077", title: "Permit Entering Enclosed Space", category: "Laporan Deck", file: "077_Permit_Enclosed_Space.html" },
   { code: "078", title: "Pilotage Check List", category: "Laporan Deck", file: "078_Pilotage_Checklist.html" },
   { code: "079A", title: "Handover Report (Jr Officer, Eng, Rating)", category: "Laporan Deck", file: "079A_Handover_Jr_Officer.html" },
+  { code: "079B", title: "Handover Check List Crew Rating", category: "Laporan Deck", file: "079B_Handover_Crew_Rating.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
