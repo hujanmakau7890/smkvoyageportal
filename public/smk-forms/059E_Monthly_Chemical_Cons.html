@@ -43,7 +43,9 @@
     .tbl td:nth-child(8) { width: 9%; }
     .tbl td:nth-child(9) { text-align: left; width: 12%; }
 
-    .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 9.5px; padding: 1px 2px; min-height: 20px; outline: none; font-family: inherit; }
+    .tbl input { width: 100%; border: 0; background: transparent; text-align: center !important; font-size: 9.5px; padding: 1px 2px; min-height: 20px; outline: none; font-family: inherit; }
+    .tbl input[type="number"] { -moz-appearance: textfield; text-align: center !important; }
+    .tbl input[type="number"]::-webkit-inner-spin-button, .tbl input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .tbl td:nth-child(2) input { text-align: left; }
     .tbl td:nth-child(9) input { text-align: left; }
     .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
