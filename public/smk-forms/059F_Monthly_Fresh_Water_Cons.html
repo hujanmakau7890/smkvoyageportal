@@ -136,45 +136,80 @@
     <table class="tbl" style="margin-top:14px;">
     <thead>
       <tr>
-        <td colspan="4" class="section-title">FRESH WATER Stock / SUPPLIED (MT)</td>
+        <td colspan="9" class="section-title">FRESH WATER Stock / SUPPLIED (MT)</td>
       </tr>
       <tr>
-        <th style="width:30%;">Port</th>
-        <th style="width:20%;">Date</th>
-        <th style="width:25%;">Sounding</th>
-        <th style="width:25%;">Volume (MT)</th>
+        <th rowspan="2" style="width:14%;">Port</th>
+        <th rowspan="2" style="width:12%;">Date</th>
+        <th colspan="2">FW Tk Port</th>
+        <th colspan="2">FW Tk Center</th>
+        <th colspan="2">FW Tk Stbd</th>
+        <th rowspan="2" style="width:10%;">Total Volume<br><small>(MT)</small></th>
+      </tr>
+      <tr>
+        <th style="width:10%;">Sounding</th>
+        <th style="width:10%;">Volume</th>
+        <th style="width:10%;">Sounding</th>
+        <th style="width:10%;">Volume</th>
+        <th style="width:10%;">Sounding</th>
+        <th style="width:10%;">Volume</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><input type="text" id="sup-port-1" placeholder="pelabuhan"></td>
         <td><input type="text" id="sup-date-1" placeholder="DD-MM-YYYY" class="date-mask"></td>
-        <td><input type="text" id="sup-snd-1" placeholder="0.00"></td>
-        <td><input type="text" id="sup-vol-1" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-port-snd-1" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-port-vol-1" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-ctr-snd-1" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-ctr-vol-1" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-stbd-snd-1" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-stbd-vol-1" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td class="readonly-cell"><input type="text" id="sup-row-total-1" readonly tabindex="-1"></td>
       </tr>
       <tr>
         <td><input type="text" id="sup-port-2" placeholder="pelabuhan"></td>
         <td><input type="text" id="sup-date-2" placeholder="DD-MM-YYYY" class="date-mask"></td>
-        <td><input type="text" id="sup-snd-2" placeholder="0.00"></td>
-        <td><input type="text" id="sup-vol-2" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-port-snd-2" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-port-vol-2" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-ctr-snd-2" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-ctr-vol-2" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-stbd-snd-2" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-stbd-vol-2" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td class="readonly-cell"><input type="text" id="sup-row-total-2" readonly tabindex="-1"></td>
       </tr>
       <tr>
         <td><input type="text" id="sup-port-3" placeholder="pelabuhan"></td>
         <td><input type="text" id="sup-date-3" placeholder="DD-MM-YYYY" class="date-mask"></td>
-        <td><input type="text" id="sup-snd-3" placeholder="0.00"></td>
-        <td><input type="text" id="sup-vol-3" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-port-snd-3" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-port-vol-3" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-ctr-snd-3" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-ctr-vol-3" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-stbd-snd-3" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-stbd-vol-3" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td class="readonly-cell"><input type="text" id="sup-row-total-3" readonly tabindex="-1"></td>
       </tr>
       <tr>
         <td><input type="text" id="sup-port-4" placeholder="pelabuhan"></td>
         <td><input type="text" id="sup-date-4" placeholder="DD-MM-YYYY" class="date-mask"></td>
-        <td><input type="text" id="sup-snd-4" placeholder="0.00"></td>
-        <td><input type="text" id="sup-vol-4" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-port-snd-4" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-port-vol-4" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-ctr-snd-4" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-ctr-vol-4" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-stbd-snd-4" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-stbd-vol-4" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td class="readonly-cell"><input type="text" id="sup-row-total-4" readonly tabindex="-1"></td>
       </tr>
       <tr>
         <td><input type="text" id="sup-port-5" placeholder="pelabuhan"></td>
         <td><input type="text" id="sup-date-5" placeholder="DD-MM-YYYY" class="date-mask"></td>
-        <td><input type="text" id="sup-snd-5" placeholder="0.00"></td>
-        <td><input type="text" id="sup-vol-5" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-port-snd-5" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-port-vol-5" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-ctr-snd-5" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-ctr-vol-5" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td><input type="text" id="sup-stbd-snd-5" placeholder="0.00"></td>
+        <td><input type="number" step="0.01" id="sup-stbd-vol-5" placeholder="0.00" oninput="calcSupplyTotal()"></td>
+        <td class="readonly-cell"><input type="text" id="sup-row-total-5" readonly tabindex="-1"></td>
       </tr>
       <tr class="total-row">
         <td colspan="3" class="row-label" style="font-weight:bold;">Total Volume</td>
@@ -330,10 +365,30 @@
 
   // ======= TABLE 1: SUPPLY TOTAL =======
   function calcSupplyTotal() {
-    var total = num('sup-vol-1') + num('sup-vol-2') + num('sup-vol-3') + num('sup-vol-4') + num('sup-vol-5');
-    document.getElementById('sup-vol-total').value = total > 0 ? total.toFixed(2) : '';
-    // Push total supply into summary supply row total
-    document.getElementById('fw-total-supply').value = total > 0 ? total.toFixed(2) : '';
+    var totalPort = 0, totalCtr = 0, totalStbd = 0;
+    for(var i=1; i<=5; i++) {
+      var p = num('sup-port-vol-'+i);
+      var c = num('sup-ctr-vol-'+i);
+      var s = num('sup-stbd-vol-'+i);
+      var rowTot = p + c + s;
+      document.getElementById('sup-row-total-'+i).value = rowTot > 0 ? rowTot.toFixed(2) : '';
+      totalPort += p;
+      totalCtr += c;
+      totalStbd += s;
+    }
+    
+    var grandTotal = totalPort + totalCtr + totalStbd;
+    document.getElementById('sup-port-vol-total').value = totalPort > 0 ? totalPort.toFixed(2) : '';
+    document.getElementById('sup-ctr-vol-total').value = totalCtr > 0 ? totalCtr.toFixed(2) : '';
+    document.getElementById('sup-stbd-vol-total').value = totalStbd > 0 ? totalStbd.toFixed(2) : '';
+    document.getElementById('sup-vol-total').value = grandTotal > 0 ? grandTotal.toFixed(2) : '';
+    
+    // Push into Table 2
+    document.getElementById('fw-port-supply').value = totalPort > 0 ? totalPort.toFixed(2) : '';
+    document.getElementById('fw-center-supply').value = totalCtr > 0 ? totalCtr.toFixed(2) : '';
+    document.getElementById('fw-stbd-supply').value = totalStbd > 0 ? totalStbd.toFixed(2) : '';
+    document.getElementById('fw-total-supply').value = grandTotal > 0 ? grandTotal.toFixed(2) : '';
+    
     calcSummary();
   }
 
@@ -361,9 +416,13 @@
 
     // Supply per-tank cells are blank (supply entered as whole tank total from table 1)
     // Total row per tank = Last + Correction (supply not split per tank)
-    var totPort    = lastPort  + corrPort;
-    var totCtr     = lastCtr   + corrCtr;
-    var totStbd    = lastStbd  + corrStbd;
+    var supplyPort = parseFloat(document.getElementById('fw-port-supply').value) || 0;
+    var supplyCtr  = parseFloat(document.getElementById('fw-center-supply').value) || 0;
+    var supplyStbd = parseFloat(document.getElementById('fw-stbd-supply').value) || 0;
+    
+    var totPort    = lastPort  + supplyPort + corrPort;
+    var totCtr     = lastCtr   + supplyCtr  + corrCtr;
+    var totStbd    = lastStbd  + supplyStbd + corrStbd;
     var totTotal   = lastTotal + supplyTotal + corrTotal;
 
     document.getElementById('fw-port-tot').value   = totPort  !== 0 ? totPort.toFixed(2)  : '';
