@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>061 - Laporan Perawatan Kapal Mingguan</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 1100px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 15px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
+    .info-row.two-col { grid-template-columns: 1fr 1fr; justify-content: start; }
+    .info-row .item { display: flex; align-items: baseline; gap: 6px; }
+    .info-row .item label { font-weight: bold; }
+    .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 0; outline: none; }
+    .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
+    .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    
+    .tbl-container { overflow-x: auto; margin-top: 14px; }
+    .tbl { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 11px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 4px; vertical-align: top; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 11px; }
+    .tbl input, .tbl textarea { width: 100%; border: 0; background: transparent; font-size: 11px; padding: 2px; outline: none; font-family: inherit; resize: vertical; }
+    .tbl input:focus, .tbl textarea:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
+    
+    .footer-section { margin-top: 24px; padding-top: 10px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; justify-content: center; max-width: 600px; margin: 0 auto; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 8px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 90%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 12px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+    
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl { min-width: 0 !important; font-size: 10px; }
+      .tbl th { font-size: 9px; }
+      .tbl td { padding: 2px; }
+      .tbl input, .tbl textarea { font-size: 10px; }
+      .sig-item .space { height: 60px; }
+      .sig-item .space .pv img { max-height: 55px; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; }
+      .st { align-items: center; }
+      .info-row { grid-template-columns: 1fr; }
+      .info-row.two-col { grid-template-columns: 1fr; }
+      .info-row .item label { white-space: normal; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <!-- HEADER -->
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">061 SHIP'S MAINTENANCE WEEKLY REPORT<br><span style="font-weight:normal; font-size:11px">LAPORAN PERAWATAN KAPAL MINGGUAN</span></div>
+        <div class="st">
+          <div class="code"><span>CS</span><span>WKY</span></div>
+          <div>Release: &nbsp; Rev.0:</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="item"><label>MV / Nama Kapal :</label>
+          <select id="vessel">
+            <option value="">Pilih Kapal</option>
+            <option value="Sahabat Mas">Sahabat Mas</option>
+            <option value="Semangat Mas">Semangat Mas</option>
+            <option value="Express Mas">Express Mas</option>
+            <option value="Pratama Mas">Pratama Mas</option>
+            <option value="Prakarsa Mas">Prakarsa Mas</option>
+            <option value="Mavendra Mas">Mavendra Mas</option>
+            <option value="Selaras Mas">Selaras Mas</option>
+            <option value="Segoro Mas">Segoro Mas</option>
+          </select>
+        </div>
+        <div class="item"><label>Date of Report :</label><input class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+        <div class="item"><label>Department :</label>
+          <select id="department">
+            <option value="">-- Pilih --</option>
+            <option value="Deck">Deck</option>
+            <option value="Engine">Engine</option>
+          </select>
+        </div>
+      </div>
+      <div class="info-row two-col">
+        <div class="item"><label>Week No :</label><input type="text" id="weekno" placeholder="Contoh: 32"></div>
+        <div class="item"><label>Year :</label><input type="text" id="year" placeholder="YYYY" maxlength="4"></div>
+      </div>
+    </header>
+
+    <!-- TABLE -->
+    <div class="tbl-container">
+      <table class="tbl" id="main-table">
+        <thead>
+          <tr>
+            <th style="width:12%;">Tanggal<br>Date</th>
+            <th style="width:18%;">Dilaut / Pelabuhan<br>Port / Sea</th>
+            <th style="width:15%;">Cuaca<br>Weather</th>
+            <th style="width:35%;">Uraian Pekerjaan<br>Work Descriptions</th>
+            <th style="width:20%;">Keterangan<br>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><input type="text" placeholder="..."></td>
+            <td><textarea rows="2" placeholder="Uraian pekerjaan..."></textarea></td>
+            <td><textarea rows="2" placeholder="Keterangan..."></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label" id="label-co-ce">Report by Chief Officer / Chief Engineer,</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Checked by Master,</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed & Name</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  // Signature handlers
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+
+  // Date masks
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  // Dynamic Title & Role Update
+  document.getElementById('vessel').addEventListener('change', updateTitle);
+  document.getElementById('department').addEventListener('change', updateTitle);
+
+  function updateTitle() {
+    var v = document.getElementById('vessel').value;
+    var dep = document.getElementById('department').value;
+    var base = "061 SHIP'S MAINTENANCE WEEKLY REPORT<br><span style='font-weight:normal; font-size:11px'>LAPORAN PERAWATAN KAPAL MINGGUAN</span>";
+    
+    var subtitle = "";
+    if (v) subtitle += v.toUpperCase();
+    if (v && dep) subtitle += " - ";
+    if (dep) subtitle += dep.toUpperCase() + " DEPT";
+    
+    document.getElementById('form-title').innerHTML = subtitle ? base + "<br><span style='font-size:12px; color:#1769d2;'>" + subtitle + "</span>" : base;
+
+    // Update Signature Role based on Department
+    var sigLabel = document.getElementById('label-co-ce');
+    if (dep === "Deck") {
+      sigLabel.innerText = "Report by Chief Officer,";
+    } else if (dep === "Engine") {
+      sigLabel.innerText = "Report by Chief Engineer,";
+    } else {
+      sigLabel.innerText = "Report by Chief Officer / Chief Engineer,";
+    }
+  }
+
+  // Textarea auto-resize
+  document.querySelectorAll('textarea').forEach(function(ta) {
+    ta.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  });
+
+  // PDF Export
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       10,
+      filename:     '061_Weekly_Maintenance_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>

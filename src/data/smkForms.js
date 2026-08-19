@@ -55,7 +55,7 @@ export const SMK_FORMS = [
   { code: "059-E", title: "Monthly Chemical Consumption", category: "Konsumsi", file: "059E_Monthly_Chemical_Cons.html" },
   { code: "059-F", title: "Monthly Fresh Water Consumption", category: "Konsumsi", file: "059F_Monthly_Fresh_Water_Cons.html" },
   { code: "059-G", title: "Navigation Equipments, Publication Book & Chart Inventory", category: "Inventaris", file: "059G_Nav_Pub_Chart.html" },
+  { code: "061", title: "Ship's Maintenance Weekly Report", category: "Laporan Mesin", file: "061_Ships_Maintenance_Weekly_Report.html" },
 ];
 
-export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))  { code: "059-G", title: "Navigation Equipments, Publication Book & Chart Inventory", category: "Inventaris", file: "059G_Nav_Pub_Chart.html" },
-];
+export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
