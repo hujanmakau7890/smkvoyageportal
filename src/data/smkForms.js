@@ -49,6 +49,7 @@ export const SMK_FORMS = [
   { code: "055", title: "Departure Checklist (Engine)", category: "Laporan Mesin", file: "055_Departure_Checklist_Engine.html" },
   { code: "056", title: "ARRIVAL Checklist (Engine)", category: "Laporan Mesin", file: "056_Arrival_Checklist_Engine.html" },
   { code: "059-A", title: "Lashing Equipment Inventory List", category: "Inventaris", file: "059A_Lashing_Equipment_Inventory_List.html" },
+  { code: "059-B", title: "Spare Part Inventory List", category: "Inventaris", file: "059B_Spare_Part_Inventory_List.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
