@@ -316,11 +316,12 @@ export default function SMKReportFormPage() {
               formTitle: '${form.title.replace(/'/g, "\\'")}'
             }, '*');
           }
-          document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn').forEach(function(btn){
+          document.querySelectorAll('button[onclick*="print()"],button[onclick="window.print()"],.print-btn,button[onclick*="savePDF"]').forEach(function(btn){
             const fn=btn.getAttribute('onclick')||'';
-            if(/print/.test(fn)){
+            if(/print|savePDF/i.test(fn) || btn.classList.contains('print-btn')){
               btn.removeAttribute('onclick');
-              btn.addEventListener('click', function(){
+              btn.addEventListener('click', function(e){
+                e.preventDefault();
                 const vessel=findVessel();
                 const val=vessel?esc(vessel.value):"";
                 if(!val){
