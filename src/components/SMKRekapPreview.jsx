@@ -346,7 +346,9 @@ function CariLaporanView() {
     setLoading(true);
     setError(null);
     try {
-      const url = new URL("http://127.0.0.1:20130/api/list-laporan");
+      const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
+  const baseUrl = uploadUrl.replace(/\/+$/, "");
+  const url = new URL(baseUrl + "/list-laporan");
       if (vessel) url.searchParams.append("vessel", vessel);
       if (year) url.searchParams.append("year", year);
       if (month) url.searchParams.append("month", month);
@@ -363,7 +365,9 @@ function CariLaporanView() {
   };
 
   const handleDownload = (path) => {
-    window.open(`http://127.0.0.1:20130/api/download?path=${encodeURIComponent(path)}`, '_blank');
+    const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
+    const baseUrl = uploadUrl.replace(/\/+$/, "");
+    window.open(`${baseUrl}/download?path=${encodeURIComponent(path)}`, '_blank');
   };
 
   return (
