@@ -324,6 +324,105 @@ function SummaryView({data}){
   </div>;
 }
 
+
+function CariLaporanView() {
+  const [vessel, setVessel] = useState("");
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const VESSELS = [
+    "Express Mas", "Mavendra Mas", "Prakarsa Mas", "Pratama Mas",
+    "Semangat Mas", "Sahabat Mas", "Segoro Mas", "Selaras Mas"
+  ];
+  const MONTHS = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  const handleSearch = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const url = new URL("http://127.0.0.1:20130/api/list-laporan");
+      if (vessel) url.searchParams.append("vessel", vessel);
+      if (year) url.searchParams.append("year", year);
+      if (month) url.searchParams.append("month", month);
+
+      const res = await fetch(url, { headers: { "X-Token": "smk-laporan-2026" } });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Gagal fetch");
+      setResults(data.files || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = (path) => {
+    window.open(`http://127.0.0.1:20130/api/download?path=${encodeURIComponent(path)}`, '_blank');
+  };
+
+  return (
+    <div style={{ padding: 20, background: "#fff", borderRadius: 8, boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+      <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1e3a5f", margin: "0 0 20px 0" }}>🔍 Cari Laporan</h2>
+      
+      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+        <select value={vessel} onChange={e => setVessel(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4 }}>
+          <option value="">Semua Kapal</option>
+          {VESSELS.map(v => <option key={v} value={v}>{v}</option>)}
+        </select>
+        <input 
+          type="number" 
+          placeholder="Tahun (cth: 2026)" 
+          value={year} 
+          onChange={e => setYear(e.target.value)}
+          style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4, width: 150 }}
+        />
+        <select value={month} onChange={e => setMonth(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4 }}>
+          <option value="">Semua Bulan</option>
+          {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+        </select>
+        <button 
+          onClick={handleSearch}
+          disabled={loading}
+          style={{ padding: "8px 16px", background: "#2563eb", color: "#fff", border: "none", borderRadius: 4, cursor: loading ? "not-allowed" : "pointer", fontWeight: "bold" }}
+        >
+          {loading ? "Mencari..." : "Cari"}
+        </button>
+      </div>
+
+      {error && <div style={{ color: "red", marginBottom: 15 }}>Error: {error}</div>}
+
+      <div style={{ background: "#f8fafc", padding: 15, borderRadius: 6, border: "1px solid #e2e8f0" }}>
+        {results.length === 0 && !loading ? (
+          <div style={{ textAlign: "center", color: "#64748b", padding: 20 }}>Tidak ada laporan ditemukan.</div>
+        ) : (
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {results.map((file, i) => (
+              <li key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i === results.length - 1 ? "none" : "1px solid #e2e8f0" }}>
+                <div>
+                  <div style={{ fontWeight: "bold", color: "#334155" }}>{file.name}</div>
+                  <div style={{ fontSize: 12, color: "#64748b" }}>{file.vessel} • {file.month} {file.year} • {(file.size / 1024).toFixed(1)} KB</div>
+                </div>
+                <button 
+                  onClick={() => handleDownload(file.path)}
+                  style={{ padding: "6px 12px", background: "#10b981", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontWeight: "bold", fontSize: 12 }}
+                >
+                  ⬇️ Download
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function NeedApprovalView({ onApproveSuccess }) {
   const [loading, setLoading] = useState(true);
   const [filesByVessel, setFilesByVessel] = useState({});
@@ -590,13 +689,13 @@ export default function SMKRekap(){
 
       {/* Tabs */}
       <div style={{background:"#fff",borderBottom:"2px solid #e2e8f0",display:"flex",overflowX:"auto",padding:"0 12px"}}>
-        {["Semua",...VESSELS,"Need Approval"].map(v=>(
+        {["Semua",...VESSELS,"Need Approval","Cari Laporan"].map(v=>(
           <button key={v} onClick={()=>setActive(v)}
             style={{padding:"11px 14px",fontSize:12,fontWeight:active===v?700:500,
               color:active===v?"#1e40af":"#6b7280",background:"none",border:"none",
               borderBottom:`3px solid ${active===v?"#1e40af":"transparent"}`,
               cursor:"pointer",whiteSpace:"nowrap"}}>
-            {v==="Semua"?"📊 Semua Kapal":v==="Need Approval"?"⏳ Need Approval":v}
+            {v==="Semua"?"📊 Semua Kapal":v==="Need Approval"?"⏳ Need Approval":v==="Cari Laporan"?"🔍 Cari Laporan":v}
           </button>
         ))}
       </div>
@@ -615,7 +714,7 @@ export default function SMKRekap(){
       {/* Content */}
       <div style={{flex:1,padding:16}}>
         <div style={{background:"#fff",borderRadius:10,boxShadow:"0 1px 4px rgba(0,0,0,.08)",overflow:"hidden"}}>
-          {active === "Need Approval" ? (
+          {active === "Cari Laporan" ? <CariLaporanView /> : active === "Need Approval" ? (
             <NeedApprovalView onApproveSuccess={fetchData} />
           ) : active === "Semua" ? (
             <SummaryView data={data} />
