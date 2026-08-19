@@ -81,6 +81,7 @@ export const SMK_FORMS = [
   { code: "080A1", title: "Quality Management Review", category: "Laporan Deck", file: "080A1_Quality_Management_Review.html" },
   { code: "080B", title: "Chief Engineer Handover Report", category: "Laporan Deck", file: "080B_CE_Handover.html" },
   { code: "080C", title: "Chief Officer Handover Report", category: "Laporan Deck", file: "080C_Chief_Officer_Handover.html" },
+  { code: "080D", title: "2nd Engineer Handover Report", category: "Laporan Mesin", file: "080D_2nd_Engineer_Handover.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];

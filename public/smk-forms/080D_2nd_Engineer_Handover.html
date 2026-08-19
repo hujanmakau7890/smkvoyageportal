@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>080D - 2nd Engineer Handover Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 950px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 16px; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 16px; font-size: 13px; }
+    .info-grid .item { display: flex; align-items: center; gap: 8px; }
+    .info-grid .item label { font-weight: bold; white-space: nowrap; width: 100px; }
+    .info-grid .item input, .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; }
+    
+    .section-title { font-weight: bold; font-size: 13px; margin: 20px 0 10px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 12px; }
+    .tbl td input[type="text"] { width: 100%; border: none; outline: none; font-family: inherit; font-size: 12px; background: transparent; }
+    .center { text-align: center; }
+    .section-row { background: #e5e7eb; font-weight: bold; }
+    
+    .mini-tbl { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+    .mini-tbl th, .mini-tbl td { border: 1px solid #666; padding: 4px; text-align: center; }
+    .mini-tbl th { background: #eee; }
+    .mini-tbl td input { width: 100%; text-align: center; border: none; outline: none; background: transparent; font-size: 11px; }
+
+    .statement-box { border: 1px solid #000; padding: 12px; font-size: 13px; margin-bottom: 20px; background: #f9fafb; line-height: 1.6; }
+    .statement-box input { border: 0; border-bottom: 1px dashed #000; background: transparent; text-align: center; font-size: 13px; outline: none; font-weight: bold; }
+    
+    .notes-section { margin-top: 12px; border: 1px solid #000; padding: 12px; font-size: 13px; }
+    .notes-section label { font-weight: bold; display: block; margin-bottom: 8px; }
+    .notes-section textarea { width: 100%; border: none; outline: none; font-size: 13px; font-family: inherit; resize: vertical; min-height: 60px; }
+
+    .footer-section { margin-top: 20px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; justify-content: center; margin-bottom: 20px; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .role { font-size: 11px; font-weight: bold; margin-top: 4px; }
+    .hidden { display: none !important; }
+
+    input[type="radio"], input[type="checkbox"] { transform: scale(1.2); cursor: pointer; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 4px 6px; font-size: 10px; }
+      .statement-box { font-size: 11px; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 12px; }
+      .info-grid .item { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .info-grid .item input, .info-grid .item select { width: 100%; border-bottom: 1px solid #ccc; padding: 6px 0; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .page { padding: 12px; }
+      .tbl { min-width: 600px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">080-D 2ND ENGINEER HANDOVER REPORT</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item"><label>MV :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Port :</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Date :</label><input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+      <div class="item"></div>
+    </div>
+
+    <!-- PART A: GENERAL CHECKLIST -->
+    <div class="section-title">A. Engine Department Handover Checklist (2nd Engineer)</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:5%;">No</th>
+            <th style="width:35%;">Topic / Description</th>
+            <th style="width:10%;">Checked</th>
+            <th style="width:50%;">Remarks / Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">1</td>
+            <td>General Information (standing order: attended E/R, work order)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">2</td>
+            <td>Main Engine</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">3</td>
+            <td>Turbo Charge ME</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">4</td>
+            <td>Latest ME & TC ME Operating report</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">5</td>
+            <td>Accuracy / Condition of Fuel Oil Counters M/E</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">6</td>
+            <td>Fresh Water Generator ; Capacity</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">7</td>
+            <td>List of Tools (Special Tools) for ME & TC ME</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">8</td>
+            <td>Condition of Engine Room (attach photo up date for each floor)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">9</td>
+            <td>Validity of Certificates (Class BKI/CCS/NK/DNV-GL open conditions, deficiencies)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">10</td>
+            <td>Engine Log Book / Oil Record Book up to date</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">11</td>
+            <td>Boiler / Economizer condition</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">12</td>
+            <td>Spare Parts List of ME, TC ME, Boiler/Economizer, Running Store List (Update)</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">13</td>
+            <td>Sludge / Waste Disposal</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">14</td>
+            <td>Latest Record of Overhaul ME & TC ME</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">15</td>
+            <td><b>Actual Service Order and planned big jobs to be carried out:</b></td>
+            <td class="center"><input type="checkbox"></td>
+            <td style="padding:4px;">
+              <table class="mini-tbl">
+                <tr><th>Equipment</th><th>Yes</th><th>Note</th></tr>
+                <tr><td><input type="text"></td><td><input type="checkbox"></td><td><input type="text"></td></tr>
+                <tr><td><input type="text"></td><td><input type="checkbox"></td><td><input type="text"></td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td class="center">16</td>
+            <td>Condition of Cargo Crane, Bunker manifold crane- and E/R cranes (spare wire Y/N). Condition of winches on deck</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">17</td>
+            <td>Condition of Emergency Fire Pump (EFP) & last tested</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">18</td>
+            <td>Condition of BT, Deck Machinery & Motor</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">19</td>
+            <td>Voyage ME Performance for last 10 voyage</td>
+            <td class="center"><input type="checkbox"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PART B: INVENTARIS -->
+    <div class="section-title">B. Inventaris & Alat Keselamatan (2nd Engineer Room)</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:40%;">Item</th>
+            <th style="width:10%;">Yes</th>
+            <th style="width:10%;">No</th>
+            <th style="width:40%;">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4" class="section-row">20. Inventaris Kamar / Room Inventory</td></tr>
+          <tr>
+            <td>Kasur / Mattress</td>
+            <td class="center"><input type="radio" name="qi1" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi1" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Bantal / Cushion</td>
+            <td class="center"><input type="radio" name="qi2" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi2" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sarung Bantal / Pillowcase</td>
+            <td class="center"><input type="radio" name="qi3" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi3" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sprai / Bed linen</td>
+            <td class="center"><input type="radio" name="qi4" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi4" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kulkas / Refrigerator</td>
+            <td class="center"><input type="radio" name="qi5" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi5" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Meja / Table</td>
+            <td class="center"><input type="radio" name="qi6" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi6" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kursi / Chair</td>
+            <td class="center"><input type="radio" name="qi7" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi7" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Sofa</td>
+            <td class="center"><input type="radio" name="qi8" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi8" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>CPU</td>
+            <td class="center"><input type="radio" name="qi9" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi9" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Staples</td>
+            <td class="center"><input type="radio" name="qi10" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi10" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Calculator</td>
+            <td class="center"><input type="radio" name="qi11" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi11" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Lampu Senter / Flash light</td>
+            <td class="center"><input type="radio" name="qi12" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi12" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Kertas Karbon / Carbon paper</td>
+            <td class="center"><input type="radio" name="qi13" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi13" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pelubang Kertas / Hole puncher</td>
+            <td class="center"><input type="radio" name="qi14" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi14" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Daily Work Report</td>
+            <td class="center"><input type="radio" name="qi15" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi15" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Selimut / Blanket</td>
+            <td class="center"><input type="radio" name="qi16" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi16" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">21. Alat Keselamatan / Emergency Equipment</td></tr>          <tr>
+            <td>Life Jacket</td>
+            <td class="center"><input type="radio" name="qi17" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi17" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td> - Peluit / Whistle</td>
+            <td class="center"><input type="radio" name="qi18" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi18" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td> - Lampu / Torch</td>
+            <td class="center"><input type="radio" name="qi19" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi19" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Helmet</td>
+            <td class="center"><input type="radio" name="qi20" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi20" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr><td colspan="4" class="section-row">22. Crane Inventory (Special for Vessel 360 Type & Others) - EM BOX CC3000</td></tr>          <tr>
+            <td>Motor Switch Q5 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi21" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi21" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Contact Set for K1 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi22" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi22" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Contact Set for K2 or K3 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi23" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi23" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Time delayer K9 <b>(2 pc)</b></td>
+            <td class="center"><input type="radio" name="qi24" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi24" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Contactor K5, K34 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi25" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi25" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Contactor K33, K32 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi26" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi26" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Auxiliary Contact Block <b>(2 pc)</b></td>
+            <td class="center"><input type="radio" name="qi27" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi27" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Time Relay K71 <b>(2 pc)</b></td>
+            <td class="center"><input type="radio" name="qi28" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi28" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Time Relay K70 <b>(2 pc)</b></td>
+            <td class="center"><input type="radio" name="qi29" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi29" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Micro switch, limit box <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi30" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi30" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Fuse 4.0A, F6, F4 <b>(10 pc)</b></td>
+            <td class="center"><input type="radio" name="qi31" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi31" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Controller Housing <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi32" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi32" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Controller Sewing / luffing <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi33" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi33" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Transformer T3 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi34" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi34" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Limit Switch, slack wire hoisting <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi35" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi35" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Limit Switch, slack wire luffing <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi36" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi36" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Power Supply, U1 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi37" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi37" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pressure transmitter <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi38" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi38" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Angle hollow encoder <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi39" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi39" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Incremental / Speed enc hoist <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi40" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi40" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>MC-Card <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi41" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi41" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>CC Card <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi42" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi42" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Filter Cartridge 4135 <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi43" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi43" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pressure switch 1381 & 2481 (Feed Pressure Safety) <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi44" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi44" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Pressure switch 1311 (Overload valve) <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi45" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi45" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Clyndrical roller bearing (wire sheave, jib top) <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi46" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi46" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Circlip, roller bearing (for wire sheaves) <b>(2 pc)</b></td>
+            <td class="center"><input type="radio" name="qi47" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi47" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td>Box for storage <b>(1 pc)</b></td>
+            <td class="center"><input type="radio" name="qi48" value="Yes"></td>
+            <td class="center"><input type="radio" name="qi48" value="No"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notes-section">
+      <label>Enclosures & Comments :</label>
+      <textarea placeholder="Updated fault report / warranty list, manual sounding table. Updated list of critical spare inventory. Additional comments..."></textarea>
+    </div>
+
+    <!-- STATEMENT -->
+    <div class="statement-box">
+      <strong>PERNYATAAN (STATEMENT) :</strong><br><br>
+      Pada hari <input type="text" style="width:120px;" placeholder="..."> 
+      tanggal <input type="text" class="date-mask" style="width:100px;" placeholder="DD-MM-YYYY"> 
+      pukul <input type="text" style="width:80px;" placeholder="HH:MM"> 
+      telah dilakukan serah terima jabatan di Pelabuhan <input type="text" style="width:150px;" placeholder="..."> 
+      dengan hasil <input type="text" style="width:150px;" placeholder="..."> 
+      antara Masinis II saat ini dengan Masinis II pengganti (baru). 
+      Dengan penandatangan serah terima ini, seluruh tugas dan tanggung jawab sepenuhnya beralih dari Masinis II saat ini kepada Masinis II pengganti (baru).<br><br>
+      <i>If we don’t receive any reply within three weeks the hand over shall be handled as fully accepted.</i>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">2nd Engineer (Masinis II Lama)</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">New 2nd Engineer</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">Knowledge by The Master</div>
+          <div class="space" id="sp-3">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  // Radio button toggle uncheck
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.addEventListener('pointerdown', function() { r.dataset.was = r.checked ? '1' : '0'; });
+    r.addEventListener('click', function() {
+      if(r.dataset.was === '1') { r.checked = false; r.dataset.was = '0'; }
+    });
+  });
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '080D_2nd_Engineer_Handover_' + v + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.statement-box'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
