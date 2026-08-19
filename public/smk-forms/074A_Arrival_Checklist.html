@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>074A - Arrival Checklist (Deck)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 900px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 15px; font-weight: bold; line-height: 1.3; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 16px; font-size: 13px; }
+    .info-grid .item { display: flex; align-items: center; gap: 8px; }
+    .info-grid .item label { font-weight: bold; white-space: nowrap; }
+    .info-grid .item input, .info-grid .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; }
+    
+    .section-title { font-weight: bold; font-size: 13px; margin: 16px 0 8px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+    
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 8px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; }
+    .tbl input[type="text"] { width: 100%; border: 0; background: transparent; font-size: 12px; outline: none; font-family: inherit; }
+    .center { text-align: center; }
+    
+    /* Columns */
+    .c-no { width: 4%; text-align: center; }
+    .c-desc { width: 50%; }
+    .c-chk { width: 8%; text-align: center; }
+    .c-rem { width: 30%; }
+    
+    .remarks-box { border: 1px solid #000; padding: 12px; font-size: 12px; margin-bottom: 16px; display: flex; gap: 16px; align-items: center; }
+    .remarks-box label.cb-label { display: flex; align-items: center; gap: 4px; font-weight: bold; cursor: pointer; }
+    
+    .footer-section { margin-top: 24px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; justify-content: center; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+    .sig-item .label input { border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 12px; outline: none; width: 60%; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; margin-bottom: 4px; }
+    .sig-item .role { font-size: 11px; font-weight: bold; }
+    .hidden { display: none !important; }
+
+    input[type="radio"], input[type="checkbox"] { transform: scale(1.2); cursor: pointer; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 6px; font-size: 11px; }
+      input::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 12px; }
+      .info-grid .item { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .info-grid .item input, .info-grid .item select { width: 100%; border-bottom: 1px solid #ccc; padding: 6px 0; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .page { padding: 12px; }
+      .remarks-box { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .tbl { min-width: 600px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">074-A ARRIVAL CHECKLIST (DECK)</div>
+        <div class="st">
+          <div class="code"><span>S</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item"><label>Ship's name :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item"><label>Date :</label><input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY"></div>
+      <div class="item"><label>Voy No :</label><input type="text" placeholder="..."></div>
+      <div class="item"><label>Port of call :</label><input type="text" placeholder="..."></div>
+    </div>
+
+    <div class="section-title">A. TO BE FILLED IN BY THE DUTY OFFICER</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="c-no">No</th>
+            <th class="c-desc">Item Description</th>
+            <th class="c-chk">Good</th>
+            <th class="c-chk">Not Good</th>
+            <th class="c-rem">Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">1</td>
+            <td>Information to engine department about ETA approx. EOSV and expected first manouver</td>
+            <td class="center"><input type="radio" name="q1" value="G"></td>
+            <td class="center"><input type="radio" name="q1" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">2</td>
+            <td>Echo sounder, Echograph</td>
+            <td class="center"><input type="radio" name="q2" value="G"></td>
+            <td class="center"><input type="radio" name="q2" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">3</td>
+            <td>Electronical navigational aids / AIS</td>
+            <td class="center"><input type="radio" name="q3" value="G"></td>
+            <td class="center"><input type="radio" name="q3" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">4</td>
+            <td>Radars set up and tuned Radios, Walky-Talkies, Intercom</td>
+            <td class="center"><input type="radio" name="q4" value="G"></td>
+            <td class="center"><input type="radio" name="q4" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">5</td>
+            <td>Primary and emergency navigation lights and signals, sound signal equipment</td>
+            <td class="center"><input type="radio" name="q5" value="G"></td>
+            <td class="center"><input type="radio" name="q5" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">6</td>
+            <td>Steering gear</td>
+            <td class="center"><input type="radio" name="q6" value="G"></td>
+            <td class="center"><input type="radio" name="q6" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">7</td>
+            <td>Indicators for rudder, engine revolutions</td>
+            <td class="center"><input type="radio" name="q7" value="G"></td>
+            <td class="center"><input type="radio" name="q7" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">8</td>
+            <td>Mooring ropes and necessary equipment on stations prepared Anchoring equipment prepared, both anchors ready for let go Navigational flags and lights exhibited</td>
+            <td class="center"><input type="radio" name="q8" value="G"></td>
+            <td class="center"><input type="radio" name="q8" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">9</td>
+            <td>Approaching conditions as depths, shoals, tidal conditions, anchorage and prohibited areas checked</td>
+            <td class="center"><input type="radio" name="q9" value="G"></td>
+            <td class="center"><input type="radio" name="q9" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">10</td>
+            <td>Communication channels of pilots/port authorities noted in nautical charts</td>
+            <td class="center"><input type="radio" name="q10" value="G"></td>
+            <td class="center"><input type="radio" name="q10" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">11</td>
+            <td>Latest weather reports and navigational messages available</td>
+            <td class="center"><input type="radio" name="q11" value="G"></td>
+            <td class="center"><input type="radio" name="q11" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">12</td>
+            <td>Pilot ladder prepared according pilots advice (incl. lighting during night)</td>
+            <td class="center"><input type="radio" name="q12" value="G"></td>
+            <td class="center"><input type="radio" name="q12" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">13</td>
+            <td>Checked operation of bow thruster (if available)</td>
+            <td class="center"><input type="radio" name="q13" value="G"></td>
+            <td class="center"><input type="radio" name="q13" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">14</td>
+            <td>Test maneuver astern/ahead performed</td>
+            <td class="center"><input type="radio" name="q14" value="G"></td>
+            <td class="center"><input type="radio" name="q14" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="remarks-box">
+      <div><b>If one or more No Good</b> - who has decided/permitted to enter:</div>
+      <label class="cb-label"><input type="checkbox"> Master</label>
+      <label class="cb-label"><input type="checkbox"> Pilot</label>
+      <label class="cb-label"><input type="checkbox"> Harbour control</label>
+    </div>
+
+    <div class="section-title">B. ARRIVAL CONDITIONS & FORMALITIES</div>
+    <div class="tbl-container">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="c-no">No</th>
+            <th class="c-desc">Item Description</th>
+            <th class="c-chk">Good</th>
+            <th class="c-chk">Not Good</th>
+            <th class="c-rem">Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">15</td>
+            <td>Inward clearance formalities prepared</td>
+            <td class="center"><input type="radio" name="q15" value="G"></td>
+            <td class="center"><input type="radio" name="q15" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">16</td>
+            <td>Arrival and port regulations given by agents and published in Admiralty list of Radio Signals checked</td>
+            <td class="center"><input type="radio" name="q16" value="G"></td>
+            <td class="center"><input type="radio" name="q16" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">17</td>
+            <td>Specific regulations (if any) of the Company for this port checked</td>
+            <td class="center"><input type="radio" name="q17" value="G"></td>
+            <td class="center"><input type="radio" name="q17" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">18</td>
+            <td>Information to Chief Engineer about fixed EOSV</td>
+            <td class="center"><input type="radio" name="q18" value="G"></td>
+            <td class="center"><input type="radio" name="q18" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">19</td>
+            <td>Established VHF contact to VTS, port authorities and pilots according specified port regulations. Update of ETA given by radio communications to pilots, agents and authorities</td>
+            <td class="center"><input type="radio" name="q19" value="G"></td>
+            <td class="center"><input type="radio" name="q19" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">20</td>
+            <td>Checked up navigational conditions as prepared by Duty Officer</td>
+            <td class="center"><input type="radio" name="q20" value="G"></td>
+            <td class="center"><input type="radio" name="q20" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">21</td>
+            <td>Crew on deck and in engine department on standby for mooring maneuver</td>
+            <td class="center"><input type="radio" name="q21" value="G"></td>
+            <td class="center"><input type="radio" name="q21" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">22</td>
+            <td>Bridge Manned with helmsman</td>
+            <td class="center"><input type="radio" name="q22" value="G"></td>
+            <td class="center"><input type="radio" name="q22" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+          <tr>
+            <td class="center">23</td>
+            <td>Filling out of this check list recorded and signed in log book</td>
+            <td class="center"><input type="radio" name="q23" value="G"></td>
+            <td class="center"><input type="radio" name="q23" value="NG"></td>
+            <td><input type="text" placeholder="..."></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-grid" style="margin-top:20px; font-weight:bold;">
+      <div class="item"><label>Date / Time Pilot on board :</label><input type="text" placeholder="DD-MM-YYYY HH:MM"></div>
+      <div class="item"><label>Date / Time Arrival :</label><input type="text" placeholder="DD-MM-YYYY HH:MM"></div>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Date & Time<input type="text" placeholder="DD-MM-YYYY HH:MM"></div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed by Duty Officer</div>
+        </div>
+        <div class="sig-item">
+          <div class="label">Date & Time<input type="text" placeholder="DD-MM-YYYY HH:MM"></div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Nama Terang">
+          <div class="role">Signed by the Master</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.addEventListener('pointerdown', function() { r.dataset.was = r.checked ? '1' : '0'; });
+    r.addEventListener('click', function() {
+      if(r.dataset.was === '1') { r.checked = false; r.dataset.was = '0'; }
+    });
+  });
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    var opt = {
+      margin:       [8, 8, 8, 8],
+      filename:     '074A_Arrival_Checklist_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.remarks-box'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
