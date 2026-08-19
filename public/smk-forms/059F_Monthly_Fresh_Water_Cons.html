@@ -270,16 +270,16 @@
       </tr>
       <tr>
         <td class="row-label">Consumption</td>
-        <td><input type="text" id="fw-port-cons" placeholder="0.00" oninput="calcSummary()"></td>
-        <td><input type="text" id="fw-center-cons" placeholder="0.00" oninput="calcSummary()"></td>
-        <td><input type="text" id="fw-stbd-cons" placeholder="0.00" oninput="calcSummary()"></td>
+        <td class="readonly-cell"><input type="text" id="fw-port-cons" readonly tabindex="-1"></td>
+        <td class="readonly-cell"><input type="text" id="fw-center-cons" readonly tabindex="-1"></td>
+        <td class="readonly-cell"><input type="text" id="fw-stbd-cons" readonly tabindex="-1"></td>
         <td class="readonly-cell"><input type="text" id="fw-total-cons" readonly tabindex="-1"></td>
       </tr>
       <tr class="result-row">
         <td class="row-label">Stock on the end of this month *</td>
-        <td><input type="text" id="fw-port-end" readonly tabindex="-1"></td>
-        <td><input type="text" id="fw-center-end" readonly tabindex="-1"></td>
-        <td><input type="text" id="fw-stbd-end" readonly tabindex="-1"></td>
+        <td><input type="text" id="fw-port-end" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-center-end" placeholder="0.00" oninput="calcSummary()"></td>
+        <td><input type="text" id="fw-stbd-end" placeholder="0.00" oninput="calcSummary()"></td>
         <td class="readonly-cell"><input type="text" id="fw-total-end" readonly tabindex="-1"></td>
       </tr>
     </tbody>
@@ -407,9 +407,9 @@
     var corrPort   = num('fw-port-corr');
     var corrCtr    = num('fw-center-corr');
     var corrStbd   = num('fw-stbd-corr');
-    var consPort   = num('fw-port-cons');
-    var consCtr    = num('fw-center-cons');
-    var consStbd   = num('fw-stbd-cons');
+    var endPort    = num('fw-port-end');
+    var endCtr     = num('fw-center-end');
+    var endStbd    = num('fw-stbd-end');
 
     // Last month row total
     var lastTotal  = lastPort + lastCtr + lastStbd;
@@ -435,20 +435,20 @@
     document.getElementById('fw-stbd-tot').value   = totStbd  !== 0 ? totStbd.toFixed(2)  : '';
     document.getElementById('fw-total-tot').value  = totTotal !== 0 ? totTotal.toFixed(2) : '';
 
-    // Consumption row total
-    var consTotal  = consPort + consCtr + consStbd;
-    document.getElementById('fw-total-cons').value = consTotal !== 0 ? consTotal.toFixed(2) : '';
+    // Stock end row total
+    var endTotal   = endPort + endCtr + endStbd;
+    document.getElementById('fw-total-end').value = endTotal !== 0 ? endTotal.toFixed(2) : '';
 
-    // Stock end of month per tank = (Last + Correction) - Consumption
-    var endPort    = totPort  - consPort;
-    var endCtr     = totCtr   - consCtr;
-    var endStbd    = totStbd  - consStbd;
-    var endTotal   = totTotal - consTotal;
+    // Consumption per tank = Total - Stock End
+    var consPort    = totPort  - endPort;
+    var consCtr     = totCtr   - endCtr;
+    var consStbd    = totStbd  - endStbd;
+    var consTotal   = totTotal - endTotal;
 
-    document.getElementById('fw-port-end').value   = (endPort  !== 0 || consPort  !== 0 || lastPort  !== 0) ? endPort.toFixed(2)  : '';
-    document.getElementById('fw-center-end').value = (endCtr   !== 0 || consCtr   !== 0 || lastCtr   !== 0) ? endCtr.toFixed(2)   : '';
-    document.getElementById('fw-stbd-end').value   = (endStbd  !== 0 || consStbd  !== 0 || lastStbd  !== 0) ? endStbd.toFixed(2)  : '';
-    document.getElementById('fw-total-end').value  = (endTotal !== 0 || consTotal !== 0 || lastTotal !== 0 || supplyTotal !== 0) ? endTotal.toFixed(2) : '';
+    document.getElementById('fw-port-cons').value   = (consPort  !== 0 || endPort  !== 0 || lastPort  !== 0) ? consPort.toFixed(2)  : '';
+    document.getElementById('fw-center-cons').value = (consCtr   !== 0 || endCtr   !== 0 || lastCtr   !== 0) ? consCtr.toFixed(2)   : '';
+    document.getElementById('fw-stbd-cons').value   = (consStbd  !== 0 || endStbd  !== 0 || lastStbd  !== 0) ? consStbd.toFixed(2)  : '';
+    document.getElementById('fw-total-cons').value  = (consTotal !== 0 || endTotal !== 0 || lastTotal !== 0 || supplyTotal !== 0) ? consTotal.toFixed(2) : '';
   }
 
   // ======= SIGNATURE =======
