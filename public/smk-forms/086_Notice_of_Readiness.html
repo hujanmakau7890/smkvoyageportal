@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>086 - Notice of Readiness</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 800px; margin: 20px auto; background: #fff; padding: 40px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 30px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 18px; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .meta-box { width: 100%; font-size: 14px; margin-bottom: 30px; line-height: 1.8; }
+    .meta-row { display: flex; align-items: flex-start; }
+    .meta-label { width: 160px; font-weight: bold; }
+    .meta-colon { width: 20px; }
+    .meta-val { flex: 1; border-bottom: 1px dashed #000; display: flex; gap: 10px; }
+    .meta-val input { border: none; outline: none; width: 100%; font-size: 14px; font-family: inherit; background: transparent; padding-bottom: 2px; }
+    .meta-val select { border: none; outline: none; width: 100%; font-size: 14px; font-family: inherit; background: transparent; }
+
+    .content-para { font-size: 15px; line-height: 2.2; margin-bottom: 30px; text-align: justify; }
+    .inline-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-family: inherit; font-size: 15px; text-align: center; font-weight: bold; outline: none; color: #1769d2; }
+    
+    .footer-section { margin-top: 40px; }
+    .sig-flex { display: flex; justify-content: space-between; }
+    .sig-item { text-align: center; width: 250px; }
+    .sig-item .label { font-size: 14px; font-weight: bold; margin-bottom: 10px; text-align: left;}
+    .sig-item .space { height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; position: relative; border-bottom: 1px solid #000;}
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 90px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 100%; border: 0; text-align: center; font-size: 14px; padding: 4px; outline: none; font-weight: bold; }
+    .sig-item .sub { font-size: 12px; }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 15mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+      .inline-input { color: #000 !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">086 - NOTICE OF READINESS</div>
+        <div class="st">
+          <div class="code"><span>CS</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="meta-box">
+      <div class="meta-row">
+        <div class="meta-label">From (Vessel)</div>
+        <div class="meta-colon">:</div>
+        <div class="meta-val">
+          <select id="vessel" onchange="syncVessel(this)">
+            <option value="">-- Select Vessel --</option>
+            <option value="Sahabat Mas">Sahabat Mas</option>
+            <option value="Semangat Mas">Semangat Mas</option>
+            <option value="Express Mas">Express Mas</option>
+            <option value="Pratama Mas">Pratama Mas</option>
+            <option value="Prakarsa Mas">Prakarsa Mas</option>
+            <option value="Mavendra Mas">Mavendra Mas</option>
+            <option value="Selaras Mas">Selaras Mas</option>
+            <option value="Segoro Mas">Segoro Mas</option>
+          </select>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Port / Date</div>
+        <div class="meta-colon">:</div>
+        <div class="meta-val">
+          <input type="text" placeholder="Port" id="i-port" oninput="syncVal(this, 's-port')" style="width: 60%;"> / 
+          <input type="text" class="date-mask" placeholder="DD-MM-YYYY" id="i-date" oninput="syncVal(this, 's-date')" style="width: 35%;">
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Time hrs LT / hrs UTC</div>
+        <div class="meta-colon">:</div>
+        <div class="meta-val">
+          <input type="text" placeholder="00:00 LT"> / <input type="text" placeholder="00:00 UTC">
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">To (Charterer)</div>
+        <div class="meta-colon">:</div>
+        <div class="meta-val"><input type="text" placeholder="Charterer Name..."></div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">To (Agent)</div>
+        <div class="meta-colon">:</div>
+        <div class="meta-val"><input type="text" placeholder="Agent Name..."></div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">CC.</div>
+        <div class="meta-colon">:</div>
+        <div class="meta-val" style="font-weight:bold;">PT. MENTARI MAS MULTIMODA (Kantor Pusat Surabaya)</div>
+      </div>
+    </div>
+
+    <div class="content-para">
+      I wish to advise you that the <input type="text" class="inline-input" placeholder="Indonesia" style="width:120px;" value="Indonesia"> Flag M/V 
+      <input type="text" class="inline-input" placeholder="[Vessel Name]" id="s-vessel" style="width:200px;"> under my command, 
+      arrived at <input type="text" class="inline-input" placeholder="[Port Name]" id="s-port" style="width:200px;"> on 
+      <input type="text" class="inline-input" placeholder="[Arrival Time & Date]" id="s-date" style="width:200px;"> (exact arrival time) 
+      and is in all respect ready in accordance with terms, conditions and exceptions of Charter Party dated 
+      <input type="text" class="inline-input date-mask" placeholder="DD-MM-YYYY" style="width:120px;"> (d/m/y).
+    </div>
+
+    <div class="content-para">
+      The bunkers onboard upon arrival are about <input type="text" class="inline-input" placeholder="0.00" style="width:80px;"> mtns HFO 
+      and <input type="text" class="inline-input" placeholder="0.00" style="width:80px;"> mtns MDO.
+    </div>
+
+    <div class="footer-section no-break">
+      <div class="sig-flex">
+        
+        <!-- Left: Master Signature -->
+        <div class="sig-item">
+          <div class="label" style="text-align:center;">Respectfully,</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+          <div class="sub">Master</div>
+        </div>
+
+        <!-- Right: Accepted By -->
+        <div class="sig-item" style="border: 1px dashed #ccc; padding: 10px;">
+          <div class="label" style="font-style:italic; font-size:12px; color:#555; text-align:center; font-weight:normal; margin-bottom:5px;">(For standard NOR acceptance, optional)</div>
+          <div class="label" style="text-align:center;">Accepted By,</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Agent / Charterer">
+          <div class="sub">
+            Date: <input type="text" class="inline-input date-mask" style="width:80px; font-size:12px;" placeholder="DD-MM-YY"> 
+            Time: <input type="text" class="inline-input" style="width:60px; font-size:12px;" placeholder="00:00">
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function syncVessel(sel) {
+    document.getElementById('s-vessel').value = sel.value;
+  }
+  function syncVal(src, targetId) {
+    document.getElementById(targetId).value = src.value;
+  }
+
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('i-date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    
+    var opt = {
+      margin:       [15, 15, 15, 15],
+      filename:     '086_Notice_of_Readiness_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['.footer-section', '.meta-box'] }
+    };
+    html2pdf().set(opt).from(el).save();
+  }
+</script>
+</body>
+</html>
