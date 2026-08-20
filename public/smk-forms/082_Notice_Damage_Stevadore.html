@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>082 - Notice of Damage by Stevadore to Ship</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 950px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    .btn-add { background: #10b981; margin-top: 10px; }
+    .btn-remove { background: #ef4444; padding: 4px 8px; font-size: 11px; border-radius: 4px; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 16px; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 20px; font-size: 13px; }
+    .info-group { display: flex; flex-direction: column; gap: 8px; }
+    .item { display: flex; align-items: center; gap: 8px; }
+    .item label { font-weight: bold; white-space: nowrap; width: 140px; }
+    .item input, .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; font-family: inherit; }
+    
+    .dist-box { border: 1px solid #000; padding: 12px; background: #f9fafb; display: flex; flex-direction: column; gap: 8px; }
+    .dist-box strong { display: block; margin-bottom: 4px; }
+    
+    .tbl-container { overflow-x: auto; margin-bottom: 16px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 12px; }
+    .tbl td input[type="text"] { width: 100%; border: none; outline: none; font-family: inherit; font-size: 12px; background: transparent; }
+    .tbl td.center input { text-align: center; }
+    .center { text-align: center; }
+
+    .statement-box { border: 1px solid #000; padding: 16px; font-size: 12px; margin-bottom: 20px; background: #fefce8; line-height: 1.5; }
+    .statement-box p { margin-bottom: 6px; }
+    .statement-box p.id { font-style: italic; color: #444; margin-bottom: 16px; font-size: 11px; }
+    .statement-box p.id:last-child { margin-bottom: 0; }
+
+    .notes-section { margin-top: 12px; border: 1px solid #000; padding: 12px; font-size: 13px; margin-bottom: 20px;}
+    .notes-section label { font-weight: bold; display: block; margin-bottom: 8px; }
+    .notes-section textarea { width: 100%; border: none; outline: none; font-size: 13px; font-family: inherit; resize: vertical; min-height: 60px; }
+
+    /* Photo Upload Grid */
+    .photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+    .photo-item { border: 1px dashed #000; height: 120px; display: flex; align-items: center; justify-content: center; position: relative; background: #fafafa; }
+    .photo-item input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .photo-item span { font-size: 11px; color: #666; text-align: center; padding: 10px; pointer-events: none; }
+    .photo-item img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; display: none; background: #fff; }
+    .photo-item .del-photo { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: none; z-index: 10; }
+    
+    .footer-section { margin-top: 20px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; justify-content: center; margin-bottom: 20px; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    
+    .stev-acc { font-size: 10px; font-style: italic; margin-bottom: 4px; line-height: 1.2; text-align: center; color: #000; }
+    
+    .hidden { display: none !important; }
+    input[type="checkbox"] { transform: scale(1.2); cursor: pointer; margin-right: 6px; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 4px 6px; font-size: 11px; }
+      .statement-box { font-size: 10px; }
+      .statement-box p.id { font-size: 9px; }
+      .photo-grid { grid-template-columns: repeat(4, 1fr); }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 16px; }
+      .item label { width: 100px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .photo-grid { grid-template-columns: 1fr 1fr; }
+      .page { padding: 12px; }
+      .tbl { min-width: 600px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">NOTICE OF DAMAGE BY STEVADORE TO SHIP</div>
+        <div class="st">
+          <div class="code"><span>CS</span><span>SET</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="info-group">
+        <div class="item">
+          <label>To Messrs. Stevadores :</label>
+          <input type="text" placeholder="...">
+        </div>
+        <div class="item">
+          <label>Address :</label>
+          <input type="text" placeholder="...">
+        </div>
+        <div class="item">
+          <label>Port of :</label>
+          <input type="text" placeholder="...">
+        </div>
+        <div class="item">
+          <label>Date :</label>
+          <input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY">
+        </div>
+        <div class="item">
+          <label>Vessel :</label>
+          <select id="vessel">
+            <option value="">Pilih Kapal</option>
+            <option value="Sahabat Mas">Sahabat Mas</option>
+            <option value="Semangat Mas">Semangat Mas</option>
+            <option value="Express Mas">Express Mas</option>
+            <option value="Pratama Mas">Pratama Mas</option>
+            <option value="Prakarsa Mas">Prakarsa Mas</option>
+            <option value="Mavendra Mas">Mavendra Mas</option>
+            <option value="Selaras Mas">Selaras Mas</option>
+            <option value="Segoro Mas">Segoro Mas</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="dist-box">
+        <div class="item" style="margin-bottom:8px;">
+          <label style="width:70px;">Report No:</label>
+          <input type="text" placeholder="...">
+        </div>
+        <strong>Distribution :</strong>
+        <label><input type="checkbox"> Stevadore</label>
+        <label><input type="checkbox"> Ship File</label>
+      </div>
+    </div>
+
+    <div class="tbl-container">
+      <table class="tbl" id="main-tbl">
+        <thead>
+          <tr>
+            <th style="width:5%;">No</th>
+            <th style="width:20%;">Date & Time</th>
+            <th style="width:40%;">Description of Damage</th>
+            <th style="width:15%;">Location</th>
+            <th style="width:15%;">Cause</th>
+            <th style="width:5%;" class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body">
+          <!-- Rows -->
+        </tbody>
+      </table>
+      <button class="btn btn-add no-print" onclick="addRow()">+ Tambah Baris</button>
+    </div>
+
+    <div class="statement-box no-break">
+      <p>Herewith undersigned Master declares that the damage(s) to the ship as stated above, was caused by the stevadores personnel whilst handling cargo during stay of the vessel in the above mentioned port.</p>
+      <p class="id">Nakhoda yang bertanda tangan dibawah ini menyatakan kerusakan pada kapal tersebut diatas, disebabkan oleh personil stevadore yang menangani muatan selama kapal berada di pelabuhan yang disebutkan diatas.</p>
+
+      <p>As the damage(s) are in no way caused by any fault in the ship's management during loading and / or discharging operations, but solely is owing to the activities of the stevadores personnel.</p>
+      <p class="id">Kerusakan ini tidak mungkin karena kesalahan apapun di dalam manajemen kapal selama operasi pemuatan dan / atau pembongkaran, namun semata-mata karena aktifitas personil stevadore.</p>
+
+      <p>The Master of this vessel, on behalf of owners and charterers, herewith holds the above company responsible for all consequences arising out of the above stated damages.</p>
+      <p class="id">Nakhoda kapal ini, atas nama Pemilik kapal dan Penyewa, dengan ini menyatakan Perusahaan yang disebutkan diatas bertanggung jawab terhadap semua konsekuensi kerugian yang ditimbulkan karena kerusakan yang disebutkan di atas.</p>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Ship Officer on duty</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">Master</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">Stevadore's signature</div>
+          <div class="stev-acc">I accept liability on behalf of above company</div>
+          <div class="space" id="sp-3" style="height:64px;">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name in Block Letter">
+        </div>
+      </div>
+    </div>
+    
+    <div class="notes-section no-break">
+      <label>Remarks :</label>
+      <textarea placeholder="Tambahkan catatan khusus..."></textarea>
+      
+      <label style="margin-top: 16px;">Lampirkan photo kerusakan kapal / Attach photo of ship's damage :</label>
+      <div class="photo-grid" id="pg">
+        <!-- 4 photo slots -->
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  let rowCount = 0;
+  function addRow() {
+    rowCount++;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="center" style="font-weight:bold;">${rowCount}</td>
+      <td><input type="text" placeholder="..."></td>
+      <td><input type="text" placeholder="..."></td>
+      <td><input type="text" placeholder="..."></td>
+      <td><input type="text" placeholder="..."></td>
+      <td class="center no-print"><button class="btn-remove" onclick="removeRow(this)">&times;</button></td>
+    `;
+    document.getElementById('tbl-body').appendChild(tr);
+    updateRowNumbers();
+  }
+
+  function removeRow(btn) {
+    btn.closest('tr').remove();
+    updateRowNumbers();
+  }
+
+  function updateRowNumbers() {
+    const rows = document.getElementById('tbl-body').querySelectorAll('tr');
+    rowCount = 0;
+    rows.forEach(r => {
+      rowCount++;
+      r.cells[0].innerText = rowCount;
+    });
+  }
+
+  // init rows
+  for(let i=0; i<5; i++) addRow();
+
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  function loadPhoto(inp) {
+    if(inp.files && inp.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(x) {
+        var p = inp.parentElement;
+        p.querySelector('img').src = x.target.result;
+        p.querySelector('img').style.display = 'block';
+        p.querySelector('.del-photo').style.display = 'block';
+        p.querySelector('span').style.display = 'none';
+      };
+      reader.readAsDataURL(inp.files[0]);
+    }
+  }
+
+  function removePhoto(btn) {
+    var p = btn.parentElement;
+    p.querySelector('img').src = '';
+    p.querySelector('img').style.display = 'none';
+    btn.style.display = 'none';
+    p.querySelector('span').style.display = 'block';
+    p.querySelector('input[type="file"]').value = '';
+  }
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    
+    // Hide empty photo slots before printing
+    var photos = document.querySelectorAll('.photo-item');
+    photos.forEach(p => {
+      if(p.querySelector('input').value === '') { p.classList.add('no-print'); }
+    });
+    
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '082_Damage_Notice_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.statement-box', '.photo-item'] }
+    };
+    html2pdf().set(opt).from(el).save().then(() => {
+      // restore empty photo slots
+      photos.forEach(p => { p.classList.remove('no-print'); });
+    });
+  }
+</script>
+</body>
+</html>
