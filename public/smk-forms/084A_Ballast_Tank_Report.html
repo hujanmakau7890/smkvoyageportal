@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>084A - Ballast Tank Condition Report (General)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
+    .page { max-width: 950px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
+    .tools { text-align: right; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    
+    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
+    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
+    .title { text-align: center; font-size: 16px; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
+    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
+    .code { display: flex; border: 1px solid #000; }
+    .code span { padding: 4px 8px; }
+    .code span:first-child { border-right: 1px solid #000; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 20px; font-size: 13px; }
+    .item { display: flex; align-items: center; gap: 8px; }
+    .item label { font-weight: bold; white-space: nowrap; width: 100px; }
+    .item input, .item select { flex: 1; border: 0; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; font-family: inherit; }
+    
+    .guide-box { border: 1px solid #000; padding: 10px; font-size: 11px; margin-bottom: 16px; background: #fefce8; display: flex; justify-content: space-around; font-weight: bold; }
+    .guide-box span { display: flex; align-items: center; gap: 6px; }
+    
+    .section-title { font-weight: bold; font-size: 13px; margin: 0 0 8px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+
+    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; margin-bottom: 16px; }
+    .tbl th, .tbl td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; }
+    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 12px; }
+    .tbl td input[type="text"] { width: 100%; border: none; outline: none; font-family: inherit; font-size: 12px; background: transparent; text-align: center; }
+    .tbl td.left input { text-align: left; }
+    
+    .other-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; font-size: 12px; }
+    .other-item { border: 1px solid #000; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .other-item .row { display: flex; align-items: center; justify-content: space-between; }
+    .other-item .row input { width: 80px; border: none; border-bottom: 1px solid #000; outline: none; text-align: center; font-family: inherit; font-size: 12px;}
+
+    .notes-section { margin-top: 12px; border: 1px solid #000; padding: 12px; font-size: 13px; margin-bottom: 12px;}
+    .notes-section label { font-weight: bold; display: block; margin-bottom: 4px; }
+    .notes-section textarea { width: 100%; border: none; outline: none; font-size: 13px; font-family: inherit; resize: vertical; min-height: 60px; }
+    
+    /* Photo Upload Grid */
+    .photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+    .photo-item { border: 1px dashed #000; height: 120px; display: flex; align-items: center; justify-content: center; position: relative; background: #fafafa; }
+    .photo-item input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .photo-item span { font-size: 11px; color: #666; text-align: center; padding: 10px; pointer-events: none; }
+    .photo-item img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; display: none; background: #fff; }
+    .photo-item .del-photo { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: none; z-index: 10; }
+    
+    .footer-section { margin-top: 20px; padding-top: 16px; border-top: 2px solid #000; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; justify-content: center; margin-bottom: 20px; }
+    .sig-item { text-align: center; }
+    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
+    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
+    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
+    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
+    
+    .hidden { display: none !important; }
+
+    @media print {
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+      .no-print { display: none !important; }
+      @page { size: A4 portrait; margin: 10mm; }
+      .head { border: 2px solid #000 !important; }
+      .top { border-bottom: 2px solid #000 !important; }
+      .code { border: 1px solid #000 !important; }
+      .code span:first-child { border-right: 1px solid #000 !important; }
+      .tbl th, .tbl td { padding: 4px 6px; font-size: 11px; }
+      .photo-grid { grid-template-columns: repeat(4, 1fr); }
+      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
+    }
+    
+    @media screen and (max-width: 768px) {
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+      .st { align-items: center; }
+      .info-grid { grid-template-columns: 1fr; gap: 16px; }
+      .other-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .photo-grid { grid-template-columns: 1fr 1fr; }
+      .page { padding: 12px; }
+      .tbl { min-width: 600px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="form-container">
+  <div class="tools no-print">
+    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+  </div>
+  <div class="page" id="pdf-content">
+    
+    <header class="head">
+      <div class="top">
+        <div class="company">PT Mentari Mas Multimoda</div>
+        <div class="title" id="form-title">084-A BALLAST TANK CONDITION REPORT<br><span style="font-size:12px; font-weight:normal;">(GENERAL)</span></div>
+        <div class="st">
+          <div class="code"><span>CS</span><span>SMT</span></div>
+          <div>Release: &nbsp; Rev.0</div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-grid">
+      <div class="item">
+        <label>Vessel :</label>
+        <select id="vessel">
+          <option value="">Pilih Kapal</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+        </select>
+      </div>
+      <div class="item">
+        <label>Tank No :</label>
+        <input type="text" placeholder="...">
+      </div>
+      <div class="item">
+        <label>Date Inspec :</label>
+        <input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY">
+      </div>
+      <div class="item">
+        <label>Date Report :</label>
+        <input type="text" class="date-mask" placeholder="DD-MM-YYYY">
+      </div>
+    </div>
+    
+    <div class="guide-box">
+      <span>COATING GRADING:</span>
+      <span>1 = GOOD</span>
+      <span>2 = FAIR</span>
+      <span>3 = POOR</span>
+      <span>NS = NOT SEEN</span>
+    </div>
+
+    <!-- COATING SECTION -->
+    <div class="section-title">I. Tank Coating Grading</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th style="width:40%;">TANK FACE / SECTION</th>
+          <th style="width:20%;">UPPER</th>
+          <th style="width:20%;">MIDDLE</th>
+          <th style="width:20%;">LOWER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:bold;">Fwd Transfer Bulkhead</td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Aft Transfer Bulkhead</td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Port Longitudinal Bhd / Side Shell</td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Stbd Longitudinal Bhd / Side Shell</td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+          <td><input type="text" placeholder="..."></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Under Deck</td>
+          <td colspan="3"><input type="text" placeholder="Condition Grade..."></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Bottom Shell</td>
+          <td colspan="3"><input type="text" placeholder="Condition Grade..."></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- STRUCTURE AND FITTINGS -->
+    <div class="section-title">II. Tank Structure & Fittings</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th style="width:40%;">TANK STRUCTURE</th>
+          <th style="width:10%;">GRADE</th>
+          <th style="width:40%;">TANK FITTINGS</th>
+          <th style="width:10%;">GRADE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:bold;">Bottom Shell</td>
+          <td><input type="text" placeholder="..."></td>
+          <td style='font-weight:bold;'>Manhole Cover</td><td><input type='text' placeholder='...'></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">DB Inb WT Girder</td>
+          <td><input type="text" placeholder="..."></td>
+          <td style='font-weight:bold;'>Tank Vent Pipes / Vent Heads</td><td><input type='text' placeholder='...'></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Inb Longitudinal Bhd</td>
+          <td><input type="text" placeholder="..."></td>
+          <td style='font-weight:bold;'>Sound Pipe / Cap / Striker plate</td><td><input type='text' placeholder='...'></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Shell</td>
+          <td><input type="text" placeholder="..."></td>
+          <td style='font-weight:bold;'>Tank remote gauging system</td><td><input type='text' placeholder='...'></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Tranverse Bulkhead Fwd</td>
+          <td><input type="text" placeholder="..."></td>
+          <td style='font-weight:bold;'>Suct / Delivery Pipe/ Valve / Mounth</td><td><input type='text' placeholder='...'></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Tranverse Bulkhead Aft</td>
+          <td><input type="text" placeholder="..."></td>
+          <td style='font-weight:bold;'>Ladders and Platforms</td><td><input type='text' placeholder='...'></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">DB Inner Bottom</td>
+          <td><input type="text" placeholder="..."></td>
+          <td style='font-weight:bold;'>Other Internal Piping</td><td><input type='text' placeholder='...'></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Upper Tank Top / Deck Head</td>
+          <td><input type="text" placeholder="..."></td>
+          <td colspan='2' style='background:#f3f4f6;'></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- OTHER -->
+    <div class="section-title">III. Other Observations</div>
+    <div class="other-grid">
+      <div class="other-item">
+        <div class="row"><strong>Anode Wastage (%)</strong> <input type="text" placeholder="%"></div>
+        <div class="row"><span>Total Good:</span> <input type="text" placeholder="pcs"></div>
+        <div class="row"><span>Total Broken:</span> <input type="text" placeholder="pcs"></div>
+      </div>
+      <div class="other-item">
+        <div class="row"><strong>Mud Accumulation (cm)</strong> <input type="text" placeholder="cm"></div>
+      </div>
+    </div>
+
+    <div class="notes-section no-break">
+      <label>Remarks :</label>
+      <textarea placeholder="Write remarks here..."></textarea>
+    </div>
+    <div class="notes-section no-break">
+      <label>Corrective Actions :</label>
+      <textarea placeholder="Write corrective actions here..."></textarea>
+    </div>
+    
+    <div class="notes-section no-break">
+      <label>Photos (must be attached to this report as evidence) :</label>
+      <div class="photo-grid" id="pg">
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      </div>
+    </div>
+
+    <!-- FOOTER / SIGNATURES -->
+    <div class="footer-section no-break">
+      <div class="footer-grid">
+        <div class="sig-item">
+          <div class="label">Inspector</div>
+          <div class="space" id="sp-1">
+            <label class="btn no-print" for="up-1">+ Add TTD</label>
+            <input type="file" id="up-1" class="hidden" accept="image/*">
+            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">Chief Officer</div>
+          <div class="space" id="sp-2">
+            <label class="btn no-print" for="up-2">+ Add TTD</label>
+            <input type="file" id="up-2" class="hidden" accept="image/*">
+            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+        <div class="sig-item">
+          <div class="label">Master</div>
+          <div class="space" id="sp-3">
+            <label class="btn no-print" for="up-3">+ Add TTD</label>
+            <input type="file" id="up-3" class="hidden" accept="image/*">
+            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+          </div>
+          <input type="text" class="nm" placeholder="Name">
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e) {
+      if(e.target.files && e.target.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(x) {
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  
+  initSig('up-1', 'pv-1');
+  initSig('up-2', 'pv-2');
+  initSig('up-3', 'pv-3');
+
+  function loadPhoto(inp) {
+    if(inp.files && inp.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(x) {
+        var p = inp.parentElement;
+        p.querySelector('img').src = x.target.result;
+        p.querySelector('img').style.display = 'block';
+        p.querySelector('.del-photo').style.display = 'block';
+        p.querySelector('span').style.display = 'none';
+      };
+      reader.readAsDataURL(inp.files[0]);
+    }
+  }
+
+  function removePhoto(btn) {
+    var p = btn.parentElement;
+    p.querySelector('img').src = '';
+    p.querySelector('img').style.display = 'none';
+    btn.style.display = 'none';
+    p.querySelector('span').style.display = 'block';
+    p.querySelector('input[type="file"]').value = '';
+  }
+
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var v = e.target.value.replace(/\D/g, '').slice(0, 8);
+      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      e.target.value = v;
+    });
+  });
+
+  function attachAutoResize(ta) {
+    ta.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  }
+  document.querySelectorAll('textarea').forEach(attachAutoResize);
+
+  function savePDF() {
+    var v = document.getElementById('vessel').value || 'UnknownVessel';
+    var d = document.getElementById('date').value || 'NoDate';
+    var el = document.getElementById('pdf-content');
+    
+    // Hide empty photo slots before printing
+    var photos = document.querySelectorAll('.photo-item');
+    photos.forEach(p => {
+      if(p.querySelector('input').value === '') { p.classList.add('no-print'); }
+    });
+    
+    var opt = {
+      margin:       [10, 10, 10, 10],
+      filename:     '084A_Ballast_Tank_Report_' + v + '_' + d + '.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.notes-section', '.photo-item'] }
+    };
+    html2pdf().set(opt).from(el).save().then(() => {
+      // restore empty photo slots
+      photos.forEach(p => { p.classList.remove('no-print'); });
+    });
+  }
+</script>
+</body>
+</html>
