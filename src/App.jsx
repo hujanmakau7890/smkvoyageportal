@@ -918,9 +918,27 @@ function Login({ onLogin }) {
         return;
       }
       const { data: profile, error: profileError } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-      if (profileError) {
-        console.error("Login profile error:", profileError);
-        setErr("Gagal memuat profil: " + profileError.message);
+      if (profileError || !profile?.id) {
+        const fallback = {
+          id: data.user.id,
+          email: data.user.email,
+          full_name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || '',
+          role: data.user.user_metadata?.role || 'user',
+          pass: '',
+        };
+        const { error: upsertErr } = await supabase.from('profiles').upsert(fallback, { onConflict: 'id' });
+        if (upsertErr) {
+          console.error('Login profile upsert error:', upsertErr);
+          setErr('Gagal menyiapkan profil: ' + upsertErr.message);
+          return;
+        }
+        const isShipAccount = fallback.role === 'kapal';
+        onLogin({
+          id: fallback.id, email: fallback.email,
+          name: fallback.full_name || email.split('@')[0],
+          role: fallback.role || 'master',
+          ship: isShipAccount ? (fallback.full_name || null) : null,
+        });
         return;
       }
       const isShipAccount = profile?.role === 'kapal';

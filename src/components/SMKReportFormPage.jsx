@@ -177,6 +177,7 @@ export default function SMKReportFormPage() {
         } catch (e) {
           const msg = e?.message || String(e);
           console.warn("[SMK] Rekap update failed:", msg);
+          alert("Download & Upload file sukses, tapi Rekap gagal: " + msg);
           setSuccessMessage("Download & Upload file sukses. Rekap gagal: " + msg);
           setTimeout(() => setSuccessMessage(""), 5000);
         }

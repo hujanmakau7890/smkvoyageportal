@@ -6,15 +6,14 @@ lalu simpan ke Laporan/Nama_Kapal/Tahun/Bulan/.
 import os
 import re
 import json
-import time
 import shutil
 import subprocess
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-ROOT = "/home/dw54/data/supabase-storage/Laporan"
-NEED_APPROVAL_ROOT = "/home/dw54/data/supabase-storage/Need Approval"
-RENDER_TMP = "/home/dw54/render_tmp"
+ROOT = "/mnt/data/supabase-storage/Laporan"
+NEED_APPROVAL_ROOT = "/mnt/data/supabase-storage/Need Approval"
+RENDER_TMP = "/home/fleet/smkvoyageportal/data/render_tmp"
 TOKEN = "smk-laporan-2026"
 PORT = 20130
 ALLOW_ORIGIN = "*"
@@ -58,7 +57,7 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 # Upload response uses Laporan/... or Need Approval/...
                 # Resolve relative to the storage root (parent of Laporan and Need Approval)
-                STORAGE_ROOT = "/home/dw54/data/supabase-storage"
+                STORAGE_ROOT = "/mnt/data/supabase-storage"
                 rel = rel.replace("\\", "/")
                 abs_path = os.path.normpath(os.path.join(STORAGE_ROOT, rel))
                 if not abs_path.startswith(os.path.normpath(STORAGE_ROOT)):
@@ -100,7 +99,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not rel:
                     self.send_error(400, "Missing path")
                     return
-                STORAGE_ROOT = "/home/dw54/data/supabase-storage"
+                STORAGE_ROOT = "/mnt/data/supabase-storage"
                 rel = rel.replace("\\", "/")
                 src_abs = os.path.normpath(os.path.join(STORAGE_ROOT, rel))
                 if not src_abs.startswith(os.path.normpath(os.path.join(STORAGE_ROOT, "Need Approval"))):
@@ -147,7 +146,6 @@ class Handler(BaseHTTPRequestHandler):
                 month = qs.get("month", [""])[0]
                 
                 results = []
-                import time
                 if os.path.exists(ROOT):
                     for root_dir, dirs, files in os.walk(ROOT):
                         for fn in files:
@@ -339,4 +337,4 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
+    HTTPServer(("0.0.0.0", PORT), Handler).serve_forever()

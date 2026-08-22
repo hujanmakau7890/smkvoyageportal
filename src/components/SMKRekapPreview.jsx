@@ -3,7 +3,7 @@ import { supabase } from "../supabase";
 
 const VESSELS = ["Express","Mavendra","Prakarsa","Pratama","Segoro","Selaras","Sahabat","Semangat"];
 const MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const CURRENT_YEAR = 2026;
+const CURRENT_YEAR = new Date().getFullYear();
 const ADMIN_EMAIL = "dwi.wahyu@mentarimas.id";
 
 const FORMS = [
@@ -48,7 +48,7 @@ const FORMS = [
   {code:"084-E", dept:"Deck",   pic:"CO",     ket:"SMT"},
   {code:"084-F", dept:"Deck",   pic:"CO",     ket:"SMT"},
   {code:"093-A",  dept:"Deck",   pic:"Master", ket:"BLN"},
-  {code:"096-B", dept:"Engine", pic:"CO",     ket:"BLN"},
+  {code:"096-B", dept:"Engine", pic:"CO", ket:"BLN", exclude:["Pratama", "Segoro", "Selaras", "Sahabat"]},
 ];
 
 const PIC_RULES = {
@@ -92,13 +92,27 @@ function buildData(year) {
   return rows;
 }
 
-function calcPIC(rows) {
+function calcPIC(rows, picMonth, vessel) {
   const out={};
   Object.entries(PIC_RULES).forEach(([role,rule])=>{
-    const codes=FORMS.filter(rule).map(f=>f.code);
-    const sub=rows.filter(r=>codes.includes(r.code));
-    const done=sub.filter(r=>r.status==="C").length;
-    out[role]={done,total:sub.length,pct:sub.length?Math.round(done/sub.length*100):0};
+    const matchedForms = FORMS.filter(f => (!f.exclude || !f.exclude.includes(vessel)) && rule(f));
+    const codes = matchedForms.map(f=>f.code);
+    
+    let expectedTotal = 0;
+    matchedForms.forEach(f => {
+      const scheduleArray = sched(f.ket);
+      if (picMonth === "Semua") {
+        expectedTotal += scheduleArray.reduce((sum, val) => sum + val, 0);
+      } else {
+        const monthIndex = Number(picMonth) - 1;
+        expectedTotal += scheduleArray[monthIndex];
+      }
+    });
+
+    const sub = rows.filter(r=>codes.includes(r.code) && r.status === "C");
+    const done = sub.length;
+    
+    out[role]={done,total:expectedTotal,pct:expectedTotal?Math.round(done/expectedTotal*100):0};
   });
   return out;
 }
@@ -112,8 +126,8 @@ function Bar({pct}){
   </div>;
 }
 
-function PICCards({rows}){
-  const scores=calcPIC(rows);
+function PICCards({rows, picMonth, vessel}){
+  const scores=calcPIC(rows, picMonth, vessel);
   return <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
     {Object.entries(scores).map(([role,s])=>(
       <div key={role} style={{background:bgc(s.pct),borderRadius:8,padding:"8px 10px",border:`1px solid ${clr(s.pct)}33`}}>
@@ -144,12 +158,28 @@ const TD={padding:"5px 6px",border:"1px solid #f1f5f9",fontSize:11};
 
 function VesselTable({vessel,data,isAdmin,onToggle}){
   const [deptF,setDeptF]=useState("Semua");
+  const [picMonth, setPicMonth] = useState(new Date().getMonth() + 1);
   const vRows=data.filter(d=>d.vessel===vessel);
   const lookup={};
   vRows.forEach(r=>{if(!lookup[r.code])lookup[r.code]={};lookup[r.code][r.month]=r.status;});
-  const forms=deptF==="Semua"?FORMS:FORMS.filter(f=>f.dept===deptF);
-  const total=vRows.length,done=vRows.filter(r=>r.status==="C").length;
+  const vesselForms = FORMS.filter(f => !f.exclude || !f.exclude.includes(vessel));
+  const forms=deptF==="Semua"?vesselForms:vesselForms.filter(f=>f.dept===deptF);
+  
+  const mRows = picMonth === "Semua" ? vRows : vRows.filter(r => r.month === Number(picMonth));
+  let expectedFormTotal = 0;
+  forms.forEach(f => {
+    const s = sched(f.ket);
+    if (picMonth === "Semua") {
+      expectedFormTotal += s.reduce((sum, val) => sum + val, 0);
+    } else {
+      expectedFormTotal += s[Number(picMonth) - 1];
+    }
+  });
+  const validCodes = forms.map(f => f.code);
+  const done = mRows.filter(r => r.status === "C" && validCodes.includes(r.code)).length;
+  const total = expectedFormTotal;
   const pct=total?Math.round(done/total*100):0;
+  
   const mStats=MO.map((_,mi)=>{
     const m=mi+1,md=vRows.filter(r=>r.month===m),d=md.filter(r=>r.status==="C").length;
     return{total:md.length,done:d,pct:md.length?Math.round(d/md.length*100):null};
@@ -158,13 +188,23 @@ function VesselTable({vessel,data,isAdmin,onToggle}){
     <div style={{background:"#1e3a5f",color:"#fff",padding:"14px 20px"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
         <div>
-          <div style={{fontSize:15,fontWeight:800,letterSpacing:".04em"}}>{vessel.toUpperCase()} MAS</div>
-          <div style={{fontSize:11,color:"#93c5fd",marginTop:2}}>{done}/{total} form · {pct}% progress</div>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{fontSize:15,fontWeight:800,letterSpacing:".04em"}}>{vessel.toUpperCase()} MAS</div>
+            <select 
+              value={picMonth} 
+              onChange={e=>setPicMonth(e.target.value)}
+              style={{padding:"2px 6px", fontSize:11, borderRadius:4, background:"#0f172a", color:"#fff", border:"1px solid #334155"}}
+            >
+              <option value="Semua">Semua Bulan</option>
+              {MO.map((mName, i) => <option key={i+1} value={i+1}>{mName}</option>)}
+            </select>
+          </div>
+          <div style={{fontSize:11,color:"#93c5fd",marginTop:4}}>{done}/{total} form · {pct}% progress {picMonth!=="Semua"?"(Bulan Ini)":"(Tahunan)"}</div>
         </div>
         <div style={{fontSize:32,fontWeight:800,color:pct>=90?"#34d399":pct>=75?"#fbbf24":"#f87171",lineHeight:1}}>{pct}%</div>
       </div>
-      {isAdmin && <div style={{fontSize:10,color:"#fbbf24",marginTop:4}}>Admin edit mode aktif — klik cell C/S untuk toggle</div>}
-      <PICCards rows={vRows}/>
+      {isAdmin && <div style={{fontSize:10,color:"#fbbf24",marginTop:4,marginBottom:8}}>Admin edit mode aktif — klik cell C/S untuk toggle</div>}
+      <PICCards rows={mRows} picMonth={picMonth} vessel={vessel}/>
     </div>
     <div style={{background:"#f8fafc",padding:"8px 16px",display:"flex",gap:6,borderBottom:"1px solid #e5e7eb",alignItems:"center"}}>
       <span style={{fontSize:11,color:"#64748b",marginRight:4}}>Dept:</span>
@@ -219,14 +259,32 @@ function VesselTable({vessel,data,isAdmin,onToggle}){
 
 function SummaryView({data}){
   const [view,setView]=useState("bulan");
+  const [summaryMonth, setSummaryMonth] = useState(new Date().getMonth() + 1);
   const stats=VESSELS.map(v=>{
-    const rows=data.filter(d=>d.vessel===v);
-    const total=rows.length,done=rows.filter(r=>r.status==="C").length,pct=total?Math.round(done/total*100):0;
+    const vRows=data.filter(d=>d.vessel===v);
+    
+    const vesselForms = FORMS.filter(f => !f.exclude || !f.exclude.includes(v));
+    let expectedFormTotal = 0;
+    vesselForms.forEach(f => {
+      const s = sched(f.ket);
+      if (summaryMonth === "Semua") {
+        expectedFormTotal += s.reduce((sum, val) => sum + val, 0);
+      } else {
+        expectedFormTotal += s[Number(summaryMonth) - 1];
+      }
+    });
+    
+    const mRows = summaryMonth === "Semua" ? vRows : vRows.filter(r => r.month === Number(summaryMonth));
+    const validCodes = vesselForms.map(f => f.code);
+    const done = mRows.filter(r => r.status === "C" && validCodes.includes(r.code)).length;
+    const total = expectedFormTotal;
+    const pct = total ? Math.round(done/total*100) : 0;
+    
     const months=MO.map((_,mi)=>{
-      const m=mi+1,md=rows.filter(r=>r.month===m),d=md.filter(r=>r.status==="C").length;
+      const m=mi+1,md=vRows.filter(r=>r.month===m),d=md.filter(r=>r.status==="C").length;
       return{total:md.length,done:d,pct:md.length?Math.round(d/md.length*100):null};
     });
-    return{vessel:v,total,done,pct,months,picScores:calcPIC(rows)};
+    return{vessel:v,total,done,pct,months,picScores:calcPIC(mRows, summaryMonth, v)};
   });
   const cs=p=>{
     if(p===null) return{color:"#d1d5db"};
@@ -236,6 +294,17 @@ function SummaryView({data}){
     return{background:"#f3f4f6",color:"#9ca3af"};
   };
   return <div>
+    <div style={{padding:"12px 16px",background:"#f8fafc",borderBottom:"1px solid #e5e7eb",display:"flex",alignItems:"center",gap:8}}>
+      <span style={{fontSize:11,fontWeight:600,color:"#475569"}}>Filter Bulan (Ringkasan):</span>
+      <select 
+        value={summaryMonth} 
+        onChange={e=>setSummaryMonth(e.target.value)}
+        style={{padding:"4px 8px", fontSize:11, borderRadius:4, border:"1px solid #cbd5e1", background:"#fff"}}
+      >
+        <option value="Semua">Semua Bulan (Tahunan)</option>
+        {MO.map((mName, i) => <option key={i+1} value={i+1}>{mName}</option>)}
+      </select>
+    </div>
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:10,padding:16,background:"#f8fafc"}}>
       {stats.map(r=>(
         <div key={r.vessel} style={{background:"#fff",borderRadius:8,padding:"12px 14px",boxShadow:"0 1px 3px rgba(0,0,0,.08)",border:"1px solid #e5e7eb"}}>
@@ -693,7 +762,7 @@ export default function SMKRekap(){
             style={{padding:"6px 12px",fontSize:14,fontWeight:700,border:"2px solid #334155",
               borderRadius:6,background:"#1e293b",color:"#fff",cursor:"pointer",outline:"none",
               appearance:"auto"}}>
-            {[2024,2025,2026,2027].map(y=><option key={y} value={y}>{y}</option>)}
+            {[2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035].map(y=><option key={y} value={y}>{y}</option>)}
           </select>
         </div>
 
