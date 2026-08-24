@@ -56,11 +56,11 @@
     .remarks-section textarea { width: 100%; border: 1px solid #000; font-size: 11px; padding: 4px 6px; resize: vertical; font-family: Arial, Helvetica, sans-serif; outline: none; background: transparent; min-height: 50px; }
     .remarks-section textarea:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
 
-    .footer-section { margin-top: 12px; padding-top: 10px; border-top: 2px solid #000; }
-    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: end; }
-    .footer-grid .sig-item { text-align: center; }
+    .footer-section { margin-top: 12px; padding-top: 10px; border-top: 2px solid #000; break-inside: avoid; page-break-inside: avoid; }
+    .footer-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; }
+    .footer-grid .sig-item { min-width: 0; text-align: center; }
     .footer-grid .sig-item .label { font-weight: bold; font-size: 11px; }
-    .footer-grid .sig-item .space { height: 50px; display: flex; align-items: center; justify-content: center;  margin: 4px 0;  position: relative; }
+    .footer-grid .sig-item .space { height: 50px; display: flex; align-items: center; justify-content: center; margin: 4px 0; position: relative; }
     .footer-grid .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
     .footer-grid .sig-item .space .pv img { max-height: 45px; max-width: 100%; }
     .footer-grid .sig-item .space .pv .x { position: absolute; right: 2px; top: 2px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
@@ -89,6 +89,8 @@
       .tbl input { font-size: 7px; min-height: 14px; }
       .remarks-section label { font-size: 9px; }
       .remarks-section textarea { font-size: 8px; min-height: 35px; }
+      .footer-section { margin-top: 6px; padding-top: 5px; }
+      .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
       .footer-grid .sig-item .label { font-size: 8px; }
       .footer-grid .sig-item .space { height: 30px; border: none; }
       .footer-grid .sig-item .space .pv img { max-height: 25px; }
@@ -98,14 +100,17 @@
       input::placeholder { color: transparent !important; }
       textarea::placeholder { color: transparent !important; }
     }
+
     @media screen and (max-width: 768px) {
-      .top { grid-template-columns: 1fr; text-align: center; }
+      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
       .st { align-items: center; }
       .info-row { grid-template-columns: 1fr; }
-      .info-row .item label { white-space: normal; }
-      .info-row .item input, .info-row .item select { font-size: 11px; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .tbl { font-size: 7px; }
+      .info-row .item { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .info-row .item label { width: 100%; white-space: normal; }
+      .info-row .item input, .info-row .item select { width: 100%; flex: none; font-size: 11px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .container { padding: 10px; overflow-x: hidden; }
+      .tbl { min-width: 600px; font-size: 7px; }
       .tbl td, .tbl th { padding: 1px; }
     }
   </style>

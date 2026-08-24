@@ -17,7 +17,27 @@ export default function SMKReportFormPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("Semua");
   const [successMessage, setSuccessMessage] = useState("");
+  const [userVessel, setUserVessel] = useState(null);
+  const [userRolePage, setUserRolePage] = useState("");
   const iframeRef = useRef(null);
+
+  // Load user profile once
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (!profile) return;
+      const role = (profile.role || '').toLowerCase();
+      setUserRolePage(role);
+      if (role === 'kapal' || role === 'ship') {
+        const candidates = [profile.ship, profile.name, profile.full_name, user.email?.split('@')[0]];
+        for (const c of candidates) {
+          if (c && typeof c === 'string' && c.trim()) { setUserVessel(c.trim()); break; }
+        }
+      }
+    });
+  }, []);
+
 
   useEffect(() => {
     if (!selectedForm) return;
@@ -385,6 +405,14 @@ export default function SMKReportFormPage() {
       } catch (e) {
         // ignore
       }
+      // Send vessel info to iframe for auto-select & lock
+      setTimeout(() => {
+        try {
+          if (userVessel) {
+            iframe.contentWindow.postMessage({ type: 'SET_VESSEL', vessel: userVessel, locked: true }, '*');
+          }
+        } catch(e) { /* ignore */ }
+      }, 300);
     };
 
     iframe.addEventListener('load', onLoad);
@@ -392,7 +420,7 @@ export default function SMKReportFormPage() {
       if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') onLoad();
     } catch (e) { /* ignore */ }
     return () => iframe.removeEventListener('load', onLoad);
-  }, [formFile, selectedForm]);
+  }, [formFile, selectedForm, userVessel]);
 
   const visibleForms = useMemo(() => {
     const query = search.trim().toLowerCase();

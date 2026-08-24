@@ -147,8 +147,23 @@ function Cell({status, isAdmin, vessel, code, month, onToggle}){
   const st = dispStatus==="C" ? {background:"#bbf7d0",color:"#14532d",fontWeight:700}
     : {background:"#fef9c3",color:"#713f12",fontWeight:600};
   const clickable = isAdmin && code && vessel && month;
-  return <td onClick={clickable?()=>onToggle({vessel,code,month,status:dispStatus}):undefined}
-    style={{textAlign:"center",fontSize:11,padding:clickable?"6px 2px":"4px 2px",border:"1px solid #e5e7eb",...st,cursor:clickable?"pointer":"default"}}>
+  const handleInteract = clickable ? (e) => {
+    e.preventDefault();
+    onToggle({vessel,code,month,status:dispStatus});
+  } : undefined;
+  return <td
+    onClick={clickable ? ()=>onToggle({vessel,code,month,status:dispStatus}) : undefined}
+    onTouchEnd={handleInteract}
+    style={{
+      textAlign:"center",fontSize:11,
+      padding:clickable?"6px 2px":"4px 2px",
+      border:"1px solid #e5e7eb",
+      ...st,
+      cursor:clickable?"pointer":"default",
+      userSelect:"none",
+      WebkitTapHighlightColor:"transparent",
+      touchAction:"manipulation"
+    }}>
     {dispStatus}
   </td>;
 }
@@ -465,8 +480,8 @@ function CariLaporanView() {
     <div style={{ padding: 20, background: "#fff", borderRadius: 8, boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
       <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1e3a5f", margin: "0 0 20px 0" }}>🔍 Cari Laporan</h2>
       
-      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
-        <select value={vessel} onChange={e => setVessel(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4 }}>
+      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
+        <select value={vessel} onChange={e => setVessel(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4, flex: "1 1 120px", minWidth: 140 }}>
           <option value="">Semua Kapal</option>
           {VESSELS.map(v => <option key={v} value={v}>{v}</option>)}
         </select>
@@ -475,16 +490,16 @@ function CariLaporanView() {
           placeholder="Tahun (cth: 2026)" 
           value={year} 
           onChange={e => setYear(e.target.value)}
-          style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4, width: 150 }}
+          style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4, flex: "1 1 100px", minWidth: 100 }}
         />
-        <select value={month} onChange={e => setMonth(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4 }}>
+        <select value={month} onChange={e => setMonth(e.target.value)} style={{ padding: "8px 12px", border: "1px solid #ccc", borderRadius: 4, flex: "1 1 120px", minWidth: 140 }}>
           <option value="">Semua Bulan</option>
           {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
         <button 
           onClick={handleSearch}
           disabled={loading}
-          style={{ padding: "8px 16px", background: "#2563eb", color: "#fff", border: "none", borderRadius: 4, cursor: loading ? "not-allowed" : "pointer", fontWeight: "bold" }}
+          style={{ padding: "8px 16px", background: "#2563eb", color: "#fff", border: "none", borderRadius: 4, cursor: loading ? "not-allowed" : "pointer", fontWeight: "bold", flex: "1 1 100%", minWidth: 100 }}
         >
           {loading ? "Mencari..." : "Cari"}
         </button>
@@ -498,14 +513,14 @@ function CariLaporanView() {
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {results.map((file, i) => (
-              <li key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i === results.length - 1 ? "none" : "1px solid #e2e8f0" }}>
-                <div>
-                  <div style={{ fontWeight: "bold", color: "#334155" }}>{file.name}</div>
-                  <div style={{ fontSize: 12, color: "#64748b" }}>{file.vessel} • {file.month} {file.year} • {(file.size / 1024).toFixed(1)} KB</div>
+              <li key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, padding: "12px 0", borderBottom: i === results.length - 1 ? "none" : "1px solid #e2e8f0" }}>
+                <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+                  <div style={{ fontWeight: "bold", color: "#334155", wordBreak: "break-word", lineHeight: 1.4 }}>{file.name}</div>
+                  <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>{file.vessel} • {file.month} {file.year} • {(file.size / 1024).toFixed(1)} KB</div>
                 </div>
                 <button 
                   onClick={() => handleDownload(file.path)}
-                  style={{ padding: "6px 12px", background: "#10b981", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontWeight: "bold", fontSize: 12 }}
+                  style={{ padding: "8px 14px", background: "#10b981", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontWeight: "bold", fontSize: 12, whiteSpace: "nowrap" }}
                 >
                   ⬇️ Download
                 </button>
@@ -513,19 +528,63 @@ function CariLaporanView() {
             ))}
           </ul>
         )}
-      </div>
+            </div>
     </div>
   );
 }
 
-function NeedApprovalView({ onApproveSuccess }) {
+function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperintendent, userVessel, siVessels }) {
   const [loading, setLoading] = useState(true);
   const [filesByVessel, setFilesByVessel] = useState({});
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState("");
+  const [sigPreview, setSigPreview] = useState(null);   // preview b64
+  const [sigStatus, setSigStatus] = useState("");       // pesan simpan TTD
+  const [showSigPanel, setShowSigPanel] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState(null);
 
   const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
   const baseUrl = uploadUrl.replace(/\/+$/, "");
+
+  // Load TTD yang sudah tersimpan
+  useEffect(() => {
+    if (!approverEmail || !isAdmin) return;
+    fetch(`${baseUrl}/get-signature?email=${encodeURIComponent(approverEmail)}`, {
+      headers: { "X-Token": "smk-laporan-2026" }
+    }).then(r => r.json()).then(res => {
+      if (res.ok && res.signature_b64) {
+        setSigPreview("data:image/png;base64," + res.signature_b64);
+      }
+    }).catch(() => {});
+  }, [approverEmail, baseUrl, isAdmin]);
+
+  const handleSigUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const b64 = ev.target.result; // data:image/png;base64,...
+      setSigPreview(b64);
+      setSigStatus("Menyimpan TTD...");
+      try {
+        const res = await fetch(`${baseUrl}/save-signature`, {
+          method: "POST",
+          headers: {
+            "X-Token": "smk-laporan-2026",
+            "X-Email": approverEmail,
+            "Content-Type": "text/plain"
+          },
+          body: b64
+        });
+        const result = await res.json();
+        setSigStatus(result.ok ? "✓ TTD berhasil disimpan!" : "✗ Gagal: " + result.error);
+        setTimeout(() => setSigStatus(""), 3000);
+      } catch(err) {
+        setSigStatus("✗ Error: " + err.message);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const fetchFiles = async () => {
     setLoading(true);
@@ -549,9 +608,11 @@ function NeedApprovalView({ onApproveSuccess }) {
   }, []);
 
   const handleApprove = async (vessel, file) => {
+    if (!isAdmin) return; // double check
     setLoading(true);
     try {
-      const res = await fetch(`${baseUrl}/approve?path=${encodeURIComponent(file.path)}`, {
+      const emailParam = approverEmail ? `&email=${encodeURIComponent(approverEmail)}` : "";
+      const res = await fetch(`${baseUrl}/approve?path=${encodeURIComponent(file.path)}${emailParam}`, {
         headers: { "X-Token": "smk-laporan-2026" }
       });
       const result = await res.json();
@@ -592,6 +653,33 @@ function NeedApprovalView({ onApproveSuccess }) {
     }
   };
 
+  const handleReject = (vessel, file) => {
+    if (!isAdmin) return;
+    setRejectTarget({ vessel, file });
+  };
+
+  const confirmReject = async () => {
+    if (!rejectTarget) return;
+    const { vessel, file } = rejectTarget;
+    setLoading(true);
+    try {
+      const res = await fetch(`${baseUrl}/reject?path=${encodeURIComponent(file.path)}`, {
+        headers: { "X-Token": "smk-laporan-2026" }
+      });
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error || "Gagal reject");
+
+      setSuccessMsg("Laporan berhasil ditolak!");
+      setTimeout(() => setSuccessMsg(""), 3000);
+      await fetchFiles();
+    } catch (err) {
+      alert("Gagal reject file: " + err.message);
+    } finally {
+      setLoading(false);
+      setRejectTarget(null);
+    }
+  };
+
   const handleView = async (vessel, file) => {
     try {
       const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(file.path)}`;
@@ -611,6 +699,21 @@ function NeedApprovalView({ onApproveSuccess }) {
   if (loading && Object.keys(filesByVessel).length === 0) return <div style={{padding: 20}}>Memuat daftar file...</div>;
   if (error) return <div style={{padding: 20, color: "red"}}>Error: {error}</div>;
 
+  // Filter based on user vessel if applicable
+  let displayEntries = Object.entries(filesByVessel);
+  if (userVessel) {
+    const vesselQuery = userVessel.toLowerCase().replace(/_/g, " ").trim();
+    displayEntries = displayEntries.filter(([v]) => v.toLowerCase().replace(/_/g, " ").trim() === vesselQuery);
+  } else if (isSuperintendent) {
+    if (siVessels && siVessels.length > 0) {
+      const allowed = siVessels.map(v => v.toLowerCase().replace(/_/g, " ").trim());
+      displayEntries = displayEntries.filter(([v]) => allowed.includes(v.toLowerCase().replace(/_/g, " ").trim()));
+    } else {
+      // SI doesn't have any assigned ships yet
+      displayEntries = [];
+    }
+  }
+
   return (
     <div style={{padding: 20, background: "#f8fafc", position: "relative"}}>
       {successMsg && (
@@ -620,17 +723,65 @@ function NeedApprovalView({ onApproveSuccess }) {
           </div>
         </div>
       )}
-      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16}}>
+      {rejectTarget && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "#fff", padding: 24, borderRadius: 12, width: "90%", maxWidth: 400, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+              <div style={{ background: "#fee2e2", padding: "8px 12px", borderRadius: "50%", fontSize: 20 }}>
+                ⚠️
+              </div>
+              <h3 style={{ margin: 0, fontSize: 18, color: "#1e293b" }}>Tolak Laporan?</h3>
+            </div>
+            <p style={{ color: "#475569", fontSize: 14, marginBottom: 24, lineHeight: 1.5 }}>
+              Apakah Anda yakin ingin menolak dan menghapus file <br/><strong>{rejectTarget.file.name}</strong>?<br/><br/>
+              Laporan ini akan dihapus permanen dari daftar persetujuan.
+            </p>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
+              <button onClick={() => setRejectTarget(null)} style={{ padding: "8px 16px", background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Batal</button>
+              <button onClick={confirmReject} style={{ padding: "8px 16px", background: "#ef4444", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}>Ya, Tolak & Hapus</button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12}}>
         <h2 style={{fontSize: 18, fontWeight: 800, color: "#1e3a5f", margin: 0}}>📋 Menunggu Persetujuan (Need Approval)</h2>
-        <button onClick={fetchFiles} style={{padding: "6px 12px", fontSize: 12, borderRadius: 4, border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer"}}>↻ Refresh</button>
+        <div style={{display:"flex", gap:8}}>
+          {isAdmin && (
+            <button onClick={() => setShowSigPanel(p=>!p)} style={{padding: "6px 12px", fontSize: 12, borderRadius: 4, border: "1px solid #3b82f6", background: sigPreview?"#eff6ff":"#fff", color:"#1d4ed8", cursor: "pointer", fontWeight:600}}>
+              ✍️ {sigPreview ? "Ubah TTD" : "Atur TTD Saya"}
+            </button>
+          )}
+          <button onClick={fetchFiles} style={{padding: "6px 12px", fontSize: 12, borderRadius: 4, border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer"}}>↻ Refresh</button>
+        </div>
       </div>
-      
-      {Object.keys(filesByVessel).length === 0 ? (
+
+      {isAdmin && showSigPanel && (
+        <div style={{background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:16, marginBottom:16}}>
+          <div style={{fontSize:13, fontWeight:700, color:"#1e40af", marginBottom:8}}>✍️ Tanda Tangan Digital Saya ({approverEmail})</div>
+          <div style={{fontSize:12, color:"#64748b", marginBottom:12}}>
+            Upload foto TTD Anda (PNG/JPG, background putih/transparan). TTD akan otomatis ditempel di PDF setiap kali Anda meng-Approve laporan.
+          </div>
+          <div style={{display:"flex", alignItems:"center", gap:16, flexWrap:"wrap"}}>
+            {sigPreview && (
+              <div style={{border:"1px solid #93c5fd", borderRadius:6, padding:4, background:"#fff"}}>
+                <img src={sigPreview} alt="TTD" style={{height:70, maxWidth:200, objectFit:"contain", display:"block"}}/>
+              </div>
+            )}
+            <label style={{cursor:"pointer", padding:"8px 14px", background:"#2563eb", color:"#fff", borderRadius:6, fontWeight:600, fontSize:12}}>
+              {sigPreview ? "Ganti TTD" : "Upload TTD"}
+              <input type="file" accept="image/*" style={{display:"none"}} onChange={handleSigUpload}/>
+            </label>
+            {sigStatus && <span style={{fontSize:12, color: sigStatus.startsWith("✓")?"#16a34a":"#dc2626", fontWeight:600}}>{sigStatus}</span>}
+          </div>
+        </div>
+      )}
+
+      {displayEntries.length === 0 ? (
         <div style={{padding: 20, background: "#fff", borderRadius: 8, textAlign: "center", color: "#64748b", border: "1px dashed #cbd5e1"}}>
           Tidak ada laporan yang menunggu persetujuan.
         </div>
       ) : (
-        Object.entries(filesByVessel).map(([vessel, files]) => (
+        displayEntries.map(([vessel, files]) => (
           <div key={vessel} style={{background: "#fff", borderRadius: 8, padding: 16, marginBottom: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.05)", border: "1px solid #e5e7eb"}}>
             <h3 style={{fontSize: 15, fontWeight: 700, marginBottom: 12, color: "#334155", display: "flex", alignItems: "center", gap: 8}}>
               🚢 {vessel.replace(/_/g, " ").toUpperCase()} <span style={{fontSize: 12, fontWeight: 500, color: "#94a3b8", background: "#f1f5f9", padding: "2px 6px", borderRadius: 12}}>{files.length} file</span>
@@ -651,7 +802,12 @@ function NeedApprovalView({ onApproveSuccess }) {
                       <td style={{padding: "10px 12px", color: "#64748b"}}>{new Date(f.created_at).toLocaleString('id-ID')}</td>
                       <td style={{padding: "10px 12px", display: "flex", gap: 8}}>
                         <button onClick={() => handleView(vessel, f)} style={{padding: "5px 10px", background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: 4, cursor: "pointer", fontSize: 12, color: "#334155", fontWeight: 500}}>Lihat</button>
-                        <button onClick={() => handleApprove(vessel, f)} style={{padding: "5px 10px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: 600}}>✓ Approve</button>
+                        {isAdmin && (
+                          <>
+                            <button onClick={() => handleApprove(vessel, f)} style={{padding: "5px 10px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: 600}}>✓ Approve</button>
+                            <button onClick={() => handleReject(vessel, f)} style={{padding: "5px 10px", background: "#ef4444", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 12, fontWeight: 600}}>❌ Reject</button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -664,7 +820,6 @@ function NeedApprovalView({ onApproveSuccess }) {
     </div>
   );
 }
-
 export default function SMKRekap(){
   const [active,setActive]=useState("Semua");
   const [year,setYear]=useState(CURRENT_YEAR);
@@ -672,31 +827,59 @@ export default function SMKRekap(){
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState(null);
   const [adminEmail,setAdminEmail]=useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userProfile, setUserProfile] = useState(null);
   const [checkingAdmin,setCheckingAdmin]=useState(true);
   const [lastUpd,setLastUpd]=useState(null);
+  const [siVessels, setSiVessels] = useState([]);
 
   const fetchData=useCallback(async ()=>{
     // PostgREST caps at 1000 rows/req, paginate to get all
-    const all=[];
-    for(let from=0;;from+=1000){
-      const { data: rows, error } = await supabase
-        .from("smk_rekap")
-        .select("vessel,form_code,month,status,dept,pic,ket")
-        .eq("year", year)
-        .range(from, from+999);
-      if(error){ setError(error.message); break; }
-      all.push(...(rows||[]));
-      if(!rows || rows.length<1000) break;
+    let all=[];
+    let page=0,sz=1000,hasMore=true;
+    while(hasMore){
+      const {data:pageData,error:err}=await supabase
+        .from('smk_rekap')
+        .select('*')
+        .eq('year',year)
+        .range(page*sz,(page+1)*sz-1);
+      if(err){ setError(err.message); break; }
+      if(pageData?.length){ all=[...all,...pageData]; page++; }
+      else hasMore=false;
     }
-    if(!error){
+    if(all.length>0){
       setData(all.map(r=>({...r, code: r.form_code})));
-      setLastUpd(new Date());
+      const max=Math.max(...all.map(r=>new Date(r.updated_at||0).getTime()));
+      setLastUpd(max>0 ? new Date(max) : null);
       setError(null);
     }
     setLoading(false);
   },[year]);
 
-  const isAdmin = adminEmail?.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = userRole === "admin" || (adminEmail?.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase());
+  const isSuperintendent = userRole === "superintendent" || userRole === "supruntendent" || userRole === "si";
+  const canApprove = isAdmin || isSuperintendent;
+
+  const userVessel = useMemo(() => {
+    if (userRole !== "kapal" && userRole !== "ship") return null;
+    if (!userProfile) return null;
+    const candidates = [userProfile.ship, userProfile.name, userProfile.full_name, adminEmail?.split("@")[0]];
+    for (const c of candidates) {
+      if (c && typeof c === "string" && c.trim()) return c.trim();
+    }
+    return null;
+  }, [userRole, userProfile, adminEmail]);
+
+  useEffect(() => {
+    if (isSuperintendent && adminEmail) {
+      supabase.from('ships').select('vessel_name').eq('superintendent', adminEmail)
+        .then(({ data }) => {
+          if (data) setSiVessels(data.map(d => d.vessel_name));
+        });
+    } else {
+      setSiVessels([]);
+    }
+  }, [isSuperintendent, adminEmail]);
 
   useEffect(()=>{
     fetchData();
@@ -707,16 +890,38 @@ export default function SMKRekap(){
   },[fetchData]);
 
   useEffect(()=>{
-    (async()=>{
+    const loadUser = async () => {
       const { data:{ session } } = await supabase.auth.getSession();
-      setAdminEmail(session?.user?.email || "");
+      const email = session?.user?.email || "";
+      setAdminEmail(email);
+      if (session?.user?.id) {
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        if (profile) {
+          setUserRole(profile.role ? profile.role.toLowerCase() : "");
+          setUserProfile(profile);
+        }
+      }
       setCheckingAdmin(false);
-    })();
-    const interval = setInterval(async ()=>{
-      const { data:{ session } } = await supabase.auth.getSession();
-      setAdminEmail(session?.user?.email || "");
-    }, 2000);
-    return ()=> clearInterval(interval);
+    };
+    loadUser();
+    
+    // Auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setAdminEmail(session.user.email);
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        if (profile) {
+          setUserRole(profile.role ? profile.role.toLowerCase() : "");
+          setUserProfile(profile);
+        }
+      } else {
+        setAdminEmail("");
+        setUserRole("");
+        setUserProfile(null);
+      }
+    });
+
+    return ()=> authListener.subscription.unsubscribe();
   },[]);
 
   const total=data.length, done=data.filter(d=>d.status==="C").length;
@@ -728,15 +933,26 @@ export default function SMKRekap(){
   const handleToggle=useCallback(async ({vessel,code,month})=>{
     const row = data.find(r=>r.vessel===vessel && r.form_code===code && r.month===month);
     const next = (row && row.status==="C") ? "S" : "C";
-    const { error } = await supabase.from("smk_rekap")
-      .upsert({ vessel, form_code: code, month, year, status: next, updated_at: new Date().toISOString() }, { onConflict: "vessel,form_code,year,month" });
-    if(!error) {
-      if(row) {
-        setData(prev=>prev.map(r=>r.vessel===vessel && r.form_code===code && r.month===month ? {...r,status:next} : r));
-      } else {
-        setData(prev=>[...prev, { vessel, form_code: code, month, year, status: next }]);
-      }
+    
+    // Optimistic UI Update (Langsung ubah state biar cepat di layar HP)
+    if(row) {
+      setData(prev=>prev.map(r=>r.vessel===vessel && r.form_code===code && r.month===month ? {...r,status:next} : r));
+    } else {
+      // Pastikan property 'code' dan 'form_code' dua-duanya ada
+      setData(prev=>[...prev, { vessel, form_code: code, code: code, month, year, status: next }]);
     }
+
+    // Panggil database di background (Tidak usah ditunggu UI-nya)
+    supabase.from("smk_rekap")
+      .upsert({ vessel, form_code: code, month, year, status: next, updated_at: new Date().toISOString() }, { onConflict: "vessel,form_code,year,month" })
+      .then(({error}) => {
+        if(error) {
+          console.error("Gagal update toggle:", error);
+          // Opsi: Jika gagal banget, kita bisa kembalikan state. 
+          // Tapi untuk log SMK, biarkan saja atau set error banner.
+          setError("Gagal menyimpan perubahan " + code + " ke database.");
+        }
+      });
   },[data, year]);
 
   return(
@@ -810,7 +1026,7 @@ export default function SMKRekap(){
       <div style={{flex:1,padding:16}}>
         <div style={{background:"#fff",borderRadius:10,boxShadow:"0 1px 4px rgba(0,0,0,.08)",overflow:"hidden"}}>
           {active === "Cari Laporan" ? <CariLaporanView /> : active === "Need Approval" ? (
-            <NeedApprovalView onApproveSuccess={fetchData} />
+            <NeedApprovalView onApproveSuccess={fetchData} approverEmail={adminEmail} isAdmin={canApprove} isSuperintendent={isSuperintendent} userVessel={userVessel} siVessels={siVessels} />
           ) : active === "Semua" ? (
             <SummaryView data={data} />
           ) : (

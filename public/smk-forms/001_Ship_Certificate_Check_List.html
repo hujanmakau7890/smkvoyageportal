@@ -202,25 +202,25 @@
             padding: 4px;
         }
 
-        /* Responsive Table adjustments for Mobile - Only apply to screen, NOT print */
-        @media screen and (max-width: 768px) {
+        /* Responsive Table adjustments - Apply globally to ensure scroll on any small screen */
+        @media screen {
             .table-responsive {
                 overflow-x: auto;
                 display: block;
                 width: 100%;
+                -webkit-overflow-scrolling: touch;
             }
-            /* Override tailwind classes and ensure fixed widths on mobile so text fits inside cells */
             table.table-fixed {
-                table-layout: auto !important; /* Allow columns to stretch based on content */
-                min-width: 800px; /* Force horizontal scroll */
+                table-layout: auto !important;
+                min-width: 900px; /* Force horizontal scroll if screen is smaller than 900px */
             }
             th, td {
-                min-width: 90px; /* Ensure columns have enough space for DD-MM-YYYY */
-                white-space: nowrap; /* Prevent wrapping in data cells */
+                min-width: 90px;
+                white-space: nowrap;
             }
             th:nth-child(2), td:nth-child(2) {
                 min-width: 200px;
-                white-space: normal; /* Let the cert names wrap */
+                white-space: normal;
             }
             td input {
                 width: 100% !important;
@@ -254,8 +254,11 @@
 <body class="bg-gray-200 p-4 sm:p-8 font-sans text-gray-800">
     <div class="max-w-5xl mx-auto bg-white p-6 sm:p-10 shadow-lg print:shadow-none print:p-0">
         <!-- Print Button -->
-        <div class="flex justify-end mb-6 no-print">
-            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded flex items-center shadow">
+                <div class="flex justify-end mb-6 no-print gap-4">
+            <button onclick="saveToSupabase()" id="btn-save" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded flex items-center shadow transition-colors">
+                💾 Simpan Data
+            </button>
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded flex items-center shadow transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                 Print / Simpan PDF
             </button>
@@ -501,5 +504,165 @@
     updateTitle();
   }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
 </script>
+
+    <script>
+        // === SUPABASE CONFIG ===
+        const SUPA_URL  = "http://100.82.80.15:54321";
+        const SUPA_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+        const FORM_CODE = "001";
+
+        async function supa(method, table, params, body) {
+            let url = `${SUPA_URL}/rest/v1/${table}`;
+            if (params) url += '?' + new URLSearchParams(params).toString();
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'apikey': SUPA_KEY,
+                    'Authorization': 'Bearer ' + SUPA_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+                },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(txt);
+            }
+            const txt = await res.text();
+            return txt ? JSON.parse(txt) : [];
+        }
+
+        // === EXPIRY DATE CHECK ===
+        function parseDateDDMMYYYY(s) {
+            if (!s) return null;
+            const p = s.split('-');
+            if (p.length !== 3) return null;
+            const [d,m,y] = p.map(Number);
+            if (isNaN(d)||isNaN(m)||isNaN(y)) return null;
+            return new Date(y, m-1, d);
+        }
+
+        function checkExpiryDates() {
+            const today = new Date(); today.setHours(0,0,0,0);
+            const limit = new Date(today); limit.setMonth(today.getMonth() + 1);
+            document.querySelectorAll('#cert-tbody tr').forEach(tr => {
+                const inputs = tr.querySelectorAll('input');
+                if (inputs.length < 3) return;
+                const exp = parseDateDDMMYYYY(inputs[2].value);
+                const pink = exp && exp <= limit;
+                const color = pink ? '#fbcfe8' : '';
+                tr.style.backgroundColor = color;
+                tr.querySelectorAll('td').forEach(td => td.style.backgroundColor = color);
+                inputs.forEach(inp => inp.style.backgroundColor = color);
+            });
+        }
+
+        ['input','change','keyup'].forEach(evt =>
+            document.addEventListener(evt, e => { if (e.target?.tagName === 'INPUT') checkExpiryDates(); })
+        );
+
+        // === LOAD FROM SUPABASE ===
+        async function loadFromSupabase() {
+            const vesselName = document.querySelector('.ship-select').value;
+            if (!vesselName) return;
+            try {
+                const rows = await supa('GET', 'smk_form_data', {
+                    'vessel_name': `eq.${vesselName}`,
+                    'form_code': `eq.${FORM_CODE}`,
+                    'select': 'form_data',
+                    'limit': 1
+                });
+                if (!rows || rows.length === 0) return;
+                const fd = rows[0].form_data;
+                if (!fd) return;
+
+                const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+                if (dateInput && fd.report_date) dateInput.value = fd.report_date;
+
+                const masterInput = document.querySelectorAll('input.border-b.border-black.text-center')[0];
+                if (masterInput && fd.master_name) masterInput.value = fd.master_name;
+
+                if (fd.rows?.length) {
+                    document.querySelectorAll('#cert-tbody tr').forEach((tr, i) => {
+                        const r = fd.rows[i]; if (!r) return;
+                        const inp = tr.querySelectorAll('input');
+                        if (inp[0]) inp[0].value = r.issued_place || '';
+                        if (inp[1]) inp[1].value = r.date_of_issued || '';
+                        if (inp[2]) inp[2].value = r.expired_date || '';
+                        if (inp[3]) inp[3].value = r.last_survey || '';
+                        if (inp[4]) inp[4].value = r.next_survey || '';
+                        if (inp[5]) inp[5].value = r.remarks || '';
+                    });
+                }
+                if (dateInput) dateInput.dispatchEvent(new Event('input'));
+                checkExpiryDates();
+            } catch(err) { console.error('Gagal load data:', err); }
+        }
+
+        // === SAVE TO SUPABASE ===
+        async function saveToSupabase() {
+            const vesselName = document.querySelector('.ship-select').value;
+            if (!vesselName) { alert('Pilih Kapal terlebih dahulu!'); return; }
+
+            const btn = document.getElementById('btn-save');
+            btn.innerText = '⏳ Menyimpan...'; btn.disabled = true;
+
+            const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+            const masterInput = document.querySelectorAll('input.border-b.border-black.text-center')[0];
+            const rowsData = [];
+            document.querySelectorAll('#cert-tbody tr').forEach(tr => {
+                const inp = tr.querySelectorAll('input');
+                rowsData.push({
+                    issued_place:   inp[0]?.value || '',
+                    date_of_issued: inp[1]?.value || '',
+                    expired_date:   inp[2]?.value || '',
+                    last_survey:    inp[3]?.value || '',
+                    next_survey:    inp[4]?.value || '',
+                    remarks:        inp[5]?.value || ''
+                });
+            });
+
+            try {
+                await supa('POST', 'smk_form_data', null, {
+                    vessel_name: vesselName,
+                    form_code: FORM_CODE,
+                    form_data: {
+                        report_date: dateInput?.value || '',
+                        master_name: masterInput?.value || '',
+                        rows: rowsData
+                    },
+                    updated_at: new Date().toISOString()
+                });
+                btn.innerText = '✅ Tersimpan!';
+                setTimeout(() => { btn.innerHTML = '💾 Simpan Data'; btn.disabled = false; }, 2000);
+            } catch(err) {
+                console.error(err);
+                alert('Gagal menyimpan: ' + err.message);
+                btn.innerHTML = '💾 Simpan Data'; btn.disabled = false;
+            }
+        }
+
+        // === VESSEL LOCK (terima dari React via postMessage) ===
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'SET_VESSEL') {
+                const sel = document.querySelector('.ship-select');
+                const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                Array.from(sel.options).forEach(opt => {
+                    if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) sel.value = opt.value;
+                });
+                if (e.data.locked) sel.disabled = true;
+                loadFromSupabase();
+            }
+        });
+
+        // Trigger load when vessel manually changed
+        document.querySelector('.ship-select').addEventListener('change', loadFromSupabase);
+
+        // Auto-load on start (for admin/SI who pick manually)
+        window.addEventListener('load', () => {
+            if (document.querySelector('.ship-select').value) loadFromSupabase();
+        });
+    </script>
 </body>
+
 </html>
