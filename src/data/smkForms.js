@@ -103,6 +103,21 @@ export const SMK_FORMS = [
   { code: "091C", title: "Record of Hours of Rest", category: "Laporan Deck", file: "091C_Record_Hours_Of_Rest.html" },
   { code: "091D", title: "Weekly Accomodation Inspection", category: "Laporan Deck", file: "091D_Weekly_Accomm_Inspection.html" },
   { code: "091E", title: "Crew Repatriation", category: "Laporan Deck", file: "091E_Crew_Repatriation.html" },
+  { code: "092", title: "Loading Cargo & Stability Info", category: "Laporan Deck", file: "092_Loading_Cargo_Stability.html" },
+  { code: "093A", title: "Covid-19 Drill", category: "Laporan Deck", file: "093A_Covid_Drill.html" },
+  { code: "093B", title: "Covid-19 Self Risk Assessment", category: "Laporan Deck", file: "093B_Covid_Self_Risk_Assessment.html" },
+  { code: "093C", title: "Covid-19 Investigation", category: "Laporan Deck", file: "093C_Covid_Investigation.html" },
+  { code: "093D", title: "Covid-19 Daily Monitoring", category: "Laporan Deck", file: "093D_Covid_Daily_Monitoring.html" },
+  { code: "093E", title: "Pre-Boarding Covid-19", category: "Laporan Deck", file: "093E_Covid_Pre_Boarding.html" },
+  { code: "094", title: "Laporan Pengembalian Barang", category: "Laporan Deck", file: "094_Item_Return_Report.html" },
+  { code: "095", title: "Navigasi Perairan Sempit", category: "Laporan Deck", file: "095_Narrow_Channel_Checklist.html" },
+  { code: "096A", title: "Checklist Pengoperasian Crane", category: "Laporan Deck", file: "096A_Checklist_Crane_Operation.html" },
+  { code: "096B1", title: "Pemeliharaan Crane Harian", category: "Laporan Deck", file: "096B1_Crane_Maintenance_Daily.html" },
+  { code: "096B2", title: "Pemeliharaan Crane 1-2 Bulan", category: "Laporan Deck", file: "096B2_Crane_Maintenance_1_2_Months.html" },
+  { code: "096B3", title: "Pemeliharaan Crane 6 Bulan", category: "Laporan Deck", file: "096B3_Crane_Maintenance_6_Months.html" },
+  { code: "096B4", title: "Pemeliharaan Crane 1-2 Tahun", category: "Laporan Deck", file: "096B4_Crane_Maintenance_1_2_Years.html" },
+  { code: "096B5", title: "Pemeliharaan Crane 5-10 Tahun", category: "Laporan Deck", file: "096B5_Crane_Maintenance_5_10_Years.html" },
+  { code: "097", title: "Pemeriksaan Peralatan Vendor Pengelasan", category: "Laporan Deck", file: "097_Welding_Vendor_Equipment_Inspection.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];

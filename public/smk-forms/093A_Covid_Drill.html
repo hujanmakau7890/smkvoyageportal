@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>093A Latihan Penanganan COVID-19</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; font-size: 11px; }
+        .page { max-width: 900px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 15px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 50px; margin-bottom: 10px; padding-bottom: 5px; }
+        .co { font-weight: bold; font-size: 12px; }
+        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 9px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 3px 6px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .grid-header { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .row { display: flex; align-items: center; margin-bottom: 4px; }
+        .row label { width: 140px; font-weight: bold; }
+        .row input, .row select { flex: 1; padding: 3px; border: 0; border-bottom: 1px dotted black; background: transparent; outline: none; font-size: 11px; }
+        
+        .section-box { border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; background: #f9fafb; }
+        .section-title { font-weight: bold; margin-bottom: 5px; }
+        textarea { width: 100%; padding: 8px; border: 1px solid #ccc; outline: none; resize: vertical; font-family: inherit; font-size: 11px; }
+        
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; margin-top: 5px; }
+        .checkbox-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        
+        .footer-sigs { display: flex; justify-content: space-around; margin-top: 20px; }
+        .sig-box { width: 250px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; font-weight: bold; font-size: 12px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 5px; outline: none; background: transparent; font-size: 12px; }
+        
+        .hidden { display: none !important; }
+        .sigimg { max-height: 70px; max-width: 100%; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 10mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; overflow: visible; }
+            textarea { border: 0; border-bottom: 1px dotted #ccc; background: transparent; }
+            .section-box { border: 0; background: white; }
+            input[type=checkbox] { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border: 1px solid black; display: inline-block; position: relative; }
+            input[type=checkbox]:checked::before { content: 'X'; position: absolute; left: 2px; top: -2px; font-weight: bold; font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Print Button -->
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">093A LATIHAN PENANGANAN PERSEBARAN COVID-19</div>
+                <div class="stat">
+                    <div class="box"><span>CS</span><span>BLN</span></div>
+                    <div>Release: Rev. -</div>
+                </div>
+            </div>
+            
+            <div class="grid-header">
+                <div>
+                    <div class="row"><label>Ship Name:</label>
+                        <select class="ship-select" id="vessel_name" style="border-bottom: 1px solid black;">
+                            <option value="">Pilih Kapal</option>
+                            <option>Sahabat Mas</option>
+                            <option>Semangat Mas</option>
+                            <option>Express Mas</option>
+                            <option>Pratama Mas</option>
+                            <option>Prakarsa Mas</option>
+                            <option>Mavendra Mas</option>
+                            <option>Selaras Mas</option>
+                            <option>Segoro Mas</option>
+                        </select>
+                    </div>
+                    <div class="row"><label>Voyage:</label><input type="text" id="voyage"></div>
+                </div>
+                <div>
+                    <div class="row"><label>Date:</label><input type="date" id="report_date"></div>
+                    <div class="row"><label>From:</label><input type="text" id="from_port"></div>
+                    <div class="row"><label>Next Port:</label><input type="text" id="next_port"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">Tentukan Emergency Condition Category / Skenario:</div>
+            <div style="font-size: 9px; font-style: italic; margin-bottom: 5px;">(Contoh: Saat pre-boarding visitor/crew dengan gejala klinis Covid-19 yaitu demam, batuk pilek, di gangway atau saat di kabin crew)</div>
+            <textarea id="scenario" style="height: 60px;"></textarea>
+            
+            <div class="row" style="margin-top: 10px;"><label style="width: 250px;">Incident position / Posisi Kejadian:</label><input type="text" id="incident_pos"></div>
+            <div class="row"><label style="width: 250px;">Sea/Weather Surrounding Place / Cuaca:</label><input type="text" id="weather"></div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">Emergency Condition impacts / Efek Keadaan Darurat:</div>
+            <div class="row"><label style="width: 150px;">a. Soul / Nyawa:</label><input type="text" id="impact_soul"></div>
+            <div class="row"><label style="width: 150px;">b. Environment / Lingkungan:</label><input type="text" id="impact_env"></div>
+            <div class="row"><label style="width: 150px;">c. Vessel / Kapal:</label><input type="text" id="impact_vessel"></div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">Relations with the Emergency Response Team by / Hubungan Dengan Tim Tanggap Darurat Dengan:</div>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="comm_phone"> Phone</label>
+                <label><input type="checkbox" id="comm_hp"> Handphone</label>
+                <label><input type="checkbox" id="comm_ssb"> SSB Radio</label>
+                <label><input type="checkbox" id="comm_telex"> Telex</label>
+                <label><input type="checkbox" id="comm_telegram"> Telegraph</label>
+                <label><input type="checkbox" id="comm_fax"> Fax</label>
+            </div>
+            <div class="row"><label style="width: 180px;">Other Comm Tools:</label><input type="text" id="comm_other"></div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">The first emergency news recipient / Penerima Berita Darurat Pertama:</div>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="rec_dpa"> D P A</label>
+                <label><input type="checkbox" id="rec_qss"> QSS Manager</label>
+                <label><input type="checkbox" id="rec_fleet"> Fleet Manager + Superitendent</label>
+                <label><input type="checkbox" id="rec_crewing"> Crewing</label>
+                <label><input type="checkbox" id="rec_port"> Local Port Health Office</label>
+            </div>
+            <div class="row"><label style="width: 180px;">Another Persons at HO:</label><input type="text" id="rec_other"></div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">Master Actions / Tindakan-tindakan Nakhoda:</div>
+            <textarea id="master_actions" style="height: 60px;"></textarea>
+        </div>
+        
+        <div class="section-box">
+            <div class="section-title">Parties involved / Pihak Lain Yang Terlibat:</div>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="party_kplp"> Sea Coast & Guard / KPLP</label>
+                <label><input type="checkbox" id="party_port"> Port Authority / Syahbandar</label>
+                <label><input type="checkbox" id="party_agent"> Local Agent</label>
+            </div>
+            <div class="row"><label style="width: 180px;">Another Parties:</label><input type="text" id="party_other"></div>
+        </div>
+        
+        <div class="section-box">
+            <div class="section-title">Others important notes / Catatan Penting Lain:</div>
+            <textarea id="notes" style="height: 40px;"></textarea>
+            <div style="font-size: 9px; font-weight: bold; margin-top: 5px; color: red;" class="no-print">* Note: Lampirkan photo disetiap laporan drill dan catat dalam Log Book.</div>
+        </div>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Ship Health Officer / Perwira Kesehatan</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:70px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig1" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig1')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig1_name" placeholder="Name & Sign">
+            </div>
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Master / Nakhoda</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:70px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig2" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig2" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig2')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig2_name" placeholder="Name & Sign">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        const FORM_CODE = "093A";
+        const shipSelect = document.getElementById('vessel_name');
+
+        const inputsToSave = [
+            'voyage', 'report_date', 'from_port', 'next_port', 'scenario', 'incident_pos', 'weather',
+            'impact_soul', 'impact_env', 'impact_vessel', 'comm_other', 'rec_other', 'master_actions', 'party_other', 'notes',
+            'sig1_name', 'sig2_name'
+        ];
+        
+        const checksToSave = [
+            'comm_phone', 'comm_hp', 'comm_ssb', 'comm_telex', 'comm_telegram', 'comm_fax',
+            'rec_dpa', 'rec_qss', 'rec_fleet', 'rec_crewing', 'rec_port',
+            'party_kplp', 'party_port', 'party_agent'
+        ];
+
+        
+
+        function loadSig(id, val) {
+            let img = document.getElementById(id);
+            if(img) {
+                img.src = val || '';
+                let c = img.closest('.pv-container');
+                if(c) {
+                    if(val) {
+                        c.querySelector('label').style.display='none';
+                        c.querySelector('.pv').style.display='block';
+                    } else {
+                        c.querySelector('label').style.display='inline-flex';
+                        c.querySelector('.pv').style.display='none';
+                    }
+                }
+            }
+        }
+
+        function clearSig(id){
+            let img = document.getElementById(id);
+            img.src='';
+            let c=img.closest('.pv-container');
+            if(c){
+                c.querySelector('.pv').style.display='none';
+                c.querySelector('label').style.display='inline-flex';
+                c.querySelector('.sig-upload').value='';
+            }
+        }
+
+        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
+            if(!e.target.files[0])return;
+            const r=new FileReader();
+            r.onload=a=>{
+                document.getElementById(x.dataset.target).src=a.target.result;
+                let c=x.closest('.pv-container');
+                if(c){
+                    c.querySelector('label').style.display='none';
+                    c.querySelector('.pv').style.display='block';
+                }
+            };
+            r.readAsDataURL(e.target.files[0])
+        });
+
+        
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { 
+                alert('Pilih Kapal terlebih dahulu!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Menyimpan...'; 
+            btn.disabled = true;
+
+            const fd = {};
+            inputsToSave.forEach(id => { fd[id] = document.getElementById(id).value; });
+            checksToSave.forEach(id => { fd[id] = document.getElementById(id).checked; });
+            fd.sig1 = document.getElementById('sig1').src || '';
+            fd.sig2 = document.getElementById('sig2').src || '';
+
+            
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false; 
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: document.getElementById('report_date').value || new Date().toISOString().split('T')[0],
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }, 500);
+
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                
+                
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+                
+                
+            }
+        });
+
+        
+    </script>
+</body>
+</html>

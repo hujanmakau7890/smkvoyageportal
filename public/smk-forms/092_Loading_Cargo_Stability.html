@@ -1,530 +1,522 @@
 <!doctype html>
-<html>
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>092 Loading Cargo & Stability Information</title>
     <style>
         * { box-sizing: border-box; }
-        body { margin: 0; background: #e5e7eb; font-family: Arial; font-size: 11px; }
-        .page { max-width: 1400px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow-x: auto; }
-        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
-        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; font-size: 11px; color: #111827; }
+        .page { max-width: 1400px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 15px; }
+        .btn { border: 0; border-radius: 6px; padding: 9px 18px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; font-size: 13px; }
         .btn:hover { background: #1d4ed8; }
-        
-        .head { border: 2px solid; padding: 8px; margin-bottom: 15px; }
-        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 50px; margin-bottom: 10px; padding-bottom: 5px; }
+        .btn.secondary { background: #64748b; }
+
+        /* Header */
+        .head { border: 2px solid #111827; padding: 10px 12px; margin-bottom: 14px; }
+        .top { display: grid; grid-template-columns: 26% 48% 26%; align-items: start; border-bottom: 2px solid #111827; padding-bottom: 8px; margin-bottom: 10px; gap: 8px; }
         .co { font-weight: bold; font-size: 12px; }
-        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; }
-        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 9px; }
-        .box { display: flex; border: 1px solid; }
-        .box span { padding: 3px 6px; }
-        .box span+span { border-left: 1px solid; }
-        
-        .grid-header { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .row { display: flex; align-items: center; margin-bottom: 4px; }
-        .row label { width: 100px; font-weight: bold; }
-        .row input, .row select { flex: 1; padding: 3px; border: 0; border-bottom: 1px dotted black; background: transparent; outline: none; font-size: 11px; }
-        
-        .section-title { font-weight: bold; font-size: 12px; background: #374151; color: white; padding: 6px; margin: 15px 0 10px 0; }
-        
-        table { border-collapse: collapse; width: 100%; text-align: center; margin-bottom: 15px; }
-        th, td { border: 1px solid black; padding: 2px; }
-        th { background: #f3f4f6; font-size: 9px; font-weight: bold; }
-        td input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 10px; outline: none; }
-        
-        .bg-gray { background: #f9fafb; font-weight: bold; }
-        .bg-light-yellow { background: #fef9c3; }
-        .readonly-val { font-weight: bold; color: #1e3a8a; }
-        
-        .flex-row { display: flex; gap: 20px; justify-content: space-around; margin-bottom: 20px; text-align: center; }
-        .info-box { border: 1px solid black; padding: 10px; width: 23%; }
-        .info-box input { width: 100%; border: 0; border-bottom: 1px dotted black; text-align: center; font-weight: bold; font-size: 12px; margin-top: 10px; }
-        
-        .grid-draft { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 20px; }
-        .draft-box { border: 1px solid black; padding: 10px; }
-        .draft-title { font-weight: bold; text-align: center; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; }
-        
-        .cargo-weight-box { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; }
-        
-        .footer-sigs { display: flex; justify-content: space-around; margin-top: 10px; }
-        .sig-box { width: 250px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; font-weight: bold; font-size: 12px; }
-        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 5px; outline: none; background: transparent; font-size: 12px; }
-        
+        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; line-height: 1.5; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; font-size: 9px; }
+        .box { display: flex; border: 1.5px solid #111827; }
+        .box span { padding: 3px 8px; min-width: 46px; text-align: center; }
+        .box span + span { border-left: 1.5px solid #111827; }
+        .release { color: #374151; }
+
+        .grid-header { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 18px; }
+        .row { display: flex; align-items: baseline; gap: 6px; }
+        .row label { font-weight: bold; white-space: nowrap; font-size: 11px; }
+        .row input, .row select { flex: 1; min-width: 0; padding: 3px 4px; border: 0; border-bottom: 1px solid #111827; background: transparent; outline: none; font-size: 11px; font-family: inherit; }
+        .row select { cursor: pointer; appearance: auto; }
+
+        .section-title { font-weight: bold; font-size: 12px; background: #1f2937; color: white; padding: 6px 10px; margin: 16px 0 10px 0; letter-spacing: 0.3px; }
+
+        /* Cargo table */
+        .table-container { overflow-x: auto; margin-bottom: 6px; }
+        table { border-collapse: collapse; width: 100%; text-align: center; }
+        th, td { border: 1px solid #111827; padding: 3px 2px; }
+        th { background: #f3f4f6; font-size: 9px; font-weight: bold; line-height: 1.35; }
+        td input { width: 100%; min-width: 42px; border: 0; background: transparent; text-align: center; font-size: 10px; outline: none; font-family: inherit; }
+        td.size-cell { background: #f9fafb; font-weight: bold; font-size: 10px; white-space: nowrap; padding: 3px 8px; }
+        .bg-gray { background: #f3f4f6; }
+        .bg-yellow { background: #fef9c3; }
+        tfoot td { font-weight: bold; background: #eef2ff; }
+        tfoot input { font-weight: bold; color: #1e3a8a; }
+
+        /* Grand total */
+        .grand { border: 2px solid #1e3a8a; background: #eff6ff; padding: 10px 14px; margin: 12px 0 4px; }
+        .grand-title { text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 8px; }
+        .grand-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; }
+        .grand-item { border: 1px solid #93c5fd; background: white; border-radius: 6px; padding: 6px; }
+        .grand-item .lbl { font-size: 9px; color: #475569; margin-bottom: 3px; }
+        .grand-item .val { font-size: 15px; font-weight: bold; color: #1e3a8a; }
+
+        /* Stability */
+        .stab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 14px; }
+        .info-box { border: 1.5px solid #111827; padding: 8px 10px 12px; text-align: center; font-weight: bold; font-size: 9.5px; }
+        .info-box input { width: 100%; border: 0; border-bottom: 1px solid #111827; text-align: center; font-weight: bold; font-size: 13px; margin-top: 8px; outline: none; background: transparent; font-family: inherit; }
+
+        .draft-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-bottom: 14px; max-width: 720px; }
+        .draft-box { border: 1.5px solid #111827; padding: 10px 12px; }
+        .draft-title { font-weight: bold; text-align: center; font-size: 11px; border-bottom: 1px solid #111827; padding-bottom: 6px; margin-bottom: 8px; }
+        .draft-box .row { margin-bottom: 5px; }
+        .draft-box .row label { width: 92px; }
+        .draft-box .row input { text-align: left; }
+
+        /* Cargo weight */
+        .cw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; max-width: 700px; margin-bottom: 20px; }
+        .cw-box { border: 1.5px solid #111827; padding: 8px 10px 12px; text-align: center; font-weight: bold; font-size: 10px; }
+        .cw-box input { width: 100%; border: 0; border-bottom: 1px solid #111827; text-align: center; font-weight: bold; font-size: 14px; margin-top: 8px; outline: none; background: transparent; font-family: inherit; }
+        .cw-box.diff { background: #fef2f2; }
+        .cw-box.diff input { color: #dc2626; }
+
+        /* Signatures */
+        .footer-sigs { display: flex; justify-content: space-around; gap: 30px; margin-top: 26px; }
+        .sig-box { width: 280px; display: flex; flex-direction: column; align-items: center; text-align: center; font-weight: bold; font-size: 11px; }
+        .sig-space { position: relative; display: flex; justify-content: center; align-items: center; min-height: 56px; width: 100%; }
+        .pv { display: none; position: relative; }
+        .sigimg { max-height: 52px; max-width: 100%; }
+        .sig-box input { border: 0; border-bottom: 1px solid #111827; width: 85%; text-align: center; margin-top: 4px; outline: none; background: transparent; font-size: 11px; font-family: inherit; }
         .hidden { display: none !important; }
-        .sigimg { max-height: 50px; max-width: 100%; }
-        
+
         @media print {
             @page { size: A4 landscape; margin: 8mm; }
             .no-print { display: none !important; }
             body { background: white; }
-            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; overflow: visible; }
-            td input { font-size: 9px; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; }
+            .table-container { overflow: visible !important; }
+            td input, th { font-size: 8.5px; }
+            .grand-item .val { font-size: 13px; }
         }
     </style>
 </head>
 <body>
     <div class="page">
-        <!-- Print Button -->
+        <!-- Toolbar -->
         <div class="tools no-print">
-            <button id="btn-print" class="btn" onclick="saveAndPrint()">
-                📄 Print / Simpan PDF
-            </button>
+            <button id="btn-reset" class="btn secondary" onclick="resetForm()">↺ Reset</button>
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">📄 Print / Simpan PDF</button>
         </div>
 
         <!-- Header -->
         <div class="head">
             <div class="top">
                 <div class="co">PT MENTARI MAS MULTIMODA</div>
-                <div class="ttl">092 LOADING CARGO & STABILITY INFORMATION</div>
+                <div class="ttl">092 — Loading Cargo &amp; Stability Information</div>
                 <div class="stat">
                     <div class="box"><span>S</span><span>VOY</span></div>
-                    <div>Release: Rev.0</div>
+                    <div class="release">Release&nbsp;: Rev.0</div>
                 </div>
             </div>
-            
             <div class="grid-header">
-                <div class="row"><label>Vessel Name:</label>
-                    <select class="ship-select" id="vessel_name" style="border-bottom: 1px solid black;">
-                        <option value="">Pilih Kapal</option>
+                <div class="row"><label>Vessel Name :</label>
+                    <select class="ship-select" id="vessel_name">
+                        <option value="">— Pilih Kapal —</option>
+                        <option>Express Mas</option>
+                        <option>Mavendra Mas</option>
+                        <option>Prakarsa Mas</option>
+                        <option>Pratama Mas</option>
                         <option>Sahabat Mas</option>
                         <option>Semangat Mas</option>
-                        <option>Express Mas</option>
-                        <option>Pratama Mas</option>
-                        <option>Prakarsa Mas</option>
-                        <option>Mavendra Mas</option>
                         <option>Selaras Mas</option>
                         <option>Segoro Mas</option>
                     </select>
                 </div>
-                <div class="row"><label>Port of Loading:</label><input type="text" id="port_loading"></div>
-                <div class="row"><label>Date:</label><input type="date" id="report_date"></div>
-                <div class="row"><label>Voy No:</label><input type="text" id="voy_no"></div>
+                <div class="row"><label>Port of Loading :</label><input type="text" id="port_loading"></div>
+                <div class="row"><label>Date :</label><input type="date" id="report_date"></div>
+                <div class="row"><label>Voy No :</label><input type="text" id="voy_no"></div>
             </div>
         </div>
 
+        <!-- A -->
         <div class="section-title">A. TOTAL CARGO / CONTAINER ON BOARD</div>
+        <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th rowspan="3">SIZE</th>
+                    <th rowspan="3" style="width:110px">SIZE</th>
                     <th colspan="4" class="bg-gray">NON DG CARGO / CONTAINER</th>
-                    <th colspan="5" class="bg-light-yellow">DANGEROUS (DG) CARGO / CONTAINER</th>
+                    <th colspan="5" class="bg-yellow">DANGEROUS (DG) CARGO / CONTAINER</th>
                     <th colspan="4" class="bg-gray">REEFER CARGO / CONTAINER</th>
                 </tr>
                 <tr>
-                    <th colspan="2">QTY (TEU/BOX)</th>
-                    <th colspan="2">WEIGHT (MT)</th>
+                    <th colspan="2">QUANTITY (TEU/BOX)</th>
+                    <th colspan="2">WEIGHT (IN MT)</th>
                     <th rowspan="2">CLASS</th>
-                    <th colspan="2">QTY (TEU/BOX)</th>
-                    <th colspan="2">WEIGHT (MT)</th>
-                    <th colspan="2">QTY (TEU/BOX)</th>
-                    <th colspan="2">WEIGHT (MT)</th>
+                    <th colspan="2">QUANTITY (TEU/BOX)</th>
+                    <th colspan="2">WEIGHT (IN MT)</th>
+                    <th colspan="2">QUANTITY (TEU/BOX)</th>
+                    <th colspan="2">WEIGHT (IN MT)</th>
                 </tr>
                 <tr>
-                    <th>I / H</th><th>O / D</th><th>I / H</th><th>O / D</th>
-                    <th>I / H</th><th>O / D</th><th>I / H</th><th>O / D</th>
-                    <th>I / H</th><th>O / D</th><th>I / H</th><th>O / D</th>
+                    <th>I/H</th><th>O/D</th><th>I/H</th><th>O/D</th>
+                    <th>I/H</th><th>O/D</th><th>I/H</th><th>O/D</th>
+                    <th>I/H</th><th>O/D</th><th>I/H</th><th>O/D</th>
                 </tr>
             </thead>
-            <tbody id="cargoBody">
-                <!-- Generated by JS -->
-            </tbody>
+            <tbody id="cargoBody"><!-- rows by JS --></tbody>
             <tfoot>
-                <tr class="bg-gray">
-                    <td>TOTAL</td>
-                    <td><input type="text" id="tot_nondg_qty_ih" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_nondg_qty_od" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_nondg_wt_ih" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_nondg_wt_od" readonly class="readonly-val"></td>
+                <tr>
+                    <td class="size-cell" style="text-align:center">TOTAL</td>
+                    <td colspan="2"><input type="text" id="tot_nondg_qty" readonly></td>
+                    <td colspan="2"><input type="text" id="tot_nondg_wt" readonly></td>
                     <td></td>
-                    <td><input type="text" id="tot_dg_qty_ih" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_dg_qty_od" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_dg_wt_ih" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_dg_wt_od" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_ref_qty_ih" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_ref_qty_od" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_ref_wt_ih" readonly class="readonly-val"></td>
-                    <td><input type="text" id="tot_ref_wt_od" readonly class="readonly-val"></td>
+                    <td colspan="2"><input type="text" id="tot_dg_qty" readonly></td>
+                    <td colspan="2"><input type="text" id="tot_dg_wt" readonly></td>
+                    <td colspan="2"><input type="text" id="tot_ref_qty" readonly></td>
+                    <td colspan="2"><input type="text" id="tot_ref_wt" readonly></td>
                 </tr>
             </tfoot>
         </table>
+        </div>
 
-        <div style="border: 2px solid #1e3a8a; padding: 10px; text-align: center; font-weight: bold; background: #eff6ff; margin-bottom: 20px;">
-            <div>GRAND TOTAL CARGO / CONTAINER ON BOARD</div>
-            <div style="display: flex; justify-content: space-around; margin-top: 10px; color: #1e3a8a;">
-                <div>I/H (TEU/BOX): <span id="grand_qty_ih">0</span></div>
-                <div>O/D (TEU/BOX): <span id="grand_qty_od">0</span></div>
-                <div>I/H (MT): <span id="grand_wt_ih">0</span></div>
-                <div>O/D (MT): <span id="grand_wt_od">0</span></div>
+        <!-- Grand total -->
+        <div class="grand">
+            <div class="grand-title">GRAND TOTAL CARGO / CONTAINER ON BOARD</div>
+            <div class="grand-grid">
+                <div class="grand-item"><div class="lbl">I/H — TEU/BOX</div><div class="val" id="grand_qty_ih">0</div></div>
+                <div class="grand-item"><div class="lbl">O/D — TEU/BOX</div><div class="val" id="grand_qty_od">0</div></div>
+                <div class="grand-item"><div class="lbl">I/H — MT</div><div class="val" id="grand_wt_ih">0.00</div></div>
+                <div class="grand-item"><div class="lbl">O/D — MT</div><div class="val" id="grand_wt_od">0.00</div></div>
             </div>
         </div>
 
+        <!-- B -->
         <div class="section-title">B. STABILITY INFORMATION</div>
-        <div class="flex-row">
-            <div class="info-box">
-                LIGHT SHIP (IN MT)
-                <input type="number" step="0.01" id="light_ship">
-            </div>
-            <div class="info-box">
-                CONSTANT (IN MT)
-                <input type="number" step="0.01" id="constant">
-            </div>
-            <div class="info-box">
-                OPERATING LOAD (FW + LO + FO) (IN MT)
-                <input type="number" step="0.01" id="op_load">
-            </div>
-            <div class="info-box">
-                ROB BALLAST (IN MT)
-                <input type="number" step="0.01" id="rob_ballast">
-            </div>
+        <div class="stab-grid">
+            <div class="info-box">LIGHT SHIP (IN MT)<input type="number" step="0.01" id="light_ship"></div>
+            <div class="info-box">CONSTANT (IN MT)<input type="number" step="0.01" id="constant"></div>
+            <div class="info-box">OPERATING LOAD<br>(FW + LUBE OIL + FUEL OIL) (IN MT)<input type="number" step="0.01" id="op_load"></div>
+            <div class="info-box">ROB BALLAST (IN MT)<input type="number" step="0.01" id="rob_ballast"></div>
         </div>
-        
-        <div class="grid-draft">
+
+        <div class="draft-grid">
             <div class="draft-box">
                 <div class="draft-title">CALCULATION DRAFT (IN METER)</div>
-                <div class="row"><label>FORE DRAFT:</label><input type="number" step="0.01" id="calc_fore"></div>
-                <div class="row"><label>MEAN DRAFT:</label><input type="number" step="0.01" id="calc_mean"></div>
-                <div class="row"><label>AFT DRAFT:</label><input type="number" step="0.01" id="calc_aft"></div>
-                <div class="row" style="margin-top: 10px;"><label>GoM (CAPS):</label><input type="number" step="0.01" id="calc_gom"></div>
+                <div class="row"><label>FORE DRAFT</label><input type="number" step="0.001" id="calc_fore"></div>
+                <div class="row"><label>MEAN DRAFT</label><input type="number" step="0.001" id="calc_mean"></div>
+                <div class="row"><label>AFT DRAFT</label><input type="number" step="0.001" id="calc_aft"></div>
+                <div class="row"><label>GoM (CAPS)</label><input type="number" step="0.01" id="calc_gom"></div>
             </div>
             <div class="draft-box">
                 <div class="draft-title">ACTUAL DRAFT (IN METER)</div>
-                <div class="row"><label>FORE DRAFT:</label><input type="number" step="0.01" id="act_fore"></div>
-                <div class="row"><label>MEAN DRAFT:</label><input type="number" step="0.01" id="act_mean"></div>
-                <div class="row"><label>AFT DRAFT:</label><input type="number" step="0.01" id="act_aft"></div>
+                <div class="row"><label>FORE DRAFT</label><input type="number" step="0.001" id="act_fore"></div>
+                <div class="row"><label>MEAN DRAFT</label><input type="number" step="0.001" id="act_mean"></div>
+                <div class="row"><label>AFT DRAFT</label><input type="number" step="0.001" id="act_aft"></div>
             </div>
         </div>
 
+        <!-- C -->
         <div class="section-title">C. CARGO WEIGHT</div>
-        <div class="cargo-weight-box">
-            <div class="row" style="width: 250px;"><label>BY PLAN (M/T):</label><input type="number" step="0.01" id="cw_plan" readonly style="font-weight:bold;"></div>
-            <div class="row" style="width: 250px;"><label>BY DRAFT (M/T):</label><input type="number" step="0.01" id="cw_draft"></div>
-            <div class="row" style="width: 250px;"><label>DIFFERENCE (M/T):</label><input type="number" step="0.01" id="cw_diff" readonly style="color:red; font-weight:bold;"></div>
+        <div class="cw-grid">
+            <div class="cw-box">BY PLAN (M/T)<input type="number" step="0.01" id="cw_plan" readonly style="color:#1e3a8a;"></div>
+            <div class="cw-box">BY DRAFT (M/T)<input type="number" step="0.01" id="cw_draft"></div>
+            <div class="cw-box diff">DIFFERENCE (M/T)<input type="number" step="0.01" id="cw_diff" readonly></div>
         </div>
 
+        <!-- Signatures -->
         <div class="footer-sigs">
             <div class="sig-box">
-                <div style="margin-bottom:10px;">Prepared by Chief Officer</div>
-                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
-                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
-                    <div class="pv hidden" style="display:none; position:relative;">
-                        <img id="sig1" class="sigimg">
-                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig1')">×</button>
+                <div>Prepared by Chief Officer,</div>
+                <div class="sig-space">
+                    <label class="btn no-print" style="padding:5px 10px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
+                    <div class="pv">
+                        <img id="sig1" class="sigimg" alt="">
+                        <button type="button" class="no-print" style="position:absolute;top:-6px;right:-6px;background:#dc2626;color:white;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;line-height:1;" onclick="clearSig('sig1')">×</button>
                     </div>
                 </div>
-                <input type="text" id="sig1_name" placeholder="Name & Sign">
+                <input type="text" id="sig1_name" placeholder="( Name &amp; Sign )">
             </div>
-            
             <div class="sig-box">
-                <div style="margin-bottom:10px;">Checked & Knowledge by Master</div>
-                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
-                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig2" type="file" accept="image/*"></label>
-                    <div class="pv hidden" style="display:none; position:relative;">
-                        <img id="sig2" class="sigimg">
-                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig2')">×</button>
+                <div>Checked &amp; knowledge by Master,</div>
+                <div class="sig-space">
+                    <label class="btn no-print" style="padding:5px 10px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig2" type="file" accept="image/*"></label>
+                    <div class="pv">
+                        <img id="sig2" class="sigimg" alt="">
+                        <button type="button" class="no-print" style="position:absolute;top:-6px;right:-6px;background:#dc2626;color:white;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;line-height:1;" onclick="clearSig('sig2')">×</button>
                     </div>
                 </div>
-                <input type="text" id="sig2_name" placeholder="Name & Sign">
+                <input type="text" id="sig2_name" placeholder="( Name &amp; Sign )">
             </div>
         </div>
     </div>
 
-    <script>
-        const cargoSizes = ['20" MT', '40" MT', '45" MT', '20" ISO MT', '20" FULL', '40" FULL', '45" FULL', '20" ISO FULL', 'Flat Rack', 'Other Cargo'];
-        const tbody = document.getElementById('cargoBody');
-        
-        let cargoData = cargoSizes.map(s => ({
-            size: s,
-            nondg: { q_ih: '', q_od: '', w_ih: '', w_od: '' },
-            dg: { cls: '', q_ih: '', q_od: '', w_ih: '', w_od: '' },
-            ref: { q_ih: '', q_od: '', w_ih: '', w_od: '' }
-        }));
+<script>
+/* ================= CONFIG ================= */
+const FORM_CODE = "092";
+let SUPA_URL = "", SUPA_KEY = "";
+const shipSelect = document.getElementById('vessel_name');
 
-        function renderTable() {
-            tbody.innerHTML = '';
-            cargoData.forEach((row, i) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="bg-gray">${row.size}</td>
-                    <!-- NON DG -->
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="q_ih" data-idx="${i}" value="${row.nondg.q_ih}"></td>
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="q_od" data-idx="${i}" value="${row.nondg.q_od}"></td>
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="w_ih" data-idx="${i}" value="${row.nondg.w_ih}"></td>
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="w_od" data-idx="${i}" value="${row.nondg.w_od}"></td>
-                    <!-- DG -->
-                    <td class="bg-light-yellow"><input type="text" class="calc-input" data-cat="dg" data-f="cls" data-idx="${i}" value="${row.dg.cls}"></td>
-                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="q_ih" data-idx="${i}" value="${row.dg.q_ih}"></td>
-                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="q_od" data-idx="${i}" value="${row.dg.q_od}"></td>
-                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="w_ih" data-idx="${i}" value="${row.dg.w_ih}"></td>
-                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="w_od" data-idx="${i}" value="${row.dg.w_od}"></td>
-                    <!-- REEFER -->
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="q_ih" data-idx="${i}" value="${row.ref.q_ih}"></td>
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="q_od" data-idx="${i}" value="${row.ref.q_od}"></td>
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="w_ih" data-idx="${i}" value="${row.ref.w_ih}"></td>
-                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="w_od" data-idx="${i}" value="${row.ref.w_od}"></td>
-                `;
-                tbody.appendChild(tr);
-            });
-            
-            document.querySelectorAll('.calc-input').forEach(el => {
-                el.addEventListener('input', function() {
-                    const cat = this.dataset.cat;
-                    const f = this.dataset.f;
-                    const idx = this.dataset.idx;
-                    cargoData[idx][cat][f] = this.value;
-                    calculateTotals();
-                });
-            });
-            calculateTotals();
-        }
+/* ================= DATA MODEL ================= */
+const cargoSizes = ['20" MT','40" MT','45" MT','20" ISO MT','20" FULL','40" FULL','45" FULL','20" ISO FULL','Flat Rack','Other Cargo'];
+let cargoData = cargoSizes.map(s => ({
+    size: s,
+    nondg: { q_ih:'', q_od:'', w_ih:'', w_od:'' },
+    dg:    { cls:'', q_ih:'', q_od:'', w_ih:'', w_od:'' },
+    ref:   { q_ih:'', q_od:'', w_ih:'', w_od:'' }
+}));
 
-        function n(val) { return parseFloat(val) || 0; }
+const n = v => { const x = parseFloat(v); return isNaN(x) ? 0 : x; };
+const fmt = (x, dec) => { const r = Math.round(x * 100) / 100; return (dec === 0 ? r.toFixed(0) : r.toFixed(2)).replace(/\.00$/, ''); };
 
-        function calculateTotals() {
-            let t = {
-                nondg: { q_ih: 0, q_od: 0, w_ih: 0, w_od: 0 },
-                dg: { q_ih: 0, q_od: 0, w_ih: 0, w_od: 0 },
-                ref: { q_ih: 0, q_od: 0, w_ih: 0, w_od: 0 }
-            };
-            
-            cargoData.forEach(r => {
-                ['nondg', 'dg', 'ref'].forEach(c => {
-                    t[c].q_ih += n(r[c].q_ih); t[c].q_od += n(r[c].q_od);
-                    t[c].w_ih += n(r[c].w_ih); t[c].w_od += n(r[c].w_od);
-                });
-            });
-            
-            document.getElementById('tot_nondg_qty_ih').value = t.nondg.q_ih;
-            document.getElementById('tot_nondg_qty_od').value = t.nondg.q_od;
-            document.getElementById('tot_nondg_wt_ih').value = t.nondg.w_ih;
-            document.getElementById('tot_nondg_wt_od').value = t.nondg.w_od;
-            
-            document.getElementById('tot_dg_qty_ih').value = t.dg.q_ih;
-            document.getElementById('tot_dg_qty_od').value = t.dg.q_od;
-            document.getElementById('tot_dg_wt_ih').value = t.dg.w_ih;
-            document.getElementById('tot_dg_wt_od').value = t.dg.w_od;
-            
-            document.getElementById('tot_ref_qty_ih').value = t.ref.q_ih;
-            document.getElementById('tot_ref_qty_od').value = t.ref.q_od;
-            document.getElementById('tot_ref_wt_ih').value = t.ref.w_ih;
-            document.getElementById('tot_ref_wt_od').value = t.ref.w_od;
-            
-            const g_q_ih = t.nondg.q_ih + t.dg.q_ih + t.ref.q_ih;
-            const g_q_od = t.nondg.q_od + t.dg.q_od + t.ref.q_od;
-            const g_w_ih = t.nondg.w_ih + t.dg.w_ih + t.ref.w_ih;
-            const g_w_od = t.nondg.w_od + t.dg.w_od + t.ref.w_od;
-            
-            document.getElementById('grand_qty_ih').innerText = g_q_ih;
-            document.getElementById('grand_qty_od').innerText = g_q_od;
-            document.getElementById('grand_wt_ih').innerText = g_w_ih.toFixed(2);
-            document.getElementById('grand_wt_od').innerText = g_w_od.toFixed(2);
-            
-            // Auto calculate BY PLAN Cargo Weight
-            document.getElementById('cw_plan').value = (g_w_ih + g_w_od).toFixed(2);
-            calcDiff();
-        }
-        
-        function calcDiff() {
-            const plan = n(document.getElementById('cw_plan').value);
-            const draft = n(document.getElementById('cw_draft').value);
-            const diff = draft - plan;
-            document.getElementById('cw_diff').value = diff !== 0 ? diff.toFixed(2) : '';
-        }
-        document.getElementById('cw_draft').addEventListener('input', calcDiff);
-
-        // Supabase Integration
-        let SUPA_URL = "";
-        let SUPA_KEY = "";
-        const FORM_CODE = "092";
-        const shipSelect = document.getElementById('vessel_name');
-
-        const inputsToSave = [
-            'port_loading', 'report_date', 'voy_no',
-            'light_ship', 'constant', 'op_load', 'rob_ballast',
-            'calc_fore', 'calc_mean', 'calc_aft', 'calc_gom',
-            'act_fore', 'act_mean', 'act_aft',
-            'cw_draft', 'sig1_name', 'sig2_name'
-        ];
-
-        async function supa(method, table, params, body) {
-            let url = `${SUPA_URL}/rest/v1/${table}`;
-            if (params) url += '?' + new URLSearchParams(params).toString();
-            const res = await fetch(url, {
-                method,
-                headers: {
-                    'apikey': SUPA_KEY,
-                    'Authorization': 'Bearer ' + SUPA_KEY,
-                    'Content-Type': 'application/json',
-                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
-                },
-                body: body ? JSON.stringify(body) : undefined
-            });
-            if (!res.ok) throw new Error(await res.text());
-            const txt = await res.text();
-            return txt ? JSON.parse(txt) : [];
-        }
-
-        function loadSig(id, val) {
-            let img = document.getElementById(id);
-            if(img) {
-                img.src = val || '';
-                let c = img.closest('.pv-container');
-                if(c) {
-                    if(val) {
-                        c.querySelector('label').style.display='none';
-                        c.querySelector('.pv').style.display='block';
-                    } else {
-                        c.querySelector('label').style.display='inline-flex';
-                        c.querySelector('.pv').style.display='none';
-                    }
-                }
-            }
-        }
-
-        function clearSig(id){
-            let img = document.getElementById(id);
-            img.src='';
-            let c=img.closest('.pv-container');
-            if(c){
-                c.querySelector('.pv').style.display='none';
-                c.querySelector('label').style.display='inline-flex';
-                c.querySelector('.sig-upload').value='';
-            }
-        }
-
-        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
-            if(!e.target.files[0])return;
-            const r=new FileReader();
-            r.onload=a=>{
-                document.getElementById(x.dataset.target).src=a.target.result;
-                let c=x.closest('.pv-container');
-                if(c){
-                    c.querySelector('label').style.display='none';
-                    c.querySelector('.pv').style.display='block';
-                }
-            };
-            r.readAsDataURL(e.target.files[0])
+/* ================= TABLE RENDER ================= */
+function renderTable() {
+    const tbody = document.getElementById('cargoBody');
+    tbody.innerHTML = '';
+    cargoData.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="size-cell">${row.size}</td>
+            <td><input type="number" step="0.01" data-cat="nondg" data-f="q_ih" data-idx="${i}" value="${row.nondg.q_ih}"></td>
+            <td><input type="number" step="0.01" data-cat="nondg" data-f="q_od" data-idx="${i}" value="${row.nondg.q_od}"></td>
+            <td><input type="number" step="0.01" data-cat="nondg" data-f="w_ih" data-idx="${i}" value="${row.nondg.w_ih}"></td>
+            <td><input type="number" step="0.01" data-cat="nondg" data-f="w_od" data-idx="${i}" value="${row.nondg.w_od}"></td>
+            <td class="bg-yellow"><input type="text" data-cat="dg" data-f="cls" data-idx="${i}" value="${row.dg.cls}"></td>
+            <td class="bg-yellow"><input type="number" step="0.01" data-cat="dg" data-f="q_ih" data-idx="${i}" value="${row.dg.q_ih}"></td>
+            <td class="bg-yellow"><input type="number" step="0.01" data-cat="dg" data-f="q_od" data-idx="${i}" value="${row.dg.q_od}"></td>
+            <td class="bg-yellow"><input type="number" step="0.01" data-cat="dg" data-f="w_ih" data-idx="${i}" value="${row.dg.w_ih}"></td>
+            <td class="bg-yellow"><input type="number" step="0.01" data-cat="dg" data-f="w_od" data-idx="${i}" value="${row.dg.w_od}"></td>
+            <td><input type="number" step="0.01" data-cat="ref" data-f="q_ih" data-idx="${i}" value="${row.ref.q_ih}"></td>
+            <td><input type="number" step="0.01" data-cat="ref" data-f="q_od" data-idx="${i}" value="${row.ref.q_od}"></td>
+            <td><input type="number" step="0.01" data-cat="ref" data-f="w_ih" data-idx="${i}" value="${row.ref.w_ih}"></td>
+            <td><input type="number" step="0.01" data-cat="ref" data-f="w_od" data-idx="${i}" value="${row.ref.w_od}"></td>`;
+        tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('input').forEach(el => {
+        el.addEventListener('input', function () {
+            cargoData[+this.dataset.idx][this.dataset.cat][this.dataset.f] = this.value;
+            recalc();
         });
+    });
+}
 
-        async function loadFromSupabase() {
-            const vessel = shipSelect.value;
-            if (!vessel) return;
+/* ================= CALCULATIONS (Excel formulas) =================
+   Excel mapping:
+   D39=SUM(D19:E38)  → total NON DG qty   (q_ih + q_od)
+   F39=SUM(F19:G38)  → total NON DG weight
+   P39=SUM(P19:Q38)  → DG qty ; R39 → DG weight
+   Z39=SUM(Z19:AA38) → REEFER qty ; AB39 → REEFER weight
+   P43 = D39+P39+Z39          (Grand qty I/H)
+   S43 = F39+R39+AB39         (Grand weight I/H)
+   X43 = H39+T39+AD39         (Grand qty O/D)
+   AB43 = J39+V39+AF39        (Grand weight O/D)
+   BY PLAN = grand weight I/H + O/D
+   DIFFERENCE = BY DRAFT − BY PLAN
+================================================================== */
+function recalc() {
+    let t = {
+        nondg: { q:0, w:0 },
+        dg:    { q:0, w:0 },
+        ref:   { q:0, w:0 }
+    };
+    cargoData.forEach(r => {
+        ['nondg','dg','ref'].forEach(c => {
+            t[c].q += n(r[c].q_ih) + n(r[c].q_od);
+            t[c].w += n(r[c].w_ih) + n(r[c].w_od);
+        });
+    });
 
-            inputsToSave.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.value = '';
-            });
-            ['sig1', 'sig2'].forEach(id => loadSig(id, ''));
-            cargoData.forEach(r => {
-                r.nondg = { q_ih: '', q_od: '', w_ih: '', w_od: '' };
-                r.dg = { cls: '', q_ih: '', q_od: '', w_ih: '', w_od: '' };
-                r.ref = { q_ih: '', q_od: '', w_ih: '', w_od: '' };
+    setVal('tot_nondg_qty', fmt(t.nondg.q, 0));
+    setVal('tot_nondg_wt',  fmt(t.nondg.w));
+    setVal('tot_dg_qty',    fmt(t.dg.q, 0));
+    setVal('tot_dg_wt',     fmt(t.dg.w));
+    setVal('tot_ref_qty',   fmt(t.ref.q, 0));
+    setVal('tot_ref_wt',    fmt(t.ref.w));
+
+    // per-side totals (I/H vs O/D kept separate for grand block)
+    let gqi=0, gqo=0, gwi=0, gwo=0;
+    cargoData.forEach(r => {
+        gqi += n(r.nondg.q_ih)+n(r.dg.q_ih)+n(r.ref.q_ih);
+        gqo += n(r.nondg.q_od)+n(r.dg.q_od)+n(r.ref.q_od);
+        gwi += n(r.nondg.w_ih)+n(r.dg.w_ih)+n(r.ref.w_ih);
+        gwo += n(r.nondg.w_od)+n(r.dg.w_od)+n(r.ref.w_od);
+    });
+    setText('grand_qty_ih', fmt(gqi,0));
+    setText('grand_qty_od', fmt(gqo,0));
+    setText('grand_wt_ih',  fmt(gwi));
+    setText('grand_wt_od',  fmt(gwo));
+
+    // BY PLAN auto = total weight (matches Excel SUM of all weight columns)
+    setVal('cw_plan', fmt(gwi + gwo));
+    calcDiff();
+}
+
+function calcDiff() {
+    const plan  = n(getVal('cw_plan'));
+    const draft = n(getVal('cw_draft'));
+    const diff  = draft - plan;
+    setVal('cw_diff', draft ? fmt(diff) : '');
+}
+document.getElementById('cw_draft').addEventListener('input', calcDiff);
+
+function getVal(id){ const el=document.getElementById(id); return el?el.value:''; }
+function setVal(id,v){ const el=document.getElementById(id); if(el) el.value=v; }
+function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+
+/* ================= SIGNATURES ================= */
+function loadSig(id, val) {
+    const img = document.getElementById(id);
+    if (!img) return;
+    img.src = val || '';
+    const c = img.closest('.sig-space');
+    if (!c) return;
+    c.querySelector('label').style.display = val ? 'none' : 'inline-flex';
+    c.querySelector('.pv').style.display = val ? 'block' : 'none';
+}
+function clearSig(id) {
+    loadSig(id, '');
+    const inp = document.querySelector(`.sig-upload[data-target="${id}"]`);
+    if (inp) inp.value = '';
+}
+document.querySelectorAll('.sig-upload').forEach(inp => inp.addEventListener('change', function(e){
+    if (!e.target.files[0]) return;
+    const r = new FileReader();
+    r.onload = a => {
+        loadSig(this.dataset.target, a.target.result);
+    };
+    r.readAsDataURL(e.target.files[0]);
+}));
+
+/* ================= RESET ================= */
+function resetForm() {
+    if (!confirm('Kosongkan semua isian form ini?')) return;
+    cargoData = cargoSizes.map(s => ({ size:s, nondg:{q_ih:'',q_od:'',w_ih:'',w_od:''}, dg:{cls:'',q_ih:'',q_od:'',w_ih:'',w_od:''}, ref:{q_ih:'',q_od:'',w_ih:'',w_od:''} }));
+    renderTable();
+    document.querySelectorAll('input[id], select[id]').forEach(el => {
+        if (el.id === 'vessel_name') { el.value = ''; return; }
+        if (el.type === 'select-one' || el.tagName === 'SELECT') return;
+        if (el.readOnly && ['cw_plan','cw_diff'].includes(el.id)) return;
+        el.value = '';
+    });
+    clearSig('sig1'); clearSig('sig2');
+    recalc();
+    saveData();
+}
+
+/* ================= SUPABASE (smk_form_data) ================= */
+async function supa(method, table, params, body) {
+    const u = `${SUPA_URL}/rest/v1/${table}` + (params ? '?' + new URLSearchParams(params).toString() : '');
+    const res = await fetch(u, {
+        method,
+        headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': 'Bearer ' + SUPA_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+        },
+        body: body ? JSON.stringify(body) : undefined
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const txt = await res.text();
+    return txt ? JSON.parse(txt) : [];
+}
+
+function collectData() {
+    const d = { cargoData: JSON.parse(JSON.stringify(cargoData)) };
+    ['port_loading','report_date','voy_no','light_ship','constant','op_load','rob_ballast',
+     'calc_fore','calc_mean','calc_aft','calc_gom','act_fore','act_mean','act_aft',
+     'cw_draft','cw_plan','cw_diff','sig1_name','sig2_name'].forEach(id => d[id] = getVal(id));
+    d.sig1 = document.getElementById('sig1').src || '';
+    d.sig2 = document.getElementById('sig2').src || '';
+    return d;
+}
+
+async function saveData() {
+    if (!SUPA_URL || !shipSelect.value) return;
+    try {
+        await supa('POST','smk_form_data', null, {
+            vessel_name: shipSelect.value,
+            form_code: FORM_CODE,
+            form_data: collectData(),
+            updated_at: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error('[092] save failed:', e.message);
+    }
+}
+
+async function loadData() {
+    if (!SUPA_URL || !shipSelect.value) return;
+    try {
+        const rows = await supa('GET','smk_form_data',
+            { vessel_name:`eq.${shipSelect.value}`, form_code:`eq.${FORM_CODE}`, select:'form_data', limit:1 });
+        const d = rows[0]?.form_data || {};
+        if (d.cargoData && Array.isArray(d.cargoData)) {
+            cargoData = cargoSizes.map((s,i) => {
+                const src = d.cargoData[i] || {};
+                return {
+                    size: s,
+                    nondg:{ q_ih:src.nondg?.q_ih||'', q_od:src.nondg?.q_od||'', w_ih:src.nondg?.w_ih||'', w_od:src.nondg?.w_od||'' },
+                    dg:   { cls:src.dg?.cls||'', q_ih:src.dg?.q_ih||'', q_od:src.dg?.q_od||'', w_ih:src.dg?.w_ih||'', w_od:src.dg?.w_od||'' },
+                    ref:  { q_ih:src.ref?.q_ih||'', q_od:src.ref?.q_od||'', w_ih:src.ref?.w_ih||'', w_od:src.ref?.w_od||'' }
+                };
             });
             renderTable();
-
-            try {
-                const rows_data = await supa('GET', 'smk_form_data', {
-                    'vessel_name': `eq.${vessel}`,
-                    'form_code': `eq.${FORM_CODE}`,
-                    'select': 'form_data',
-                    'limit': 1
-                });
-                if (!rows_data || rows_data.length === 0) return;
-                const fd = rows_data[0].form_data;
-                if (!fd) return;
-
-                inputsToSave.forEach(id => {
-                    if (fd[id] !== undefined) document.getElementById(id).value = fd[id];
-                });
-                
-                if (fd.cargoData && Array.isArray(fd.cargoData)) {
-                    cargoData = fd.cargoData;
-                }
-                renderTable();
-                
-                loadSig('sig1', fd.sig1);
-                loadSig('sig2', fd.sig2);
-                
-            } catch(err) { console.error('Gagal load data:', err); }
         }
-
-        async function saveAndPrint() {
-            const vessel = shipSelect.value;
-            if (!vessel) { 
-                alert('Pilih Kapal terlebih dahulu!'); 
-                return; 
-            }
-
-            const btn = document.getElementById('btn-print');
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '⏳ Menyimpan...'; 
-            btn.disabled = true;
-
-            const fd = { cargoData: cargoData };
-            inputsToSave.forEach(id => { fd[id] = document.getElementById(id).value; });
-            fd.sig1 = document.getElementById('sig1').src || '';
-            fd.sig2 = document.getElementById('sig2').src || '';
-
-            try {
-                if (SUPA_URL && SUPA_KEY) {
-                    await supa('POST', 'smk_form_data', null, {
-                        vessel_name: vessel,
-                        form_code: FORM_CODE,
-                        form_data: fd,
-                        updated_at: new Date().toISOString()
-                    });
-                }
-                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
-                setTimeout(() => { 
-                    btn.innerHTML = originalHtml; 
-                    btn.disabled = false; 
-                    window.parent.postMessage({
-                        type: 'SMK_SAVE_PDF',
-                        name: document.title,
-                        ship: vessel,
-                        date: document.getElementById('report_date').value,
-                        formCode: FORM_CODE,
-                        formTitle: document.title
-                    }, '*');
-                }, 500);
-            } catch(err) {
-                console.error(err);
-                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
-                btn.innerHTML = originalHtml; 
-                btn.disabled = false;
-                window.parent.postMessage({
-                    type: 'SMK_SAVE_PDF',
-                    name: document.title,
-                    ship: vessel,
-                    date: document.getElementById('report_date').value,
-                    formCode: FORM_CODE,
-                    formTitle: document.title
-                }, '*');
-            }
-        }
-
-        window.addEventListener('message', function(e) {
-            if (e.data && e.data.type === 'INIT_FORM') {
-                SUPA_URL = e.data.supabaseUrl;
-                SUPA_KEY = e.data.supabaseKey;
-                
-                if (e.data.vessel) {
-                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
-                    Array.from(shipSelect.options).forEach(opt => {
-                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
-                    });
-                }
-                if (e.data.locked) shipSelect.disabled = true;
-                
-                if (shipSelect.value) loadFromSupabase();
-            }
+        ['port_loading','report_date','voy_no','light_ship','constant','op_load','rob_ballast',
+         'calc_fore','calc_mean','calc_aft','calc_gom','act_fore','act_mean','act_aft',
+         'cw_draft','cw_plan','cw_diff','sig1_name','sig2_name'].forEach(id => {
+            if (d[id] != null) setVal(id, d[id]);
         });
-        
-        // Initial render
-        renderTable();
+        loadSig('sig1', d.sig1); loadSig('sig2', d.sig2);
+        recalc();
+    } catch (e) {
+        console.error('[092] load failed:', e.message);
+    }
+}
+shipSelect.addEventListener('change', loadData);
 
-        shipSelect.addEventListener('change', loadFromSupabase);
-    </script>
+/* ================= SAVE & PRINT ================= */
+async function saveAndPrint() {
+    if (!shipSelect.value) { alert('Pilih kapal terlebih dahulu!'); shipSelect.focus(); return; }
+    const btn = document.getElementById('btn-print');
+    btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
+    recalc();
+    await saveData();
+    btn.disabled = false; btn.textContent = '📄 Print / Simpan PDF';
+
+    window.parent.postMessage({
+        type: 'SMK_SAVE_PDF',
+        name: document.title,
+        ship: shipSelect.value,
+        date: getVal('report_date') || new Date().toISOString().split('T')[0],
+        formCode: FORM_CODE,
+        formTitle: document.title
+    }, '*');
+}
+
+/* ================= TITLE SYNC ================= */
+(function () {
+    function updateTitle() {
+        const v = shipSelect.value;
+        const dt = getVal('report_date');
+        let t = '092 Loading Cargo & Stability Information';
+        if (v) t += ' - ' + v;
+        if (dt) t += ' - ' + dt;
+        window.parent && window.parent.postMessage({ type:'FORM_TITLE', title:t }, '*');
+    }
+    shipSelect.addEventListener('change', updateTitle);
+    document.getElementById('report_date').addEventListener('change', updateTitle);
+})();
+
+/* ================= INIT_FORM from parent app ================= */
+window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'INIT_FORM') {
+        SUPA_URL = e.data.supabaseUrl || '';
+        SUPA_KEY = e.data.supabaseKey || '';
+        if (e.data.vessel) {
+            const want = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
+            const opt = Array.from(shipSelect.options).find(o => o.value.toLowerCase().replace(/_/g,' ') === want);
+            if (opt) shipSelect.value = opt.value;
+        }
+        if (e.data.locked) shipSelect.disabled = true;
+        loadData().then(recalc);
+    }
+});
+
+renderTable();
+recalc();
+</script>
 </body>
 </html>

@@ -1,0 +1,356 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>093C Penyelidikan Kondisi Awak Kapal Covid-19</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; font-size: 11px; }
+        .page { max-width: 900px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 15px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 50px; margin-bottom: 10px; padding-bottom: 5px; }
+        .co { font-weight: bold; font-size: 12px; }
+        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 9px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 3px 6px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .grid-header { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .row { display: flex; align-items: center; margin-bottom: 4px; }
+        .row label { width: 140px; font-weight: bold; }
+        .row input, .row select { flex: 1; padding: 3px; border: 0; border-bottom: 1px dotted black; background: transparent; outline: none; font-size: 11px; }
+        
+        .section-box { border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; background: #f9fafb; }
+        .section-title { font-weight: bold; background: #374151; color: white; padding: 5px 10px; margin: -10px -10px 10px -10px; font-size: 12px; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .check-item { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dotted #ccc; padding-bottom: 2px; }
+        .check-item .label { width: 60%; }
+        .check-item .options { display: flex; gap: 10px; }
+        .check-item label { cursor: pointer; }
+        
+        .footer-sigs { display: flex; justify-content: space-around; margin-top: 20px; }
+        .sig-box { width: 250px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; font-weight: bold; font-size: 12px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 5px; outline: none; background: transparent; font-size: 12px; }
+        
+        .hidden { display: none !important; }
+        .sigimg { max-height: 70px; max-width: 100%; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 10mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; overflow: visible; }
+            .section-box { border: 0; background: white; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">093C PENYELIDIKAN KONDISI AWAK KAPAL TERKAIT COVID-19</div>
+                <div class="stat">
+                    <div class="box"><span>CS</span><span>SET</span></div>
+                    <div>Release: Rev. -</div>
+                </div>
+            </div>
+            
+            <div class="grid-header">
+                <div>
+                    <div class="row"><label>Nama Kapal:</label>
+                        <select class="ship-select" id="vessel_name" style="border-bottom: 1px solid black;">
+                            <option value="">Pilih Kapal</option>
+                            <option>Sahabat Mas</option>
+                            <option>Semangat Mas</option>
+                            <option>Express Mas</option>
+                            <option>Pratama Mas</option>
+                            <option>Prakarsa Mas</option>
+                            <option>Mavendra Mas</option>
+                            <option>Selaras Mas</option>
+                            <option>Segoro Mas</option>
+                        </select>
+                    </div>
+                    <div class="row"><label>Nama Pewawancara:</label><input type="text" id="interviewer"></div>
+                    <div class="row"><label>Nama Awak Kapal:</label><input type="text" id="crew_name"></div>
+                    <div class="row"><label>Nomor Buku Pelaut:</label><input type="text" id="seaman_book"></div>
+                </div>
+                <div>
+                    <div class="row"><label>Tanggal Wawancara:</label><input type="date" id="interview_date"></div>
+                    <div class="row"><label>Pelabuhan/Lokasi:</label><input type="text" id="port_location"></div>
+                    <div class="row"><label>Jabatan Awak Kapal:</label><input type="text" id="crew_rank"></div>
+                    <div class="row"><label>NIK KTP:</label><input type="text" id="nik"></div>
+                </div>
+            </div>
+            <div class="grid-header">
+                <div>
+                    <div class="row"><label style="width: 100px;">Kriteria:</label>
+                        <select id="kriteria" style="border-bottom: 1px solid black; padding: 2px;">
+                            <option value="Pasien Dalam Pengawasan">Pasien Dalam Pengawasan</option>
+                            <option value="Orang Dalam Pemantauan">Orang Dalam Pemantauan</option>
+                            <option value="Kasus Probabel">Kasus Probabel</option>
+                            <option value="Kasus Konfirmasi">Kasus Konfirmasi</option>
+                            <option value="Kontak Erat">Kontak Erat</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="row"><label style="width: 100px;">Tempat/Tgl Lahir:</label><input type="text" id="birth_info"></div>
+                    <div class="row"><label style="width: 100px;">Jenis Kelamin:</label><input type="text" id="gender"></div>
+                    <div class="row"><label style="width: 100px;">Alamat Lengkap:</label><input type="text" id="address"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">INFORMASI KLINIS</div>
+            <div class="row" style="margin-bottom: 10px;">
+                <label style="width: 280px;">Tanggal pertama kali timbul Gejala Klinis:</label><input type="date" id="symptom_date">
+                <label style="width: 130px; margin-left: 20px;">Demam/Suhu Tubuh:</label><input type="number" step="0.1" id="temperature" placeholder="°C" style="width: 60px; flex: none;"> °C
+            </div>
+            <div class="grid-2">
+                <div id="clin1"></div>
+                <div id="clin2"></div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">KONDISI PENYERTA</div>
+            <div class="grid-2">
+                <div id="cond1"></div>
+                <div id="cond2"></div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">RIWAYAT DIRAWAT DI RUMAH SAKIT</div>
+            <div class="grid-2">
+                <div id="hosp1"></div>
+                <div id="hosp2"></div>
+            </div>
+            <div class="row" style="margin-top: 10px;">
+                <label style="width: 200px;">Status saat keluar Rumah Sakit:</label>
+                <select id="hosp_status" style="width: 150px; flex: none; margin-right: 20px;">
+                    <option value="">-</option>
+                    <option value="Sembuh">Sembuh</option>
+                    <option value="Rawat Jalan">Rawat Jalan</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+                <input type="text" id="hosp_status_other" placeholder="Keterangan Lain...">
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title">FAKTOR KONTAK / PAPARAN</div>
+            <div id="expo"></div>
+        </div>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Pewawancara</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig1" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig1')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig1_name" placeholder="Sign & Name">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const clin_q = [
+            { id: 'c_batuk', label: 'Batuk' }, { id: 'c_lemah', label: 'Lemah (malaise)' },
+            { id: 'c_pilek', label: 'Pilek' }, { id: 'c_nyeriotot', label: 'Nyeri Otot' },
+            { id: 'c_tenggorokan', label: 'Sakit Tenggorokan' }, { id: 'c_mual', label: 'Mual atau Muntah' },
+            { id: 'c_sesak', label: 'Sesak Napas' }, { id: 'c_abdomen', label: 'Nyeri Abdomen' },
+            { id: 'c_mengigil', label: 'Mengigil' }, { id: 'c_diare', label: 'Diare' },
+            { id: 'c_sakitkepala', label: 'Sakit Kepala' }, { id: 'c_lain', label: 'Lainnya (Sebutkan)' }
+        ];
+
+        const cond_q = [
+            { id: 'd_hamil', label: 'Hamil' }, { id: 'd_imun', label: 'Gangguan Imunologi' },
+            { id: 'd_diabetes', label: 'Diabetes' }, { id: 'd_ginjal', label: 'Gagal Ginjal Kronis' },
+            { id: 'd_jantung', label: 'Penyakit Jantung' }, { id: 'd_hati', label: 'Gagal Hati Kronis' },
+            { id: 'd_hipertensi', label: 'Hipertensi' }, { id: 'd_ppok', label: 'PPOK' },
+            { id: 'd_keganasan', label: 'Keganasan' }, { id: 'd_lain', label: 'Lainnya (Sebutkan)' }
+        ];
+
+        const hosp_q = [
+            { id: 'h_pernah', label: 'Apakah Pernah dirawat di RS?' }, { id: 'h_intubasi', label: 'Intubasi' },
+            { id: 'h_icu', label: 'Apakah dirawat di ruang ICU?' }, { id: 'h_oksigen', label: 'Penggunaan Oksigen/EMCO' },
+            { id: 'h_pneumonia', label: 'Pneumonia (klinis / radiologi)' }, { id: 'h_ards', label: 'Acute Respiratory Distress Syndrome' }
+        ];
+
+        const expo_q = [
+            { id: 'e_riwayat', label: '14 hari sebelum sakit apakah memiliki riwayat perjalanan? (Bila YA, sebutkan Negara/Kota, Tanggal)' },
+            { id: 'e_suspect', label: '14 hari sebelum sakit apakah kontak dg kasus Suspect Covid-19?' },
+            { id: 'e_konfirmasi', label: '14 hari sebelum sakit apakah kontak dg kasus konfirmasi Covid-19?' },
+            { id: 'e_pasar', label: '14 hari sebelum sakit apakah mengunjungi pasar hewan? (Bila YA, sebutkan lokasi)' },
+            { id: 'e_faskes', label: '14 hari sebelum sakit apakah mengunjungi fasilitas kesehatan? (Bila YA, sebutkan lokasi)' }
+        ];
+
+        function renderCheck(q) {
+            return `
+                <div class="check-item">
+                    <div class="label">${q.label}</div>
+                    <div class="options">
+                        <label><input type="radio" name="${q.id}" value="Ya"> Ya</label>
+                        <label><input type="radio" name="${q.id}" value="Tidak"> Tidak</label>
+                    </div>
+                </div>
+                ${(q.id === 'c_lain' || q.id === 'd_lain' || q.id === 'e_riwayat' || q.id === 'e_pasar' || q.id === 'e_faskes') ? 
+                  `<input type="text" id="${q.id}_txt" placeholder="Sebutkan..." style="width:100%; border:0; border-bottom:1px dotted #ccc; margin-bottom:5px; font-size:10px;">` : ''}
+            `;
+        }
+
+        const buildHTML = (arr, el1, el2) => {
+            let h1 = '', h2 = '';
+            arr.forEach((q, i) => { if(i%2===0) h1+=renderCheck(q); else h2+=renderCheck(q); });
+            if (el1) document.getElementById(el1).innerHTML = h1;
+            if (el2) document.getElementById(el2).innerHTML = h2;
+        };
+
+        buildHTML(clin_q, 'clin1', 'clin2');
+        buildHTML(cond_q, 'cond1', 'cond2');
+        buildHTML(hosp_q, 'hosp1', 'hosp2');
+
+        let ex = '';
+        expo_q.forEach(q => ex += renderCheck(q));
+        document.getElementById('expo').innerHTML = ex;
+
+        const allRadioNames = [...clin_q, ...cond_q, ...hosp_q, ...expo_q].map(q => q.id);
+
+        
+        const FORM_CODE = "093C";
+        const shipSelect = document.getElementById('vessel_name');
+
+        const inputsToSave = [
+            'interviewer', 'crew_name', 'seaman_book', 'interview_date', 'port_location', 'crew_rank', 'nik',
+            'kriteria', 'birth_info', 'gender', 'address', 'symptom_date', 'temperature',
+            'c_lain_txt', 'd_lain_txt', 'hosp_status', 'hosp_status_other', 'e_riwayat_txt', 'e_pasar_txt', 'e_faskes_txt',
+            'sig1_name'
+        ];
+
+        
+
+        function loadSig(id, val) {
+            let img = document.getElementById(id);
+            if(img) {
+                img.src = val || '';
+                let c = img.closest('.pv-container');
+                if(c) {
+                    if(val) {
+                        c.querySelector('label').style.display='none';
+                        c.querySelector('.pv').style.display='block';
+                    } else {
+                        c.querySelector('label').style.display='inline-flex';
+                        c.querySelector('.pv').style.display='none';
+                    }
+                }
+            }
+        }
+
+        function clearSig(id){
+            let img = document.getElementById(id);
+            img.src='';
+            let c=img.closest('.pv-container');
+            if(c){
+                c.querySelector('.pv').style.display='none';
+                c.querySelector('label').style.display='inline-flex';
+                c.querySelector('.sig-upload').value='';
+            }
+        }
+
+        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
+            if(!e.target.files[0])return;
+            const r=new FileReader();
+            r.onload=a=>{
+                document.getElementById(x.dataset.target).src=a.target.result;
+                let c=x.closest('.pv-container');
+                if(c){
+                    c.querySelector('label').style.display='none';
+                    c.querySelector('.pv').style.display='block';
+                }
+            };
+            r.readAsDataURL(e.target.files[0])
+        });
+
+        
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { 
+                alert('Pilih Kapal terlebih dahulu!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Menyimpan...'; 
+            btn.disabled = true;
+
+            const fd = { radios: {} };
+            inputsToSave.forEach(id => { fd[id] = document.getElementById(id).value; });
+            fd.sig1 = document.getElementById('sig1').src || '';
+            
+            allRadioNames.forEach(n => {
+                const ch = document.querySelector(`input[name="${n}"]:checked`);
+                if (ch) fd.radios[n] = ch.value;
+            });
+
+            
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false; 
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: document.getElementById('interview_date').value || new Date().toISOString().split('T')[0],
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }, 500);
+
+
+        document.getElementById('interviewer').addEventListener('input', function() {
+            document.getElementById('sig1_name').value = this.value;
+        });
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                
+                
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+                
+                
+            }
+        });
+
+        
+    </script>
+</body>
+</html>

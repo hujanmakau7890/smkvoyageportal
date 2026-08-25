@@ -1,0 +1,375 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>093B Penilaian Resiko Awak Kapal Covid-19</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; font-size: 11px; }
+        .page { max-width: 900px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 15px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 50px; margin-bottom: 10px; padding-bottom: 5px; }
+        .co { font-weight: bold; font-size: 12px; }
+        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 9px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 3px 6px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .grid-header { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .row { display: flex; align-items: center; margin-bottom: 4px; }
+        .row label { width: 120px; font-weight: bold; }
+        .row input, .row select { flex: 1; padding: 3px; border: 0; border-bottom: 1px dotted black; background: transparent; outline: none; font-size: 11px; }
+        
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid black; padding: 6px; text-align: left; }
+        th { background: #f3f4f6; text-align: center; font-weight: bold; }
+        .cat-row { background: #e5e7eb; font-weight: bold; }
+        .radio-cell { text-align: center; width: 50px; }
+        
+        .result-box { border: 2px solid #1e3a8a; background: #eff6ff; padding: 15px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 13px; }
+        
+        .notes-box { margin-bottom: 20px; }
+        .notes-box textarea { width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; outline: none; font-family: inherit; font-size: 11px; }
+        
+        .footer-sigs { display: flex; justify-content: space-around; margin-top: 10px; }
+        .sig-box { width: 200px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; font-weight: bold; font-size: 12px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 5px; outline: none; background: transparent; font-size: 12px; }
+        
+        .hidden { display: none !important; }
+        .sigimg { max-height: 50px; max-width: 100%; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 10mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; overflow: visible; }
+            .notes-box textarea { border: 0; border-bottom: 1px dotted #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Print Button -->
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">093B PENILAIAN RESIKO AWAK KAPAL TERKAIT COVID-19</div>
+                <div class="stat">
+                    <div class="box"><span>CS</span><span>SET</span></div>
+                    <div>Release: Rev. -</div>
+                </div>
+            </div>
+            
+            <div class="grid-header">
+                <div>
+                    <div class="row"><label>Vessel Name:</label>
+                        <select class="ship-select" id="vessel_name" style="border-bottom: 1px solid black;">
+                            <option value="">Pilih Kapal</option>
+                            <option>Sahabat Mas</option>
+                            <option>Semangat Mas</option>
+                            <option>Express Mas</option>
+                            <option>Pratama Mas</option>
+                            <option>Prakarsa Mas</option>
+                            <option>Mavendra Mas</option>
+                            <option>Selaras Mas</option>
+                            <option>Segoro Mas</option>
+                        </select>
+                    </div>
+                    <div class="row"><label>Crew Name:</label><input type="text" id="crew_name"></div>
+                    <div class="row"><label>Rank:</label><input type="text" id="crew_rank"></div>
+                </div>
+                <div>
+                    <div class="row"><label>Port:</label><input type="text" id="port_name"></div>
+                    <div class="row"><label>Date/Time Onboard:</label><input type="datetime-local" id="dt_onboard"></div>
+                    <div class="row"><label>Date/Time Record:</label><input type="datetime-local" id="dt_record"></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="font-size: 10px; font-style: italic; margin-bottom: 10px;">
+            Instruction: All new crews should carry out self risk assessment within 6 hours of Joining Vessel or Prior to Sailing. Put a mark in "Yes" or "No".
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 30px;">No</th>
+                    <th>Contents of Crew Risk Assessment (SRA)</th>
+                    <th class="radio-cell">YES</th>
+                    <th class="radio-cell">NO</th>
+                </tr>
+            </thead>
+            <tbody id="qBody">
+                <!-- Generated by JS -->
+            </tbody>
+            <tfoot>
+                <tr class="cat-row">
+                    <td colspan="2" style="text-align: right;">TOTAL JAWABAN YA :</td>
+                    <td style="text-align: center;"><span id="total_yes">0</span></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="result-box">
+            HASIL PENILAIAN / RESULT:<br>
+            <span id="risk_result" style="font-size: 18px; color: #15803d; margin-top: 5px; display: inline-block;">RESIKO RENDAH</span>
+            <div style="font-size: 10px; font-weight: normal; margin-top: 5px; color: #4b5563;">
+                (0-7: Rendah | 8-14: Sedang | 15-22: Tinggi)
+            </div>
+        </div>
+
+        <div class="notes-box">
+            <b>NOTES / CATATAN dari Perwira Kesehatan Kapal atau Nakhoda:</b>
+            <textarea id="notes"></textarea>
+        </div>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Crew</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig1" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig1')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig1_name" placeholder="Sign & Name">
+            </div>
+            
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Ship Health Officer</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig2" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig2" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig2')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig2_name" placeholder="Sign & Name">
+            </div>
+
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Master</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig3" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig3" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig3')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig3_name" placeholder="Sign & Name">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { cat: 'A', text: 'POTENSI TERTULAR DI PERJALANAN ATAU SETELAH NAIK DI KAPAL' },
+            { no: 1, text: 'Saya pergi keluar rumah menuju ke kapal' },
+            { no: 2, text: 'Saya memakai transportasi umum: online, angkot, bus, taksi, kereta api, pesawat' },
+            { no: 3, text: 'Saya tidak memakai masker pada saat berkumpul dengan orang lain dengan jarak kurang dari 1 meter atau seseorang yang menunjukkan gejala klinis Covid-19' },
+            { no: 4, text: 'Saya berjabat tangan dengan orang lain' },
+            { no: 5, text: 'Saya tidak membersihkan tangan dengan hand sanitizer/sabun setelah memegang sesuatu dari luar selama dalam perjalanan atau setelah tiba di kapal' },
+            { no: 6, text: 'Saya menyentuh benda atau uang yang juga disentuh orang lain' },
+            { no: 7, text: 'Saya tidak menjaga jarak minimal 1.5meter dengan orang lain' },
+            { no: 8, text: 'Saya makan di warung atau restaurant' },
+            { no: 9, text: 'Saya tidak minum hangat dan cuci tangan dengan sabun setelah tiba di kapal' },
+            { no: 10, text: 'Saya tinggal di wilayah adanya pasien tertular Covid-19' },
+            { cat: 'B', text: 'POTENSI TERTULAR DI DALAM RUMAH AWAK KAPAL' },
+            { no: 11, text: 'Saya tidak pasang hand sanitizer di depan pintu masuk rumah untuk bersihkan tangan sebelum pegang gagang pintu masuk' },
+            { no: 12, text: 'Saya tidak mencuci tangan dengan sabun di rumah setelah tiba dari bepergian' },
+            { no: 13, text: 'Saya tidak menyediakan tissue basah/antiseptic, masker, sabun antiseptic bagi keluarga di rumah' },
+            { no: 14, text: 'Saya tidak segera merendam pakaian bekas pakai dari luar rumah dengan air panas atau sabun' },
+            { no: 15, text: 'Saya tidak segera mandi keramas setelah tiba di rumah dari bepergian' },
+            { no: 16, text: 'Saya tidak mensosialisasikan hal apapun terkait pencegahan atau penanganan virus Covid-19 kepada anggota keluarga di rumah' },
+            { cat: 'C', text: 'DAYA TAHAN TUBUH (IMUNITAS)' },
+            { no: 17, text: 'Saya dalam sehari tidak kena cahaya matahari minimal 15 menit' },
+            { no: 18, text: 'Saya tidak jalan kaki atau olah raga minimal 30 menit setiap hari' },
+            { no: 19, text: 'Saya jarang minum Vitamin atau mendapatkan asupan makanan dengan kandungan Vitamin C & E' },
+            { no: 20, text: 'Saya kurang tidur' },
+            { no: 21, text: 'Saya berusia di atas 60 tahun' },
+            { no: 22, text: 'Saya mempunyai penyakit jantung / diabetes / gangguan pernafasan kronis' }
+        ];
+
+        let answers = {};
+        
+        function renderQuestions() {
+            const tbody = document.getElementById('qBody');
+            tbody.innerHTML = '';
+            questions.forEach(q => {
+                const tr = document.createElement('tr');
+                if (q.cat) {
+                    tr.className = 'cat-row';
+                    tr.innerHTML = `<td>${q.cat}</td><td colspan="3">${q.text}</td>`;
+                } else {
+                    tr.innerHTML = `
+                        <td style="text-align:center;">${q.no}</td>
+                        <td>${q.text}</td>
+                        <td class="radio-cell"><input type="radio" name="q_${q.no}" value="Yes" onchange="updateScore(${q.no}, 'Yes')"></td>
+                        <td class="radio-cell"><input type="radio" name="q_${q.no}" value="No" onchange="updateScore(${q.no}, 'No')"></td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateScore(no, val) {
+            answers[no] = val;
+            calculateTotal();
+        }
+
+        function setAnswers(loadedData) {
+            answers = loadedData || {};
+            for(let i=1; i<=22; i++) {
+                if(answers[i]) {
+                    const el = document.querySelector(`input[name="q_${i}"][value="${answers[i]}"]`);
+                    if(el) el.checked = true;
+                }
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let yesCount = 0;
+            for(let i=1; i<=22; i++) {
+                if (answers[i] === 'Yes') yesCount++;
+            }
+            document.getElementById('total_yes').innerText = yesCount;
+            
+            const rBox = document.getElementById('risk_result');
+            if (yesCount <= 7) {
+                rBox.innerText = 'RESIKO RENDAH';
+                rBox.style.color = '#15803d'; // green
+            } else if (yesCount <= 14) {
+                rBox.innerText = 'RESIKO SEDANG';
+                rBox.style.color = '#b45309'; // orange
+            } else {
+                rBox.innerText = 'RESIKO TINGGI';
+                rBox.style.color = '#b91c1c'; // red
+            }
+        }
+
+        
+        const FORM_CODE = "093B";
+        const shipSelect = document.getElementById('vessel_name');
+
+        const inputsToSave = [
+            'crew_name', 'crew_rank', 'port_name', 'dt_onboard', 'dt_record', 'notes',
+            'sig1_name', 'sig2_name', 'sig3_name'
+        ];
+
+        
+
+        function loadSig(id, val) {
+            let img = document.getElementById(id);
+            if(img) {
+                img.src = val || '';
+                let c = img.closest('.pv-container');
+                if(c) {
+                    if(val) {
+                        c.querySelector('label').style.display='none';
+                        c.querySelector('.pv').style.display='block';
+                    } else {
+                        c.querySelector('label').style.display='inline-flex';
+                        c.querySelector('.pv').style.display='none';
+                    }
+                }
+            }
+        }
+
+        function clearSig(id){
+            let img = document.getElementById(id);
+            img.src='';
+            let c=img.closest('.pv-container');
+            if(c){
+                c.querySelector('.pv').style.display='none';
+                c.querySelector('label').style.display='inline-flex';
+                c.querySelector('.sig-upload').value='';
+            }
+        }
+
+        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
+            if(!e.target.files[0])return;
+            const r=new FileReader();
+            r.onload=a=>{
+                document.getElementById(x.dataset.target).src=a.target.result;
+                let c=x.closest('.pv-container');
+                if(c){
+                    c.querySelector('label').style.display='none';
+                    c.querySelector('.pv').style.display='block';
+                }
+            };
+            r.readAsDataURL(e.target.files[0])
+        });
+
+        
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { 
+                alert('Pilih Kapal terlebih dahulu!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Menyimpan...'; 
+            btn.disabled = true;
+
+            const fd = { answers: answers };
+            inputsToSave.forEach(id => { fd[id] = document.getElementById(id).value; });
+            ['sig1', 'sig2', 'sig3'].forEach(id => fd[id] = document.getElementById(id).src || '');
+
+            
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false; 
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: (document.getElementById('dt_record').value || '').split('T')[0] || new Date().toISOString().split('T')[0],
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }, 500);
+
+
+        document.getElementById('crew_name').addEventListener('input', function() {
+            document.getElementById('sig1_name').value = this.value;
+        });
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                
+                
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+                
+                
+            }
+        });
+        
+        renderQuestions();
+        
+    </script>
+</body>
+</html>

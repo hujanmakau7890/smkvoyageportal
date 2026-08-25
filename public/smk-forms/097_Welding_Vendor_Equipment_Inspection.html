@@ -1,0 +1,300 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>097 Pemeriksaan Peralatan Vendor Pengelasan</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; font-size: 11px; }
+        .page { max-width: 900px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 15px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 50px; margin-bottom: 10px; padding-bottom: 5px; }
+        .co { font-weight: bold; font-size: 12px; }
+        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 9px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 3px 6px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .grid-header { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .row { display: flex; align-items: center; margin-bottom: 4px; }
+        .row label { width: 140px; font-weight: bold; font-size: 11px; }
+        .row input, .row select { flex: 1; padding: 3px; border: 0; border-bottom: 1px dotted black; background: transparent; outline: none; font-size: 11px; }
+        
+        .radio-group { display: flex; gap: 8px; justify-content: flex-start; }
+        .radio-group label { cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: normal; }
+        
+        .section-box { border: 1px solid #111; padding: 15px; margin-bottom: 15px; }
+        .section-title { font-weight: bold; background: #e5e7eb; padding: 5px 10px; margin: -15px -15px 15px -15px; font-size: 12px; border-bottom: 1px solid #111; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .check-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer; }
+        .check-item input[type="checkbox"] { margin-top: 2px; }
+        .check-text { display: flex; flex-direction: column; font-size: 11px; font-weight: bold; }
+        .check-text span { font-size: 9px; font-weight: normal; color: #555; }
+        
+        table { border-collapse: collapse; width: 100%; margin-bottom: 10px; }
+        th, td { border: 1px solid black; padding: 6px; text-align: left; vertical-align: middle; }
+        th { background: #f3f4f6; text-align: center; font-weight: bold; }
+        .c-header { text-align: center; font-weight: bold; }
+        .rem-col input { width: 100%; border: 0; border-bottom: 1px dotted #ccc; outline: none; background: transparent; font-size: 10px; }
+        
+        .footer-sigs { display: flex; justify-content: space-around; margin-top: 30px; }
+        .sig-box { width: 250px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; font-weight: bold; font-size: 12px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 5px; outline: none; background: transparent; font-size: 12px; }
+        
+        .hidden { display: none !important; }
+        .sigimg { max-height: 70px; max-width: 100%; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 10mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; overflow: visible; }
+            input[type=radio], input[type=checkbox] { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border: 1px solid black; display: inline-block; position: relative; border-radius: 2px; }
+            input[type=radio] { border-radius: 50%; }
+            input[type=checkbox]:checked::before { content: '✓'; position: absolute; left: 1px; top: -2px; font-weight: bold; font-size: 10px; }
+            input[type=radio]:checked::before { content: ''; position: absolute; left: 2px; top: 2px; width: 6px; height: 6px; background: black; border-radius: 50%; }
+            .check-text span { color: #000; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Print Button -->
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">097<br>PEMERIKSAAN PERALATAN VENDOR PENGELASAN<br>Welding Vendor Equipment Inspection</div>
+                <div class="stat">
+                    <div class="box"><span>CS</span><span>SET</span></div>
+                    <div>Release: Rev.0</div>
+                </div>
+            </div>
+            
+            <div class="grid-header">
+                <div>
+                    <div class="row"><label>Nama Kapal:<br><span style="font-size:9px;font-weight:normal;">Vessel's Name</span></label>
+                        <select class="ship-select" id="vessel_name" style="border-bottom: 1px solid black;">
+                            <option value="">Pilih Kapal</option>
+                            <option>Sahabat Mas</option>
+                            <option>Semangat Mas</option>
+                            <option>Express Mas</option>
+                            <option>Pratama Mas</option>
+                            <option>Prakarsa Mas</option>
+                            <option>Mavendra Mas</option>
+                            <option>Selaras Mas</option>
+                            <option>Segoro Mas</option>
+                        </select>
+                    </div>
+                    <div class="row"><label>Tanggal:<br><span style="font-size:9px;font-weight:normal;">Date</span></label><input type="date" id="report_date"></div>
+                    <div class="row"><label>Nama Vendor:<br><span style="font-size:9px;font-weight:normal;">Vendor's name</span></label><input type="text" id="vendor_name"></div>
+                    <div class="row"><label>Jumlah Orang:<br><span style="font-size:9px;font-weight:normal;">Number of people</span></label><input type="number" id="people_count"></div>
+                    <div class="row"><label>P. Jawab (Vendor):<br><span style="font-size:9px;font-weight:normal;">Person responsible</span></label><input type="text" id="vendor_pic"></div>
+                </div>
+                <div>
+                    <div class="row"><label>P. Jawab Kapal:<br><span style="font-size:9px;font-weight:normal;">Crew Responsible</span></label><input type="text" id="crew_pic"></div>
+                    <div class="row"><label>Jabatan:<br><span style="font-size:9px;font-weight:normal;">Rank</span></label><input type="text" id="crew_rank"></div>
+                    
+                    <div class="row" style="margin-top:10px;">
+                        <label style="width: 200px;">Risk Assessment ditinjau?<br><span style="font-size:9px;font-weight:normal;">Risk Assesment reviewed?</span></label>
+                        <div class="radio-group" style="flex:1;">
+                            <label><input type="radio" name="ra_reviewed" value="Yes"> Yes</label>
+                            <label><input type="radio" name="ra_reviewed" value="No"> No</label>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <label style="width: 200px;">Ijin kerja panas ditinjau?<br><span style="font-size:9px;font-weight:normal;">Hot work permit reviewed?</span></label>
+                        <div class="radio-group" style="flex:1;">
+                            <label><input type="radio" name="hw_reviewed" value="Yes"> Yes</label>
+                            <label><input type="radio" name="hw_reviewed" value="No"> No</label>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <label style="width: 200px;">Fire watch ditunjuk?<br><span style="font-size:9px;font-weight:normal;">Fire watch assigned?</span></label>
+                        <div class="radio-group" style="flex:1;">
+                            <label><input type="radio" name="fw_assigned" value="Yes"> Yes</label>
+                            <label><input type="radio" name="fw_assigned" value="No"> No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="section-box">
+                <div class="section-title">Alat Pelindung Diri (APD) / Personel Protective Equipment (PPE)</div>
+                <label class="check-item"><input type="checkbox" id="ppe_helm"><div class="check-text">Helm <span>Safety helmet</span></div></label>
+                <label class="check-item"><input type="checkbox" id="ppe_wearpack"><div class="check-text">Baju kerja overall <span>Wearpack</span></div></label>
+                <label class="check-item"><input type="checkbox" id="ppe_gloves"><div class="check-text">Sarung tangan las <span>Welding gloves</span></div></label>
+                <label class="check-item"><input type="checkbox" id="ppe_goggles"><div class="check-text">Kacamata Las <span>Welding face shield / goggles</span></div></label>
+                <label class="check-item"><input type="checkbox" id="ppe_shoes"><div class="check-text">Sepatu <span>Safety Shoes</span></div></label>
+                <label class="check-item"><input type="checkbox" id="ppe_harness"><div class="check-text">Safety harness jika diperlukan <span>Safety harness if needed</span></div></label>
+            </div>
+            
+            <div class="section-box">
+                <div class="section-title">Peralatan Kerja Panas / Hot Work Equipment</div>
+                <label class="check-item"><input type="checkbox" id="eq_machine"><div class="check-text">Mesin las telah diperiksa secara visual <span>Welding machine visually inspected</span></div></label>
+                <label class="check-item"><input type="checkbox" id="eq_cable"><div class="check-text">Isolasi kabel listrik dalam kondisi baik <span>Electrical cable insulation in good condition</span></div></label>
+                <label class="check-item"><input type="checkbox" id="eq_ground"><div class="check-text">Grounding/earthing tersedia dengan baik <span>Proper grounding or earthing provided</span></div></label>
+                <label class="check-item"><input type="checkbox" id="eq_hoses"><div class="check-text">Selang dan sambungan gas tidak bocor <span>Gas hoses and connections leak-free</span></div></label>
+                <label class="check-item"><input type="checkbox" id="eq_arrestor"><div class="check-text">Flashback arrestor terpasang <span>Flashback arrestor installed</span></div></label>
+                <label class="check-item"><input type="checkbox" id="eq_grinder"><div class="check-text">Gerinda serta cover terpasang dengan baik <span>Grinder and cover properly installed</span></div></label>
+            </div>
+        </div>
+
+        <div class="section-box" style="padding: 0; border: 0;">
+            <div class="section-title">VERIFIKASI AKHIR / Final Verification</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pemeriksaan / Verification Item</th>
+                        <th style="width: 80px;">Ya / Yes</th>
+                        <th style="width: 80px;">No / Tidak</th>
+                        <th style="width: 250px;">Remark</th>
+                    </tr>
+                </thead>
+                <tbody id="veriBody">
+                    <!-- JS populated -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Reported by,</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:70px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig1" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig1')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig1_name" placeholder="Sign & Name">
+                <div style="display: flex; width: 80%; align-items: center; margin-top: 5px;">
+                    <span style="font-weight: normal; margin-right: 5px;">Date:</span>
+                    <input type="date" id="sig1_date" style="border: 0; border-bottom: 1px dotted black; width: 100%; outline: none; background: transparent; font-size: 11px;">
+                </div>
+            </div>
+            
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Checked by Master,</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:70px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig2" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig2" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig2')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig2_name" placeholder="Sign & Name">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FORM_CODE = "097";
+        const shipSelect = document.getElementById('vessel_name');
+
+        const veriData = [
+            { id: 1, text: 'Semua tindakan keselamatan telah dipenuhi', eng: 'All safety precautions complied with' },
+            { id: 2, text: 'Semua APD digunakan dengan benar', eng: 'All PPE properly used' },
+            { id: 3, text: 'Seluruh peralatan vendor dalam kondisi aman digunakan', eng: 'All vendor equipment confirmed safe for use' },
+            { id: 4, text: 'Fire watch ditunjuk dan memahami tugasnya', eng: 'Fire watch assigned and aware of duties' },
+            { id: 5, text: 'APAR dan perlengkapan darurat tersedia di lokasi kerja', eng: 'Fire extinguisher and emergency equipment available at work site' }
+        ];
+
+        function renderVeriTable() {
+            const tbody = document.getElementById('veriBody');
+            veriData.forEach(v => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:bold;">${v.text}</div>
+                        <div style="font-size:9px;color:#555;">${v.eng}</div>
+                    </td>
+                    <td class="c-header"><div class="radio-group"><label style="margin:0 auto;"><input type="radio" name="v_r_${v.id}" value="Yes"></label></div></td>
+                    <td class="c-header"><div class="radio-group"><label style="margin:0 auto;"><input type="radio" name="v_r_${v.id}" value="No"></label></div></td>
+                    <td class="rem-col"><input type="text" id="v_rem_${v.id}" placeholder="..."></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        renderVeriTable();
+
+        function clearSig(id){
+            let img = document.getElementById(id);
+            img.src='';
+            let c=img.closest('.pv-container');
+            if(c){
+                c.querySelector('.pv').style.display='none';
+                c.querySelector('label').style.display='inline-flex';
+                c.querySelector('.sig-upload').value='';
+            }
+        }
+
+        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
+            if(!e.target.files[0])return;
+            const r=new FileReader();
+            r.onload=a=>{
+                document.getElementById(x.dataset.target).src=a.target.result;
+                let c=x.closest('.pv-container');
+                if(c){
+                    c.querySelector('label').style.display='none';
+                    c.querySelector('.pv').style.display='block';
+                }
+            };
+            r.readAsDataURL(e.target.files[0])
+        });
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { alert('Pilih Kapal terlebih dahulu!'); return; }
+            
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Membuat PDF...'; 
+            btn.disabled = true;
+
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false; 
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: document.getElementById('report_date').value || new Date().toISOString().split('T')[0],
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }, 500);
+        }
+
+        document.getElementById('crew_pic').addEventListener('input', function() {
+            document.getElementById('sig1_name').value = this.value;
+        });
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>
