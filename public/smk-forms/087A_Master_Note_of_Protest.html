@@ -131,27 +131,7 @@
         let SUPA_KEY  = "";
         const FORM_CODE = "087A";
 
-        async function supa(method, table, params, body) {
-            let url = `${SUPA_URL}/rest/v1/${table}`;
-            if (params) url += '?' + new URLSearchParams(params).toString();
-            const res = await fetch(url, {
-                method,
-                headers: {
-                    'apikey': SUPA_KEY,
-                    'Authorization': 'Bearer ' + SUPA_KEY,
-                    'Content-Type': 'application/json',
-                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
-                },
-                body: body ? JSON.stringify(body) : undefined
-            });
-            if (!res.ok) {
-                const txt = await res.text();
-                throw new Error(txt);
-            }
-            const txt = await res.text();
-            return txt ? JSON.parse(txt) : [];
-        }
-
+        
         // Sync inputs
         const shipSelect = document.querySelector('.ship-select');
         const vInline = document.getElementById('vessel_name_inline');
@@ -168,48 +148,6 @@
         mName.addEventListener('input', () => { sigMName.value = mName.value; });
         sigMName.addEventListener('input', () => { mName.value = sigMName.value; });
 
-        // === LOAD FROM SUPABASE ===
-        async function loadFromSupabase() {
-            const vesselName = shipSelect.value;
-            vInline.value = vesselName;
-            sigVessel.value = vesselName;
-            
-            if (!vesselName) return;
-
-            // Clear first
-            document.getElementById('place_date').value = '';
-            document.getElementById('attention').value = '';
-            document.getElementById('cc').value = '';
-            document.getElementById('re').value = '';
-            document.getElementById('master_name').value = '';
-            document.getElementById('sig_master_name').value = '';
-            document.getElementById('declaration').value = '';
-            document.getElementById('accepted_by').value = '';
-
-            try {
-                const rows = await supa('GET', 'smk_form_data', {
-                    'vessel_name': `eq.${vesselName}`,
-                    'form_code': `eq.${FORM_CODE}`,
-                    'select': 'form_data',
-                    'limit': 1
-                });
-                if (!rows || rows.length === 0) return;
-                const fd = rows[0].form_data;
-                if (!fd) return;
-
-                if (fd.place_date) document.getElementById('place_date').value = fd.place_date;
-                if (fd.attention) document.getElementById('attention').value = fd.attention;
-                if (fd.cc) document.getElementById('cc').value = fd.cc;
-                if (fd.re) document.getElementById('re').value = fd.re;
-                if (fd.master_name) {
-                    mName.value = fd.master_name;
-                    sigMName.value = fd.master_name;
-                }
-                if (fd.declaration) document.getElementById('declaration').value = fd.declaration;
-                if (fd.accepted_by) document.getElementById('accepted_by').value = fd.accepted_by;
-
-            } catch(err) { console.error('Gagal load data:', err); }
-        }
 
         // === SAVE & PRINT ===
         async function aksiSimpanDanCetak() {
@@ -226,29 +164,11 @@
 
             const placeDate = document.getElementById('place_date').value;
 
-            try {
-                if (SUPA_URL && SUPA_KEY) {
-                    await supa('POST', 'smk_form_data', null, {
-                        vessel_name: vesselName,
-                        form_code: FORM_CODE,
-                        form_data: {
-                            report_date: placeDate, // for sorting in dashboard
-                            place_date: placeDate,
-                            attention: document.getElementById('attention').value,
-                            cc: document.getElementById('cc').value,
-                            re: document.getElementById('re').value,
-                            master_name: mName.value,
-                            declaration: document.getElementById('declaration').value,
-                            accepted_by: document.getElementById('accepted_by').value
-                        },
-                        updated_at: new Date().toISOString()
-                    });
-                }
-                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
-                setTimeout(() => { 
-                    btn.innerHTML = originalHtml; 
-                    btn.disabled = false; 
-                    
+                            btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+
                     window.parent.postMessage({
                         type: 'SMK_SAVE_PDF',
                         name: document.title,
@@ -258,29 +178,12 @@
                         formTitle: document.title
                     }, '*');
                 }, 500);
-            } catch(err) {
-                console.error(err);
-                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
-                btn.innerHTML = originalHtml; 
-                btn.disabled = false;
-                
-                window.parent.postMessage({
-                    type: 'SMK_SAVE_PDF',
-                    name: document.title,
-                    ship: vesselName,
-                    date: placeDate.split(',').pop().trim() || '',
-                    formCode: FORM_CODE,
-                    formTitle: document.title
-                }, '*');
-            }
         }
 
         // === INIT DATA FROM REACT (terima dari React via postMessage) ===
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'INIT_FORM') {
-                SUPA_URL = e.data.supabaseUrl;
-                SUPA_KEY = e.data.supabaseKey;
-                
+
                 const sel = document.querySelector('.ship-select');
                 if (e.data.vessel) {
                     const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
@@ -290,11 +193,14 @@
                 }
                 if (e.data.locked) sel.disabled = true;
                 
-                if (sel.value) loadFromSupabase();
+                
             }
         });
 
-        shipSelect.addEventListener('change', loadFromSupabase);
+        shipSelect.addEventListener('change', () => {
+            vInline.value = shipSelect.value;
+            sigVessel.value = shipSelect.value;
+        });
     </script>
 </body>
 </html>

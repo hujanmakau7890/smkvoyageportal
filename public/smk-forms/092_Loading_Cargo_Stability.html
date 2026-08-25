@@ -245,7 +245,6 @@
 <script>
 /* ================= CONFIG ================= */
 const FORM_CODE = "092";
-let SUPA_URL = "", SUPA_KEY = "";
 const shipSelect = document.getElementById('vessel_name');
 
 /* ================= DATA MODEL ================= */
@@ -391,89 +390,14 @@ function resetForm() {
     });
     clearSig('sig1'); clearSig('sig2');
     recalc();
-    saveData();
 }
 
-/* ================= SUPABASE (smk_form_data) ================= */
-async function supa(method, table, params, body) {
-    const u = `${SUPA_URL}/rest/v1/${table}` + (params ? '?' + new URLSearchParams(params).toString() : '');
-    const res = await fetch(u, {
-        method,
-        headers: {
-            'apikey': SUPA_KEY,
-            'Authorization': 'Bearer ' + SUPA_KEY,
-            'Content-Type': 'application/json',
-            'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
-        },
-        body: body ? JSON.stringify(body) : undefined
-    });
-    if (!res.ok) throw new Error(await res.text());
-    const txt = await res.text();
-    return txt ? JSON.parse(txt) : [];
-}
-
-function collectData() {
-    const d = { cargoData: JSON.parse(JSON.stringify(cargoData)) };
-    ['port_loading','report_date','voy_no','light_ship','constant','op_load','rob_ballast',
-     'calc_fore','calc_mean','calc_aft','calc_gom','act_fore','act_mean','act_aft',
-     'cw_draft','cw_plan','cw_diff','sig1_name','sig2_name'].forEach(id => d[id] = getVal(id));
-    d.sig1 = document.getElementById('sig1').src || '';
-    d.sig2 = document.getElementById('sig2').src || '';
-    return d;
-}
-
-async function saveData() {
-    if (!SUPA_URL || !shipSelect.value) return;
-    try {
-        await supa('POST','smk_form_data', null, {
-            vessel_name: shipSelect.value,
-            form_code: FORM_CODE,
-            form_data: collectData(),
-            updated_at: new Date().toISOString()
-        });
-    } catch (e) {
-        console.error('[092] save failed:', e.message);
-    }
-}
-
-async function loadData() {
-    if (!SUPA_URL || !shipSelect.value) return;
-    try {
-        const rows = await supa('GET','smk_form_data',
-            { vessel_name:`eq.${shipSelect.value}`, form_code:`eq.${FORM_CODE}`, select:'form_data', limit:1 });
-        const d = rows[0]?.form_data || {};
-        if (d.cargoData && Array.isArray(d.cargoData)) {
-            cargoData = cargoSizes.map((s,i) => {
-                const src = d.cargoData[i] || {};
-                return {
-                    size: s,
-                    nondg:{ q_ih:src.nondg?.q_ih||'', q_od:src.nondg?.q_od||'', w_ih:src.nondg?.w_ih||'', w_od:src.nondg?.w_od||'' },
-                    dg:   { cls:src.dg?.cls||'', q_ih:src.dg?.q_ih||'', q_od:src.dg?.q_od||'', w_ih:src.dg?.w_ih||'', w_od:src.dg?.w_od||'' },
-                    ref:  { q_ih:src.ref?.q_ih||'', q_od:src.ref?.q_od||'', w_ih:src.ref?.w_ih||'', w_od:src.ref?.w_od||'' }
-                };
-            });
-            renderTable();
-        }
-        ['port_loading','report_date','voy_no','light_ship','constant','op_load','rob_ballast',
-         'calc_fore','calc_mean','calc_aft','calc_gom','act_fore','act_mean','act_aft',
-         'cw_draft','cw_plan','cw_diff','sig1_name','sig2_name'].forEach(id => {
-            if (d[id] != null) setVal(id, d[id]);
-        });
-        loadSig('sig1', d.sig1); loadSig('sig2', d.sig2);
-        recalc();
-    } catch (e) {
-        console.error('[092] load failed:', e.message);
-    }
-}
-shipSelect.addEventListener('change', loadData);
 
 /* ================= SAVE & PRINT ================= */
 async function saveAndPrint() {
     if (!shipSelect.value) { alert('Pilih kapal terlebih dahulu!'); shipSelect.focus(); return; }
     const btn = document.getElementById('btn-print');
     btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
-    recalc();
-    await saveData();
     btn.disabled = false; btn.textContent = '📄 Print / Simpan PDF';
 
     window.parent.postMessage({
@@ -503,15 +427,13 @@ async function saveAndPrint() {
 /* ================= INIT_FORM from parent app ================= */
 window.addEventListener('message', function (e) {
     if (e.data && e.data.type === 'INIT_FORM') {
-        SUPA_URL = e.data.supabaseUrl || '';
-        SUPA_KEY = e.data.supabaseKey || '';
         if (e.data.vessel) {
             const want = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
             const opt = Array.from(shipSelect.options).find(o => o.value.toLowerCase().replace(/_/g,' ') === want);
             if (opt) shipSelect.value = opt.value;
         }
         if (e.data.locked) shipSelect.disabled = true;
-        loadData().then(recalc);
+        recalc();
     }
 });
 

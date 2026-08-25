@@ -176,27 +176,7 @@
         let SUPA_KEY  = "";
         const FORM_CODE = "087B";
 
-        async function supa(method, table, params, body) {
-            let url = `${SUPA_URL}/rest/v1/${table}`;
-            if (params) url += '?' + new URLSearchParams(params).toString();
-            const res = await fetch(url, {
-                method,
-                headers: {
-                    'apikey': SUPA_KEY,
-                    'Authorization': 'Bearer ' + SUPA_KEY,
-                    'Content-Type': 'application/json',
-                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
-                },
-                body: body ? JSON.stringify(body) : undefined
-            });
-            if (!res.ok) {
-                const txt = await res.text();
-                throw new Error(txt);
-            }
-            const txt = await res.text();
-            return txt ? JSON.parse(txt) : [];
-        }
-
+        
         // Sync inputs
         const shipSelect = document.querySelector('.ship-select');
         const shipNameInput = document.getElementById('ship_name');
@@ -275,44 +255,6 @@
             'statement_body', 'chief_name'
         ];
 
-        // === LOAD FROM SUPABASE ===
-        async function loadFromSupabase() {
-            const vesselName = shipSelect.value;
-            shipNameInput.value = vesselName;
-            
-            if (!vesselName) return;
-
-            // Clear first
-            inputsToSave.forEach(id => {
-                const el = document.getElementById(id);
-                if(el && id !== 'owner_operator' && id !== 'classification') el.value = '';
-            });
-            sigMName.value = '';
-            photos = [];
-            renderPhotos();
-
-            try {
-                const rows = await supa('GET', 'smk_form_data', {
-                    'vessel_name': `eq.${vesselName}`,
-                    'form_code': `eq.${FORM_CODE}`,
-                    'select': 'form_data',
-                    'limit': 1
-                });
-                if (!rows || rows.length === 0) return;
-                const fd = rows[0].form_data;
-                if (!fd) return;
-
-                inputsToSave.forEach(id => {
-                    if (fd[id] !== undefined) document.getElementById(id).value = fd[id];
-                });
-                sigMName.value = document.getElementById('master_name').value;
-                
-                if (fd.photos && Array.isArray(fd.photos)) {
-                    photos = fd.photos;
-                    renderPhotos();
-                }
-            } catch(err) { console.error('Gagal load data:', err); }
-        }
 
         // === SAVE & PRINT ===
         async function aksiSimpanDanCetak() {
@@ -333,52 +275,26 @@
             });
             fd.photos = photos;
 
-            try {
-                if (SUPA_URL && SUPA_KEY) {
-                    await supa('POST', 'smk_form_data', null, {
-                        vessel_name: vesselName,
-                        form_code: FORM_CODE,
-                        form_data: fd,
-                        updated_at: new Date().toISOString()
-                    });
-                }
-                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
-                setTimeout(() => { 
-                    btn.innerHTML = originalHtml; 
-                    btn.disabled = false; 
-                    
+                            btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+
                     window.parent.postMessage({
                         type: 'SMK_SAVE_PDF',
                         name: document.title,
                         ship: vesselName,
-                        date: document.getElementById('report_date').value,
+                        date: placeDate.split(',').pop().trim() || '', // rough date extraction
                         formCode: FORM_CODE,
                         formTitle: document.title
                     }, '*');
                 }, 500);
-            } catch(err) {
-                console.error(err);
-                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
-                btn.innerHTML = originalHtml; 
-                btn.disabled = false;
-                
-                window.parent.postMessage({
-                    type: 'SMK_SAVE_PDF',
-                    name: document.title,
-                    ship: vesselName,
-                    date: document.getElementById('report_date').value,
-                    formCode: FORM_CODE,
-                    formTitle: document.title
-                }, '*');
-            }
         }
 
         // === INIT DATA FROM REACT (terima dari React via postMessage) ===
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'INIT_FORM') {
-                SUPA_URL = e.data.supabaseUrl;
-                SUPA_KEY = e.data.supabaseKey;
-                
+
                 const sel = document.querySelector('.ship-select');
                 if (e.data.vessel) {
                     const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
@@ -388,11 +304,14 @@
                 }
                 if (e.data.locked) sel.disabled = true;
                 
-                if (sel.value) loadFromSupabase();
+                
             }
         });
 
-        shipSelect.addEventListener('change', loadFromSupabase);
+        shipSelect.addEventListener('change', () => {
+            vInline.value = shipSelect.value;
+            sigVessel.value = shipSelect.value;
+        });
     </script>
 </body>
 </html>

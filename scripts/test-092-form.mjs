@@ -31,7 +31,7 @@ assert.match(html, /draft - plan/, 'DIFFERENCE = BY DRAFT - BY PLAN');
 assert.match(html, /const FORM_CODE = "092"/, 'form code must be 092');
 assert.match(html, /type: 'SMK_SAVE_PDF'/, 'must retain portal PDF integration');
 assert.match(html, /type === 'INIT_FORM'/, 'must accept INIT_FORM from parent app');
-assert.match(html, /smk_form_data/, 'must persist to smk_form_data table');
+assert.doesNotMatch(html, /smk_form_data/, 'autosave to smk_form_data must be removed');
 
 // Registry
 assert.match(registry, /code: "092"/, 'form must appear in portal menu');

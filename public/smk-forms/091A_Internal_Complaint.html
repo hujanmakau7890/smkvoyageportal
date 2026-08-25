@@ -239,24 +239,7 @@
             'date_master', 'sugg_master', 'resolve_master', 'sig4_name'
         ];
 
-        async function supa(method, table, params, body) {
-            let url = `${SUPA_URL}/rest/v1/${table}`;
-            if (params) url += '?' + new URLSearchParams(params).toString();
-            const res = await fetch(url, {
-                method,
-                headers: {
-                    'apikey': SUPA_KEY,
-                    'Authorization': 'Bearer ' + SUPA_KEY,
-                    'Content-Type': 'application/json',
-                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
-                },
-                body: body ? JSON.stringify(body) : undefined
-            });
-            if (!res.ok) throw new Error(await res.text());
-            const txt = await res.text();
-            return txt ? JSON.parse(txt) : [];
-        }
-
+        
         function loadSig(id, val) {
             let img = document.getElementById(id);
             if(img) {
@@ -299,35 +282,7 @@
             r.readAsDataURL(e.target.files[0])
         });
 
-        async function loadFromSupabase() {
-            const vessel = shipSelect.value;
-            if (!vessel) return;
-
-            inputsToSave.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.value = '';
-            });
-            ['sig1', 'sig2', 'sig3', 'sig4'].forEach(id => loadSig(id, ''));
-
-            try {
-                const rows = await supa('GET', 'smk_form_data', {
-                    'vessel_name': `eq.${vessel}`,
-                    'form_code': `eq.${FORM_CODE}`,
-                    'select': 'form_data',
-                    'limit': 1
-                });
-                if (!rows || rows.length === 0) return;
-                const fd = rows[0].form_data;
-                if (!fd) return;
-
-                inputsToSave.forEach(id => {
-                    if (fd[id] !== undefined) document.getElementById(id).value = fd[id];
-                });
-                
-                ['sig1', 'sig2', 'sig3', 'sig4'].forEach(id => loadSig(id, fd[id]));
-            } catch(err) { console.error('Gagal load data:', err); }
-        }
-
+        
         async function saveAndPrint() {
             const vessel = shipSelect.value;
             if (!vessel) { 
@@ -344,49 +299,25 @@
             inputsToSave.forEach(id => { fd[id] = document.getElementById(id).value; });
             ['sig1', 'sig2', 'sig3', 'sig4'].forEach(id => fd[id] = document.getElementById(id).src || '');
 
-            try {
-                if (SUPA_URL && SUPA_KEY) {
-                    await supa('POST', 'smk_form_data', null, {
-                        vessel_name: vessel,
-                        form_code: FORM_CODE,
-                        form_data: fd,
-                        updated_at: new Date().toISOString()
-                    });
-                }
-                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
-                setTimeout(() => { 
-                    btn.innerHTML = originalHtml; 
-                    btn.disabled = false; 
+                            btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+
                     window.parent.postMessage({
                         type: 'SMK_SAVE_PDF',
                         name: document.title,
-                        ship: vessel,
-                        date: document.getElementById('reg_date').value,
+                        ship: vesselName,
+                        date: placeDate.split(',').pop().trim() || '', // rough date extraction
                         formCode: FORM_CODE,
                         formTitle: document.title
                     }, '*');
                 }, 500);
-            } catch(err) {
-                console.error(err);
-                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
-                btn.innerHTML = originalHtml; 
-                btn.disabled = false;
-                window.parent.postMessage({
-                    type: 'SMK_SAVE_PDF',
-                    name: document.title,
-                    ship: vessel,
-                    date: document.getElementById('reg_date').value,
-                    formCode: FORM_CODE,
-                    formTitle: document.title
-                }, '*');
-            }
         }
 
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'INIT_FORM') {
-                SUPA_URL = e.data.supabaseUrl;
-                SUPA_KEY = e.data.supabaseKey;
-                
+
                 if (e.data.vessel) {
                     const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
                     Array.from(shipSelect.options).forEach(opt => {
@@ -399,7 +330,7 @@
             }
         });
 
-        shipSelect.addEventListener('change', loadFromSupabase);
+        
     </script>
 </body>
 </html>
