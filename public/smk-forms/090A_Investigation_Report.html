@@ -1,0 +1,278 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>090-A Investigation Report</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; }
+        .page { max-width: 1000px; margin: 20px auto; background: white; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 20px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 82px; margin-bottom: 10px; padding-bottom: 10px; }
+        .co { font-weight: bold; }
+        .ttl { text-align: center; font-weight: bold; font-size: 16px; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-size: 11px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 5px 8px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .section-title { background: #1f2937; color: white; padding: 8px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase; font-size: 14px; }
+        .sub-section { font-weight: bold; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #374151; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        
+        .field-group { display: flex; flex-direction: column; margin-bottom: 12px; }
+        .field-group label { font-weight: bold; font-size: 12px; margin-bottom: 4px; }
+        .field-group input, .field-group select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; outline: none; }
+        .field-group textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; outline: none; resize: vertical; min-height: 80px; font-family: inherit; }
+        
+        .footer-sigs { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 40px; gap: 20px; text-align: center; font-weight: bold; font-size: 12px; }
+        .sig-box { margin-bottom: 20px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 10px; outline: none; background: transparent; }
+        
+        .hidden { display: none !important; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 10mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; }
+            .field-group input, .field-group select, .field-group textarea { border: 0; border-bottom: 1px dotted #ccc; border-radius: 0; padding: 2px; }
+            .field-group select { appearance: none; -webkit-appearance: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">090-A<br>INVESTIGATION REPORT FORM</div>
+                <div class="stat">
+                    <div class="box"><span>CS</span><span>SET</span></div>
+                    <div>Release: Rev.01</div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="field-group">
+                    <label>Vessel Name:</label>
+                    <select class="ship-select" id="vessel_name">
+                        <option value="">Pilih Kapal</option>
+                        <option>Sahabat Mas</option>
+                        <option>Semangat Mas</option>
+                        <option>Express Mas</option>
+                        <option>Pratama Mas</option>
+                        <option>Prakarsa Mas</option>
+                        <option>Mavendra Mas</option>
+                        <option>Selaras Mas</option>
+                        <option>Segoro Mas</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>Report Date:</label>
+                    <input type="date" id="report_date">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">1. UMUM / GENERAL</div>
+        <div class="grid-2">
+            <div class="field-group">
+                <label>Judul Laporan / Report Title:</label>
+                <input type="text" id="report_title">
+            </div>
+            <div class="field-group">
+                <label>Nomor Laporan / Report No:</label>
+                <input type="text" id="report_no">
+            </div>
+            <div class="field-group">
+                <label>Tanggal & Waktu Kejadian / Date & Time of Incident:</label>
+                <input type="datetime-local" id="incident_time">
+            </div>
+            <div class="field-group">
+                <label>Lokasi Kejadian / Location (Port/Sea):</label>
+                <input type="text" id="incident_location">
+            </div>
+        </div>
+
+        <div class="section-title">2. DESKRIPSI KEJADIAN / INCIDENT DESCRIPTION</div>
+        <div class="field-group">
+            <label>Apa yang terjadi secara detail? / What happened in detail?</label>
+            <textarea id="incident_description" style="min-height: 120px;"></textarea>
+        </div>
+        <div class="field-group">
+            <label>Kerusakan / Korban (Damage / Casualties):</label>
+            <textarea id="damage_description"></textarea>
+        </div>
+
+        <div class="section-title">3. INVESTIGASI & FAKTA / INVESTIGATION & FACTS</div>
+        <div class="sub-section">Faktor Tugas & Manusia / Task & Human Factors</div>
+        <div class="grid-2">
+            <div class="field-group">
+                <label>Tugas yang sedang dikerjakan / Task being performed:</label>
+                <textarea id="task_performed"></textarea>
+            </div>
+            <div class="field-group">
+                <label>Kondisi saat itu (Cuaca/Penerangan) / Conditions (Weather/Lighting):</label>
+                <textarea id="weather_cond"></textarea>
+            </div>
+        </div>
+
+        <div class="sub-section">Faktor Teknis & Organisasi / Technical & Organizational Factors</div>
+        <div class="grid-2">
+            <div class="field-group">
+                <label>Kegagalan teknis/alat? / Technical failure?</label>
+                <textarea id="technical_failure"></textarea>
+            </div>
+            <div class="field-group">
+                <label>Prosedur ditaati? / Were procedures followed?</label>
+                <textarea id="procedure_followed"></textarea>
+            </div>
+        </div>
+
+        <div class="section-title">4. KESIMPULAN / CONCLUSION</div>
+        <div class="field-group">
+            <label>Analisa Penyebab (Cause Analysis):</label>
+            <textarea id="cause_analysis" style="min-height: 100px;"></textarea>
+        </div>
+        <div class="field-group">
+            <label>Akar Masalah (Root Cause):</label>
+            <textarea id="root_cause" style="min-height: 100px;"></textarea>
+        </div>
+
+        <div class="section-title">5. TINDAKAN PERBAIKAN / CORRECTIVE ACTION</div>
+        <div class="field-group">
+            <label>Tindakan perbaikan di kapal / Corrective action ON BOARD:</label>
+            <textarea id="ca_onboard"></textarea>
+        </div>
+        <div class="field-group">
+            <label>Tindakan perbaikan di kantor / Corrective action ASHORE:</label>
+            <textarea id="ca_ashore"></textarea>
+        </div>
+        
+        <div class="section-title">6. PELAJARAN YANG DIAMBIL / LESSON LEARNED</div>
+        <div class="field-group">
+            <label>Pelajaran untuk komunikasi armada / Lesson learned for fleet communication:</label>
+            <textarea id="lesson_learned" style="min-height: 100px;"></textarea>
+        </div>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div>Investigator / Master</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:80px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="masterSig" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="masterSig" class="sigimg" style="max-height:70px; max-width:100%;">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('masterSig')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="master_name" placeholder="Name">
+            </div>
+            
+            <div class="sig-box">
+                <div>DPA / Safety Manager</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:80px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="dpaSig" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="dpaSig" class="sigimg" style="max-height:70px; max-width:100%;">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('dpaSig')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="dpa_name" placeholder="Name">
+            </div>
+            
+            <div class="sig-box">
+                <div>Management (Review)</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:80px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="mgmtSig" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="mgmtSig" class="sigimg" style="max-height:70px; max-width:100%;">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('mgmtSig')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="mgmt_name" placeholder="Name">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FORM_CODE = "090A";
+        const shipSelect = document.getElementById('vessel_name');
+
+        function clearSig(id){
+            let img = document.getElementById(id);
+            img.src='';
+            let c=img.closest('.pv-container');
+            if(c){
+                c.querySelector('.pv').style.display='none';
+                c.querySelector('label').style.display='inline-flex';
+                c.querySelector('.sig-upload').value='';
+            }
+        }
+
+        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
+            if(!e.target.files[0])return;
+            const r=new FileReader();
+            r.onload=a=>{
+                document.getElementById(x.dataset.target).src=a.target.result;
+                let c=x.closest('.pv-container');
+                if(c){
+                    c.querySelector('label').style.display='none';
+                    c.querySelector('.pv').style.display='block';
+                }
+            };
+            r.readAsDataURL(e.target.files[0])
+        });
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { 
+                alert('Pilih Kapal terlebih dahulu!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Membuat PDF...'; 
+            btn.disabled = true;
+
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false; 
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: document.getElementById('report_date').value,
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }, 500);
+        }
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

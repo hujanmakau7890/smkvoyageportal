@@ -254,11 +254,8 @@
 <body class="bg-gray-200 p-4 sm:p-8 font-sans text-gray-800">
     <div class="max-w-5xl mx-auto bg-white p-6 sm:p-10 shadow-lg print:shadow-none print:p-0">
         <!-- Print Button -->
-                <div class="flex justify-end mb-6 no-print gap-4">
-            <button onclick="saveToSupabase()" id="btn-save" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded flex items-center shadow transition-colors">
-                💾 Simpan Data
-            </button>
-            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded flex items-center shadow transition-colors">
+        <div class="flex justify-end mb-6 no-print gap-4">
+            <button onclick="aksiSimpanDanCetak()" id="btn-print" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded flex items-center shadow transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                 Print / Simpan PDF
             </button>
@@ -565,6 +562,15 @@
         async function loadFromSupabase() {
             const vesselName = document.querySelector('.ship-select').value;
             if (!vesselName) return;
+            
+            // CLEAR EXISTING FORM DATA FIRST
+            const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+            if (dateInput) dateInput.value = '';
+            const masterInput = document.querySelectorAll('input.border-b.border-black.text-center')[0];
+            if (masterInput) masterInput.value = '';
+            document.querySelectorAll('#cert-tbody input').forEach(inp => inp.value = '');
+            checkExpiryDates();
+            
             try {
                 const rows = await supa('GET', 'smk_form_data', {
                     'vessel_name': `eq.${vesselName}`,
@@ -599,13 +605,18 @@
             } catch(err) { console.error('Gagal load data:', err); }
         }
 
-        // === SAVE TO SUPABASE ===
-        async function saveToSupabase() {
+        // === SAVE & PRINT ===
+        async function aksiSimpanDanCetak() {
             const vesselName = document.querySelector('.ship-select').value;
-            if (!vesselName) { alert('Pilih Kapal terlebih dahulu!'); return; }
+            if (!vesselName) { 
+                alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); 
+                return; 
+            }
 
-            const btn = document.getElementById('btn-save');
-            btn.innerText = '⏳ Menyimpan...'; btn.disabled = true;
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Menyimpan Data...'; 
+            btn.disabled = true;
 
             const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
             const masterInput = document.querySelectorAll('input.border-b.border-black.text-center')[0];
@@ -623,22 +634,46 @@
             });
 
             try {
-                await supa('POST', 'smk_form_data', null, {
-                    vessel_name: vesselName,
-                    form_code: FORM_CODE,
-                    form_data: {
-                        report_date: dateInput?.value || '',
-                        master_name: masterInput?.value || '',
-                        rows: rowsData
-                    },
-                    updated_at: new Date().toISOString()
-                });
-                btn.innerText = '✅ Tersimpan!';
-                setTimeout(() => { btn.innerHTML = '💾 Simpan Data'; btn.disabled = false; }, 2000);
+                if (SUPA_URL && SUPA_KEY) {
+                    await supa('POST', 'smk_form_data', null, {
+                        vessel_name: vesselName,
+                        form_code: FORM_CODE,
+                        form_data: {
+                            report_date: dateInput?.value || '',
+                            master_name: masterInput?.value || '',
+                            rows: rowsData
+                        },
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
+                setTimeout(() => { 
+                    btn.innerHTML = originalHtml; 
+                    btn.disabled = false; 
+                    const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+                    window.parent.postMessage({
+                        type: 'SMK_SAVE_PDF',
+                        name: document.title,
+                        ship: vesselName,
+                        date: dateInput ? dateInput.value : '',
+                        formCode: FORM_CODE,
+                        formTitle: document.title
+                    }, '*');
+                }, 500);
             } catch(err) {
                 console.error(err);
-                alert('Gagal menyimpan: ' + err.message);
-                btn.innerHTML = '💾 Simpan Data'; btn.disabled = false;
+                alert('Peringatan: Gagal menyimpan data ke database (' + err.message + '). PDF tetap akan dibuat.');
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false;
+                const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vesselName,
+                    date: dateInput ? dateInput.value : '',
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
             }
         }
 

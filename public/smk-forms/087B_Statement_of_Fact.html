@@ -1,0 +1,398 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>087-B Statement of Fact</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; }
+        .page { max-width: 900px; margin: 20px auto; background: white; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 20px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 82px; margin-bottom: 10px; padding-bottom: 10px; }
+        .co { font-weight: bold; }
+        .ttl { text-align: center; font-weight: bold; font-size: 16px; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-size: 11px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 5px 8px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .header-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .field-group { display: flex; align-items: center; margin-bottom: 8px; }
+        .field-group label { width: 150px; font-weight: bold; font-size: 12px; }
+        .field-group input, .field-group select { flex: 1; padding: 4px; border: 0; border-bottom: 1px solid black; background: transparent; outline: none; }
+        
+        .section-title { font-weight: bold; margin: 20px 0 10px; text-decoration: underline; }
+        
+        table.ship-particulars { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table.ship-particulars td { border: 1px solid black; padding: 5px; font-size: 12px; }
+        table.ship-particulars td:first-child { width: 200px; font-weight: bold; background: #f3f4f6; }
+        table.ship-particulars input { width: 100%; border: 0; outline: none; background: transparent; }
+        
+        .route-info { display: flex; gap: 20px; margin-bottom: 20px; align-items: center; font-size: 13px;}
+        .route-info input { border: 0; border-bottom: 1px solid black; outline: none; background: transparent; }
+        
+        textarea { width: 100%; height: 250px; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; outline: none; resize: vertical; line-height: 1.5; font-family: inherit; }
+        
+        .footer-sigs { display: grid; grid-template-columns: 1fr 1fr; margin-top: 30px; gap: 20px; text-align: center; font-weight: bold; }
+        .sig-box { margin-bottom: 20px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 60%; text-align: center; margin-top: 10px; outline: none; background: transparent; }
+        
+        .photo-section { border: 2px dashed #ccc; padding: 20px; text-align: center; margin-top: 20px; }
+        .photo-note { font-style: italic; font-size: 12px; margin-bottom: 10px; }
+        
+        .hidden { display: none !important; }
+        
+        /* Picture upload handling */
+        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .photo-item { position: relative; border: 1px solid #eee; padding: 5px; min-height: 150px; display: flex; align-items: center; justify-content: center; }
+        .photo-item img { max-width: 100%; max-height: 200px; }
+        .photo-item .x { position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; border: none; width: 20px; height: 20px; cursor: pointer; display: none; }
+        .photo-item:hover .x { display: block; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; }
+            textarea { border: 0; height: auto; min-height: 150px; }
+            .photo-section { border: 1px solid black; }
+            .field-group select { appearance: none; -webkit-appearance: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Print Button -->
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="aksiSimpanDanCetak()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">087-B<br>STATEMENT OF FACT</div>
+                <div class="stat">
+                    <div class="box"><span>CS</span><span>SET</span></div>
+                    <div>Release: Rev.01</div>
+                </div>
+            </div>
+            
+            <div class="header-fields">
+                <div>
+                    <div class="field-group">
+                        <label>Date :</label>
+                        <input type="text" id="report_date" placeholder="DD-MM-YYYY">
+                    </div>
+                    <div class="field-group">
+                        <label>MV :</label>
+                        <select class="ship-select">
+                            <option value="">Pilih Kapal</option>
+                            <option>Sahabat Mas</option>
+                            <option>Semangat Mas</option>
+                            <option>Express Mas</option>
+                            <option>Pratama Mas</option>
+                            <option>Prakarsa Mas</option>
+                            <option>Mavendra Mas</option>
+                            <option>Selaras Mas</option>
+                            <option>Segoro Mas</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="field-group">
+                        <label>Master :</label>
+                        <input type="text" id="master_name">
+                    </div>
+                    <div class="field-group">
+                        <label>Voyage :</label>
+                        <input type="text" id="voyage">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="ship-particulars">
+            <tr><td>Type of vessel</td><td><input type="text" id="type_vessel"></td></tr>
+            <tr><td>Ship's name</td><td><input type="text" id="ship_name" readonly></td></tr>
+            <tr><td>Call Sign</td><td><input type="text" id="call_sign"></td></tr>
+            <tr><td>Port of Registry</td><td><input type="text" id="port_registry"></td></tr>
+            <tr><td>Registered No.</td><td><input type="text" id="registered_no"></td></tr>
+            <tr><td>Flag</td><td><input type="text" id="flag"></td></tr>
+            <tr><td>Delivery Date</td><td><input type="text" id="delivery_date"></td></tr>
+            <tr><td>Gross Tonnage</td><td><input type="text" id="gross_tonnage"></td></tr>
+            <tr><td>Net Tonnage</td><td><input type="text" id="net_tonnage"></td></tr>
+            <tr><td>Horse power Output</td><td><input type="text" id="hp_output"></td></tr>
+            <tr><td>Main Engine</td><td><input type="text" id="main_engine"></td></tr>
+            <tr><td>Owner / Operator</td><td><input type="text" id="owner_operator" value="PT MENTARI MAS MULTIMODA"></td></tr>
+            <tr><td>Charterer</td><td><input type="text" id="charterer"></td></tr>
+            <tr><td>Agent</td><td><input type="text" id="agent"></td></tr>
+            <tr><td>Classification Society</td><td><input type="text" id="classification" value="BKI / CCS / NK / DNV-GL"></td></tr>
+        </table>
+
+        <div class="route-info">
+            <div>On route from <input type="text" id="route_from"></div>
+            <div>To <input type="text" id="route_to"></div>
+            <div>Date <input type="text" id="route_date"></div>
+            <div>Time <input type="text" id="route_time"></div>
+        </div>
+
+        <textarea id="statement_body" placeholder="Type Statement of Fact here..."></textarea>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div>Chief Officer / Chief Eng</div>
+                <div style="height: 60px;"></div>
+                <div>Name : <input type="text" id="chief_name"></div>
+            </div>
+            <div class="sig-box">
+                <div>Master</div>
+                <div style="height: 60px;"></div>
+                <div>Name : <input type="text" id="sig_master_name"></div>
+            </div>
+        </div>
+
+        <div class="photo-section">
+            <div class="photo-note">" Agar dilampirkan photo untuk area yang rusak & polusi / Pls put photo for damage area & pollution area "</div>
+            <label class="btn no-print" style="display: inline-flex; justify-content: center; width: auto; margin: 0 auto; background: #15803d;">
+                + Tambah Foto
+                <input type="file" id="photo-upload" class="hidden" accept="image/*" multiple>
+            </label>
+            <div class="photo-grid" id="photo-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // === SUPABASE CONFIG ===
+        let SUPA_URL  = "";
+        let SUPA_KEY  = "";
+        const FORM_CODE = "087B";
+
+        async function supa(method, table, params, body) {
+            let url = `${SUPA_URL}/rest/v1/${table}`;
+            if (params) url += '?' + new URLSearchParams(params).toString();
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'apikey': SUPA_KEY,
+                    'Authorization': 'Bearer ' + SUPA_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+                },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(txt);
+            }
+            const txt = await res.text();
+            return txt ? JSON.parse(txt) : [];
+        }
+
+        // Sync inputs
+        const shipSelect = document.querySelector('.ship-select');
+        const shipNameInput = document.getElementById('ship_name');
+        const mName = document.getElementById('master_name');
+        const sigMName = document.getElementById('sig_master_name');
+
+        shipSelect.addEventListener('change', () => { shipNameInput.value = shipSelect.value; });
+        mName.addEventListener('input', () => { sigMName.value = mName.value; });
+        sigMName.addEventListener('input', () => { mName.value = sigMName.value; });
+
+        // Photo Upload Handling
+        const photoUpload = document.getElementById('photo-upload');
+        const photoGrid = document.getElementById('photo-grid');
+        let photos = [];
+
+        function renderPhotos() {
+            photoGrid.innerHTML = '';
+            photos.forEach((base64, index) => {
+                const div = document.createElement('div');
+                div.className = 'photo-item';
+                div.innerHTML = `<img src="${base64}"><button class="x no-print" onclick="removePhoto(${index})">×</button>`;
+                photoGrid.appendChild(div);
+            });
+        }
+
+        function removePhoto(index) {
+            photos.splice(index, 1);
+            renderPhotos();
+        }
+
+        photoUpload.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            if (photos.length + files.length > 4) {
+                alert("Maksimal 4 foto (untuk menjaga ukuran file database)");
+                return;
+            }
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    // Compress image before saving to base64
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const MAX_SIZE = 800; // max width/height
+                        if (width > height && width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        } else if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Compress as JPEG 70% quality
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        photos.push(compressedBase64);
+                        renderPhotos();
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+            e.target.value = '';
+        });
+
+        const inputsToSave = [
+            'report_date', 'master_name', 'voyage', 'type_vessel', 'call_sign',
+            'port_registry', 'registered_no', 'flag', 'delivery_date', 'gross_tonnage',
+            'net_tonnage', 'hp_output', 'main_engine', 'owner_operator', 'charterer',
+            'agent', 'classification', 'route_from', 'route_to', 'route_date', 'route_time',
+            'statement_body', 'chief_name'
+        ];
+
+        // === LOAD FROM SUPABASE ===
+        async function loadFromSupabase() {
+            const vesselName = shipSelect.value;
+            shipNameInput.value = vesselName;
+            
+            if (!vesselName) return;
+
+            // Clear first
+            inputsToSave.forEach(id => {
+                const el = document.getElementById(id);
+                if(el && id !== 'owner_operator' && id !== 'classification') el.value = '';
+            });
+            sigMName.value = '';
+            photos = [];
+            renderPhotos();
+
+            try {
+                const rows = await supa('GET', 'smk_form_data', {
+                    'vessel_name': `eq.${vesselName}`,
+                    'form_code': `eq.${FORM_CODE}`,
+                    'select': 'form_data',
+                    'limit': 1
+                });
+                if (!rows || rows.length === 0) return;
+                const fd = rows[0].form_data;
+                if (!fd) return;
+
+                inputsToSave.forEach(id => {
+                    if (fd[id] !== undefined) document.getElementById(id).value = fd[id];
+                });
+                sigMName.value = document.getElementById('master_name').value;
+                
+                if (fd.photos && Array.isArray(fd.photos)) {
+                    photos = fd.photos;
+                    renderPhotos();
+                }
+            } catch(err) { console.error('Gagal load data:', err); }
+        }
+
+        // === SAVE & PRINT ===
+        async function aksiSimpanDanCetak() {
+            const vesselName = shipSelect.value;
+            if (!vesselName) { 
+                alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Menyimpan...'; 
+            btn.disabled = true;
+
+            const fd = {};
+            inputsToSave.forEach(id => {
+                fd[id] = document.getElementById(id).value;
+            });
+            fd.photos = photos;
+
+            try {
+                if (SUPA_URL && SUPA_KEY) {
+                    await supa('POST', 'smk_form_data', null, {
+                        vessel_name: vesselName,
+                        form_code: FORM_CODE,
+                        form_data: fd,
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
+                setTimeout(() => { 
+                    btn.innerHTML = originalHtml; 
+                    btn.disabled = false; 
+                    
+                    window.parent.postMessage({
+                        type: 'SMK_SAVE_PDF',
+                        name: document.title,
+                        ship: vesselName,
+                        date: document.getElementById('report_date').value,
+                        formCode: FORM_CODE,
+                        formTitle: document.title
+                    }, '*');
+                }, 500);
+            } catch(err) {
+                console.error(err);
+                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false;
+                
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vesselName,
+                    date: document.getElementById('report_date').value,
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }
+        }
+
+        // === INIT DATA FROM REACT (terima dari React via postMessage) ===
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                SUPA_URL = e.data.supabaseUrl;
+                SUPA_KEY = e.data.supabaseKey;
+                
+                const sel = document.querySelector('.ship-select');
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(sel.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) sel.value = opt.value;
+                    });
+                }
+                if (e.data.locked) sel.disabled = true;
+                
+                if (sel.value) loadFromSupabase();
+            }
+        });
+
+        shipSelect.addEventListener('change', loadFromSupabase);
+    </script>
+</body>
+</html>

@@ -101,7 +101,7 @@ export default function SMKReportFormPage() {
           }
         });
 
-        const LANDSCAPE_FORMS = new Set(["010_Risk_Assessment.html"]);
+        const LANDSCAPE_FORMS = new Set(["010_Risk_Assessment.html", "018_Crew_Certificate_Monitoring.html", "091C_Record_Hours_Of_Rest.html", "091D_Weekly_Accomm_Inspection.html", "092_Loading_Cargo_Stability.html"]);
         if (selectedForm?.file && LANDSCAPE_FORMS.has(selectedForm.file)) {
           let styleEl = clone.querySelector("style[data-smk-orientation]");
           if (!styleEl) {
@@ -116,7 +116,7 @@ export default function SMKReportFormPage() {
           }
         }
 
-        const DEDUP_FORMS = new Set(["010_Risk_Assessment.html"]);
+        const DEDUP_FORMS = new Set(["010_Risk_Assessment.html", "018_Crew_Certificate_Monitoring.html"]);
         if (selectedForm?.file && DEDUP_FORMS.has(selectedForm.file) && sourceDoc) {
           const tbody = clone.querySelector("tbody#rows");
           if (tbody) {

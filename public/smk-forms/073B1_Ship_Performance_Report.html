@@ -6,501 +6,584 @@
   <title>073 B1 - Ship Performance Report</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
-    .page { max-width: 1100px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
-    .tools { text-align: right; margin-bottom: 16px; }
-    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
+    body { background: #e5e7eb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1f2937; font-size: 12px; }
+    input, select, textarea { font-family: inherit; font-size: inherit; width: 100%; border: 1px solid #d1d5db; border-radius: 4px; padding: 6px; }
+    input[type="number"] { text-align: right; }
+    input[readonly] { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; cursor: not-allowed; }
     
-    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
-    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
-    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
-    .title { text-align: center; font-size: 15px; font-weight: bold; line-height: 1.3; }
-    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
-    .code { display: flex; border: 1px solid #000; }
+    .page { max-width: 1200px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-radius: 8px; }
+    .no-print-area { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+    .btn { border: 0; border-radius: 4px; background: #2563eb; color: #fff; font-weight: 600; padding: 8px 16px; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: #1d4ed8; }
+    .btn-red { background: #ef4444; }
+    .btn-red:hover { background: #b91c1c; }
+    
+    /* Header */
+    .head { border: 2px solid #1f2937; padding: 12px 16px; margin-bottom: 16px; border-radius: 4px; }
+    .top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1f2937; padding-bottom: 8px; margin-bottom: 8px; }
+    .company { font-size: 16px; font-weight: 700; text-transform: uppercase; }
+    .title { font-size: 18px; font-weight: 700; }
+    .st { font-size: 12px; font-weight: 600; }
+    .code { display: inline-flex; border: 1px solid #1f2937; border-radius: 2px; }
     .code span { padding: 4px 8px; }
-    .code span:first-child { border-right: 1px solid #000; }
+    .code span:first-child { border-right: 1px solid #1f2937; background: #f3f4f6; }
     
-    .section-title { font-weight: bold; font-size: 12px; margin: 16px 0 8px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid #2563eb; }
+    .tab-btn { padding: 10px 20px; background: #f3f4f6; border: 1px solid #d1d5db; border-bottom: none; cursor: pointer; font-weight: 600; border-radius: 6px 6px 0 0; color: #4b5563; }
+    .tab-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 16px; font-size: 12px; margin-bottom: 12px; }
-    .grid-4 .item { display: flex; flex-direction: column; gap: 2px; }
-    .grid-4 .item label { font-weight: bold; color: #444; font-size: 11px; }
-    .grid-4 .item input, .grid-4 .item select { border: 1px solid #ccc; padding: 4px; font-size: 12px; outline: none; }
-    .grid-4 .item input:focus, .grid-4 .item select:focus { border-color: #1769d2; }
+    /* Layout */
+    .section-title { font-weight: 700; font-size: 14px; margin: 24px 0 12px; background: #1e3a8a; color: white; padding: 8px 12px; border-radius: 4px; text-transform: uppercase; }
+    .grid { display: grid; gap: 12px 16px; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-5 { grid-template-columns: repeat(5, 1fr); }
+    
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-weight: 600; color: #374151; font-size: 11px; }
+    .field-group { display: flex; gap: 4px; }
+    .panel { background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 6px; margin-bottom: 16px; }
+    
+    /* Voyage Card */
+    .voyage-card { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .voyage-header { background: #f1f5f9; padding: 8px 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #cbd5e1; }
+    .voyage-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+    .voyage-section { border: 1px solid #e2e8f0; border-radius: 4px; padding: 10px; }
+    .voyage-section h4 { margin-top: 0; margin-bottom: 8px; font-size: 11px; color: #475569; text-transform: uppercase; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; }
+    
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-weight: bold; font-size: 10px; color: white; }
+    .badge-ok { background: #10b981; }
+    .badge-over { background: #ef4444; }
+    .badge-na { background: #6b7280; }
 
-    .tbl-container { overflow-x: auto; margin-bottom: 16px; border: 1px solid #000; }
-    .tbl { width: 100%; border-collapse: collapse; font-size: 10px; table-layout: fixed; }
-    .tbl th, .tbl td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; }
-    .tbl th { background: #f3f4f6; font-weight: bold; }
-    .tbl input[type="text"] { width: 100%; border: 0; background: transparent; font-size: 10px; text-align: center; outline: none; }
-    
-    .footer-section { margin-top: 24px; padding-top: 16px; border-top: 2px solid #000; }
-    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; justify-content: center; }
-    .sig-item { text-align: center; }
-    .sig-item .label { font-size: 11px; font-weight: bold; margin-bottom: 8px; }
-    .sig-item .space { height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; position: relative; }
-    .sig-item .space .btn { padding: 4px 8px; font-size: 9px; }
-    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
-    .sig-item .space .pv img { max-height: 60px; max-width: 100%; object-fit: contain; }
-    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .sig-item .nm { width: 90%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 11px; padding: 4px; outline: none; font-weight: bold; margin-bottom: 4px; }
-    .sig-item .role { font-size: 10px; font-weight: bold; }
-    .hidden { display: none !important; }
+    /* Tables */
+    .tbl { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    .tbl th, .tbl td { border: 1px solid #d1d5db; padding: 6px; text-align: left; }
+    .tbl th { background: #f3f4f6; font-weight: 600; text-align: center; }
+    .tbl input { border: none; padding: 4px; background: transparent; text-align: right; }
+    .tbl input[type="text"] { text-align: left; }
+    .tbl input:focus { outline: 1px solid #2563eb; background: #fff; }
 
+    /* Footer & Signatures */
+    .footer-section { break-inside: avoid; page-break-inside: avoid; margin-top: 32px; border-top: 2px solid #e5e7eb; padding-top: 16px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; text-align: center; }
+    .sig-box { min-height: 100px; border-bottom: 1px dotted #1f2937; margin: 12px 0; position: relative; cursor: pointer; background: #f9fafb; display: flex; align-items: center; justify-content: center; }
+    .sig-box:hover { background: #f3f4f6; }
+    .sig-img { max-height: 90px; max-width: 100%; object-fit: contain; }
+    .sig-placeholder { color: #9ca3af; font-size: 11px; }
+    .input-transparent { border: 0 !important; border-bottom: 1px solid #9ca3af !important; border-radius: 0 !important; text-align: center !important; font-weight: bold; padding: 4px; background: transparent; }
+    .input-transparent:focus { border-bottom-color: #2563eb !important; outline: none !important; }
+    
+    /* Print */
     @media print {
-      body { background: #fff; }
-      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; width: 100%; }
+      body { background: #fff; margin: 0; padding: 0; font-size: 10px; }
+      .page { max-width: 100%; margin: 0; padding: 0; box-shadow: none; border: none; }
       .no-print { display: none !important; }
-      @page { size: A4 landscape; margin: 8mm; }
-      .tbl { font-size: 8px; }
-      .tbl input { font-size: 8px; }
-      input::placeholder { color: transparent !important; opacity: 0 !important; }
-      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
-      .grid-4 .item input, .grid-4 .item select { border: none; border-bottom: 1px solid #000; }
-    }
-    
-    @media screen and (max-width: 768px) {
-      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
-      .st { align-items: center; }
-      .info-grid { grid-template-columns: 1fr; gap: 12px; }
-      .item { flex-direction: column; align-items: flex-start; gap: 4px; }
-      .item label { width: 100%; flex-direction: row; justify-content: flex-start; align-items: baseline; gap: 6px; white-space: normal; }
-      .item input, .item select { width: 100%; flex: none; }
-      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-      .page { padding: 10px; overflow-x: hidden; width: 100%; }
-      .tbl-container { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
-      .tbl { min-width: 600px; }
-    }
-      .tbl { min-width: 1200px; }
+      .tabs { display: none; }
+      .tab-content { display: block !important; page-break-before: always; }
+      .tab-content:first-of-type { page-break-before: avoid; }
+      .voyage-card { break-inside: avoid; page-break-inside: avoid; }
+      @page { size: A4 landscape; margin: 12mm; }
     }
   </style>
 </head>
 <body>
-<div class="container" id="form-container">
-  <div class="tools no-print">
-    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+<div class="page">
+  <div class="no-print no-print-area">
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
   </div>
-  <div class="page" id="pdf-content">
-    
-    <header class="head">
-      <div class="top">
-        <div class="company">PT Mentari Mas Multimoda</div>
-        <div class="title" id="form-title">073 B1 - SHIP PERFORMANCE REPORT</div>
-        <div class="st">
-          <div class="code"><span>CS</span><span>BLN</span></div>
-          <div>Release: &nbsp; Rev.0</div>
+  
+  <div class="head">
+    <div class="top">
+      <div class="company">PT Mentari Mas Multimoda</div>
+      <div class="title">SHIP PERFORMANCE REPORT</div>
+      <div class="st">
+        <div class="code">
+          <span>Form</span>
+          <span>073 B1</span>
         </div>
       </div>
-    </header>
-    
-    <!-- VESSEL GENERAL INFO -->
-    <div class="section-title">A. GENERAL SHIP'S INFORMATION</div>
-    <div class="grid-4">
-      <div class="item">
-        <label>Ship's Name</label>
-        <select id="vessel">
-          <option value="">Pilih Kapal</option>
-          <option value="Sahabat Mas">Sahabat Mas</option>
-          <option value="Semangat Mas">Semangat Mas</option>
-          <option value="Express Mas">Express Mas</option>
-          <option value="Pratama Mas">Pratama Mas</option>
-          <option value="Prakarsa Mas">Prakarsa Mas</option>
-          <option value="Mavendra Mas">Mavendra Mas</option>
-          <option value="Selaras Mas">Selaras Mas</option>
-          <option value="Segoro Mas">Segoro Mas</option>
+    </div>
+  </div>
+
+  <div class="tabs no-print">
+    <button class="tab-btn active" onclick="openTab(event, 'tab1')">1. Input Voyage</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab2')">2. Monthly Summary</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab3')">3. EEOI Average Roll</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab4')">4. Data Collection System</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab5')">5. BOD Report</button>
+  </div>
+
+  <!-- TAB 1: Input Voyage -->
+  <div id="tab1" class="tab-content active">
+    <div class="section-title">A. Informasi Kapal & Standard Performance</div>
+    <div class="panel grid grid-5">
+      <div class="field"><label>Ship's Name</label>
+        <select id="shipName" class="vessel" onchange="updateTitle()">
+          <option value="">- Pilih Kapal -</option>
+          <option>Sahabat Mas</option>
+          <option>Semangat Mas</option>
+          <option>Express Mas</option>
+          <option>Pratama Mas</option>
+          <option>Prakarsa Mas</option>
+          <option>Mavendra Mas</option>
+          <option>Selaras Mas</option>
+          <option>Segoro Mas</option>
         </select>
       </div>
-      <div class="item"><label>IMO Number</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Ship's Type</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Power ME</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Gross Ton (GT)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Nett Ton (NT)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Deadweight (DWT)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Nominal TEUs</label><input type="text" placeholder="..."></div>
-    </div>
-
-    <!-- STANDARD PERFORMANCE -->
-    <div class="section-title">B. STANDARD CONSUMPTION & PERFORMANCE</div>
-    <div class="grid-4">
-      <div class="item"><label>Speed Service (Knot)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>RPM</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>ME Cons. (MT/Day)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>ME Cons. Type</label><input type="text" placeholder="e.g MFO/HSD"></div>
-      <div class="item"><label>AE Cons. Sailing (MT/Day)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>AE Cons. Anchor (MT/Day)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Manouv Total (MT/Hr)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Fresh Water (MT/Day)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>LO Sys (L/Day)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>LO Cyl (L/Day)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>LO 1xAE (L/Day)</label><input type="text" placeholder="..."></div>
-      <div class="item"><label>Reporting Month</label><input type="text" placeholder="MM-YYYY"></div>
-    </div>
-
-    <!-- VOYAGE PERFORMANCE LOG -->
-    <div class="section-title">C. VOYAGE PERFORMANCE LOG (CONTINUOUSLY)</div>
-    <div class="tbl-container">
-      <table class="tbl" id="voy-table">
-        <thead>
-          <tr>
-            <th rowspan="2" style="width:3%;">No</th>
-            <th rowspan="2" style="width:6%;">Voy No</th>
-            <th rowspan="2" style="width:7%;">Route</th>
-            <th rowspan="2" style="width:4%;">Draft<br>(m)</th>
-            <th colspan="2" style="width:14%;">Time Info (Hrs)</th>
-            <th colspan="2" style="width:14%;">Distance & Speed</th>
-            <th colspan="5" style="width:30%;">Consumption (MT / Ltr)</th>
-            <th rowspan="2" style="width:6%;">Fresh Water<br>(MT)</th>
-            <th rowspan="2" style="width:6%;">Ballast<br>(Ton)</th>
-            <th rowspan="2" class="no-print" style="width:3%;">Act</th>
-          </tr>
-          <tr>
-            <th>Steaming<br>(BOSV-EOSV)</th>
-            <th>Anchor /<br>Manouv</th>
-            <th>Dist<br>(NM)</th>
-            <th>Speed<br>(Knot)</th>
-            <th>Fuel<br>MFO (MT)</th>
-            <th>Fuel<br>HSD (MT)</th>
-            <th>LO Sys<br>(Ltr)</th>
-            <th>LO Cyl<br>(Ltr)</th>
-            <th>Sludge<br>(Ltr)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="row-no">1</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">2</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">3</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">4</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">5</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">6</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">7</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">8</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">9</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">10</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">11</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-          <tr>
-            <td class="row-no">12</td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('voy-table');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="no-print" style="margin-bottom:20px;">
-      <button class="btn" style="padding:6px 12px; font-size:11px;" onclick="addRow('voy-table')">+ Tambah Voy Log</button>
-    </div>
-
-    <!-- FOOTER / SIGNATURES -->
-    <div class="footer-section no-break">
-      <div class="footer-grid">
-        <div class="sig-item">
-          <div class="label">Prepared by,</div>
-          <div class="space" id="sp-1">
-            <label class="btn no-print" for="up-1">+ Add TTD</label>
-            <input type="file" id="up-1" class="hidden" accept="image/*">
-            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
-          </div>
-          <input type="text" class="nm" placeholder="Nama Terang">
-          <div class="role">Chief Engineer</div>
-        </div>
-        <div class="sig-item">
-          <div class="label">Acknowledged by,</div>
-          <div class="space" id="sp-2">
-            <label class="btn no-print" for="up-2">+ Add TTD</label>
-            <input type="file" id="up-2" class="hidden" accept="image/*">
-            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
-          </div>
-          <input type="text" class="nm" placeholder="Nama Terang">
-          <div class="role">Master</div>
-        </div>
-        <div class="sig-item">
-          <div class="label">Reviewed by,</div>
-          <div class="space" id="sp-3">
-            <label class="btn no-print" for="up-3">+ Add TTD</label>
-            <input type="file" id="up-3" class="hidden" accept="image/*">
-            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
-          </div>
-          <input type="text" class="nm" placeholder="Nama Terang">
-          <div class="role">Superintendent / Fleet Manager</div>
+      <div class="field"><label>Reporting Month</label><input type="month" id="reportMonth" class="date" onchange="updateTitle()"></div>
+      <div class="field"><label>Ship's Type</label><input type="text" id="shipType"></div>
+      <div class="field"><label>IMO Number</label><input type="text" id="imoNumber"></div>
+      <div class="field"><label>Nominal TEUs</label><input type="number" id="nomTeus"></div>
+      <div class="field"><label>Deadweight (DWT)</label><input type="number" id="dwt"></div>
+      <div class="field"><label>Nett Ton (NT)</label><input type="number" id="nettTon"></div>
+      <div class="field"><label>Gross Ton (GT)</label><input type="number" id="grossTon"></div>
+      <div class="field"><label>Power Main Engine</label><input type="number" id="mePower"></div>
+      <div class="field"><label>Total Auxiliary Engine Power</label><input type="number" id="aePower"></div>
+      <div class="field"><label>Service Speed (knot)</label><input type="number" id="svcSpeed"></div>
+      <div class="field"><label>RPM</label><input type="number" id="rpm"></div>
+      <div class="field"><label>ME Fuel Type & Cons (MT/day)</label>
+        <div class="field-group">
+          <select id="meFuelType" style="flex:1"><option>HFO</option><option>MFO</option><option>DO</option><option>HSD</option></select>
+          <input type="number" id="meCons" placeholder="MT/d" style="flex:1">
         </div>
       </div>
+      <div class="field"><label>AE Fuel Type & Cons</label>
+        <div class="field-group">
+          <select id="aeFuelType" style="flex:1"><option>HFO</option><option>MFO</option><option>DO</option><option>HSD</option></select>
+          <input type="number" id="aeSailCons" placeholder="Sail" title="Sailing Consumption" style="flex:1">
+          <input type="number" id="aeAnchorCons" placeholder="Anch" title="Anchor Consumption" style="flex:1">
+        </div>
+      </div>
+      <div class="field"><label>Manouver Total (MT/hour)</label><input type="number" id="manouverCons"></div>
+      <div class="field"><label>LO Sys / Cyl / AE (L/day)</label>
+        <div class="field-group">
+          <input type="number" id="loSys" placeholder="Sys" style="flex:1">
+          <input type="number" id="loCyl" placeholder="Cyl" style="flex:1">
+          <input type="number" id="loAe" placeholder="AE" style="flex:1">
+        </div>
+      </div>
+      <div class="field"><label>Fresh Water (MT/day)</label><input type="number" id="fwCons"></div>
+    </div>
+
+    <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>B. Voyage / Port Call Log</span>
+      <button class="btn no-print" onclick="addVoyCard()" style="font-size:11px; padding:4px 8px;">+ Tambah Voyage</button>
     </div>
     
+    <div id="voyage-container">
+      <!-- Voyage Cards will be inserted here by JS -->
+    </div>
+
+    <div class="section-title">C. Ringkasan Performa Voyage</div>
+    <div class="panel grid grid-5">
+      <div class="field"><label>Total Distance (NM)</label><input type="text" id="sumDist" readonly></div>
+      <div class="field"><label>Total Steaming Time (Hrs)</label><input type="text" id="sumSteam" readonly></div>
+      <div class="field"><label>Average Speed (Knot)</label><input type="text" id="avgSpeed" readonly></div>
+      <div class="field"><label>Total MFO Cons (MT)</label><input type="text" id="sumMFO" readonly></div>
+      <div class="field"><label>Total HSD Cons (MT)</label><input type="text" id="sumHSD" readonly></div>
+      <div class="field"><label>Total CO₂ Equivalent (MT)</label><input type="text" id="sumCO2" readonly></div>
+      <div class="field"><label>Total Cargo (TEUs)</label><input type="text" id="sumTEUs" readonly></div>
+      <div class="field"><label>Total Cargo (Ton)</label><input type="text" id="sumTon" readonly></div>
+      <div class="field"><label>Fuel / TEU</label><input type="text" id="fuelPerTeu" readonly></div>
+      <div class="field"><label>Fuel / Ton</label><input type="text" id="fuelPerTon" readonly></div>
+      <div class="field"><label>EEOI Actual</label><input type="text" id="eeoiActual" readonly></div>
+      <div class="field"><label>ME Status vs Std</label>
+        <div id="meStatusWrapper" style="padding:4px 0;"><span id="meStatus" class="badge badge-na">N/A</span></div>
+      </div>
+      <div class="field"><label>AE Status vs Std</label>
+        <div id="aeStatusWrapper" style="padding:4px 0;"><span id="aeStatus" class="badge badge-na">N/A</span></div>
+      </div>
+      <div class="field"><label>Total Fresh Water Cons (MT)</label><input type="text" id="sumFW" readonly></div>
+      <div class="field"><label>Total Sludge (MT)</label><input type="text" id="sumSludge" readonly></div>
+      <div class="field"><label>Total Downtime (Hrs)</label><input type="text" id="sumDowntime" readonly></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Monthly Summary -->
+  <div id="tab2" class="tab-content">
+    <div class="section-title">Monthly Summary</div>
+    <div class="panel grid grid-4">
+      <div class="field"><label>Total Steaming Time (Hrs)</label><input type="text" id="monthSteam" readonly></div>
+      <div class="field"><label>Total Port/Anchorage Time (Hrs)</label><input type="text" id="monthPort" readonly></div>
+      <div class="field"><label>Total Manoeuvre Time (Hrs)</label><input type="text" id="monthManoeuvre" readonly></div>
+      <div class="field"><label>Total Distance (NM)</label><input type="text" id="monthDist" readonly></div>
+      
+      <div class="field"><label>Total Cargo (Ton)</label><input type="text" id="monthCargo" readonly></div>
+      <div class="field"><label>Total Fuel (MT)</label><input type="text" id="monthFuel" readonly></div>
+      <div class="field"><label>Total LO (Ltr)</label><input type="text" id="monthLO" readonly></div>
+      <div class="field"><label>Total FW (MT)</label><input type="text" id="monthFW" readonly></div>
+      
+      <div class="field"><label>Total Sludge (MT)</label><input type="text" id="monthSludge" readonly></div>
+      <div class="field"><label>Total EEOI</label><input type="text" id="monthEEOI" readonly></div>
+      <div class="field"><label>Fuel Efficiency (MT/NM)</label><input type="text" id="monthEff" readonly></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: EEOI Average Roll -->
+  <div id="tab3" class="tab-content">
+    <div class="section-title">EEOI Average Roll</div>
+    <div class="panel grid grid-3">
+      <div class="field"><label>EEOI Actual</label><input type="text" id="eeoiRollActual" readonly></div>
+      <div class="field"><label>EEOI Rolling Average</label><input type="text" id="eeoiRollAvg" readonly></div>
+      <div class="field"><label>Fuel CO₂ Equivalent</label><input type="text" id="eeoiCO2" readonly></div>
+      <div class="field"><label>Cargo-Distance Basis (Ton-NM)</label><input type="text" id="eeoiBasis" readonly></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Data Collection System -->
+  <div id="tab4" class="tab-content">
+    <div class="section-title">Data Collection System</div>
+    <div class="panel grid grid-3">
+      <div class="field"><label>Ship Name</label><input type="text" id="dcsShip" readonly></div>
+      <div class="field"><label>Method used to measure fuel</label><input type="text" value="ROB difference" readonly></div>
+      <div class="field"><label>Total HFO/LFO/DO Cons (MT)</label><input type="text" id="dcsFuel" readonly></div>
+      <div class="field"><label>Hours Underway</label><input type="text" id="dcsHours" readonly></div>
+      <div class="field"><label>Distance Travelled (NM)</label><input type="text" id="dcsDist" readonly></div>
+      <div class="field"><label>Main Propulsion Power (kW)</label><input type="text" id="dcsMainPower" readonly></div>
+      <div class="field"><label>Auxiliary Propulsion Power (kW)</label><input type="text" id="dcsAuxPower" readonly></div>
+      <div class="field"><label>Ice Class / EEDI</label><input type="text" value="N/A" readonly></div>
+      <div class="field"><label>DWT / NT / GT</label><input type="text" id="dcsDims" readonly></div>
+      <div class="field"><label>Ship Type / IMO</label><input type="text" id="dcsTypeImo" readonly></div>
+      <div class="field"><label>Start Date</label><input type="date" id="dcsStart"></div>
+      <div class="field"><label>End Date</label><input type="date" id="dcsEnd"></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: BOD Report -->
+  <div id="tab5" class="tab-content">
+    <div class="section-title">BOD Report Template</div>
+    <div class="panel grid grid-4">
+      <div class="field"><label>ME Speed (Knot)</label><input type="text" id="bodSpeed" readonly></div>
+      <div class="field"><label>ME RPM</label><input type="text" id="bodRpm" readonly></div>
+      <div class="field"><label>ME Fuel Sailing MT/day</label><input type="text" id="bodMeFuelDay" readonly></div>
+      <div class="field"><label>ME Fuel Sailing MT/month</label><input type="text" id="bodMeFuelMonth" readonly></div>
+      
+      <div class="field"><label>Lubricating Oil ME Sys (Ltr)</label><input type="text" id="bodLoSys" readonly></div>
+      <div class="field"><label>Lubricating Oil ME Cyl (Ltr)</label><input type="text" id="bodLoCyl" readonly></div>
+      <div class="field"><label>AE Performance / Fuel Cons</label><input type="text" id="bodAePerf" readonly></div>
+      <div class="field"><label>HSD/MFO Manoeuvre MT/hour</label><input type="text" id="bodManoeuvreCons" readonly></div>
+      
+      <div class="field"><label>Cargo TEUs</label><input type="text" id="bodTeus" readonly></div>
+      <div class="field"><label>MFO + HSD / TEU</label><input type="text" id="bodFuelTeu" readonly></div>
+      <div class="field"><label>Port Calls</label><input type="text" id="bodPortCalls" readonly></div>
+      <div class="field"><label>Boiler Consumption (MT)</label><input type="text" id="bodBoiler" readonly></div>
+      
+      <div class="field"><label>FW Consumption (MT)</label><input type="text" id="bodFw" readonly></div>
+      <div class="field"><label>Sludge Level (MT)</label><input type="text" id="bodSludge" readonly></div>
+    </div>
+  </div>
+
+  <!-- SIGNATURES -->
+  <div class="footer-section">
+    <div class="footer-grid">
+      <div>
+        <p>Prepared by,</p>
+        <div class="sig-box" onclick="handleSigClick(this, 'sig1')">
+          <span class="sig-placeholder no-print">Klik untuk upload TTD</span>
+          <img id="sig1-img" class="sig-img" style="display:none">
+          <input type="file" id="sig1-file" accept="image/*" style="display:none" onchange="loadSig(this, 'sig1-img')">
+        </div>
+        <input type="text" class="input-transparent" placeholder="Name">
+        <p>Chief Engineer</p>
+      </div>
+      <div>
+        <p>Acknowledged by,</p>
+        <div class="sig-box" onclick="handleSigClick(this, 'sig2')">
+          <span class="sig-placeholder no-print">Klik untuk upload TTD</span>
+          <img id="sig2-img" class="sig-img" style="display:none">
+          <input type="file" id="sig2-file" accept="image/*" style="display:none" onchange="loadSig(this, 'sig2-img')">
+        </div>
+        <input type="text" class="input-transparent" placeholder="Name">
+        <p>Master</p>
+      </div>
+      <div>
+        <p>Approved by,</p>
+        <div class="sig-box" onclick="handleSigClick(this, 'sig3')">
+          <span class="sig-placeholder no-print">Klik untuk upload TTD</span>
+          <img id="sig3-img" class="sig-img" style="display:none">
+          <input type="file" id="sig3-file" accept="image/*" style="display:none" onchange="loadSig(this, 'sig3-img')">
+        </div>
+        <input type="text" class="input-transparent" placeholder="Name">
+        <p>Supt / Fleet Manager</p>
+      </div>
+    </div>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-  function initSig(upId, pvId) {
-    document.getElementById(upId).addEventListener('change', function(e) {
-      if(e.target.files && e.target.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(x) {
-          var pv = document.getElementById(pvId);
-          pv.querySelector('img').src = x.target.result;
-          pv.style.display = 'flex';
-          pv.parentElement.querySelector('label').classList.add('hidden');
-        };
-        reader.readAsDataURL(e.target.files[0]);
-      }
-    });
+  let voyCount = 0;
+
+  function openTab(evt, tabId) {
+    document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+    document.getElementById(tabId).classList.add("active");
+    evt.currentTarget.classList.add("active");
   }
-  function clearSig(pvId, upId) {
-    var pv = document.getElementById(pvId);
-    pv.querySelector('img').src = '';
-    pv.style.display = 'none';
-    pv.parentElement.querySelector('label').classList.remove('hidden');
-    document.getElementById(upId).value = '';
+
+  function addVoyCard() {
+    voyCount++;
+    const container = document.getElementById("voyage-container");
+    const id = voyCount;
+    const card = document.createElement("div");
+    card.className = "voyage-card";
+    card.id = `voy-card-${id}`;
+    
+    card.innerHTML = `
+      <div class="voyage-header">
+        <span>Voyage #<input type="text" class="v-no" value="${id}" style="width:60px; display:inline-block; margin-left:8px; padding:2px;"></span>
+        <button class="btn btn-red no-print" style="padding:4px 8px; font-size:11px;" onclick="document.getElementById('voy-card-${id}').remove(); calculate();">Hapus Voyage</button>
+      </div>
+      <div class="voyage-body">
+        <div class="grid grid-4">
+          <div class="field"><label>Dep Port</label><input type="text" class="v-dep"></div>
+          <div class="field"><label>Arr Port</label><input type="text" class="v-arr"></div>
+          <div class="field"><label>Cargo TEUs</label><input type="number" class="v-teus" oninput="calculate()"></div>
+          <div class="field"><label>Cargo Ton</label><input type="number" class="v-ton" oninput="calculate()"></div>
+        </div>
+        
+        <div class="grid grid-3">
+          <div class="voyage-section">
+            <h4>Time & Distance</h4>
+            <div class="grid grid-2">
+              <div class="field"><label>Distance (NM)</label><input type="number" class="v-dist" oninput="calculate()"></div>
+              <div class="field"><label>Steaming Hrs</label><input type="number" class="v-steam" oninput="calculate()"></div>
+              <div class="field"><label>Port/Anch Hrs</label><input type="number" class="v-port" oninput="calculate()"></div>
+              <div class="field"><label>Manoeuvre Hrs</label><input type="number" class="v-manoeuvre" oninput="calculate()"></div>
+              <div class="field"><label>Downtime (Hrs)</label><input type="number" class="v-downtime" oninput="calculate()"></div>
+              <div class="field"><label>Calc Speed</label><input type="text" class="v-spd" readonly></div>
+            </div>
+          </div>
+          
+          <div class="voyage-section">
+            <h4>Fuel & Performance</h4>
+            <div class="grid grid-2">
+              <div class="field"><label>MFO Cons (MT)</label><input type="number" class="v-mfo" oninput="calculate()"></div>
+              <div class="field"><label>HSD Cons (MT)</label><input type="number" class="v-hsd" oninput="calculate()"></div>
+              <div class="field"><label>ME Cons (MT)</label><input type="number" class="v-me-cons" oninput="calculate()"></div>
+              <div class="field"><label>AE Cons (MT)</label><input type="number" class="v-ae-cons" oninput="calculate()"></div>
+              <div class="field"><label>Boiler Cons (MT)</label><input type="number" class="v-boiler" oninput="calculate()"></div>
+              <div class="field"><label>Avg RPM</label><input type="number" class="v-rpm"></div>
+            </div>
+          </div>
+          
+          <div class="voyage-section">
+            <h4>Fluids & Remarks</h4>
+            <div class="grid grid-2">
+              <div class="field"><label>Total LO Cons (L)</label><input type="number" class="v-lo" oninput="calculate()"></div>
+              <div class="field"><label>Fresh Water (MT)</label><input type="number" class="v-fw" oninput="calculate()"></div>
+              <div class="field"><label>Sludge (MT)</label><input type="number" class="v-sludge" oninput="calculate()"></div>
+              <div class="field"><label>Draft (M)</label><input type="number" class="v-draft"></div>
+              <div class="field" style="grid-column: span 2"><label>Remarks</label><input type="text" class="v-remarks"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+    calculate();
+  }
+
+  function calculate() {
+    const cards = document.querySelectorAll(".voyage-card");
+    let tDist = 0, tSteam = 0, tPort = 0, tManoeuvre = 0, tDowntime = 0;
+    let tMfo = 0, tHsd = 0, tMe = 0, tAe = 0, tBoiler = 0;
+    let tTeus = 0, tTon = 0, tLo = 0, tFw = 0, tSludge = 0;
+    
+    cards.forEach(card => {
+      const dist = parseFloat(card.querySelector(".v-dist").value) || 0;
+      const steam = parseFloat(card.querySelector(".v-steam").value) || 0;
+      const port = parseFloat(card.querySelector(".v-port").value) || 0;
+      const man = parseFloat(card.querySelector(".v-manoeuvre").value) || 0;
+      const down = parseFloat(card.querySelector(".v-downtime").value) || 0;
+      
+      const mfo = parseFloat(card.querySelector(".v-mfo").value) || 0;
+      const hsd = parseFloat(card.querySelector(".v-hsd").value) || 0;
+      const me = parseFloat(card.querySelector(".v-me-cons").value) || 0;
+      const ae = parseFloat(card.querySelector(".v-ae-cons").value) || 0;
+      const boiler = parseFloat(card.querySelector(".v-boiler").value) || 0;
+      
+      const teus = parseFloat(card.querySelector(".v-teus").value) || 0;
+      const ton = parseFloat(card.querySelector(".v-ton").value) || 0;
+      const lo = parseFloat(card.querySelector(".v-lo").value) || 0;
+      const fw = parseFloat(card.querySelector(".v-fw").value) || 0;
+      const sludge = parseFloat(card.querySelector(".v-sludge").value) || 0;
+      
+      let spd = steam > 0 ? (dist / steam) : 0;
+      card.querySelector(".v-spd").value = spd > 0 ? spd.toFixed(2) : "";
+      
+      tDist += dist; tSteam += steam; tPort += port; tManoeuvre += man; tDowntime += down;
+      tMfo += mfo; tHsd += hsd; tMe += me; tAe += ae; tBoiler += boiler;
+      tTeus += teus; tTon += ton; tLo += lo; tFw += fw; tSludge += sludge;
+    });
+
+    const avgSpd = tSteam > 0 ? (tDist / tSteam) : 0;
+    const tFuel = tMfo + tHsd;
+    
+    // Tab 1 Summary
+    document.getElementById("sumDist").value = tDist.toFixed(2);
+    document.getElementById("sumSteam").value = tSteam.toFixed(2);
+    document.getElementById("avgSpeed").value = avgSpd.toFixed(2);
+    document.getElementById("sumMFO").value = tMfo.toFixed(2);
+    document.getElementById("sumHSD").value = tHsd.toFixed(2);
+    
+    // CO2 Eq: MFO*3.114 + HSD*3.206
+    let co2 = (tMfo * 3.114) + (tHsd * 3.206);
+    document.getElementById("sumCO2").value = co2.toFixed(2);
+    
+    document.getElementById("sumTEUs").value = tTeus.toFixed(2);
+    document.getElementById("sumTon").value = tTon.toFixed(2);
+    document.getElementById("fuelPerTeu").value = tTeus > 0 ? (tFuel / tTeus).toFixed(2) : "0.00";
+    document.getElementById("fuelPerTon").value = tTon > 0 ? (tFuel / tTon).toFixed(4) : "0.00";
+    
+    // EEOI
+    let basis = tTon * tDist;
+    let eeoi = (basis > 0) ? (co2 * 1000000 / basis) : 0; // scaled by 10^6 commonly
+    document.getElementById("eeoiActual").value = eeoi > 0 ? eeoi.toFixed(2) : "0.00";
+    
+    document.getElementById("sumFW").value = tFw.toFixed(2);
+    document.getElementById("sumSludge").value = tSludge.toFixed(2);
+    document.getElementById("sumDowntime").value = tDowntime.toFixed(2);
+    
+    // Mirror to Tab 2
+    document.getElementById("monthSteam").value = tSteam.toFixed(2);
+    document.getElementById("monthPort").value = tPort.toFixed(2);
+    document.getElementById("monthManoeuvre").value = tManoeuvre.toFixed(2);
+    document.getElementById("monthDist").value = tDist.toFixed(2);
+    document.getElementById("monthCargo").value = tTon.toFixed(2);
+    document.getElementById("monthFuel").value = tFuel.toFixed(2);
+    document.getElementById("monthLO").value = tLo.toFixed(2);
+    document.getElementById("monthFW").value = tFw.toFixed(2);
+    document.getElementById("monthSludge").value = tSludge.toFixed(2);
+    document.getElementById("monthEEOI").value = document.getElementById("eeoiActual").value;
+    document.getElementById("monthEff").value = tDist > 0 ? (tFuel / tDist).toFixed(4) : "0.00";
+    
+    // Mirror to Tab 3
+    document.getElementById("eeoiRollActual").value = document.getElementById("eeoiActual").value;
+    document.getElementById("eeoiRollAvg").value = document.getElementById("eeoiActual").value; // Simplified
+    document.getElementById("eeoiCO2").value = co2.toFixed(2);
+    document.getElementById("eeoiBasis").value = basis.toFixed(2);
+    
+    // Mirror to Tab 4
+    document.getElementById("dcsFuel").value = tFuel.toFixed(2);
+    document.getElementById("dcsHours").value = tSteam.toFixed(2);
+    document.getElementById("dcsDist").value = tDist.toFixed(2);
+    
+    // Mirror to Tab 5
+    document.getElementById("bodSpeed").value = avgSpd.toFixed(2);
+    document.getElementById("bodTeus").value = tTeus.toFixed(2);
+    document.getElementById("bodFuelTeu").value = document.getElementById("fuelPerTeu").value;
+    document.getElementById("bodPortCalls").value = cards.length;
+    document.getElementById("bodBoiler").value = tBoiler.toFixed(2);
+    document.getElementById("bodFw").value = tFw.toFixed(2);
+    document.getElementById("bodSludge").value = tSludge.toFixed(2);
+    
+    // Status Logic
+    const stdMe = parseFloat(document.getElementById("meCons").value) || 0;
+    let actualMeDay = tSteam > 0 ? (tMe / (tSteam/24)) : 0;
+    let meStatus = document.getElementById("meStatus");
+    if(stdMe > 0 && actualMeDay > 0) {
+      if(actualMeDay <= stdMe * 1.05) {
+        meStatus.textContent = "OK"; meStatus.className = "badge badge-ok";
+      } else {
+        meStatus.textContent = "OVER"; meStatus.className = "badge badge-over";
+      }
+    } else {
+      meStatus.textContent = "N/A"; meStatus.className = "badge badge-na";
+    }
+    
+    const stdAe = parseFloat(document.getElementById("aeSailCons").value) || 0;
+    let actualAeDay = tSteam > 0 ? (tAe / (tSteam/24)) : 0;
+    let aeStatus = document.getElementById("aeStatus");
+    if(stdAe > 0 && actualAeDay > 0) {
+      if(actualAeDay <= stdAe * 1.05) {
+        aeStatus.textContent = "OK"; aeStatus.className = "badge badge-ok";
+      } else {
+        aeStatus.textContent = "OVER"; aeStatus.className = "badge badge-over";
+      }
+    } else {
+      aeStatus.textContent = "N/A"; aeStatus.className = "badge badge-na";
+    }
+  }
+
+  // Update Title & DCS info
+  function updateTitle() {
+    const vessel = document.getElementById("shipName").value;
+    const repMonth = document.getElementById("reportMonth").value;
+    let title = "073 B1 - Ship Performance Report";
+    if(vessel) title += " - " + vessel;
+    if(repMonth) {
+        const d = new Date(repMonth + "-01");
+        title += " - " + d.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+    }
+    document.title = title;
+    if(window.parent) window.parent.postMessage({ type: 'FORM_TITLE', title: title }, '*');
+    document.getElementById("dcsShip").value = vessel;
   }
   
-  initSig('up-1', 'pv-1');
-  initSig('up-2', 'pv-2');
-  initSig('up-3', 'pv-3');
-
-  function updateRows(tableId) {
-    var rows = document.querySelectorAll('#' + tableId + ' tbody tr');
-    rows.forEach(function(r, idx) {
-      var td = r.querySelector('.row-no');
-      if(td) td.innerText = idx + 1;
+  // Link standard performance to DCS & BOD
+  const dims = ['dwt', 'nettTon', 'grossTon'];
+  dims.forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      document.getElementById("dcsDims").value = `DWT:${document.getElementById('dwt').value || 0} / NT:${document.getElementById('nettTon').value || 0} / GT:${document.getElementById('grossTon').value || 0}`;
     });
+  });
+  
+  document.getElementById('mePower').addEventListener('input', e => document.getElementById('dcsMainPower').value = e.target.value);
+  document.getElementById('aePower').addEventListener('input', e => document.getElementById('dcsAuxPower').value = e.target.value);
+  
+  document.getElementById('shipType').addEventListener('input', e => {
+      document.getElementById('dcsTypeImo').value = e.target.value + " / IMO: " + (document.getElementById('imoNumber').value || "");
+  });
+  document.getElementById('imoNumber').addEventListener('input', e => {
+      document.getElementById('dcsTypeImo').value = (document.getElementById('shipType').value || "") + " / IMO: " + e.target.value;
+  });
+
+  document.getElementById('meCons').addEventListener('input', calculate);
+  document.getElementById('aeSailCons').addEventListener('input', calculate);
+
+  // Signatures
+  function handleSigClick(el, sigId) {
+    const img = document.getElementById(sigId + '-img');
+    const placeholder = el.querySelector('.sig-placeholder');
+    if (img.style.display === 'block') {
+      if (confirm('Hapus tanda tangan?')) {
+        img.src = '';
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+        document.getElementById(sigId + '-file').value = '';
+      }
+    } else {
+      document.getElementById(sigId + '-file').click();
+    }
+  }
+  function loadSig(input, imgId) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById(imgId);
+        const placeholder = input.parentElement.querySelector('.sig-placeholder');
+        img.src = e.target.result;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
   }
 
-  function addRow(tableId) {
-    var tbody = document.querySelector('#' + tableId + ' tbody');
-    var tr = document.createElement('tr');
-    tr.innerHTML = `
-            <td class="row-no"></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td><input type="text" placeholder="..."></td>
-            <td class="no-print"><button type="button" onclick="this.closest('tr').remove(); updateRows('${tableId}');" style="background:#dc2626; color:white; border:none; border-radius:3px; cursor:pointer; padding:2px 4px; font-weight:bold;">X</button></td>
-    `;
-    tbody.appendChild(tr);
-    updateRows(tableId);
-  }
-
-  function savePDF() {
-    var v = document.getElementById('vessel').value || 'UnknownVessel';
-    var el = document.getElementById('pdf-content');
-    var opt = {
-      margin:       [8, 8, 8, 8],
-      filename:     '073B1_Ship_Performance_' + v + '.pdf',
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
-      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section'] }
-    };
-    html2pdf().set(opt).from(el).save();
+  // Init
+  window.onload = function() {
+    addVoyCard();
+    addVoyCard();
+    // Catch postMessage if needed by portal
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "REQUEST_TITLE") updateTitle();
+    });
   }
 </script>
 </body>

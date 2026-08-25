@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>090-B Investigation Report Attach</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; }
+        .page { max-width: 900px; margin: 20px auto; background: white; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 20px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 82px; margin-bottom: 10px; padding-bottom: 10px; }
+        .co { font-weight: bold; }
+        .ttl { text-align: center; font-weight: bold; font-size: 16px; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; font-size: 11px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 5px 8px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .header-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .field-group { display: flex; align-items: center; margin-bottom: 8px; }
+        .field-group label { width: 150px; font-weight: bold; font-size: 12px; }
+        .field-group input, .field-group select { flex: 1; padding: 4px; border: 0; border-bottom: 1px solid black; background: transparent; outline: none; }
+        
+        .photo-section { border: 2px dashed #ccc; padding: 20px; text-align: center; margin-bottom: 30px; }
+        .photo-title { font-weight: bold; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
+        .photo-note { font-style: italic; font-size: 12px; margin-bottom: 10px; color: #555; }
+        
+        .hidden { display: none !important; }
+        
+        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .photo-item { position: relative; border: 1px solid #eee; padding: 5px; min-height: 200px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .photo-item img { max-width: 100%; max-height: 300px; }
+        .photo-item .x { position: absolute; top: -10px; right: -10px; background: red; color: white; border-radius: 50%; border: none; width: 24px; height: 24px; cursor: pointer; display: none; }
+        .photo-item:hover .x { display: block; }
+        .photo-item input { margin-top: 10px; width: 100%; border: 0; border-bottom: 1px dotted #ccc; outline: none; text-align: center; font-size: 11px; }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; }
+            .photo-section { border: 1px solid #000; padding: 10px; margin-bottom: 15px; page-break-inside: avoid; }
+            .field-group select { appearance: none; -webkit-appearance: none; }
+            .photo-item { border: 0; min-height: auto; }
+            .photo-grid { gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Print Button -->
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">090-B<br>INVESTIGATION REPORT (ATTACHMENT)</div>
+                <div class="stat">
+                    <div class="box"><span>CS</span><span>SET</span></div>
+                    <div>Release: Rev.01</div>
+                </div>
+            </div>
+            
+            <div class="header-fields">
+                <div class="field-group">
+                    <label>Report No. / Year :</label>
+                    <input type="text" id="report_no">
+                </div>
+                <div class="field-group">
+                    <label>MV :</label>
+                    <select class="ship-select" id="vessel_name">
+                        <option value="">Pilih Kapal</option>
+                        <option>Sahabat Mas</option>
+                        <option>Semangat Mas</option>
+                        <option>Express Mas</option>
+                        <option>Pratama Mas</option>
+                        <option>Prakarsa Mas</option>
+                        <option>Mavendra Mas</option>
+                        <option>Selaras Mas</option>
+                        <option>Segoro Mas</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="photo-section" id="sec-sketch">
+            <div class="photo-title">1. Sketsa Kejadian / Sketch Events</div>
+            <div class="photo-note">Gambar / denah kondisi pada saat kecelakaan</div>
+            <label class="btn no-print" style="display: inline-flex; justify-content: center; width: auto; margin: 0 auto; background: #15803d; font-size: 11px; padding: 5px 10px;">
+                + Tambah Sketsa
+                <input type="file" class="hidden photo-upload" data-target="sketch_photos" accept="image/*" multiple>
+            </label>
+            <div class="photo-grid" id="sketch_photos"></div>
+        </div>
+
+        <div class="photo-section" id="sec-damage">
+            <div class="photo-title">2. Foto Kerusakan / Damaged Pictures</div>
+            <div class="photo-note">Foto detail dari area yang rusak atau objek yang terlibat</div>
+            <label class="btn no-print" style="display: inline-flex; justify-content: center; width: auto; margin: 0 auto; background: #15803d; font-size: 11px; padding: 5px 10px;">
+                + Tambah Foto Kerusakan
+                <input type="file" class="hidden photo-upload" data-target="damage_photos" accept="image/*" multiple>
+            </label>
+            <div class="photo-grid" id="damage_photos"></div>
+        </div>
+
+        <div class="photo-section" id="sec-scene">
+            <div class="photo-title">3. Kondisi Setelah Kecelakaan di Tempat Kejadian / On Scene After Accident</div>
+            <label class="btn no-print" style="display: inline-flex; justify-content: center; width: auto; margin: 0 auto; background: #15803d; font-size: 11px; padding: 5px 10px;">
+                + Tambah Foto Lokasi
+                <input type="file" class="hidden photo-upload" data-target="scene_photos" accept="image/*" multiple>
+            </label>
+            <div class="photo-grid" id="scene_photos"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const FORM_CODE = "090B";
+        const shipSelect = document.getElementById('vessel_name');
+        
+        function updateCaption(element) {
+            // we don't strictly need this function if we don't save to DB, 
+            // but the HTML has  so we keep a dummy function
+            // to avoid JS errors, or we can just let it be. 
+            // The HTML input elements still hold the typed value for printing anyway.
+        }
+
+        function removePhoto(btn) {
+            const item = btn.closest('.photo-item');
+            if (item) item.remove();
+        }
+
+        document.querySelectorAll('.photo-upload').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const targetId = this.dataset.target;
+                const grid = document.getElementById(targetId);
+                const files = Array.from(e.target.files);
+                
+                // Allow up to 10 photos since we don't save to DB
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width, height = img.height;
+                            const MAX_SIZE = 800;
+                            if (width > height && width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            } else if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            const div = document.createElement('div');
+                            div.className = 'photo-item';
+                            div.innerHTML = `
+                                <img src="${canvas.toDataURL('image/jpeg', 0.8)}">
+                                <input type="text" placeholder="Caption / Keterangan">
+                                <button class="x no-print" onclick="removePhoto(this)">×</button>
+                            `;
+                            grid.appendChild(div);
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+                e.target.value = '';
+            });
+        });
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { 
+                alert('Pilih Kapal terlebih dahulu!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Membuat PDF...'; 
+            btn.disabled = true;
+
+            setTimeout(() => { 
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false; 
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: new Date().toISOString().split('T')[0],
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }, 500);
+        }
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

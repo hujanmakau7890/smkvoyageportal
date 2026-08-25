@@ -1,0 +1,406 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>091-D Weekly Accomodation Inspection</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; font-size: 10px; }
+        .page { max-width: 1400px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow-x: auto; }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 15px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 50px; margin-bottom: 10px; padding-bottom: 5px; }
+        .co { font-weight: bold; font-size: 12px; }
+        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 9px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 3px 6px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .row { display: flex; align-items: center; margin-bottom: 4px; }
+        .row label { width: 140px; font-weight: bold; }
+        .row input, .row select { flex: 1; padding: 3px; border: 0; border-bottom: 1px dotted black; background: transparent; outline: none; font-size: 11px; }
+        
+        .instruction { font-size: 9px; font-style: italic; margin-bottom: 10px; line-height: 1.3; }
+        
+        .table-container { width: 100%; overflow-x: auto; margin-bottom: 20px; }
+        table { border-collapse: collapse; width: 100%; text-align: center; }
+        th, td { border: 1px solid black; padding: 2px; }
+        th { background: #f3f4f6; font-size: 8px; font-weight: bold; height: 90px; vertical-align: bottom; white-space: nowrap; }
+        th span { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; padding-top: 5px; }
+        
+        td.room-cell { font-weight: bold; background: #f9fafb; text-align: left; padding-left: 5px; font-size: 9px; white-space: nowrap; width: 130px; }
+        td.check-cell { width: 15px; cursor: pointer; user-select: none; font-weight: bold; font-size: 10px; }
+        td.check-cell:hover { background: #e5e7eb; }
+        td.check-cell.marked { background: #15803d; color: white; }
+        
+        .footer-sigs { display: flex; justify-content: flex-end; margin-top: 10px; }
+        .sig-box { width: 250px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; font-weight: bold; font-size: 12px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 5px; outline: none; background: transparent; font-size: 12px; }
+        
+        .hidden { display: none !important; }
+        
+        @media print {
+            @page { size: A4 landscape; margin: 7mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; overflow: visible; }
+            .table-container { overflow: visible; }
+            td.check-cell.marked { background: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .row input, .row select { border-bottom: 1px dotted #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Print Button -->
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">091-D WEEKLY CREW'S ACCOMODATION INSPECTION<br>INSPEKSI AKOMODASI AWAK KAPAL MINGGUAN</div>
+                <div class="stat">
+                    <div class="box"><span>S</span><span>WKY</span></div>
+                    <div>Release: Rev.0</div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <div class="row"><label>Vessel Name:</label>
+                        <select class="ship-select" id="vessel_name" style="border-bottom: 1px solid black;">
+                            <option value="">Pilih Kapal</option>
+                            <option>Sahabat Mas</option>
+                            <option>Semangat Mas</option>
+                            <option>Express Mas</option>
+                            <option>Pratama Mas</option>
+                            <option>Prakarsa Mas</option>
+                            <option>Mavendra Mas</option>
+                            <option>Selaras Mas</option>
+                            <option>Segoro Mas</option>
+                        </select>
+                    </div>
+                    <div class="row"><label>IMO Number:</label><input type="text" id="imo_number"></div>
+                </div>
+                <div>
+                    <div class="row"><label>Inspection Date:</label><input type="date" id="inspection_date"></div>
+                    <div class="row"><label>Master Name:</label><input type="text" id="master_name"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instruction">
+            <b>Instructions / Instruksi :</b><br>
+            Weekly inspections of seafarer accommodation (incl. on-board recreational facilities) to be carried out on board ships by Master, to ensure that seafarer accommodation is clean, decently habitable and maintained in a good state of repair as stated in Safety Management Manual (SMM) TE-S11 Ship Board Maintenance Procedure, DMLC II/Section-8, MLC 2006/Reg.3.1.<br>
+            <i>Inspeksi mingguan untuk akomodasi awak kapal dilakukan di atas kapal oleh Nakhoda, untuk memastikan akomodasi bersih, layak huni, dan dipelihara dalam kondisi baik sebagaimana dinyatakan dalam Prosedur Pemeliharaan Kapal SMM TE-S11.</i><br>
+            (Click cell to mark "X" / Klik kotak untuk menandai "X")
+        </div>
+
+        <div class="table-container">
+            <table id="inspTable">
+                <thead>
+                    <tr id="tableHead">
+                        <th>Accommodation Name</th>
+                        <!-- Headers generated by JS -->
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Rows generated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Master / Nakhoda</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig1" class="sigimg" style="max-height:40px;">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig1')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig1_name" placeholder="Sign & Name">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const cols = [
+            'Ventilation','Heating','AC','Lighting','Noise','Vibration','Personal Sanitary','Door','Window',
+            'Bed','Mattress','Cushion','Pillowcase','Bed-Linen','Blanket','Refrigerator','Hot Beverages',
+            'Table','Chair','Sofa','Life Jacket','Helmet','Bath room','Toilet','Tub / Shower','Wash Basin',
+            'Mirror','Small Cabinets','Book Rack','Coat Hooks','Computer System','Lockers','Washing Machine',
+            'Drying Machine','TV','Video System','Sound System','Library','Sport Facility','Games Facility','Medicine Box'
+        ];
+        
+        const rows = [
+            'Master','Chief Officer','2nd-Officer','3rd-Officer','Chief Engineer','2nd-Engineer','3rd-Engineer',
+            '4th-Engineer','Electrician','Boastwain','AB-1','AB-2','AB-3','Eng-Foreman','Oiler-1','Oiler-2',
+            'Oiler-3','Deck Cadet-1','Deck Cadet-2','Engine Cadet-1','Engine Cadet-2','Messroom Master-Off-Eng',
+            'Messroom Crews','Recreational','Smooking Room','Hospital'
+        ];
+
+        // Generate Table
+        const thead = document.getElementById('tableHead');
+        cols.forEach(c => {
+            const th = document.createElement('th');
+            th.innerHTML = `<span>${c}</span>`;
+            thead.appendChild(th);
+        });
+
+        const tbody = document.getElementById('tableBody');
+        let tableData = Array(rows.length).fill().map(() => Array(cols.length).fill(false));
+
+        rows.forEach((r, rowIndex) => {
+            const tr = document.createElement('tr');
+            const tdRoom = document.createElement('td');
+            tdRoom.className = 'room-cell';
+            tdRoom.textContent = r;
+            tr.appendChild(tdRoom);
+            
+            cols.forEach((c, colIndex) => {
+                const td = document.createElement('td');
+                td.className = 'check-cell';
+                td.dataset.row = rowIndex;
+                td.dataset.col = colIndex;
+                
+                // Drag selection
+                td.addEventListener('mousedown', function(e) {
+                    isDragging = true;
+                    toggleCell(this);
+                });
+                td.addEventListener('mouseenter', function(e) {
+                    if (isDragging) toggleCell(this);
+                });
+                
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        
+        let isDragging = false;
+        document.addEventListener('mouseup', () => { isDragging = false; });
+        
+        function toggleCell(cell) {
+            const r = cell.dataset.row;
+            const c = cell.dataset.col;
+            tableData[r][c] = !tableData[r][c];
+            updateCellVisual(cell, tableData[r][c]);
+        }
+        
+        function updateCellVisual(cell, isMarked) {
+            if (isMarked) {
+                cell.classList.add('marked');
+                cell.textContent = 'X';
+            } else {
+                cell.classList.remove('marked');
+                cell.textContent = '';
+            }
+        }
+
+        function refreshTableVisuals() {
+            const cells = document.querySelectorAll('.check-cell');
+            cells.forEach(cell => {
+                const r = cell.dataset.row;
+                const c = cell.dataset.col;
+                updateCellVisual(cell, tableData[r][c]);
+            });
+        }
+
+        // Supabase & Save Logic
+        let SUPA_URL = "";
+        let SUPA_KEY = "";
+        const FORM_CODE = "091D";
+        const shipSelect = document.getElementById('vessel_name');
+
+        const inputsToSave = [
+            'imo_number', 'inspection_date', 'master_name', 'sig1_name'
+        ];
+
+        async function supa(method, table, params, body) {
+            let url = `${SUPA_URL}/rest/v1/${table}`;
+            if (params) url += '?' + new URLSearchParams(params).toString();
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'apikey': SUPA_KEY,
+                    'Authorization': 'Bearer ' + SUPA_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+                },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (!res.ok) throw new Error(await res.text());
+            const txt = await res.text();
+            return txt ? JSON.parse(txt) : [];
+        }
+
+        function loadSig(id, val) {
+            let img = document.getElementById(id);
+            if(img) {
+                img.src = val || '';
+                let c = img.closest('.pv-container');
+                if(c) {
+                    if(val) {
+                        c.querySelector('label').style.display='none';
+                        c.querySelector('.pv').style.display='block';
+                    } else {
+                        c.querySelector('label').style.display='inline-flex';
+                        c.querySelector('.pv').style.display='none';
+                    }
+                }
+            }
+        }
+
+        function clearSig(id){
+            let img = document.getElementById(id);
+            img.src='';
+            let c=img.closest('.pv-container');
+            if(c){
+                c.querySelector('.pv').style.display='none';
+                c.querySelector('label').style.display='inline-flex';
+                c.querySelector('.sig-upload').value='';
+            }
+        }
+
+        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
+            if(!e.target.files[0])return;
+            const r=new FileReader();
+            r.onload=a=>{
+                document.getElementById(x.dataset.target).src=a.target.result;
+                let c=x.closest('.pv-container');
+                if(c){
+                    c.querySelector('label').style.display='none';
+                    c.querySelector('.pv').style.display='block';
+                }
+            };
+            r.readAsDataURL(e.target.files[0])
+        });
+
+        async function loadFromSupabase() {
+            const vessel = shipSelect.value;
+            if (!vessel) return;
+
+            inputsToSave.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = '';
+            });
+            loadSig('sig1', '');
+            tableData = Array(rows.length).fill().map(() => Array(cols.length).fill(false));
+            refreshTableVisuals();
+
+            try {
+                const rows_data = await supa('GET', 'smk_form_data', {
+                    'vessel_name': `eq.${vessel}`,
+                    'form_code': `eq.${FORM_CODE}`,
+                    'select': 'form_data',
+                    'limit': 1
+                });
+                if (!rows_data || rows_data.length === 0) return;
+                const fd = rows_data[0].form_data;
+                if (!fd) return;
+
+                inputsToSave.forEach(id => {
+                    if (fd[id] !== undefined) document.getElementById(id).value = fd[id];
+                });
+                
+                loadSig('sig1', fd.sig1);
+                if (fd.tableData && Array.isArray(fd.tableData)) {
+                    tableData = fd.tableData;
+                    refreshTableVisuals();
+                }
+            } catch(err) { console.error('Gagal load data:', err); }
+        }
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { 
+                alert('Pilih Kapal terlebih dahulu!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Menyimpan...'; 
+            btn.disabled = true;
+
+            const fd = { tableData: tableData };
+            inputsToSave.forEach(id => { fd[id] = document.getElementById(id).value; });
+            fd.sig1 = document.getElementById('sig1').src || '';
+
+            try {
+                if (SUPA_URL && SUPA_KEY) {
+                    await supa('POST', 'smk_form_data', null, {
+                        vessel_name: vessel,
+                        form_code: FORM_CODE,
+                        form_data: fd,
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
+                setTimeout(() => { 
+                    btn.innerHTML = originalHtml; 
+                    btn.disabled = false; 
+                    window.parent.postMessage({
+                        type: 'SMK_SAVE_PDF',
+                        name: document.title,
+                        ship: vessel,
+                        date: document.getElementById('inspection_date').value,
+                        formCode: FORM_CODE,
+                        formTitle: document.title
+                    }, '*');
+                }, 500);
+            } catch(err) {
+                console.error(err);
+                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false;
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: document.getElementById('inspection_date').value,
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }
+        }
+
+        document.getElementById('master_name').addEventListener('input', function() {
+            document.getElementById('sig1_name').value = this.value;
+        });
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                SUPA_URL = e.data.supabaseUrl;
+                SUPA_KEY = e.data.supabaseKey;
+                
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+                
+                if (shipSelect.value) loadFromSupabase();
+            }
+        });
+
+        shipSelect.addEventListener('change', loadFromSupabase);
+    </script>
+</body>
+</html>

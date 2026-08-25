@@ -1,0 +1,530 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>092 Loading Cargo & Stability Information</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e5e7eb; font-family: Arial; font-size: 11px; }
+        .page { max-width: 1400px; margin: 20px auto; background: white; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow-x: auto; }
+        .tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .btn { border: 0; border-radius: 6px; padding: 10px 20px; color: white; font-weight: bold; background: #1769d2; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .head { border: 2px solid; padding: 8px; margin-bottom: 15px; }
+        .top { display: grid; grid-template-columns: 25% 50% 25%; border-bottom: 2px solid; min-height: 50px; margin-bottom: 10px; padding-bottom: 5px; }
+        .co { font-weight: bold; font-size: 12px; }
+        .ttl { text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .stat { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 9px; }
+        .box { display: flex; border: 1px solid; }
+        .box span { padding: 3px 6px; }
+        .box span+span { border-left: 1px solid; }
+        
+        .grid-header { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .row { display: flex; align-items: center; margin-bottom: 4px; }
+        .row label { width: 100px; font-weight: bold; }
+        .row input, .row select { flex: 1; padding: 3px; border: 0; border-bottom: 1px dotted black; background: transparent; outline: none; font-size: 11px; }
+        
+        .section-title { font-weight: bold; font-size: 12px; background: #374151; color: white; padding: 6px; margin: 15px 0 10px 0; }
+        
+        table { border-collapse: collapse; width: 100%; text-align: center; margin-bottom: 15px; }
+        th, td { border: 1px solid black; padding: 2px; }
+        th { background: #f3f4f6; font-size: 9px; font-weight: bold; }
+        td input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 10px; outline: none; }
+        
+        .bg-gray { background: #f9fafb; font-weight: bold; }
+        .bg-light-yellow { background: #fef9c3; }
+        .readonly-val { font-weight: bold; color: #1e3a8a; }
+        
+        .flex-row { display: flex; gap: 20px; justify-content: space-around; margin-bottom: 20px; text-align: center; }
+        .info-box { border: 1px solid black; padding: 10px; width: 23%; }
+        .info-box input { width: 100%; border: 0; border-bottom: 1px dotted black; text-align: center; font-weight: bold; font-size: 12px; margin-top: 10px; }
+        
+        .grid-draft { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 20px; }
+        .draft-box { border: 1px solid black; padding: 10px; }
+        .draft-title { font-weight: bold; text-align: center; border-bottom: 1px solid black; padding-bottom: 5px; margin-bottom: 10px; }
+        
+        .cargo-weight-box { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; }
+        
+        .footer-sigs { display: flex; justify-content: space-around; margin-top: 10px; }
+        .sig-box { width: 250px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; font-weight: bold; font-size: 12px; }
+        .sig-box input { border: 0; border-bottom: 1px solid black; width: 80%; text-align: center; margin-top: 5px; outline: none; background: transparent; font-size: 12px; }
+        
+        .hidden { display: none !important; }
+        .sigimg { max-height: 50px; max-width: 100%; }
+        
+        @media print {
+            @page { size: A4 landscape; margin: 8mm; }
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; padding: 0; box-shadow: none; max-width: 100%; overflow: visible; }
+            td input { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Print Button -->
+        <div class="tools no-print">
+            <button id="btn-print" class="btn" onclick="saveAndPrint()">
+                📄 Print / Simpan PDF
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="head">
+            <div class="top">
+                <div class="co">PT MENTARI MAS MULTIMODA</div>
+                <div class="ttl">092 LOADING CARGO & STABILITY INFORMATION</div>
+                <div class="stat">
+                    <div class="box"><span>S</span><span>VOY</span></div>
+                    <div>Release: Rev.0</div>
+                </div>
+            </div>
+            
+            <div class="grid-header">
+                <div class="row"><label>Vessel Name:</label>
+                    <select class="ship-select" id="vessel_name" style="border-bottom: 1px solid black;">
+                        <option value="">Pilih Kapal</option>
+                        <option>Sahabat Mas</option>
+                        <option>Semangat Mas</option>
+                        <option>Express Mas</option>
+                        <option>Pratama Mas</option>
+                        <option>Prakarsa Mas</option>
+                        <option>Mavendra Mas</option>
+                        <option>Selaras Mas</option>
+                        <option>Segoro Mas</option>
+                    </select>
+                </div>
+                <div class="row"><label>Port of Loading:</label><input type="text" id="port_loading"></div>
+                <div class="row"><label>Date:</label><input type="date" id="report_date"></div>
+                <div class="row"><label>Voy No:</label><input type="text" id="voy_no"></div>
+            </div>
+        </div>
+
+        <div class="section-title">A. TOTAL CARGO / CONTAINER ON BOARD</div>
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="3">SIZE</th>
+                    <th colspan="4" class="bg-gray">NON DG CARGO / CONTAINER</th>
+                    <th colspan="5" class="bg-light-yellow">DANGEROUS (DG) CARGO / CONTAINER</th>
+                    <th colspan="4" class="bg-gray">REEFER CARGO / CONTAINER</th>
+                </tr>
+                <tr>
+                    <th colspan="2">QTY (TEU/BOX)</th>
+                    <th colspan="2">WEIGHT (MT)</th>
+                    <th rowspan="2">CLASS</th>
+                    <th colspan="2">QTY (TEU/BOX)</th>
+                    <th colspan="2">WEIGHT (MT)</th>
+                    <th colspan="2">QTY (TEU/BOX)</th>
+                    <th colspan="2">WEIGHT (MT)</th>
+                </tr>
+                <tr>
+                    <th>I / H</th><th>O / D</th><th>I / H</th><th>O / D</th>
+                    <th>I / H</th><th>O / D</th><th>I / H</th><th>O / D</th>
+                    <th>I / H</th><th>O / D</th><th>I / H</th><th>O / D</th>
+                </tr>
+            </thead>
+            <tbody id="cargoBody">
+                <!-- Generated by JS -->
+            </tbody>
+            <tfoot>
+                <tr class="bg-gray">
+                    <td>TOTAL</td>
+                    <td><input type="text" id="tot_nondg_qty_ih" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_nondg_qty_od" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_nondg_wt_ih" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_nondg_wt_od" readonly class="readonly-val"></td>
+                    <td></td>
+                    <td><input type="text" id="tot_dg_qty_ih" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_dg_qty_od" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_dg_wt_ih" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_dg_wt_od" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_ref_qty_ih" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_ref_qty_od" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_ref_wt_ih" readonly class="readonly-val"></td>
+                    <td><input type="text" id="tot_ref_wt_od" readonly class="readonly-val"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div style="border: 2px solid #1e3a8a; padding: 10px; text-align: center; font-weight: bold; background: #eff6ff; margin-bottom: 20px;">
+            <div>GRAND TOTAL CARGO / CONTAINER ON BOARD</div>
+            <div style="display: flex; justify-content: space-around; margin-top: 10px; color: #1e3a8a;">
+                <div>I/H (TEU/BOX): <span id="grand_qty_ih">0</span></div>
+                <div>O/D (TEU/BOX): <span id="grand_qty_od">0</span></div>
+                <div>I/H (MT): <span id="grand_wt_ih">0</span></div>
+                <div>O/D (MT): <span id="grand_wt_od">0</span></div>
+            </div>
+        </div>
+
+        <div class="section-title">B. STABILITY INFORMATION</div>
+        <div class="flex-row">
+            <div class="info-box">
+                LIGHT SHIP (IN MT)
+                <input type="number" step="0.01" id="light_ship">
+            </div>
+            <div class="info-box">
+                CONSTANT (IN MT)
+                <input type="number" step="0.01" id="constant">
+            </div>
+            <div class="info-box">
+                OPERATING LOAD (FW + LO + FO) (IN MT)
+                <input type="number" step="0.01" id="op_load">
+            </div>
+            <div class="info-box">
+                ROB BALLAST (IN MT)
+                <input type="number" step="0.01" id="rob_ballast">
+            </div>
+        </div>
+        
+        <div class="grid-draft">
+            <div class="draft-box">
+                <div class="draft-title">CALCULATION DRAFT (IN METER)</div>
+                <div class="row"><label>FORE DRAFT:</label><input type="number" step="0.01" id="calc_fore"></div>
+                <div class="row"><label>MEAN DRAFT:</label><input type="number" step="0.01" id="calc_mean"></div>
+                <div class="row"><label>AFT DRAFT:</label><input type="number" step="0.01" id="calc_aft"></div>
+                <div class="row" style="margin-top: 10px;"><label>GoM (CAPS):</label><input type="number" step="0.01" id="calc_gom"></div>
+            </div>
+            <div class="draft-box">
+                <div class="draft-title">ACTUAL DRAFT (IN METER)</div>
+                <div class="row"><label>FORE DRAFT:</label><input type="number" step="0.01" id="act_fore"></div>
+                <div class="row"><label>MEAN DRAFT:</label><input type="number" step="0.01" id="act_mean"></div>
+                <div class="row"><label>AFT DRAFT:</label><input type="number" step="0.01" id="act_aft"></div>
+            </div>
+        </div>
+
+        <div class="section-title">C. CARGO WEIGHT</div>
+        <div class="cargo-weight-box">
+            <div class="row" style="width: 250px;"><label>BY PLAN (M/T):</label><input type="number" step="0.01" id="cw_plan" readonly style="font-weight:bold;"></div>
+            <div class="row" style="width: 250px;"><label>BY DRAFT (M/T):</label><input type="number" step="0.01" id="cw_draft"></div>
+            <div class="row" style="width: 250px;"><label>DIFFERENCE (M/T):</label><input type="number" step="0.01" id="cw_diff" readonly style="color:red; font-weight:bold;"></div>
+        </div>
+
+        <div class="footer-sigs">
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Prepared by Chief Officer</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig1" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig1" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig1')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig1_name" placeholder="Name & Sign">
+            </div>
+            
+            <div class="sig-box">
+                <div style="margin-bottom:10px;">Checked & Knowledge by Master</div>
+                <div class="space pv-container" style="position:relative; display:flex; justify-content:center; align-items:center; min-height:50px;">
+                    <label class="btn no-print" style="padding:5px 8px;font-size:9px">+ Add TTD<input class="hidden sig-upload" data-target="sig2" type="file" accept="image/*"></label>
+                    <div class="pv hidden" style="display:none; position:relative;">
+                        <img id="sig2" class="sigimg">
+                        <button class="x no-print" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="clearSig('sig2')">×</button>
+                    </div>
+                </div>
+                <input type="text" id="sig2_name" placeholder="Name & Sign">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cargoSizes = ['20" MT', '40" MT', '45" MT', '20" ISO MT', '20" FULL', '40" FULL', '45" FULL', '20" ISO FULL', 'Flat Rack', 'Other Cargo'];
+        const tbody = document.getElementById('cargoBody');
+        
+        let cargoData = cargoSizes.map(s => ({
+            size: s,
+            nondg: { q_ih: '', q_od: '', w_ih: '', w_od: '' },
+            dg: { cls: '', q_ih: '', q_od: '', w_ih: '', w_od: '' },
+            ref: { q_ih: '', q_od: '', w_ih: '', w_od: '' }
+        }));
+
+        function renderTable() {
+            tbody.innerHTML = '';
+            cargoData.forEach((row, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="bg-gray">${row.size}</td>
+                    <!-- NON DG -->
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="q_ih" data-idx="${i}" value="${row.nondg.q_ih}"></td>
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="q_od" data-idx="${i}" value="${row.nondg.q_od}"></td>
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="w_ih" data-idx="${i}" value="${row.nondg.w_ih}"></td>
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="nondg" data-f="w_od" data-idx="${i}" value="${row.nondg.w_od}"></td>
+                    <!-- DG -->
+                    <td class="bg-light-yellow"><input type="text" class="calc-input" data-cat="dg" data-f="cls" data-idx="${i}" value="${row.dg.cls}"></td>
+                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="q_ih" data-idx="${i}" value="${row.dg.q_ih}"></td>
+                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="q_od" data-idx="${i}" value="${row.dg.q_od}"></td>
+                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="w_ih" data-idx="${i}" value="${row.dg.w_ih}"></td>
+                    <td class="bg-light-yellow"><input type="number" step="0.01" class="calc-input" data-cat="dg" data-f="w_od" data-idx="${i}" value="${row.dg.w_od}"></td>
+                    <!-- REEFER -->
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="q_ih" data-idx="${i}" value="${row.ref.q_ih}"></td>
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="q_od" data-idx="${i}" value="${row.ref.q_od}"></td>
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="w_ih" data-idx="${i}" value="${row.ref.w_ih}"></td>
+                    <td><input type="number" step="0.01" class="calc-input" data-cat="ref" data-f="w_od" data-idx="${i}" value="${row.ref.w_od}"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.querySelectorAll('.calc-input').forEach(el => {
+                el.addEventListener('input', function() {
+                    const cat = this.dataset.cat;
+                    const f = this.dataset.f;
+                    const idx = this.dataset.idx;
+                    cargoData[idx][cat][f] = this.value;
+                    calculateTotals();
+                });
+            });
+            calculateTotals();
+        }
+
+        function n(val) { return parseFloat(val) || 0; }
+
+        function calculateTotals() {
+            let t = {
+                nondg: { q_ih: 0, q_od: 0, w_ih: 0, w_od: 0 },
+                dg: { q_ih: 0, q_od: 0, w_ih: 0, w_od: 0 },
+                ref: { q_ih: 0, q_od: 0, w_ih: 0, w_od: 0 }
+            };
+            
+            cargoData.forEach(r => {
+                ['nondg', 'dg', 'ref'].forEach(c => {
+                    t[c].q_ih += n(r[c].q_ih); t[c].q_od += n(r[c].q_od);
+                    t[c].w_ih += n(r[c].w_ih); t[c].w_od += n(r[c].w_od);
+                });
+            });
+            
+            document.getElementById('tot_nondg_qty_ih').value = t.nondg.q_ih;
+            document.getElementById('tot_nondg_qty_od').value = t.nondg.q_od;
+            document.getElementById('tot_nondg_wt_ih').value = t.nondg.w_ih;
+            document.getElementById('tot_nondg_wt_od').value = t.nondg.w_od;
+            
+            document.getElementById('tot_dg_qty_ih').value = t.dg.q_ih;
+            document.getElementById('tot_dg_qty_od').value = t.dg.q_od;
+            document.getElementById('tot_dg_wt_ih').value = t.dg.w_ih;
+            document.getElementById('tot_dg_wt_od').value = t.dg.w_od;
+            
+            document.getElementById('tot_ref_qty_ih').value = t.ref.q_ih;
+            document.getElementById('tot_ref_qty_od').value = t.ref.q_od;
+            document.getElementById('tot_ref_wt_ih').value = t.ref.w_ih;
+            document.getElementById('tot_ref_wt_od').value = t.ref.w_od;
+            
+            const g_q_ih = t.nondg.q_ih + t.dg.q_ih + t.ref.q_ih;
+            const g_q_od = t.nondg.q_od + t.dg.q_od + t.ref.q_od;
+            const g_w_ih = t.nondg.w_ih + t.dg.w_ih + t.ref.w_ih;
+            const g_w_od = t.nondg.w_od + t.dg.w_od + t.ref.w_od;
+            
+            document.getElementById('grand_qty_ih').innerText = g_q_ih;
+            document.getElementById('grand_qty_od').innerText = g_q_od;
+            document.getElementById('grand_wt_ih').innerText = g_w_ih.toFixed(2);
+            document.getElementById('grand_wt_od').innerText = g_w_od.toFixed(2);
+            
+            // Auto calculate BY PLAN Cargo Weight
+            document.getElementById('cw_plan').value = (g_w_ih + g_w_od).toFixed(2);
+            calcDiff();
+        }
+        
+        function calcDiff() {
+            const plan = n(document.getElementById('cw_plan').value);
+            const draft = n(document.getElementById('cw_draft').value);
+            const diff = draft - plan;
+            document.getElementById('cw_diff').value = diff !== 0 ? diff.toFixed(2) : '';
+        }
+        document.getElementById('cw_draft').addEventListener('input', calcDiff);
+
+        // Supabase Integration
+        let SUPA_URL = "";
+        let SUPA_KEY = "";
+        const FORM_CODE = "092";
+        const shipSelect = document.getElementById('vessel_name');
+
+        const inputsToSave = [
+            'port_loading', 'report_date', 'voy_no',
+            'light_ship', 'constant', 'op_load', 'rob_ballast',
+            'calc_fore', 'calc_mean', 'calc_aft', 'calc_gom',
+            'act_fore', 'act_mean', 'act_aft',
+            'cw_draft', 'sig1_name', 'sig2_name'
+        ];
+
+        async function supa(method, table, params, body) {
+            let url = `${SUPA_URL}/rest/v1/${table}`;
+            if (params) url += '?' + new URLSearchParams(params).toString();
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'apikey': SUPA_KEY,
+                    'Authorization': 'Bearer ' + SUPA_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+                },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (!res.ok) throw new Error(await res.text());
+            const txt = await res.text();
+            return txt ? JSON.parse(txt) : [];
+        }
+
+        function loadSig(id, val) {
+            let img = document.getElementById(id);
+            if(img) {
+                img.src = val || '';
+                let c = img.closest('.pv-container');
+                if(c) {
+                    if(val) {
+                        c.querySelector('label').style.display='none';
+                        c.querySelector('.pv').style.display='block';
+                    } else {
+                        c.querySelector('label').style.display='inline-flex';
+                        c.querySelector('.pv').style.display='none';
+                    }
+                }
+            }
+        }
+
+        function clearSig(id){
+            let img = document.getElementById(id);
+            img.src='';
+            let c=img.closest('.pv-container');
+            if(c){
+                c.querySelector('.pv').style.display='none';
+                c.querySelector('label').style.display='inline-flex';
+                c.querySelector('.sig-upload').value='';
+            }
+        }
+
+        document.querySelectorAll('.sig-upload').forEach(x=>x.onchange=e=>{
+            if(!e.target.files[0])return;
+            const r=new FileReader();
+            r.onload=a=>{
+                document.getElementById(x.dataset.target).src=a.target.result;
+                let c=x.closest('.pv-container');
+                if(c){
+                    c.querySelector('label').style.display='none';
+                    c.querySelector('.pv').style.display='block';
+                }
+            };
+            r.readAsDataURL(e.target.files[0])
+        });
+
+        async function loadFromSupabase() {
+            const vessel = shipSelect.value;
+            if (!vessel) return;
+
+            inputsToSave.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = '';
+            });
+            ['sig1', 'sig2'].forEach(id => loadSig(id, ''));
+            cargoData.forEach(r => {
+                r.nondg = { q_ih: '', q_od: '', w_ih: '', w_od: '' };
+                r.dg = { cls: '', q_ih: '', q_od: '', w_ih: '', w_od: '' };
+                r.ref = { q_ih: '', q_od: '', w_ih: '', w_od: '' };
+            });
+            renderTable();
+
+            try {
+                const rows_data = await supa('GET', 'smk_form_data', {
+                    'vessel_name': `eq.${vessel}`,
+                    'form_code': `eq.${FORM_CODE}`,
+                    'select': 'form_data',
+                    'limit': 1
+                });
+                if (!rows_data || rows_data.length === 0) return;
+                const fd = rows_data[0].form_data;
+                if (!fd) return;
+
+                inputsToSave.forEach(id => {
+                    if (fd[id] !== undefined) document.getElementById(id).value = fd[id];
+                });
+                
+                if (fd.cargoData && Array.isArray(fd.cargoData)) {
+                    cargoData = fd.cargoData;
+                }
+                renderTable();
+                
+                loadSig('sig1', fd.sig1);
+                loadSig('sig2', fd.sig2);
+                
+            } catch(err) { console.error('Gagal load data:', err); }
+        }
+
+        async function saveAndPrint() {
+            const vessel = shipSelect.value;
+            if (!vessel) { 
+                alert('Pilih Kapal terlebih dahulu!'); 
+                return; 
+            }
+
+            const btn = document.getElementById('btn-print');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '⏳ Menyimpan...'; 
+            btn.disabled = true;
+
+            const fd = { cargoData: cargoData };
+            inputsToSave.forEach(id => { fd[id] = document.getElementById(id).value; });
+            fd.sig1 = document.getElementById('sig1').src || '';
+            fd.sig2 = document.getElementById('sig2').src || '';
+
+            try {
+                if (SUPA_URL && SUPA_KEY) {
+                    await supa('POST', 'smk_form_data', null, {
+                        vessel_name: vessel,
+                        form_code: FORM_CODE,
+                        form_data: fd,
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
+                setTimeout(() => { 
+                    btn.innerHTML = originalHtml; 
+                    btn.disabled = false; 
+                    window.parent.postMessage({
+                        type: 'SMK_SAVE_PDF',
+                        name: document.title,
+                        ship: vessel,
+                        date: document.getElementById('report_date').value,
+                        formCode: FORM_CODE,
+                        formTitle: document.title
+                    }, '*');
+                }, 500);
+            } catch(err) {
+                console.error(err);
+                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false;
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vessel,
+                    date: document.getElementById('report_date').value,
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }
+        }
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'INIT_FORM') {
+                SUPA_URL = e.data.supabaseUrl;
+                SUPA_KEY = e.data.supabaseKey;
+                
+                if (e.data.vessel) {
+                    const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
+                    Array.from(shipSelect.options).forEach(opt => {
+                        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) shipSelect.value = opt.value;
+                    });
+                }
+                if (e.data.locked) shipSelect.disabled = true;
+                
+                if (shipSelect.value) loadFromSupabase();
+            }
+        });
+        
+        // Initial render
+        renderTable();
+
+        shipSelect.addEventListener('change', loadFromSupabase);
+    </script>
+</body>
+</html>

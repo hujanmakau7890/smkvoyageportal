@@ -4,3 +4,16 @@ dist
 *.local
 .env
 .env.*
+
+# temp/build artifacts
+.venv-xlsx/
+venv/
+data/render_tmp/
+*.pdf
+*.cjs
+fix_*.py
+patch_*.py
+strip_supabase.py
+test_results.txt
+PROMPT_073B1_REBUILD.md
+data/073b1-source-first80.txt

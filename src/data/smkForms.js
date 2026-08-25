@@ -90,6 +90,19 @@ export const SMK_FORMS = [
   { code: "084A", title: "Ballast Tank Condition Report (General)", category: "Laporan Deck", file: "084A_Ballast_Tank_Report.html" },
   { code: "085", title: "Plugging & Unplugging Reefer Container", category: "Laporan Mesin", file: "085_Plugging_Unplugging_Reefer.html" },
   { code: "086", title: "Notice of Readiness", category: "Laporan Deck", file: "086_Notice_of_Readiness.html" },
+  { code: "087A", title: "Master Note of Protest", category: "Laporan Deck", file: "087A_Master_Note_of_Protest.html" },
+  { code: "087B", title: "Statement of Fact", category: "Laporan Deck", file: "087B_Statement_of_Fact.html" },
+  { code: "088A", title: "Report of Injury or Death", category: "Laporan Deck", file: "088A_Report_of_Injury_or_Death.html" },
+  { code: "088B", title: "Cover Letter For Crew Treatment", category: "Laporan Deck", file: "088B_Cover_Letter_For_Crew_Treatment.html" },
+  { code: "088C", title: "Near Miss Report", category: "Laporan Deck", file: "088C_Near_Miss_Report.html" },
+  { code: "089A", title: "Notice of Liability - Terminal", category: "Laporan Deck", file: "089A_Notice_of_Liability_Terminal.html" },
+  { code: "089B", title: "Notice of Liability - Collision", category: "Laporan Deck", file: "089B_Notice_of_Liability_Collision.html" },
+  { code: "090A", title: "Investigation Report", category: "Laporan Deck", file: "090A_Investigation_Report.html" },
+  { code: "090B", title: "Investigation Report (Attach)", category: "Laporan Deck", file: "090B_Investigation_Report_Attach.html" },
+  { code: "091A", title: "Internal Complaint", category: "Laporan Deck", file: "091A_Internal_Complaint.html" },
+  { code: "091C", title: "Record of Hours of Rest", category: "Laporan Deck", file: "091C_Record_Hours_Of_Rest.html" },
+  { code: "091D", title: "Weekly Accomodation Inspection", category: "Laporan Deck", file: "091D_Weekly_Accomm_Inspection.html" },
+  { code: "091E", title: "Crew Repatriation", category: "Laporan Deck", file: "091E_Crew_Repatriation.html" },
 ];
 
 export const SMK_CATEGORIES = ["Semua", ...new Set(SMK_FORMS.map((form) => form.category))];
