@@ -22,7 +22,8 @@
         .box { display: flex; border: 1.5px solid #111827; }
         .box span { padding: 3px 8px; min-width: 46px; text-align: center; }
         .box span + span { border-left: 1.5px solid #111827; }
-        .release { color: #374151; }
+        .release { color: #374151; font-size: 9px; }
+        .release-line { display: flex; justify-content: flex-end; margin: 2px 0 4px; }
 
         .grid-header { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 18px; }
         .row { display: flex; align-items: baseline; gap: 6px; }
@@ -106,9 +107,9 @@
                 <div class="ttl">092 — Loading Cargo &amp; Stability Information</div>
                 <div class="stat">
                     <div class="box"><span>S</span><span>VOY</span></div>
-                    <div class="release">Release&nbsp;: Rev.0</div>
                 </div>
             </div>
+            <div class="release-line"><span class="release">Release&nbsp;:&nbsp;Rev.0</span></div>
             <div class="grid-header">
                 <div class="row"><label>Vessel Name :</label>
                     <select class="ship-select" id="vessel_name">
