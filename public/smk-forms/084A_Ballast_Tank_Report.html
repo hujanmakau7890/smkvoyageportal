@@ -264,12 +264,12 @@
     <div class="section-title">III. Other Observations</div>
     <div class="other-grid">
       <div class="other-item">
-        <div class="row"><strong>Anode Wastage (%)</strong> <input type="text" placeholder="%"></div>
-        <div class="row"><span>Total Good:</span> <input type="text" placeholder="pcs"></div>
-        <div class="row"><span>Total Broken:</span> <input type="text" placeholder="pcs"></div>
+        <div class="row"><strong>Anode Wastage (%)</strong> <input type="text" id="anode_wastage" readonly placeholder="%"></div>
+        <div class="row"><span>Total Good:</span> <input type="text" id="anode_good" placeholder="pcs"></div>
+        <div class="row"><span>Total Broken:</span> <input type="text" id="anode_broken" placeholder="pcs"></div>
       </div>
       <div class="other-item">
-        <div class="row"><strong>Mud Accumulation (cm)</strong> <input type="text" placeholder="cm"></div>
+        <div class="row"><strong>Mud Accumulation (cm)</strong> <input type="text" id="mud_cm" placeholder="cm"></div>
       </div>
     </div>
 
@@ -415,6 +415,22 @@
       formTitle: document.title
     }, '*');
   }
+
+  /* EXCEL FORMULA PARITY */
+  // H42 = IF(OR(F43="",G43=""),"",F43/SUM(F43:G43))  -> Anode Wastage %
+  function recalcOther() {
+    var g = document.getElementById('anode_good').value.trim();
+    var b = document.getElementById('anode_broken').value.trim();
+    var out = document.getElementById('anode_wastage');
+    if (g === '' || b === '') { out.value = ''; return; }
+    var G = parseFloat(g), B = parseFloat(b);
+    if (isNaN(G) || isNaN(B) || (G + B) === 0) { out.value = ''; return; }
+    var pct = G / (G + B) * 100;
+    out.value = (Math.round(pct * 100) / 100) + '%';
+  }
+  ['anode_good','anode_broken'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', recalcOther);
+  });
 
   /* TITLE SYNC */
   (function () {
