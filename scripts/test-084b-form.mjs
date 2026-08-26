@@ -28,11 +28,13 @@ assert.match(html, /Bulbows Bow/, 'Bulbows Bow caption (Excel spelling)');
 assert.match(html, /Port Side Shell/, 'port label');
 assert.match(html, /Stbd Side/, 'stbd label');
 assert.match(html, /Aft Bulkhead/, 'aft bulkhead');
-assert.match(html, /Tank Top \/ Deck Head|tt-lab/, 'tank top strip');
-assert.match(html, />Upper</, 'upper label');
-assert.match(html, />Lower</, 'lower label');
-assert.match(html, /Fwd/, 'fwd label');
-assert.match(html, />Aft</, 'aft label');
+// Diagram content — v7: diagram is the pixel-exact crop of the real Excel render,
+// with the 7 grade dropdowns overlaid at their exact cell positions
+assert.match(html, /assets\/084B_diagram\.png/, 'diagram = pixel-exact Excel render image');
+// v7: Upper/Lower/Fwd/Aft captions live inside the pixel-exact image,
+// so we verify the overlay selects instead
+assert.match(html, /assets\/084B_diagram\.png/, 'sheet image present');
+assert.equal((html.match(/<select class="cg"/g)||[]).length, 7, '7 floating diagram selects');
 // Content parity with exact Excel spellings
 assert.match(html, /BALLAST TANK CONDITION REPORT \(F P T\)/i, 'title');
 assert.match(html, /PT Mentari Mas Multimoda/i, 'company');
