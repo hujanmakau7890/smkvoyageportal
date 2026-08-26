@@ -35,7 +35,7 @@ class Handler(BaseHTTPRequestHandler):
     def _cors(self):
         self.send_header("Access-Control-Allow-Origin", ALLOW_ORIGIN)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "X-Token, X-Ship, X-Year, X-Month, X-Filename, X-Destination, Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "X-Token, X-Ship, X-Year, X-Month, X-Filename, X-Destination, X-Email, Content-Type")
         self.send_header("Access-Control-Max-Age", "86400")
 
     def do_OPTIONS(self):
