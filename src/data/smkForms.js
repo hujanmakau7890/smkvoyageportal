@@ -89,6 +89,7 @@ export const SMK_FORMS = [
   { code: "083", title: "Notice of Loss or Damage of Gear", category: "Laporan Deck", file: "083_Loss_Damage_Lashing_Gear.html" },
   { code: "084A", title: "Ballast Tank Condition Report (General)", category: "Laporan Deck", file: "084A_Ballast_Tank_Report.html" },
   { code: "084B", title: "Ballast Tank Condition Report (FPT)", category: "Laporan Deck", file: "084B_Ballast_Tank_Report_FPT.html" },
+  { code: "084C", title: "Ballast Tank Condition Report (Void)", category: "Laporan Deck", file: "084C_Ballast_Tank_Report_Void.html" },
   { code: "085", title: "Plugging & Unplugging Reefer Container", category: "Laporan Mesin", file: "085_Plugging_Unplugging_Reefer.html" },
   { code: "086", title: "Notice of Readiness", category: "Laporan Deck", file: "086_Notice_of_Readiness.html" },
   { code: "087A", title: "Master Note of Protest", category: "Laporan Deck", file: "087A_Master_Note_of_Protest.html" },
