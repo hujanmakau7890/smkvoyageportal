@@ -8,6 +8,23 @@ const registry = fs.readFileSync('src/data/smkForms.js', 'utf8');
 for (const id of ['vessel', 'date', 'tank_no', 'date_report', 'report_status']) {
   assert.match(html, new RegExp(`id="${id}"`), `missing required field ${id}`);
 }
+// Conditional formatting (exact dxf colors from Excel)
+assert.match(html, /#05FB11/, 'under deck grade 1 green (dxf 30)');
+assert.match(html, /#13FF01/, 'structure/fittings grade 1 green (dxf 29/3)');
+assert.match(html, /#66FF33/, 'bulkhead grade 1 green (dxf 13/10)');
+assert.match(html, /#27FC04/, 'anode >=0.7 green (dxf 24)');
+assert.match(html, /#92D050/, 'status Completed green (dxf 5)');
+assert.match(html, /#00FF00/, 'mud <=1 green (dxf 19)');
+assert.match(html, /#FFFF00/, 'grade 2 yellow');
+assert.match(html, /#ff0000|#FF0000/, 'grade 3 red');
+assert.match(html, /applyGradeCF/, 'conditional formatting logic present');
+assert.match(html, /cfAnode/, 'anode conditional formatting');
+assert.match(html, /cfMud/, 'mud conditional formatting');
+assert.match(html, /#002060/, 'blue font for mud dropdown + signature names (Excel font color)');
+assert.match(html, /color:#FF0000|color: ?#FF0000/, 'red notes K41-K43');
+// Excel number format parity
+assert.match(html, /0%|Math\.round\(frac \* 100\) \+ '%'/, 'anode % number format');
+assert.match(html, /MONTHS/, 'date display d-Mmm-yy like Excel [$-409]d-mmm-yy');
 // Excel content parity
 assert.match(html, /BALLAST TANK CONDITION REPORT \(GENERAL\)/, 'title must match Excel');
 assert.match(html, /PT MENTARI MAS MULTIMODA/, 'company header');
