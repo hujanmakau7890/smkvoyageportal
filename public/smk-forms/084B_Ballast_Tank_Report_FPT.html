@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>084B - Ballast Tank Condition Report (FPT)</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#e5e7eb; font-family:Arial, sans-serif; color:#111; font-size:13px; }
+  .tools { max-width:960px; margin:14px auto 0; text-align:right; }
+  .btn { border:0; border-radius:6px; background:#1769d2; color:#fff; font-weight:700; padding:10px 15px; cursor:pointer; font-family:inherit; }
+  .page { max-width:960px; margin:10px auto 24px; background:#fff; padding:24px; box-shadow:0 3px 14px #999; }
+
+  /* ===== HEADER ===== */
+  .head { border:2px solid #000; padding:0; }
+  .top { display:grid; grid-template-columns:1fr 2fr 1fr; align-items:center; border-bottom:2px solid #000; min-height:52px; }
+  .company { font-size:14px; font-weight:bold; text-transform:uppercase; padding:0 10px; }
+  .title { text-align:center; font-size:14px; font-weight:bold; line-height:1.25; text-transform:uppercase; padding:4px 6px; }
+  .st { display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-size:11px; font-weight:bold; padding:4px 8px; }
+  .code { display:flex; border:1px solid #000; }
+  .code span { padding:3px 9px; }
+  .code span:first-child { border-right:1px solid #000; }
+  .rel { display:flex; justify-content:flex-end; gap:6px; font-size:11px; padding:3px 8px; }
+
+  /* ===== INFO ===== */
+  .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 28px; margin:14px 0 12px; }
+  .item { display:flex; align-items:center; gap:8px; }
+  .item label { font-weight:bold; white-space:nowrap; width:96px; }
+  .item input, .item select { flex:1; border:0; border-bottom:1px dashed #000; background:transparent; font-size:13px; padding:3px 5px; outline:none; font-family:inherit; }
+
+  /* ===== GUIDE CHIPS ===== */
+  .guide-box { border:1px solid #000; padding:8px 10px; font-size:12px; margin-bottom:14px; display:flex; flex-wrap:wrap; justify-content:space-around; gap:6px; font-weight:bold; background:#fff; }
+  .chip { display:inline-flex; align-items:center; gap:6px; }
+  .sw { display:inline-block; width:22px; height:15px; border:1px solid #000; }
+
+  /* ===== DIAGRAM (Excel rows 10-24, cols G..Q) : Fore Peak Tank ===== */
+  .xd-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:14px; }
+  .xdiag { display:grid; min-width:780px;
+           grid-template-columns:64px 64px 58px 58px 40px 40px 40px 40px 64px 64px;
+           grid-template-rows:auto auto auto 27px 27px 27px 27px 27px 27px 27px 27px auto auto; justify-content:center; column-gap:2px; }
+  .bb-cap { grid-column:5/8; grid-row:1; font-size:12px; text-align:left; white-space:nowrap; padding-left:14%; }
+  .bb-box { grid-column:5/8; grid-row:2/4; border:2px solid #000; display:grid; grid-template-rows:1fr 1fr; }
+  .bb-box select { width:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .bb-box > div:first-child { border-bottom:1px dashed #000; }
+  /* side shells */
+  .port-shell { grid-column:1/3; grid-row:4/8; border:2px solid #000; display:grid; grid-template-rows:1fr 1fr; }
+  .stbd-shell { grid-column:9/11; grid-row:4/8; border:2px solid #000; display:grid; grid-template-rows:1fr 1fr; }
+  .shellbox select { width:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .shellbox > div:first-child { border-bottom:1px dashed #000; }
+  .shlab { font-size:12px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .port-lab { grid-column:3/5; grid-row:5; font-size:12px; align-self:center; white-space:nowrap; }
+  .stbd-lab { grid-column:8/9; grid-row:5; font-size:12px; align-self:start; white-space:pre-line; line-height:1.4; padding-top:6px; }
+  /* center spine */
+  .spine { grid-column:5/8; display:flex; align-items:center; justify-content:center; font-size:12px; }
+  .spine.aft-bh { grid-row:8; border:2px solid #000; border-bottom:0; }
+  .aft-grade { grid-column:5/8; grid-row:9/11; border:2px solid #000; border-top:1px dashed #000; display:flex; align-items:stretch; }
+  .aft-grade select { flex:1; width:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .aft-cap { grid-column:5/8; grid-row:11; font-size:12px; text-align:center; }
+  /* tank top strip */
+  .tt-strip { grid-column:1/11; grid-row:12; margin-top:8px; border:2px solid #000; height:27px; position:relative; }
+  .tt-strip .tt-lab { position:absolute; left:34%; top:-16px; font-size:12px; white-space:nowrap; }
+  .tt-strip select { width:100%; height:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .fwd-aft { display:flex; justify-content:space-between; grid-column:1/11; grid-row:2; font-size:12px; }
+
+  /* ===== STRUCTURE / FITTINGS ===== */
+  .sf-wrap { display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-bottom:14px; }
+  table.tbl { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
+  table.tbl th, table.tbl td { border:1px solid #000; padding:5px 7px; }
+  table.tbl th { font-weight:bold; text-align:center; background:#fff; }
+  table.tbl td.g { width:56px; padding:0; text-align:center; }
+  table.tbl td.g select { width:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; padding:5px 0; font-family:inherit; }
+
+  /* ===== OTHER / VALUE ===== */
+  .other-wrap { display:flex; gap:18px; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; }
+  table.ov { border-collapse:collapse; font-size:12px; }
+  table.ov th, table.ov td { border:1px solid #000; padding:4px 7px; }
+  table.ov th { font-weight:bold; text-align:center; }
+  table.ov td.in { padding:0; height:27px; }
+  table.ov td.in input, table.ov td.in select { width:100%; min-width:70px; height:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .ov-notes { font-size:12px; color:#FF0000; max-width:300px; line-height:1.5; padding-top:4px; }
+
+  /* ===== REMARKS ===== */
+  .notes-section { border:1px solid #000; padding:10px; font-size:13px; margin-bottom:12px; }
+  .notes-section label { font-weight:bold; display:block; margin-bottom:4px; white-space:pre-line; }
+  .notes-section textarea { width:100%; border:0; outline:none; font-size:13px; font-family:inherit; resize:vertical; min-height:56px; background:transparent; }
+
+  /* ===== SIGNATURES ===== */
+  .footer-section { margin-top:16px; padding-top:14px; border-top:2px solid #000; }
+  .footer-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+  .sig-item { text-align:center; }
+  .sig-item .label { font-size:12px; font-weight:bold; margin-bottom:4px; }
+  .sig-item .nm { border:1px solid #000; margin-bottom:8px; }
+  .sig-item .nm input { width:100%; border:0; outline:none; text-align:center; font-size:13px; font-weight:bold; color:#002060; padding:4px; background:transparent; font-family:inherit; }
+  .sig-item .space { height:74px; border:1px solid #000; display:flex; align-items:center; justify-content:center; position:relative; }
+  .sig-item .btn { padding:5px 9px; font-size:11px; }
+  .pv { display:none; width:100%; height:100%; align-items:center; justify-content:center; position:relative; }
+  .pv img { max-height:66px; max-width:90%; object-fit:contain; }
+  .pv .remove { position:absolute; top:2px; right:2px; background:#dc2626; color:#fff; border:0; border-radius:50%; width:19px; height:19px; font-size:12px; cursor:pointer; }
+
+  /* ===== PHOTOS ===== */
+  .photo-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:8px; }
+  .photo-item { border:1px dashed #000; height:120px; display:flex; align-items:center; justify-content:center; position:relative; background:#fafafa; overflow:hidden; }
+  .photo-item input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .photo-item span { font-size:11px; color:#666; text-align:center; padding:8px; pointer-events:none; }
+  .photo-item img { width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; display:none; background:#fff; }
+  .del-photo { position:absolute; top:2px; right:2px; background:#ef4444; color:#fff; border:0; border-radius:50%; width:20px; height:20px; font-size:12px; cursor:pointer; display:none; z-index:5; }
+
+  .hidden { display:none !important; }
+
+  @media print {
+    body { background:#fff; }
+    .tools, .no-print { display:none !important; }
+    .page { box-shadow:none; margin:0; padding:0; max-width:none; }
+    input::placeholder, textarea::placeholder { color:transparent !important; }
+    select { appearance:none !important; -webkit-appearance:none !important; }
+    @page { size:A4 portrait; margin:10mm 10mm 5mm 15mm; }
+  }
+  @media screen and (max-width:768px) {
+    .info-grid, .sf-wrap, .footer-grid { grid-template-columns:1fr; }
+    .footer-grid { gap:12px; }
+    .other-wrap { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="tools">
+  <button id="btn-print" class="btn" onclick="aksiSimpanDanCetak()">&#128196; Print / Simpan PDF</button>
+</div>
+
+<div class="page" id="pdf-content">
+
+  <!-- HEADER -->
+  <div class="head">
+    <div class="top">
+      <div class="company">PT Mentari Mas Multimoda</div>
+      <div class="title">084-B&ensp;&mdash;&ensp;Ballast Tank Condition Report (F P T)</div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>SMT</span></div>
+      </div>
+    </div>
+    <div class="rel"><span>Release :</span><span>Rev.0 :</span></div>
+  </div>
+
+  <!-- INFO -->
+  <div class="info-grid">
+    <div class="item"><label>Vessel</label><select id="vessel">
+      <option value=""></option>
+      <option>Express Mas</option>
+      <option>Mavendra Mas</option>
+      <option>Prakarsa Mas</option>
+      <option>Pratama Mas</option>
+      <option>Segoro Mas</option>
+      <option>Semangat Mas</option>
+      <option>Selaras Mas</option>
+      <option>Sahabat Mas</option>
+    </select></div>
+    <div class="item"><label>Tank No</label><input type="text" id="tank_no"></div>
+    <div class="item"><label>Date Inspec</label><input type="text" id="date" class="date-mask" placeholder="DD-MM-YYYY"></div>
+    <div class="item"><label>Date Report</label><input type="text" id="date_report" class="date-mask" placeholder="DD-MM-YYYY"></div>
+  </div>
+
+  <!-- COATING GRADING GUIDE (C9:D12) -->
+  <div class="guide-box">
+    <span class="chip"><i class="sw" style="background:#29f72e;"></i>&nbsp;1&nbsp;=&nbsp;GOOD</span>
+    <span class="chip"><i class="sw" style="background:#ffff00;"></i>&nbsp;2&nbsp;=&nbsp;FAIR</span>
+    <span class="chip"><i class="sw" style="background:#ff0000;"></i>&nbsp;3&nbsp;=&nbsp;POOR</span>
+    <span class="chip"><i class="sw"></i>&nbsp;NS&nbsp;=&nbsp;NOT SEEN</span>
+  </div>
+
+  <!-- ==================== DIAGRAM : FORE PEAK TANK (Excel rows 10-24) ==================== -->
+  <div class="xd-wrap"><div class="xdiag">
+
+    <!-- Bulbous Bow (K10 + L11:L12 dropdown) -->
+    <div class="bb-cap">Bulbows Bow</div>
+    <div class="bb-box">
+      <div><select data-cg="bulk" aria-label="bulbous bow upper"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
+      <div><select data-cg="bulk" aria-label="bulbous bow lower"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
+    </div>
+
+    <!-- Port Side Shell : Upper/Lower grades (G14:H17, I14:J17) -->
+    <div class="port-shell shellbox">
+      <div><select data-cg="ud" aria-label="port side shell upper"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
+      <div><select data-cg="ud" aria-label="port side shell lower"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
+    </div>
+    <div class="port-lab">Port Side Shell<br><span style="display:flex; gap:26px;"><span>Upper</span><span>Lower</span></span></div>
+
+    <!-- Stbd Side Shell : Lower/Upper grades (N13:O13, P13:Q13) -->
+    <div class="stbd-lab">Stbd Side
+Shell</div>
+    <div class="stbd-shell shellbox">
+      <div><select data-cg="ud" aria-label="stbd side shell lower"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
+      <div><select data-cg="ud" aria-label="stbd side shell upper"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
+    </div>
+
+    <!-- Aft Bulkhead stack : Lower (K18) | grade K19:M20 | Upper (K21), Fwd/Aft labels -->
+    <div class="spine aft-bh">Aft Bulkhead</div>
+    <div class="aft-grade">
+      <select data-cg="bulk" aria-label="aft bulkhead grade"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+    </div>
+    <div class="aft-cap" style="display:flex; justify-content:space-between; padding:0 12%;"><span>Aft</span><span>Fwd</span></div>
+
+  </div></div>
+
+  <!-- STRUCTURE / FITTINGS (Excel rows 30-39) -->
+  <div class="sf-wrap">
+    <table class="tbl">
+      <tr><th>TANKS STRUCTURE</th><th style="width:56px;">GRADE</th></tr>
+      <tr><td>Bottom Shell</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Rudder Trunk Bulkheads</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Port Side Shell</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Stbd Side Shell</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Transvere Bulkhead Aft</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Transfer Bulkhead Fwd</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Tank Top / Deack Head</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Wash Bulkheads</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>&nbsp;</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+    </table>
+    <table class="tbl">
+      <tr><th>TANK FITTINGS</th><th style="width:56px;">GRADE</th></tr>
+      <tr><td>Manhole Cover</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Tank Vent Pipes / Vent Heads</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Sound Pipe / Cap / Striker plate</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Tank remote gauging system</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Suct / Delivery Pipe/ Valve / Mounth</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Ladders and Platforms</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Other Internal Piping</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>&nbsp;</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>&nbsp;</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- OTHER | VALUE (Excel rows 41-44) -->
+  <div class="other-wrap">
+    <table class="ov">
+      <tr><th colspan="3">OTHER</th><th colspan="2">VALUE</th></tr>
+      <tr>
+        <td rowspan="2">Anode Wastage (%)</td>
+        <td style="font-size:11px; text-align:center;">Total Good</td>
+        <td style="font-size:11px; text-align:center;">Total Broken</td>
+        <td class="in" rowspan="2" style="min-width:80px;"><input type="text" id="anode_wastage" readonly></td>
+      </tr>
+      <tr>
+        <td class="in"><input type="text" id="anode_good"></td>
+        <td class="in"><input type="text" id="anode_broken"></td>
+      </tr>
+      <tr>
+        <td>Mud Accumulation (cm)</td>
+        <td class="in" colspan="2"><select id="mud_sel" style="color:#002060;"><option value=""></option><option>&lt;=1</option><option>1,1 - 5</option><option>&gt;5</option></select></td>
+        <td class="in"><input type="text" id="mud_val" readonly></td>
+      </tr>
+    </table>
+    <div class="ov-notes">
+      Fotos have to be attached to this report as evidence<br><br>
+      Tank Inspections have to be conducted in accordance with <b>TANK COATINGS CONDITION GUIDE</b>
+    </div>
+  </div>
+
+  <!-- REMARKS / CORRECTIVE ACTIONS -->
+  <div class="notes-section">
+    <label>Remarks:</label>
+    <textarea id="remarks"></textarea>
+  </div>
+  <div class="notes-section">
+    <label>Corrective
+Actions:</label>
+    <textarea id="corrective"></textarea>
+  </div>
+
+  <!-- EVIDENCE PHOTOS -->
+  <div class="notes-section" style="padding-bottom:14px;">
+    <label>Evidence Fotos</label>
+    <div class="photo-grid" id="pg">
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+    </div>
+  </div>
+
+  <!-- SIGNATURES (Excel row 54) -->
+  <div class="footer-section">
+    <div class="footer-grid">
+      <div class="sig-item">
+        <div class="label">Inspector</div>
+        <div class="nm"><input type="text" id="nm_inspector"></div>
+        <div class="space" id="sp-1">
+          <label class="btn no-print" for="up-1">+ Add TTD</label>
+          <input type="file" id="up-1" class="hidden" accept="image/*">
+          <div class="pv" id="pv-1"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Ch Officer</div>
+        <div class="nm"><input type="text" id="nm_choff"></div>
+        <div class="space" id="sp-2">
+          <label class="btn no-print" for="up-2">+ Add TTD</label>
+          <input type="file" id="up-2" class="hidden" accept="image/*">
+          <div class="pv" id="pv-2"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Master</div>
+        <div class="nm"><input type="text" id="nm_master"></div>
+        <div class="space" id="sp-3">
+          <label class="btn no-print" for="up-3">+ Add TTD</label>
+          <input type="file" id="up-3" class="hidden" accept="image/*">
+          <div class="pv" id="pv-3"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "084B";
+
+  /* ============================================================
+     CONDITIONAL FORMATTING - exact dxf colors from the Excel file
+     Font stays black - BACKGROUND carries the grade color.
+     ============================================================ */
+  var Y = '#FFFF00', R = '#FF0000';
+  // 084-B uses uniform #00FF00 green for all zones (dxf 3..30)
+  var GREEN = '#00FF00';
+
+  function applyGradeCF(sel) {
+    var v = sel.value;
+    if (v === '1')      sel.style.background = GREEN;
+    else if (v === '2') sel.style.background = Y;
+    else if (v === '3') sel.style.background = R;
+    else                sel.style.background = '';
+  }
+  document.querySelectorAll('select[data-cg]').forEach(function(sel) {
+    sel.addEventListener('change', function(){ applyGradeCF(sel); });
+    applyGradeCF(sel);
+  });
+
+  // H42 anode wastage: <50% red, 50-69% yellow, >=70% green #00FF00 (fmt 0%)
+  function cfAnode() {
+    var el = document.getElementById('anode_wastage');
+    var v = el.value.trim();
+    if (v === '') { el.style.background = ''; return; }
+    var n = parseFloat(v);
+    if (isNaN(n)) { el.style.background = ''; return; }
+    if (n < 50)       el.style.background = R;
+    else if (n < 70)  el.style.background = Y;
+    else              el.style.background = GREEN;
+  }
+
+  // H44 mud: "<=1" -> #00FF00, "1,1 - 5" -> yellow, ">5" -> red
+  function cfMud(el) {
+    var v = el.value;
+    if (!v) { el.style.background = ''; return; }
+    if (v.indexOf('<=1') !== -1)          el.style.background = GREEN;
+    else if (v.indexOf('1,1 - 5') !== -1) el.style.background = Y;
+    else if (v.indexOf('>5') !== -1)      el.style.background = R;
+    else el.style.background = '';
+  }
+
+  /* ===== DATE MASK (DD-MM-YYYY) ===== */
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var d = e.target.value.replace(/\D/g,'').slice(0,8);
+      var v = d;
+      if (d.length >= 5) v = d.slice(0,2)+'-'+d.slice(2,4)+'-'+d.slice(4);
+      else if (d.length >= 3) v = d.slice(0,2)+'-'+d.slice(2);
+      e.target.value = v;
+    });
+  });
+
+  /* ===== EXCEL FORMULAS ===== */
+  // H42 = IF(OR(F43="",G43=""),"",F43/SUM(F43:G43))  number format 0%
+  function recalcOther() {
+    var g = document.getElementById('anode_good').value.trim();
+    var b = document.getElementById('anode_broken').value.trim();
+    var out = document.getElementById('anode_wastage');
+    if (g === '' || b === '') { out.value = ''; cfAnode(); return; }
+    var G = parseFloat(g), B = parseFloat(b);
+    if (isNaN(G) || isNaN(B) || (G+B) === 0) { out.value = ''; cfAnode(); return; }
+    out.value = Math.round(G/(G+B)*100) + '%';
+    cfAnode();
+  }
+  ['anode_good','anode_broken'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', recalcOther);
+  });
+
+  // H44 = IF(G44="","",G44)
+  document.getElementById('mud_sel').addEventListener('change', function(){
+    var mv = document.getElementById('mud_val');
+    mv.value = this.value;
+    cfMud(mv);
+  });
+
+  /* ===== SIGNATURE UPLOAD ===== */
+  function initSig(upId, pvId) {
+    document.getElementById(upId).addEventListener('change', function(e){
+      if (e.target.files && e.target.files[0]) {
+        var rd = new FileReader();
+        rd.onload = function(x){
+          var pv = document.getElementById(pvId);
+          pv.querySelector('img').src = x.target.result;
+          pv.style.display = 'flex';
+          pv.parentElement.querySelector('label').classList.add('hidden');
+        };
+        rd.readAsDataURL(e.target.files[0]);
+      }
+    });
+  }
+  function clearSig(pvId, upId) {
+    var pv = document.getElementById(pvId);
+    pv.querySelector('img').src = '';
+    pv.style.display = 'none';
+    pv.parentElement.querySelector('label').classList.remove('hidden');
+    document.getElementById(upId).value = '';
+  }
+  initSig('up-1','pv-1'); initSig('up-2','pv-2'); initSig('up-3','pv-3');
+
+  /* ===== PHOTO UPLOAD ===== */
+  function loadPhoto(inp) {
+    if (inp.files && inp.files[0]) {
+      var rd = new FileReader();
+      rd.onload = function(x){
+        var p = inp.parentElement;
+        p.querySelector('img').src = x.target.result;
+        p.querySelector('img').style.display = 'block';
+        p.querySelector('.del-photo').style.display = 'block';
+        p.querySelector('span').style.display = 'none';
+      };
+      rd.readAsDataURL(inp.files[0]);
+    }
+  }
+  function removePhoto(btn) {
+    var p = btn.parentElement;
+    p.querySelector('img').src = '';
+    p.querySelector('img').style.display = 'none';
+    btn.style.display = 'none';
+    p.querySelector('span').style.display = 'block';
+    p.querySelector('input[type=file]').value = '';
+  }
+
+  /* ===== SAVE & PRINT (portal) ===== */
+  async function aksiSimpanDanCetak() {
+    var vesselName = document.getElementById('vessel').value;
+    if (!vesselName) { alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); return; }
+
+    var btn = document.getElementById('btn-print');
+    btn.disabled = true; btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
+    setTimeout(function(){ btn.disabled = false; btn.innerHTML = '&#128196; Print / Simpan PDF'; }, 500);
+
+    window.parent.postMessage({
+      type: 'SMK_SAVE_PDF',
+      name: document.title,
+      ship: vesselName,
+      date: document.getElementById('date').value || '',
+      formCode: FORM_CODE,
+      formTitle: document.title
+    }, '*');
+  }
+  var savePDF = aksiSimpanDanCetak;
+
+  /* ===== TITLE SYNC ===== */
+  function updateTitle() {
+    var sel = document.getElementById('vessel');
+    var t = '084B Ballast Tank Condition Report (FPT)';
+    if (sel.value) t += ' - ' + sel.value;
+    var dt = document.getElementById('date').value;
+    if (dt) t += ' - ' + dt;
+    window.parent && window.parent.postMessage({ type:'FORM_TITLE', title:t }, '*');
+  }
+  document.getElementById('vessel').addEventListener('change', updateTitle);
+
+  /* ===== INIT_FORM from parent app ===== */
+  window.addEventListener('message', function(e){
+    if (e.data && e.data.type === 'INIT_FORM') {
+      var sel = document.getElementById('vessel');
+      if (e.data.vessel) {
+        var vl = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
+        Array.from(sel.options).forEach(function(o){
+          if (o.value.toLowerCase().replace(/_/g,' ') === vl) sel.value = o.value;
+        });
+      }
+      if (e.data.locked) sel.disabled = true;
+    }
+  });
+</script>
+</body>
+</html>
