@@ -19,7 +19,8 @@ assert.doesNotMatch(html, /sel\.style\.color = (Y|R|GREEN)/, 'font must stay bla
 const cnt = (re) => (html.match(re) || []).length;
 assert.equal(cnt(/data-cg="bb"/g), 1, 'Bulbows Bow = Excel L11:L12 single grade');
 assert.equal(cnt(/data-cg="ud"/g), 4, 'port Upper/Lower + stbd Lower/Upper = Excel G13,I13,N13,P13');
-assert.equal(cnt(/data-cg="aft"/g), 1, 'Aft Bulkhead = Excel K19:M20');
+assert.equal(cnt(/data-cg="aft"/g), 2, 'Aft Bulkhead = Excel K19:M19 + K20:M20 = two dropdowns');
+assert.equal(cnt(/data-cg="l14"/g), 1, 'fore peak centreline column = Excel L14 dropdown');
 assert.equal(cnt(/data-cg="low"/g), 1, 'lower box = Excel L23:L25');
 assert.equal(cnt(/data-cg="struct"/g), 9, 'structure grades H31:H39');
 assert.equal(cnt(/data-cg="fit"/g), 9, 'fittings grades Q31:R39');
@@ -34,7 +35,7 @@ assert.match(html, /assets\/084B_diagram\.png/, 'diagram = pixel-exact Excel ren
 // v7: Upper/Lower/Fwd/Aft captions live inside the pixel-exact image,
 // so we verify the overlay selects instead
 assert.match(html, /assets\/084B_diagram\.png/, 'sheet image present');
-assert.equal((html.match(/<select class="cg"/g)||[]).length, 7, '7 floating diagram selects');
+assert.equal((html.match(/<select class="cg"/g)||[]).length, 9, '9 floating diagram selects (exact Excel DV ranges)');
 // Content parity with exact Excel spellings
 assert.match(html, /BALLAST TANK CONDITION REPORT \(F P T\)/i, 'title');
 assert.match(html, /PT Mentari Mas Multimoda/i, 'company');
