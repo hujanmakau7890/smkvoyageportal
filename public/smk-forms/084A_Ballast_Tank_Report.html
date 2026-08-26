@@ -3,180 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>084-A Ballast Tank Condition Report (General)</title>
+<title>084A - Ballast Tank Condition Report (General)</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background:#e5e7eb; font-family: Arial, Helvetica, sans-serif; color:#000; font-size:13px; }
-  .tools { max-width: 940px; margin: 14px auto 0; text-align: right; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#e5e7eb; font-family:Arial, sans-serif; color:#111; font-size:13px; }
+  .tools { max-width:960px; margin:14px auto 0; text-align:right; }
   .btn { border:0; border-radius:6px; background:#1769d2; color:#fff; font-weight:700; padding:10px 15px; cursor:pointer; font-family:inherit; }
-  .page { max-width:940px; margin:10px auto 24px; background:#fff; padding:24px 28px; box-shadow:0 3px 14px #999; }
+  .page { max-width:960px; margin:10px auto 24px; background:#fff; padding:24px; box-shadow:0 3px 14px #999; }
 
-  /* ===== HEADER (Excel B4:R5) ===== */
-  .hdr { display:grid; grid-template-columns: 22% 47% 15.5% 15.5%; }
-  .hdr .cell { border:1.4px solid #000; text-align:center; font-weight:bold; font-size:13px; display:flex; align-items:center; justify-content:center; min-height:46px; padding:2px; }
-  .hdr .co, .hdr .ti { grid-row: 1 / 3; }
-  .hdr .cs, .hdr .smt { min-height:23px; }
-  .rel { border:1.4px solid #000; border-top:0; font-size:11px; padding:2px 5px; display:flex; justify-content:space-between; min-height:18px; align-items:center; }
+  /* ===== HEADER ===== */
+  .head { border:2px solid #000; padding:0; }
+  .top { display:grid; grid-template-columns:1fr 2fr 1fr; align-items:center; border-bottom:2px solid #000; min-height:52px; }
+  .company { font-size:14px; font-weight:bold; text-transform:uppercase; padding:0 10px; }
+  .title { text-align:center; font-size:14px; font-weight:bold; line-height:1.25; text-transform:uppercase; padding:4px 6px; }
+  .st { display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-size:11px; font-weight:bold; padding:4px 8px; }
+  .code { display:flex; border:1px solid #000; }
+  .code span { padding:3px 9px; }
+  .code span:first-child { border-right:1px solid #000; }
+  .rel { display:flex; justify-content:flex-end; gap:6px; font-size:11px; padding:3px 8px; }
 
-  /* ===== STATUS (Excel Q6) ===== */
-  .statusrow { display:flex; justify-content:flex-end; align-items:center; gap:6px; margin:5px 0 7px; font-size:11px; }
-  .statusrow select { border:1.4px solid #000; font-size:11px; padding:2px 6px; background:#fff; font-family:inherit; outline:none; }
+  /* ===== INFO ===== */
+  .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 28px; margin:14px 0 12px; }
+  .item { display:flex; align-items:center; gap:8px; }
+  .item label { font-weight:bold; white-space:nowrap; width:96px; }
+  .item input, .item select { flex:1; border:0; border-bottom:1px dashed #000; background:transparent; font-size:13px; padding:3px 5px; outline:none; font-family:inherit; }
 
-  /* ===== INFO BAR (Excel row 7) ===== */
-  .infobar { display:grid; grid-template-columns: 12% 21% 11% 11% 14% 12% 15% 11%; margin-bottom:8px; }
-  .infobar .lbl { border:1.4px solid #000; font-size:13px; display:flex; align-items:center; padding:0 5px; min-height:27px; }
-  .infobar .val { border:1.4px solid #000; border-left:0; min-height:27px; }
-  .infobar select, .infobar input { width:100%; height:100%; border:0; outline:none; font-size:13px; padding:0 5px; background:transparent; font-family:inherit; }
+  /* ===== GUIDE CHIPS ===== */
+  .guide-box { border:1px solid #000; padding:8px 10px; font-size:12px; margin-bottom:14px; display:flex; flex-wrap:wrap; justify-content:space-around; gap:6px; font-weight:bold; background:#fff; }
+  .chip { display:inline-flex; align-items:center; gap:6px; }
+  .sw { display:inline-block; width:22px; height:15px; border:1px solid #000; }
 
-  /* ===== TOP AREA : legend + J9:K9 box (Excel rows 9-12) ===== */
-  .toparea { display:flex; justify-content:space-between; align-items:flex-start; margin:2px 0 2px; }
-  .cg-title { font-weight:bold; font-size:13px; margin:0 0 3px; }
-  table.cg { border-collapse:collapse; font-size:13px; }
-  table.cg td { border:1.4px solid #000; text-align:center; height:27px; padding:1px 12px; }
-  table.cg td.w { width:36px; font-weight:bold; }
-  .legendblock { margin-left:2%; }
-  .jk-stack { display:flex; flex-direction:column; margin-right:24%; }
-  .jk-grade { border:1.4px solid #000; height:26px; width:74px; }
-  .jk-grade select { width:100%; height:100%; border:0; outline:none; text-align:center; font-size:13px; background:transparent; font-family:inherit; }
-  .jk-empty { border:1.4px solid #000; border-top:0; height:78px; width:74px; }
+  /* ===== DIAGRAM (exact Excel grid rows 11-23, cols C..P) ===== */
+  .xd-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:14px; }
+  .xdiag { display:grid; grid-template-columns:70px 55px 46px 55px 56px 45px 57px 62px 62px 57px 48px 58px 55px 58px;
+           grid-template-rows:18px 27px 27px 27px 27px 100px 27px 27px 27px; min-width:800px; }
+  .xd-cap { grid-column:10/15; grid-row:1; font-size:12px; padding-left:32%; white-space:nowrap; }
+  /* forward transfer bulkhead label + grade stack */
+  .fwd-label { grid-column:5/7; grid-row:2/4; align-self:center; font-size:12px; line-height:1.35; padding-left:4px; white-space:nowrap; }
+  .stackbox { border:2px solid #000; display:grid; grid-template-columns:34px 1fr; }
+  .stack-fwd { grid-column:8/10; grid-row:2/5; }
+  .stack-aft { grid-column:8/10; grid-row:7/10; }
+  .stackbox .sc { display:flex; border-bottom:1px dashed #000; }
+  .stackbox .sc:last-child { border-bottom:0; }
+  .stackbox .sc.dd { border-right:1px dashed #000; }
+  .stackbox select { width:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .stackbox .sl { display:flex; align-items:center; justify-content:center; font-size:12px; }
+  /* under deck strips (row 16) */
+  .ud-sel { border:0; outline:none; width:100%; height:100%; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .strip { border:2px solid #000; display:flex; height:27px; align-self:end; }
+  .strip > * { border-left:1px dashed #000; flex:1; }
+  .strip > *:first-child { border-left:0; }
+  .strip-l { grid-column:4/10; grid-row:5; margin-right:4px; }
+  .strip-r { grid-column:10/14; grid-row:5; }
+  /* main band (rows 17-20) */
+  .band { border:2px solid #000; display:flex; align-self:stretch; }
+  .band > div { flex:1; display:flex; align-items:center; justify-content:center; font-size:12px; text-align:center; padding:2px; }
+  .band > div + div { border-left:1px dashed #000; }
+  .band-port  { grid-column:4/8; grid-row:6; }
+  .band-bs    { grid-column:8/10; grid-row:6; margin:0 4px; }
+  .band-stbd  { grid-column:10/14; grid-row:6; }
+  .side-lab { font-size:12px; line-height:1.4; align-self:start; padding-top:8px; }
+  .lab-port { grid-column:1/4; grid-row:6; }
+  .lab-stbd { grid-column:14/15; grid-row:6; padding-left:4px; }
+  .aft-label { grid-column:4/7; grid-row:8; font-size:12px; align-self:center; padding-left:4px; white-space:nowrap; }
 
-  /* ===== DIAGRAM (Excel rows 13-23) ===== */
-  .diag { display:grid; grid-template-columns: 88px 1fr 88px; align-items:center; margin:0 0 2px; }
-  .side { font-size:12px; line-height:1.3; }
-  .side.right { text-align:left; padding-left:6px; white-space:pre-line; }
-  .udrow { display:grid; grid-template-columns: 1fr 1.15fr 1fr; margin-bottom:3px; }
-  .ud-cap { font-size:13px; padding:0 0 2px 8%; text-align:left; }
-  .ud { border:1.4px solid #000; height:26px; }
-  .ud select { width:100%; height:100%; border:0; outline:none; text-align:center; font-size:13px; background:transparent; font-family:inherit; }
-  .ud.a { grid-column: 1 / 3; margin-right:3px; }
-  .ud.b { grid-column: 3 / 4; }
-  .barsandbs { display:grid; grid-template-columns: 1fr 1.15fr 1fr; align-items:stretch; }
-  .bargroup { display:flex; }
-  .vbar { border:1.4px solid #000; flex:1; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center; font-size:13px; height:82px; display:flex; align-items:center; justify-content:center; }
-  .vbar + .vbar { border-left:0; }
-  .bargroup.r .vbar:first-child { border-left:1.4px solid #000; }
-  .bscol { display:flex; flex-direction:column; margin:0 3px; }
-  .flabel { font-size:12px; padding:1px 0 2px 2px; }
-  .pair { display:flex; align-items:stretch; height:26px; margin-bottom:2px; }
-  .pair select { width:56px; border:1.4px solid #000; outline:none; text-align:center; font-size:13px; background:transparent; font-family:inherit; }
-  .pair span { font-size:12px; display:flex; align-items:center; padding-left:8px; }
-  .vbar.bs { height:auto; flex:1; margin:2px 0; }
+  /* ===== STRUCTURE / FITTINGS ===== */
+  .sf-wrap { display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-bottom:14px; }
+  table.tbl { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
+  table.tbl th, table.tbl td { border:1px solid #000; padding:5px 7px; }
+  table.tbl th { font-weight:bold; text-align:center; background:#fff; }
+  table.tbl td.g { width:56px; padding:0; text-align:center; }
+  table.tbl td.g select { width:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; padding:5px 0; font-family:inherit; }
 
-  /* ===== LEGEND 2 (Excel rows 24-28) ===== */
-  .legend2 { margin:4px 0 10px 2%; }
-  .legend2 .cg-title { margin-bottom:3px; }
+  /* ===== OTHER / VALUE ===== */
+  .other-wrap { display:flex; gap:18px; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; }
+  table.ov { border-collapse:collapse; font-size:12px; }
+  table.ov th, table.ov td { border:1px solid #000; padding:4px 7px; }
+  table.ov th { font-weight:bold; text-align:center; }
+  table.ov td.in { padding:0; height:27px; }
+  table.ov td.in input, table.ov td.in select { width:100%; min-width:70px; height:100%; border:0; outline:none; background:transparent; text-align:center; font-size:13px; font-family:inherit; }
+  .ov-notes { font-size:12px; color:#FF0000; max-width:300px; line-height:1.5; padding-top:4px; }
 
-  /* ===== STRUCTURE / FITTINGS (Excel rows 30-39) ===== */
-  .sf-wrap { display:grid; grid-template-columns: 1fr 1fr; gap:28px; margin-bottom:12px; }
-  table.sf { width:100%; border-collapse:collapse; font-size:13px; }
-  table.sf th, table.sf td { border:1.4px solid #000; height:27px; padding:1px 6px; font-weight:normal; }
-  table.sf th { font-weight:bold; text-align:center; }
-  table.sf th.g, table.sf td.g { width:58px; text-align:center; }
-  table.sf td.g select { width:100%; height:100%; border:0; outline:none; text-align:center; font-size:13px; background:transparent; font-family:inherit; }
+  /* ===== REMARKS ===== */
+  .notes-section { border:1px solid #000; padding:10px; font-size:13px; margin-bottom:12px; }
+  .notes-section label { font-weight:bold; display:block; margin-bottom:4px; white-space:pre-line; }
+  .notes-section textarea { width:100%; border:0; outline:none; font-size:13px; font-family:inherit; resize:vertical; min-height:56px; background:transparent; }
 
-  /* ===== OTHER / VALUE (Excel rows 41-44) ===== */
-  .other-wrap { display:flex; gap:20px; align-items:flex-start; margin-bottom:12px; }
-  table.ov { border-collapse:collapse; }
-  table.ov th, table.ov td { border:1.2px solid #000; padding:1px 6px; }
-  table.ov th { font-weight:bold; text-align:center; height:27px; font-size:13px; }
-  table.ov td.lab { height:27px; font-size:13px; }
-  table.ov td.in { height:27px; padding:0; }
-  table.ov td.sm { font-size:11px; text-align:center; }
-  table.ov td input, table.ov td select { width:100%; min-width:64px; height:100%; border:0; outline:none; text-align:center; font-size:13px; background:transparent; font-family:inherit; }
-  #mud_sel { color:#002060; }
-  .ov-notes { font-size:13px; line-height:1.5; max-width:300px; padding-top:2px; color:#FF0000; }
+  /* ===== SIGNATURES ===== */
+  .footer-section { margin-top:16px; padding-top:14px; border-top:2px solid #000; }
+  .footer-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+  .sig-item { text-align:center; }
+  .sig-item .label { font-size:12px; font-weight:bold; margin-bottom:4px; }
+  .sig-item .nm { border:1px solid #000; margin-bottom:8px; }
+  .sig-item .nm input { width:100%; border:0; outline:none; text-align:center; font-size:13px; font-weight:bold; color:#002060; padding:4px; background:transparent; font-family:inherit; }
+  .sig-item .space { height:74px; border:1px solid #000; display:flex; align-items:center; justify-content:center; position:relative; }
+  .sig-item .btn { padding:5px 9px; font-size:11px; }
+  .pv { display:none; width:100%; height:100%; align-items:center; justify-content:center; position:relative; }
+  .pv img { max-height:66px; max-width:90%; object-fit:contain; }
+  .pv .remove { position:absolute; top:2px; right:2px; background:#dc2626; color:#fff; border:0; border-radius:50%; width:19px; height:19px; font-size:12px; cursor:pointer; }
 
-  /* ===== REMARKS / CORRECTIVE (Excel rows 46-53) ===== */
-  .boxrow { display:grid; grid-template-columns: 15% 85%; margin-bottom:10px; }
-  .boxrow .lab { border:1.4px solid #000; font-weight:bold; font-size:13px; padding:3px 6px; }
-  .boxrow .area { border:1.4px solid #000; border-left:0; }
-  .boxrow textarea { width:100%; min-height:76px; border:0; outline:none; resize:vertical; font-size:13px; padding:4px 6px; font-family:inherit; background:transparent; }
-
-  /* ===== SIGNATURES (Excel rows 54-55) ===== */
-  .sigbar { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:4px; }
-  .sig { display:flex; align-items:stretch; }
-  .sig .slab { border:1.4px solid #000; font-size:13px; display:flex; align-items:center; justify-content:center; padding:0 6px; min-height:27px; white-space:nowrap; }
-  .sig .sname { border:1.4px solid #000; border-left:0; flex:1; display:flex; align-items:center; }
-  .sig .sname input { width:100%; border:0; outline:none; font-size:13px; text-align:center; background:transparent; font-family:inherit; color:#002060; font-weight:bold; }
-  .signline { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:6px; }
-  .signline .scell { border:1.4px solid #000; height:86px; display:flex; align-items:center; justify-content:center; position:relative; }
-  .signline .scell .btn { padding:5px 9px; font-size:11px; }
-  .pv { display:none; position:relative; width:100%; height:100%; align-items:center; justify-content:center; }
-  .pv img { max-height:78px; max-width:92%; object-fit:contain; }
-  .pv .remove { position:absolute; top:2px; right:2px; background:#dc2626; color:#fff; border:0; border-radius:50%; width:20px; height:20px; font-size:13px; font-weight:bold; cursor:pointer; }
-
-  /* ===== PAGE 2 : EVIDENCE (Excel rows 68-153) ===== */
-  .page2 { max-width:940px; margin:10px auto 24px; background:#fff; padding:24px 28px; box-shadow:0 3px 14px #999; }
-  .ev-box { border:1.4px solid #000; min-height:600px; padding:10px; margin-top:10px; }
-  .photo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-  .photo-item { border:1px dashed #888; height:145px; display:flex; align-items:center; justify-content:center; position:relative; background:#fafafa; overflow:hidden; }
+  /* ===== PHOTOS ===== */
+  .photo-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:8px; }
+  .photo-item { border:1px dashed #000; height:120px; display:flex; align-items:center; justify-content:center; position:relative; background:#fafafa; overflow:hidden; }
   .photo-item input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
-  .photo-item span { font-size:11px; color:#666; pointer-events:none; }
+  .photo-item span { font-size:11px; color:#666; text-align:center; padding:8px; pointer-events:none; }
   .photo-item img { width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; display:none; background:#fff; }
   .del-photo { position:absolute; top:2px; right:2px; background:#ef4444; color:#fff; border:0; border-radius:50%; width:20px; height:20px; font-size:12px; cursor:pointer; display:none; z-index:5; }
 
   .hidden { display:none !important; }
-  input::placeholder, textarea::placeholder { color:#aaa; }
 
-  /* print like Excel page setup: A4 portrait, margins T/R 10mm B 5mm L 15mm */
   @media print {
     body { background:#fff; }
     .tools, .no-print { display:none !important; }
-    .page, .page2 { box-shadow:none; margin:0; padding:0; max-width:none; page-break-after:always; }
-    .page2 { page-break-after:auto; }
-    .ev-box { min-height:560px; }
+    .page { box-shadow:none; margin:0; padding:0; max-width:none; }
     input::placeholder, textarea::placeholder { color:transparent !important; }
-    select { appearance:none !important; -webkit-appearance:none !important; background-image:none !important; }
+    select { appearance:none !important; -webkit-appearance:none !important; }
     @page { size:A4 portrait; margin:10mm 10mm 5mm 15mm; }
   }
-
   @media screen and (max-width:768px) {
-    .page, .page2 { padding:12px; overflow-x:hidden; width:100%; }
-    .scrollx { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    .scrollx > * { min-width:660px; }
-    .sf-wrap { grid-template-columns:1fr; gap:12px; }
+    .info-grid, .sf-wrap, .footer-grid { grid-template-columns:1fr; }
+    .footer-grid { gap:12px; }
     .other-wrap { flex-direction:column; }
-    .sigbar, .signline { grid-template-columns:1fr; }
-    .signline .scell { height:70px; }
-    .infobar { grid-template-columns: 30% 70%; }
-    .infobar .val { border-left:0; border-top:0; }
-    .infobar .lbl:nth-last-child(2), .infobar .val:last-child { border-top:1.4px solid #000; }
-    .diag { grid-template-columns: 74px 1fr 74px; }
-    .jk-stack { margin-right:4%; }
   }
 </style>
 </head>
 <body>
 
-<div class="tools no-print">
+<div class="tools">
   <button id="btn-print" class="btn" onclick="aksiSimpanDanCetak()">&#128196; Print / Simpan PDF</button>
 </div>
 
-<!-- ==================== PAGE 1 ==================== -->
 <div class="page" id="pdf-content">
 
   <!-- HEADER -->
-  <div class="hdr">
-    <div class="cell co">PT MENTARI MAS MULTIMODA</div>
-    <div class="cell ti">084-A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BALLAST TANK CONDITION REPORT (GENERAL)</div>
-    <div class="cell cs">CS</div>
-    <div class="cell smt">SMT</div>
-  </div>
-  <div class="rel"><span>Release :</span><span>Rev.0 :</span></div>
-
-  <!-- STATUS dropdown (Q6, CF: Choose=yellow, Abort=red, Completed=green) -->
-  <div class="statusrow">
-    <select id="report_status">
-      <option>Choose</option>
-      <option>Abort</option>
-      <option>Completed</option>
-    </select>
+  <div class="head">
+    <div class="top">
+      <div class="company">PT Mentari Mas Multimoda</div>
+      <div class="title">084-A&ensp;&mdash;&ensp;Ballast Tank Condition Report (General)</div>
+      <div class="st">
+        <div class="code"><span>CS</span><span>SMT</span></div>
+      </div>
+    </div>
+    <div class="rel"><span>Release :</span><span>Rev.0 :</span></div>
   </div>
 
-  <!-- INFO BAR -->
-  <div class="infobar">
-    <div class="lbl">Vessel</div>
-    <div class="val"><select id="vessel">
+  <!-- INFO -->
+  <div class="info-grid">
+    <div class="item"><label>Vessel</label><select id="vessel">
       <option value=""></option>
       <option>Express Mas</option>
       <option>Mavendra Mas</option>
@@ -187,81 +160,80 @@
       <option>Selaras Mas</option>
       <option>Sahabat Mas</option>
     </select></div>
-    <div class="lbl">Tank No</div>
-    <div class="val"><input type="text" id="tank_no"></div>
-    <div class="lbl">Date Inspec</div>
-    <div class="val"><input type="text" id="date" class="date-mask" placeholder="DD-MM-YYYY"></div>
-    <div class="lbl">Date Report</div>
-    <div class="val"><input type="text" id="date_report" class="date-mask" placeholder="DD-MM-YYYY"></div>
+    <div class="item"><label>Tank No</label><input type="text" id="tank_no"></div>
+    <div class="item"><label>Date Inspec</label><input type="text" id="date" class="date-mask" placeholder="DD-MM-YYYY"></div>
+    <div class="item"><label>Date Report</label><input type="text" id="date_report" class="date-mask" placeholder="DD-MM-YYYY"></div>
   </div>
 
-  <!-- ROWS 9-12 : Coating Grading legend + grade box (J9:K9) + empty tall box (J10:K12) -->
-  <div class="toparea">
-    <div class="legendblock">
-      <div class="cg-title">Coating Grading</div>
-      <table class="cg">
-        <tr><td class="w" style="background:#29f72e;">1</td><td>GOOD</td></tr>
-        <tr><td class="w" style="background:#ffff00;">2</td><td>FAIR</td></tr>
-        <tr><td class="w" style="background:#ff0000;">3</td><td>POOR</td></tr>
-      </table>
+  <!-- COATING GRADING GUIDE -->
+  <div class="guide-box">
+    <span class="chip"><i class="sw" style="background:#29f72e;"></i>&nbsp;1&nbsp;=&nbsp;GOOD</span>
+    <span class="chip"><i class="sw" style="background:#ffff00;"></i>&nbsp;2&nbsp;=&nbsp;FAIR</span>
+    <span class="chip"><i class="sw" style="background:#ff0000;"></i>&nbsp;3&nbsp;=&nbsp;POOR</span>
+    <span class="chip"><i class="sw"></i>&nbsp;NS&nbsp;=&nbsp;NOT SEEN</span>
+  </div>
+
+  <!-- ==================== DIAGRAM : EXACT EXCEL GRID (rows 11-23, cols C..P) ==================== -->
+  <div class="xd-wrap"><div class="xdiag">
+
+    <div class="xd-cap">Under Deck</div>
+
+    <!-- fwd transfer bulkhead label -->
+    <div class="fwd-label">Fwd transfer<br>bulkhead</div>
+
+    <!-- fwd grade stack (Excel J13:J15 + K13:K15) -->
+    <div class="stackbox stack-fwd">
+      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
+      <div class="sl">Upper</div>
+      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
+      <div class="sl">Middle</div>
+      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
+      <div class="sl">Lower</div>
     </div>
-    <div class="jk-stack">
-      <div class="jk-grade"><select data-cg="box"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
-      <div class="jk-empty"></div>
+
+    <!-- under deck strips (Excel F16:J16 and L16:O16) -->
+    <div class="strip strip-l">
+      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
     </div>
-  </div>
-
-  <!-- ROWS 13-23 : cross-section diagram -->
-  <div class="diag scrollx">
-    <div class="side left">Port Longitudinal
-bulkhead or
-Side Shell</div>
-    <div class="mid">
-      <div class="ud-cap">Under Deck</div>
-      <div class="udrow">
-        <div class="ud a"><select data-cg="ud"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
-        <div class="ud b"><select data-cg="ud"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
-      </div>
-      <div class="barsandbs">
-        <div class="bargroup l">
-          <div class="vbar">Upper</div><div class="vbar">Middle</div><div class="vbar">Lower</div>
-        </div>
-        <div class="bscol">
-          <div class="flabel">Fwd transfer bulkhead</div>
-          <div class="pair"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select><span>Upper</span></div>
-          <div class="pair"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select><span>Middle</span></div>
-          <div class="pair"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select><span>Lower</span></div>
-          <div class="vbar bs">Bottom Shell</div>
-          <div class="flabel" style="padding-top:3px;">Aft Transfer bulkhead</div>
-          <div class="pair"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select><span>Lower</span></div>
-          <div class="pair"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select><span>Middle</span></div>
-          <div class="pair"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select><span>Upper</span></div>
-        </div>
-        <div class="bargroup r">
-          <div class="vbar">Lower</div><div class="vbar">Middle</div><div class="vbar">Upper</div>
-        </div>
-      </div>
+    <div class="strip strip-r">
+      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
     </div>
-    <div class="side right">      stbd longitudinal
-       bulkhead or
-       Side Shell</div>
-  </div>
 
-  <!-- ROWS 24-28 : second legend with NS -->
-  <div class="legend2">
-    <div class="cg-title">Coating Grading</div>
-    <table class="cg">
-      <tr><td class="w" style="background:#29f72e;">1</td><td>GOOD</td></tr>
-      <tr><td class="w" style="background:#ffff00;">2</td><td>FAIR</td></tr>
-      <tr><td class="w" style="background:#ff0000;">3</td><td>POOR</td></tr>
-      <tr><td class="w">NS</td><td>NOT SEEN</td></tr>
-    </table>
-  </div>
+    <!-- main band (Excel rows 17-20): port zones | bottom shell | stbd zones -->
+    <div class="side-lab lab-port">Port Longitudinal<br>bulkhead or<br>Side Shell</div>
+    <div class="band band-port">
+      <div>Upper</div><div>Middle</div><div>Lower</div>
+    </div>
+    <div class="band band-bs">
+      <div>Bottom Shell</div>
+    </div>
+    <div class="band band-stbd">
+      <div>Lower</div><div>Middle</div><div>Upper</div>
+    </div>
+    <div class="side-lab lab-stbd">stbd longitudinal<br>bulkhead or<br>Side Shell</div>
 
-  <!-- ROWS 30-39 : TANK STRUCTURE / TANK FITTINGS -->
-  <div class="sf-wrap scrollx">
-    <table class="sf">
-      <tr><th>TANK STRUCTURE</th><th class="g">GRADE</th></tr>
+    <!-- aft transfer bulkhead label + grade stack (Excel F22 + J21:J23/K21:K23) -->
+    <div class="aft-label">Aft Transfer bulkhead</div>
+    <div class="stackbox stack-aft">
+      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
+      <div class="sl">Lower</div>
+      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
+      <div class="sl">Middle</div>
+      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
+      <div class="sl">Upper</div>
+    </div>
+
+  </div></div>
+
+  <!-- ==================== STRUCTURE / FITTINGS (Excel rows 30-39) ==================== -->
+  <div class="sf-wrap">
+    <table class="tbl">
+      <tr><th>TANK STRUCTURE</th><th style="width:56px;">GRADE</th></tr>
       <tr><td>Bottom Shell</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td>DB Inb WT Girder</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td>Inb Longitudinal Bhd</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
@@ -272,8 +244,8 @@ Side Shell</div>
       <tr><td>Upper Tank Top / Deck Head</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td>&nbsp;</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
     </table>
-    <table class="sf">
-      <tr><th>TANK FITTINGS</th><th class="g">GRADE</th></tr>
+    <table class="tbl">
+      <tr><th>TANK FITTINGS</th><th style="width:56px;">GRADE</th></tr>
       <tr><td>Manhole Cover</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td>Tank Vent Pipes / Vent Heads</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td>Sound Pipe / Cap / Striker plate</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
@@ -286,88 +258,84 @@ Side Shell</div>
     </table>
   </div>
 
-  <!-- ROWS 41-44 : OTHER | VALUE -->
-  <div class="other-wrap scrollx">
+  <!-- ==================== OTHER | VALUE (Excel rows 41-44) ==================== -->
+  <div class="other-wrap">
     <table class="ov">
-      <tr><th colspan="5" style="min-width:200px;">OTHER</th><th colspan="2">VALUE</th></tr>
+      <tr><th colspan="3">OTHER</th><th colspan="2">VALUE</th></tr>
       <tr>
-        <td class="lab" rowspan="2" colspan="3">Anode Wastage (%)</td>
-        <td class="sm">Total Good</td><td class="sm">Total Broken</td>
-        <td class="in" rowspan="2" colspan="2" style="height:52px;"><input type="text" id="anode_wastage" readonly></td>
+        <td rowspan="2">Anode Wastage (%)</td>
+        <td style="font-size:11px; text-align:center;">Total Good</td>
+        <td style="font-size:11px; text-align:center;">Total Broken</td>
+        <td class="in" rowspan="2" style="min-width:80px;"><input type="text" id="anode_wastage" readonly></td>
       </tr>
       <tr>
-        <td class="in" style="height:26px;"><input type="text" id="anode_good"></td>
+        <td class="in"><input type="text" id="anode_good"></td>
         <td class="in"><input type="text" id="anode_broken"></td>
       </tr>
       <tr>
-        <td class="lab" colspan="3">Mud Accumalation (cm)</td>
-        <td class="in"><input type="text" id="mud_a"></td>
-        <td class="in"><input type="text" id="mud_b"></td>
-        <td class="in"><select id="mud_sel"><option value=""></option><option>&lt;=1</option><option>1,1 - 5</option><option>&gt;5</option></select></td>
+        <td>Mud Accumalation (cm)</td>
+        <td class="in" colspan="2"><select id="mud_sel" style="color:#002060;"><option value=""></option><option>&lt;=1</option><option>1,1 - 5</option><option>&gt;5</option></select></td>
         <td class="in"><input type="text" id="mud_val" readonly></td>
       </tr>
     </table>
     <div class="ov-notes">
       Fotos have to be attached to this report as evidence<br><br>
-      Tank Inspections have to be conducted in accordance with <span style="font-weight:bold;">TANKS&nbsp; COATINGS CONDITION GUIDE</span>
+      Tank Inspections have to be conducted in accordance with <b>TANKS&nbsp; COATINGS CONDITION GUIDE</b>
     </div>
   </div>
 
-  <!-- ROWS 46-53 -->
-  <div class="boxrow">
-    <div class="lab">Remarks:</div>
-    <div class="area"><textarea id="remarks"></textarea></div>
+  <!-- REMARKS / CORRECTIVE ACTIONS (Excel B46 / B50) -->
+  <div class="notes-section">
+    <label>Remarks:</label>
+    <textarea id="remarks"></textarea>
   </div>
-  <div class="boxrow">
-    <div class="lab">Corrective Actions:</div>
-    <div class="area"><textarea id="corrective"></textarea></div>
-  </div>
-
-  <!-- ROWS 54-55 : SIGNATURES -->
-  <div class="sigbar">
-    <div class="sig"><div class="slab" style="min-width:92px;">Inspector</div><div class="sname"><input type="text" id="nm_inspector"></div></div>
-    <div class="sig"><div class="slab" style="min-width:70px;">Ch Off</div><div class="sname"><input type="text" id="nm_choff"></div></div>
-    <div class="sig"><div class="slab" style="min-width:74px;">Master</div><div class="sname"><input type="text" id="nm_master"></div></div>
-  </div>
-  <div class="signline">
-    <div class="scell" id="sp-1">
-      <label class="btn no-print" for="up-1">+ Add TTD</label>
-      <input type="file" id="up-1" class="hidden" accept="image/*">
-      <div class="pv" id="pv-1"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
-    </div>
-    <div class="scell" id="sp-2">
-      <label class="btn no-print" for="up-2">+ Add TTD</label>
-      <input type="file" id="up-2" class="hidden" accept="image/*">
-      <div class="pv" id="pv-2"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
-    </div>
-    <div class="scell" id="sp-3">
-      <label class="btn no-print" for="up-3">+ Add TTD</label>
-      <input type="file" id="up-3" class="hidden" accept="image/*">
-      <div class="pv" id="pv-3"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
-    </div>
+  <div class="notes-section">
+    <label>Corrective
+Actions:</label>
+    <textarea id="corrective"></textarea>
   </div>
 
-</div>
-
-<!-- ==================== PAGE 2 : EVIDENCE ==================== -->
-<div class="page2" id="pdf-content-2">
-
-  <div class="hdr">
-    <div class="cell co">PT MENTARI MAS MULTIMODA</div>
-    <div class="cell ti">084-A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BALLAST TANK CONDITION REPORT (GENERAL)</div>
-    <div class="cell cs">CS</div>
-    <div class="cell smt">SMT</div>
-  </div>
-  <div class="rel"><span>Release :</span><span>Rev.0 :</span></div>
-
-  <div class="ev-box">
+  <!-- EVIDENCE PHOTOS -->
+  <div class="notes-section" style="padding-bottom:14px;">
+    <label>Evidence Fotos</label>
     <div class="photo-grid" id="pg">
       <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
       <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
       <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
       <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
-      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
-      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+    </div>
+  </div>
+
+  <!-- SIGNATURES (Excel row 54) -->
+  <div class="footer-section">
+    <div class="footer-grid">
+      <div class="sig-item">
+        <div class="label">Inspector</div>
+        <div class="nm"><input type="text" id="nm_inspector"></div>
+        <div class="space" id="sp-1">
+          <label class="btn no-print" for="up-1">+ Add TTD</label>
+          <input type="file" id="up-1" class="hidden" accept="image/*">
+          <div class="pv" id="pv-1"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Ch Off</div>
+        <div class="nm"><input type="text" id="nm_choff"></div>
+        <div class="space" id="sp-2">
+          <label class="btn no-print" for="up-2">+ Add TTD</label>
+          <input type="file" id="up-2" class="hidden" accept="image/*">
+          <div class="pv" id="pv-2"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="label">Master</div>
+        <div class="nm"><input type="text" id="nm_master"></div>
+        <div class="space" id="sp-3">
+          <label class="btn no-print" for="up-3">+ Add TTD</label>
+          <input type="file" id="up-3" class="hidden" accept="image/*">
+          <div class="pv" id="pv-3"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -377,72 +345,92 @@ Side Shell</div>
   const FORM_CODE = "084A";
 
   /* ============================================================
-     EXACT CONDITIONAL FORMATTING (from Excel cfRule / dxf colors)
+     CONDITIONAL FORMATTING - exact dxf colors from the Excel file
      ============================================================ */
-  const Y = '#FFFF00', R = '#FF0000';
-  // per-zone green font colors (exact from dxf records)
-  const ZONE_GREEN = { ud:'#05FB11', struct:'#13FF01', fit:'#13FF01', bulk:'#66FF33', box:'#29F72E' };
+  var Y = '#FFFF00', R = '#FF0000';
+  var ZONE_GREEN = { ud:'#05FB11', struct:'#13FF01', fit:'#13FF01', bulk:'#66FF33' };
 
   function applyGradeCF(sel) {
     var zone = sel.getAttribute('data-cg');
     var v = sel.value;
-    if (v === '1')      { sel.style.color = ZONE_GREEN[zone] || '#13FF01'; sel.style.fontWeight = '400'; }
-    else if (v === '2') { sel.style.color = Y;  sel.style.fontWeight = '400'; }
-    else if (v === '3') { sel.style.color = R;  sel.style.fontWeight = '400'; }
-    else if (v === 'NS'){ sel.style.color = ''; sel.style.fontWeight = '700'; }
-    else                { sel.style.color = ''; sel.style.fontWeight = '400'; }
+    if (v === '1')      sel.style.color = ZONE_GREEN[zone] || '#13FF01';
+    else if (v === '2') sel.style.color = Y;
+    else if (v === '3') sel.style.color = R;
+    else                sel.style.color = '';
   }
   document.querySelectorAll('select[data-cg]').forEach(function(sel) {
     sel.addEventListener('change', function(){ applyGradeCF(sel); });
     applyGradeCF(sel);
   });
 
-  // Q6 status: Choose -> yellow, Abort -> red, Completed -> #92D050
-  var statusSel = document.getElementById('report_status');
-  function applyStatusCF() {
-    var v = statusSel.value;
-    if (v === 'Choose')    statusSel.style.color = Y;
-    else if (v === 'Abort')      statusSel.style.color = R;
-    else if (v === 'Completed')  statusSel.style.color = '#92D050';
-    else statusSel.style.color = '';
-  }
-  statusSel.addEventListener('change', applyStatusCF);
-  applyStatusCF();
-
-  // H42 anode wastage: <0.5 red, 0.5-0.69 yellow, >=0.7 green #27FC04 (number format 0%)
+  // H42 anode wastage: <0.5 red, 0.5-0.69 yellow, >=0.7 green (Excel fmt 0%)
   function cfAnode() {
     var el = document.getElementById('anode_wastage');
     var v = el.value.trim();
     if (v === '') { el.style.color = ''; return; }
     var n = parseFloat(v);
     if (isNaN(n)) { el.style.color = ''; return; }
-    if (n < 0.5)      el.style.color = R;
-    else if (n < 0.7) el.style.color = Y;
+    if (n < 50)       el.style.color = R;
+    else if (n < 70)  el.style.color = Y;
     else              el.style.color = '#27FC04';
   }
 
-  // H44 mud mirror: "<=1" -> #00FF00, "1,1 - 5" -> yellow, ">5" -> red
+  // H44 mud: "<=1" -> #00FF00, "1,1 - 5" -> yellow, ">5" -> red
   function cfMud(el) {
     var v = el.value;
-    if (v === '') { el.style.color = ''; return; }
-    if (v.indexOf('<=1') !== -1)      el.style.color = '#00FF00';
+    if (!v) { el.style.color = ''; return; }
+    if (v.indexOf('<=1') !== -1)          el.style.color = '#00FF00';
     else if (v.indexOf('1,1 - 5') !== -1) el.style.color = Y;
-    else if (v.indexOf('>5') !== -1)  el.style.color = R;
+    else if (v.indexOf('>5') !== -1)      el.style.color = R;
     else el.style.color = '';
   }
 
+  /* ===== DATE MASK (DD-MM-YYYY) ===== */
+  document.querySelectorAll('.date-mask').forEach(function(el) {
+    el.addEventListener('input', function(e) {
+      var d = e.target.value.replace(/\D/g,'').slice(0,8);
+      var v = d;
+      if (d.length >= 5) v = d.slice(0,2)+'-'+d.slice(2,4)+'-'+d.slice(4);
+      else if (d.length >= 3) v = d.slice(0,2)+'-'+d.slice(2);
+      e.target.value = v;
+    });
+  });
+
+  /* ===== EXCEL FORMULAS ===== */
+  // H42 = IF(OR(F43="",G43=""),"",F43/SUM(F43:G43))  number format 0%
+  function recalcOther() {
+    var g = document.getElementById('anode_good').value.trim();
+    var b = document.getElementById('anode_broken').value.trim();
+    var out = document.getElementById('anode_wastage');
+    if (g === '' || b === '') { out.value = ''; cfAnode(); return; }
+    var G = parseFloat(g), B = parseFloat(b);
+    if (isNaN(G) || isNaN(B) || (G+B) === 0) { out.value = ''; cfAnode(); return; }
+    out.value = Math.round(G/(G+B)*100) + '%';
+    cfAnode();
+  }
+  ['anode_good','anode_broken'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', recalcOther);
+  });
+
+  // H44 = IF(G44="","",G44)  -> mirror of threshold dropdown
+  document.getElementById('mud_sel').addEventListener('change', function(){
+    var mv = document.getElementById('mud_val');
+    mv.value = this.value;
+    cfMud(mv);
+  });
+
   /* ===== SIGNATURE UPLOAD ===== */
   function initSig(upId, pvId) {
-    document.getElementById(upId).addEventListener('change', function(e) {
+    document.getElementById(upId).addEventListener('change', function(e){
       if (e.target.files && e.target.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(x) {
+        var rd = new FileReader();
+        rd.onload = function(x){
           var pv = document.getElementById(pvId);
           pv.querySelector('img').src = x.target.result;
           pv.style.display = 'flex';
           pv.parentElement.querySelector('label').classList.add('hidden');
         };
-        reader.readAsDataURL(e.target.files[0]);
+        rd.readAsDataURL(e.target.files[0]);
       }
     });
   }
@@ -453,20 +441,20 @@ Side Shell</div>
     pv.parentElement.querySelector('label').classList.remove('hidden');
     document.getElementById(upId).value = '';
   }
-  initSig('up-1', 'pv-1'); initSig('up-2', 'pv-2'); initSig('up-3', 'pv-3');
+  initSig('up-1','pv-1'); initSig('up-2','pv-2'); initSig('up-3','pv-3');
 
-  /* ===== PHOTO UPLOAD (evidence page) ===== */
+  /* ===== PHOTO UPLOAD ===== */
   function loadPhoto(inp) {
     if (inp.files && inp.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function(x) {
+      var rd = new FileReader();
+      rd.onload = function(x){
         var p = inp.parentElement;
         p.querySelector('img').src = x.target.result;
         p.querySelector('img').style.display = 'block';
         p.querySelector('.del-photo').style.display = 'block';
         p.querySelector('span').style.display = 'none';
       };
-      reader.readAsDataURL(inp.files[0]);
+      rd.readAsDataURL(inp.files[0]);
     }
   }
   function removePhoto(btn) {
@@ -475,67 +463,8 @@ Side Shell</div>
     p.querySelector('img').style.display = 'none';
     btn.style.display = 'none';
     p.querySelector('span').style.display = 'block';
-    p.querySelector('input[type="file"]').value = '';
+    p.querySelector('input[type=file]').value = '';
   }
-
-  /* ===== DATE MASK + Excel number format [$-409]d-mmm-yy ===== */
-  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.querySelectorAll('.date-mask').forEach(function(el) {
-    el.addEventListener('input', function(e) {
-      var digits = e.target.value.replace(/\D/g, '').slice(0, 8);
-      e.target.dataset.raw = digits;
-      var v = digits;
-      if (digits.length >= 3) v = digits.slice(0, 2) + '-' + digits.slice(2);
-      if (digits.length >= 6) v = digits.slice(0, 5) + '-' + digits.slice(5);
-      e.target.value = v;
-      updateTitle();
-    });
-    el.addEventListener('focus', function(e) {
-      // restore editable digit form
-      var r = e.target.dataset.raw || '';
-      var v = r;
-      if (r.length >= 3) v = r.slice(0, 2) + '-' + r.slice(2);
-      if (r.length >= 6) v = r.slice(0, 5) + '-' + r.slice(5);
-      e.target.value = v;
-    });
-    el.addEventListener('blur', function(e) {
-      // display like Excel: 26-Aug-26
-      var r = e.target.dataset.raw || '';
-      if (r.length === 8) {
-        var d = parseInt(r.slice(0,2),10), m = parseInt(r.slice(2,4),10), y = parseInt(r.slice(4,8),10);
-        if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
-          e.target.value = (''+d) + '-' + MONTHS[m-1] + '-' + (''+y).slice(2);
-          return;
-        }
-      }
-      e.target.value = r.length ? e.target.value : '';
-    });
-  });
-
-  /* ===== EXCEL FORMULAS ===== */
-  // H42 = IF(OR(F43="",G43=""),"",F43/SUM(F43:G43))  fmt 0%
-  function recalcOther() {
-    var g = document.getElementById('anode_good').value.trim();
-    var b = document.getElementById('anode_broken').value.trim();
-    var out = document.getElementById('anode_wastage');
-    if (g === '' || b === '') { out.value = ''; cfAnode(); return; }
-    var G = parseFloat(g), B = parseFloat(b);
-    if (isNaN(G) || isNaN(B) || (G + B) === 0) { out.value = ''; cfAnode(); return; }
-    var frac = G / (G + B);
-    out.value = Math.round(frac * 100) + '%';   // Excel number format "0%"
-    cfAnode();
-  }
-  ['anode_good', 'anode_broken'].forEach(function(id) {
-    document.getElementById(id).addEventListener('input', recalcOther);
-  });
-
-  // H44 = IF(G44="","",G44)  -> mirror of threshold dropdown
-  var mudSel = document.getElementById('mud_sel');
-  mudSel.addEventListener('change', function() {
-    var mv = document.getElementById('mud_val');
-    mv.value = this.value;
-    cfMud(mv);
-  });
 
   /* ===== SAVE & PRINT (portal) ===== */
   async function aksiSimpanDanCetak() {
@@ -550,7 +479,7 @@ Side Shell</div>
       type: 'SMK_SAVE_PDF',
       name: document.title,
       ship: vesselName,
-      date: document.getElementById('date').dataset.raw || document.getElementById('date').value || '',
+      date: document.getElementById('date').value || '',
       formCode: FORM_CODE,
       formTitle: document.title
     }, '*');
@@ -560,22 +489,22 @@ Side Shell</div>
   /* ===== TITLE SYNC ===== */
   function updateTitle() {
     var sel = document.getElementById('vessel');
-    var dt = document.getElementById('date');
     var t = '084A Ballast Tank Condition Report (General)';
     if (sel.value) t += ' - ' + sel.value;
-    if (dt.dataset.raw) t += ' - ' + dt.dataset.raw;
+    var dt = document.getElementById('date').value;
+    if (dt) t += ' - ' + dt;
     window.parent && window.parent.postMessage({ type:'FORM_TITLE', title:t }, '*');
   }
   document.getElementById('vessel').addEventListener('change', updateTitle);
 
   /* ===== INIT_FORM from parent app ===== */
-  window.addEventListener('message', function(e) {
+  window.addEventListener('message', function(e){
     if (e.data && e.data.type === 'INIT_FORM') {
       var sel = document.getElementById('vessel');
       if (e.data.vessel) {
-        var vLower = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
-        Array.from(sel.options).forEach(function(opt){
-          if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) sel.value = opt.value;
+        var vl = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
+        Array.from(sel.options).forEach(function(o){
+          if (o.value.toLowerCase().replace(/_/g,' ') === vl) sel.value = o.value;
         });
       }
       if (e.data.locked) sel.disabled = true;
