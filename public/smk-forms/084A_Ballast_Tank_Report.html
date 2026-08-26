@@ -1,338 +1,410 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>084A - Ballast Tank Condition Report (General)</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { margin: 0; background: #e5e7eb; font-family: Arial, sans-serif; color: #111; }
-    .page { max-width: 950px; margin: 20px auto; background: #fff; padding: 24px; box-shadow: 0 3px 14px #999; }
-    .tools { text-align: right; margin-bottom: 16px; }
-    .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; }
-    
-    .head { border: 2px solid #000; padding: 10px 14px; margin-bottom: 12px; }
-    .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
-    .company { font-size: 15px; font-weight: bold; text-transform: uppercase; }
-    .title { text-align: center; font-size: 16px; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
-    .st { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 11px; font-weight: bold; }
-    .code { display: flex; border: 1px solid #000; }
-    .code span { padding: 4px 8px; }
-    .code span:first-child { border-right: 1px solid #000; }
-    
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 20px; font-size: 13px; }
-    .item { display: flex; align-items: center; gap: 8px; }
-    .item label { font-weight: bold; white-space: nowrap; width: 100px; }
-    .item input, .item select { flex: 1; border: 0; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; padding: 4px 6px; outline: none; font-family: inherit; }
-    
-    .guide-box { border: 1px solid #000; padding: 10px; font-size: 11px; margin-bottom: 16px; background: #fefce8; display: flex; justify-content: space-around; font-weight: bold; }
-    .guide-box span { display: flex; align-items: center; gap: 6px; }
-    
-    .section-title { font-weight: bold; font-size: 13px; margin: 0 0 8px; background: #1769d2; color: white; padding: 6px 10px; border-radius: 4px; text-transform: uppercase; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>084-A Ballast Tank Condition Report (General)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background:#e5e7eb; font-family: Arial, Helvetica, sans-serif; color:#000; }
+  .tools { max-width: 900px; margin: 14px auto 0; text-align: right; }
+  .btn { border:0; border-radius:6px; background:#1769d2; color:#fff; font-weight:700; padding:10px 15px; cursor:pointer; font-family:inherit; }
+  .page { max-width:900px; margin:10px auto 24px; background:#fff; padding:26px 30px; box-shadow:0 3px 14px #999; }
 
-    .tbl { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; margin-bottom: 16px; }
-    .tbl th, .tbl td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; }
-    .tbl th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 12px; }
-    .tbl td input[type="text"] { width: 100%; border: none; outline: none; font-family: inherit; font-size: 12px; background: transparent; text-align: center; }
-    .tbl td.left input { text-align: left; }
-    
-    .other-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; font-size: 12px; }
-    .other-item { border: 1px solid #000; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-    .other-item .row { display: flex; align-items: center; justify-content: space-between; }
-    .other-item .row input { width: 80px; border: none; border-bottom: 1px solid #000; outline: none; text-align: center; font-family: inherit; font-size: 12px;}
+  /* ===== HEADER (Excel B4:R5 + Q6) ===== */
+  .hdr { display:grid; grid-template-columns: 22% 47% 15.5% 15.5%; }
+  .hdr .cell { border:1.4px solid #000; text-align:center; font-weight:bold; font-size:13px; display:flex; align-items:center; justify-content:center; min-height:44px; }
+  .hdr .co { grid-row: 1 / 3; }
+  .hdr .ti { grid-row: 1 / 3; font-size:13.5px; letter-spacing:.2px; }
+  .hdr .cs, .hdr .smt { min-height:22px; }
+  .rel { border:1.4px solid #000; border-top:0; font-size:8.5px; padding:2px 4px; display:flex; justify-content:space-between; }
+  .statusrow { display:flex; justify-content:flex-end; margin-bottom:6px; align-items:center; gap:6px; }
+  .statusrow select { border:1.4px solid #000; font-size:11px; padding:2px 6px; background:#fff; font-family:inherit; }
 
-    .notes-section { margin-top: 12px; border: 1px solid #000; padding: 12px; font-size: 13px; margin-bottom: 12px;}
-    .notes-section label { font-weight: bold; display: block; margin-bottom: 4px; }
-    .notes-section textarea { width: 100%; border: none; outline: none; font-size: 13px; font-family: inherit; resize: vertical; min-height: 60px; }
-    
-    /* Photo Upload Grid */
-    .photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
-    .photo-item { border: 1px dashed #000; height: 120px; display: flex; align-items: center; justify-content: center; position: relative; background: #fafafa; }
-    .photo-item input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-    .photo-item span { font-size: 11px; color: #666; text-align: center; padding: 10px; pointer-events: none; }
-    .photo-item img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; display: none; background: #fff; }
-    .photo-item .del-photo { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: none; z-index: 10; }
-    
-    .footer-section { margin-top: 20px; padding-top: 16px; border-top: 2px solid #000; }
-    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; justify-content: center; margin-bottom: 20px; }
-    .sig-item { text-align: center; }
-    .sig-item .label { font-size: 12px; font-weight: bold; margin-bottom: 4px; }
-    .sig-item .space { height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative; }
-    .sig-item .space .btn { padding: 6px 10px; font-size: 10px; }
-    .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
-    .sig-item .space .pv img { max-height: 70px; max-width: 100%; object-fit: contain; }
-    .sig-item .space .pv .remove { position: absolute; top: 0; right: 0; background: #dc2626; color: #fff; border: 0; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .sig-item .nm { width: 80%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 13px; padding: 4px; outline: none; font-weight: bold; }
-    
-    .hidden { display: none !important; }
+  /* ===== INFO BAR (Excel row 7) ===== */
+  .infobar { display:grid; grid-template-columns: 12% 21% 12% 12% 15% 12% 16% 12%; margin-bottom:10px; }
+  .infobar .lbl { border:1.4px solid #000; font-size:11.5px; display:flex; align-items:center; padding:0 5px; min-height:26px; }
+  .infobar .val { border:1.4px solid #000; border-left:0; min-height:26px; }
+  .infobar select, .infobar input { width:100%; height:100%; border:0; outline:none; font-size:11.5px; padding:0 5px; background:transparent; font-family:inherit; }
 
-    @media print {
-      body { background: #fff; }
-      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
-      .no-print { display: none !important; }
-      @page { size: A4 portrait; margin: 10mm; }
-      .head { border: 2px solid #000 !important; }
-      .top { border-bottom: 2px solid #000 !important; }
-      .code { border: 1px solid #000 !important; }
-      .code span:first-child { border-right: 1px solid #000 !important; }
-      .tbl th, .tbl td { padding: 4px 6px; font-size: 11px; }
-      .photo-grid { grid-template-columns: repeat(4, 1fr); }
-      input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }
-      select { appearance: none !important; -webkit-appearance: none !important; background-image: none !important; }
-    }
-    
-    @media screen and (max-width: 768px) {
-      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
-      .st { align-items: center; }
-      .info-grid { grid-template-columns: 1fr; gap: 12px; }
-      .item { flex-direction: column; align-items: flex-start; gap: 4px; }
-      .item label { width: 100%; flex-direction: row; justify-content: flex-start; align-items: baseline; gap: 6px; white-space: normal; }
-      .item input, .item select { width: 100%; flex: none; }
-      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-      .page { padding: 10px; overflow-x: hidden; width: 100%; }
-      .tbl-container { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
-      .tbl { min-width: 600px; }
-    }
-      .st { align-items: center; }
-      .info-grid { grid-template-columns: 1fr; gap: 16px; }
-      .other-grid { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-      .photo-grid { grid-template-columns: 1fr 1fr; }
-      .page { padding: 12px; }
-      .tbl { min-width: 600px; }
-    }
-  </style>
+  /* ===== COATING LEGEND (rows 9-12) ===== */
+  .legendwrap { display:flex; align-items:flex-start; justify-content:space-between; margin:4px 0 6px; }
+  .cg-title { font-weight:bold; font-size:11.5px; margin:2px 0 4px; }
+  table.cg { border-collapse:collapse; font-size:11.5px; }
+  table.cg td { border:1.4px solid #000; text-align:center; min-height:24px; height:24px; padding:1px 10px; font-weight:bold; }
+  table.cg td.w { width:34px; }
+  .minibox { width:120px; height:64px; border:1.4px solid #000; }
+  .ud-cap { font-size:10.5px; padding-right:8%; text-align:right; }
+
+  /* ===== CROSS SECTION DIAGRAM (rows 13-23) ===== */
+  .diag-wrap { position:relative; margin:0 0 4px; }
+  .side-note { position:absolute; top:50%; transform:translateY(-58%); font-size:9.5px; line-height:1.25; width:86px; }
+  .side-note.left { left:-2px; }
+  .side-note.right { right:-2px; }
+  table.diag { border-collapse:collapse; table-layout:fixed; margin:0 auto; }
+  table.diag td { font-size:10.5px; }
+  table.diag td.b { border:1.2px solid #000; text-align:center; vertical-align:middle; }
+  table.diag td.nb { border:none; }
+  table.diag td.in { border:1.2px solid #000; text-align:center; padding:0; height:24px; }
+  table.diag td.in input, table.diag td.in select { width:100%; height:100%; border:0; outline:none; text-align:center; font-size:10.5px; background:transparent; font-family:inherit; }
+  table.diag td.vt { border:1.2px solid #000; writing-mode:vertical-rl; transform:rotate(180deg); text-align:center; font-weight:bold; height:96px; }
+  .fbh-label { font-size:10.5px; padding-left:4px; }
+
+  /* ===== SECOND LEGEND (rows 24-28) ===== */
+  .legend2 { margin:6px 0 10px; }
+
+  /* ===== STRUCTURE / FITTINGS (rows 30-39) ===== */
+  .sf-wrap { display:grid; grid-template-columns: 1fr 1fr; gap:26px; margin-bottom:12px; }
+  table.sf { width:100%; border-collapse:collapse; font-size:11px; }
+  table.sf th, table.sf td { border:1.4px solid #000; height:25px; padding:1px 5px; }
+  table.sf th { font-weight:bold; text-align:center; font-size:11px; }
+  table.sf th.g, table.sf td.g { width:52px; text-align:center; }
+  table.sf td.g select { width:100%; height:100%; border:0; outline:none; text-align:center; font-size:11px; background:transparent; font-family:inherit; appearance:auto; }
+
+  /* ===== OTHER / VALUE (rows 41-44) ===== */
+  .other-wrap { display:flex; gap:18px; align-items:flex-start; margin-bottom:12px; }
+  table.ov { border-collapse:collapse; font-size:10.5px; }
+  table.ov th, table.ov td { border:1.2px solid #000; height:26px; padding:1px 6px; }
+  table.ov th { font-weight:bold; text-align:center; }
+  table.ov td.lab { font-weight:normal; }
+  table.ov td.sm { font-size:9px; text-align:center; }
+  table.ov td input, table.ov td select { width:100%; min-width:56px; height:100%; border:0; outline:none; text-align:center; font-size:10.5px; background:transparent; font-family:inherit; }
+  .ov-notes { font-size:9.5px; line-height:1.45; max-width:250px; padding-top:4px; }
+  .ov-notes b { display:block; }
+
+  /* ===== REMARKS / CORRECTIVE (rows 46-53) ===== */
+  .boxrow { display:grid; grid-template-columns: 15% 85%; margin-bottom:10px; }
+  .boxrow .lab { border:1.4px solid #000; font-weight:bold; font-size:11.5px; padding:4px 6px; }
+  .boxrow .area { border:1.4px solid #000; border-left:0; min-height:74px; }
+  .boxrow textarea { width:100%; min-height:74px; border:0; outline:none; resize:vertical; font-size:11px; padding:4px 6px; font-family:inherit; background:transparent; }
+
+  /* ===== SIGNATURES (rows 54-55) ===== */
+  .sigbar { display:grid; grid-template-columns: 1fr 1fr 1fr; margin-top:4px; }
+  .sig { display:flex; align-items:stretch; }
+  .sig .slab { border:1.4px solid #000; font-size:11px; display:flex; align-items:center; justify-content:center; padding:0 4px; min-height:26px; }
+  .sig .sname { border:1.4px solid #000; border-left:0; flex:1; display:flex; align-items:center; }
+  .sig .sname input { width:100%; border:0; outline:none; font-size:11px; text-align:center; background:transparent; font-family:inherit; font-weight:bold; }
+  .signline { display:grid; grid-template-columns: 1fr 1fr 1fr; }
+  .signline .scell { border:1.4px solid #000; height:84px; display:flex; align-items:center; justify-content:center; position:relative; }
+  .signline .scell .btn { padding:5px 9px; font-size:10px; }
+  .pv { display:none; position:relative; width:100%; height:100%; align-items:center; justify-content:center; }
+  .pv img { max-height:76px; max-width:92%; object-fit:contain; }
+  .pv .remove { position:absolute; top:2px; right:2px; background:#dc2626; color:#fff; border:0; border-radius:50%; width:20px; height:20px; font-size:13px; font-weight:bold; cursor:pointer; }
+
+  /* ===== PAGE 2 : EVIDENCE (rows 68-153) ===== */
+  .page2 { max-width:900px; margin:10px auto 24px; background:#fff; padding:26px 30px; box-shadow:0 3px 14px #999; }
+  .ev-note { font-size:10px; margin:8px 0 6px; }
+  .ev-box { border:1.4px solid #000; min-height:640px; padding:10px; }
+  .photo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .photo-item { border:1px dashed #888; height:150px; display:flex; align-items:center; justify-content:center; position:relative; background:#fafafa; overflow:hidden; }
+  .photo-item input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .photo-item span { font-size:10px; color:#666; pointer-events:none; }
+  .photo-item img { width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; display:none; background:#fff; }
+  .del-photo { position:absolute; top:2px; right:2px; background:#ef4444; color:#fff; border:0; border-radius:50%; width:20px; height:20px; font-size:12px; cursor:pointer; display:none; z-index:5; }
+
+  .hidden { display:none !important; }
+  input::placeholder, textarea::placeholder { color:#aaa; }
+
+  @media print {
+    body { background:#fff; }
+    .tools, .no-print { display:none !important; }
+    .page, .page2 { box-shadow:none; margin:0; padding:0; max-width:none; page-break-after:always; }
+    .page2 { page-break-after:auto; }
+    .ev-box { min-height:600px; }
+    input::placeholder, textarea::placeholder { color:transparent !important; }
+    select { appearance:none !important; -webkit-appearance:none !important; background-image:none !important; }
+    @page { size:A4 portrait; margin:9mm; }
+  }
+
+  @media screen and (max-width:768px) {
+    .page, .page2 { padding:12px; overflow-x:hidden; width:100%; }
+    .scrollx { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .scrollx > * { min-width:640px; }
+    .sf-wrap { grid-template-columns:1fr; gap:12px; }
+    .other-wrap { flex-direction:column; }
+    .hdr { font-size:11px; }
+    .sigbar, .signline { grid-template-columns:1fr; }
+    .signline .scell { height:70px; }
+    .infobar { grid-template-columns: 30% 70%; }
+    .infobar .val { border-left:0; border-top:0; }
+    .infobar .lbl:nth-last-child(2), .infobar .val:last-child { border-top:1.4px solid #000; }
+    .diag-wrap .side-note { position:static; transform:none; width:auto; text-align:center; margin:4px 0; }
+  }
+</style>
 </head>
 <body>
-<div class="container" id="form-container">
-  <div class="tools no-print">
-    <button id="btn-print" class="btn" onclick="aksiSimpanDanCetak()">&#128196; Print / Simpan PDF</button>
-  </div>
-  <div class="page" id="pdf-content">
-    
-    <header class="head">
-      <div class="top">
-        <div class="company">PT Mentari Mas Multimoda</div>
-        <div class="title" id="form-title">084-A BALLAST TANK CONDITION REPORT<br><span style="font-size:12px; font-weight:normal;">(GENERAL)</span></div>
-        <div class="st">
-          <div class="code"><span>CS</span><span>SMT</span></div>
-          <div>Release: &nbsp; Rev.0</div>
-        </div>
-      </div>
-    </header>
-    
-    <div class="info-grid">
-      <div class="item">
-        <label>Vessel :</label>
-        <select id="vessel">
-          <option value="">Pilih Kapal</option>
-          <option value="Sahabat Mas">Sahabat Mas</option>
-          <option value="Semangat Mas">Semangat Mas</option>
-          <option value="Express Mas">Express Mas</option>
-          <option value="Pratama Mas">Pratama Mas</option>
-          <option value="Prakarsa Mas">Prakarsa Mas</option>
-          <option value="Mavendra Mas">Mavendra Mas</option>
-          <option value="Selaras Mas">Selaras Mas</option>
-          <option value="Segoro Mas">Segoro Mas</option>
-        </select>
-      </div>
-      <div class="item">
-        <label>Tank No :</label>
-        <input type="text" placeholder="...">
-      </div>
-      <div class="item">
-        <label>Date Inspec :</label>
-        <input type="text" class="date-mask" id="date" placeholder="DD-MM-YYYY">
-      </div>
-      <div class="item">
-        <label>Date Report :</label>
-        <input type="text" class="date-mask" placeholder="DD-MM-YYYY">
-      </div>
-    </div>
-    
-    <div class="guide-box">
-      <span>COATING GRADING:</span>
-      <span>1 = GOOD</span>
-      <span>2 = FAIR</span>
-      <span>3 = POOR</span>
-      <span>NS = NOT SEEN</span>
-    </div>
 
-    <!-- COATING SECTION -->
-    <div class="section-title">I. Tank Coating Grading</div>
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th style="width:40%;">TANK FACE / SECTION</th>
-          <th style="width:20%;">UPPER</th>
-          <th style="width:20%;">MIDDLE</th>
-          <th style="width:20%;">LOWER</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="font-weight:bold;">Fwd Transfer Bulkhead</td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Aft Transfer Bulkhead</td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Port Longitudinal Bhd / Side Shell</td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Stbd Longitudinal Bhd / Side Shell</td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-          <td><input type="text" placeholder="..."></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Under Deck</td>
-          <td colspan="3"><input type="text" placeholder="Condition Grade..."></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Bottom Shell</td>
-          <td colspan="3"><input type="text" placeholder="Condition Grade..."></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- STRUCTURE AND FITTINGS -->
-    <div class="section-title">II. Tank Structure & Fittings</div>
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th style="width:40%;">TANK STRUCTURE</th>
-          <th style="width:10%;">GRADE</th>
-          <th style="width:40%;">TANK FITTINGS</th>
-          <th style="width:10%;">GRADE</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="font-weight:bold;">Bottom Shell</td>
-          <td><input type="text" placeholder="..."></td>
-          <td style='font-weight:bold;'>Manhole Cover</td><td><input type='text' placeholder='...'></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">DB Inb WT Girder</td>
-          <td><input type="text" placeholder="..."></td>
-          <td style='font-weight:bold;'>Tank Vent Pipes / Vent Heads</td><td><input type='text' placeholder='...'></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Inb Longitudinal Bhd</td>
-          <td><input type="text" placeholder="..."></td>
-          <td style='font-weight:bold;'>Sound Pipe / Cap / Striker plate</td><td><input type='text' placeholder='...'></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Shell</td>
-          <td><input type="text" placeholder="..."></td>
-          <td style='font-weight:bold;'>Tank remote gauging system</td><td><input type='text' placeholder='...'></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Tranverse Bulkhead Fwd</td>
-          <td><input type="text" placeholder="..."></td>
-          <td style='font-weight:bold;'>Suct / Delivery Pipe/ Valve / Mounth</td><td><input type='text' placeholder='...'></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Tranverse Bulkhead Aft</td>
-          <td><input type="text" placeholder="..."></td>
-          <td style='font-weight:bold;'>Ladders and Platforms</td><td><input type='text' placeholder='...'></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">DB Inner Bottom</td>
-          <td><input type="text" placeholder="..."></td>
-          <td style='font-weight:bold;'>Other Internal Piping</td><td><input type='text' placeholder='...'></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold;">Upper Tank Top / Deck Head</td>
-          <td><input type="text" placeholder="..."></td>
-          <td colspan='2' style='background:#f3f4f6;'></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- OTHER -->
-    <div class="section-title">III. Other Observations</div>
-    <div class="other-grid">
-      <div class="other-item">
-        <div class="row"><strong>Anode Wastage (%)</strong> <input type="text" id="anode_wastage" readonly placeholder="%"></div>
-        <div class="row"><span>Total Good:</span> <input type="text" id="anode_good" placeholder="pcs"></div>
-        <div class="row"><span>Total Broken:</span> <input type="text" id="anode_broken" placeholder="pcs"></div>
-      </div>
-      <div class="other-item">
-        <div class="row"><strong>Mud Accumulation (cm)</strong> <input type="text" id="mud_cm" placeholder="cm"></div>
-      </div>
-    </div>
-
-    <div class="notes-section no-break">
-      <label>Remarks :</label>
-      <textarea placeholder="Write remarks here..."></textarea>
-    </div>
-    <div class="notes-section no-break">
-      <label>Corrective Actions :</label>
-      <textarea placeholder="Write corrective actions here..."></textarea>
-    </div>
-    
-    <div class="notes-section no-break">
-      <label>Photos (must be attached to this report as evidence) :</label>
-      <div class="photo-grid" id="pg">
-        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
-        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
-        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
-        <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
-      </div>
-    </div>
-
-    <!-- FOOTER / SIGNATURES -->
-    <div class="footer-section no-break">
-      <div class="footer-grid">
-        <div class="sig-item">
-          <div class="label">Inspector</div>
-          <div class="space" id="sp-1">
-            <label class="btn no-print" for="up-1">+ Add TTD</label>
-            <input type="file" id="up-1" class="hidden" accept="image/*">
-            <div class="pv" id="pv-1"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
-          </div>
-          <input type="text" class="nm" placeholder="Name">
-        </div>
-        <div class="sig-item">
-          <div class="label">Chief Officer</div>
-          <div class="space" id="sp-2">
-            <label class="btn no-print" for="up-2">+ Add TTD</label>
-            <input type="file" id="up-2" class="hidden" accept="image/*">
-            <div class="pv" id="pv-2"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
-          </div>
-          <input type="text" class="nm" placeholder="Name">
-        </div>
-        <div class="sig-item">
-          <div class="label">Master</div>
-          <div class="space" id="sp-3">
-            <label class="btn no-print" for="up-3">+ Add TTD</label>
-            <input type="file" id="up-3" class="hidden" accept="image/*">
-            <div class="pv" id="pv-3"><img src="" alt=""><button class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
-          </div>
-          <input type="text" class="nm" placeholder="Name">
-        </div>
-      </div>
-    </div>
-    
-  </div>
+<div class="tools no-print">
+  <button id="btn-print" class="btn" onclick="aksiSimpanDanCetak()">&#128196; Print / Simpan PDF</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page" id="pdf-content">
+
+  <!-- HEADER : PT MENTARI MAS MULTIMODA | TITLE | CS | SMT (+Release) -->
+  <div class="hdr">
+    <div class="cell co">PT MENTARI MAS MULTIMODA</div>
+    <div class="cell ti">084-A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BALLAST TANK CONDITION REPORT (GENERAL)</div>
+    <div class="cell cs">CS</div>
+    <div class="cell smt">SMT</div>
+  </div>
+  <div class="rel">
+    <span>Release :</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rev.0 :</span>
+  </div>
+  <div class="statusrow">
+    <span style="font-size:10px;">Status</span>
+    <select id="report_status">
+      <option>Choose</option>
+      <option>Abort</option>
+      <option>Completed</option>
+    </select>
+  </div>
+
+  <!-- INFO BAR : Vessel | Tank No | Date Inspec | Date Report -->
+  <div class="infobar">
+    <div class="lbl">Vessel</div>
+    <div class="val"><select id="vessel">
+      <option value=""></option>
+      <option>Express Mas</option>
+      <option>Mavendra Mas</option>
+      <option>Prakarsa Mas</option>
+      <option>Pratama Mas</option>
+      <option>Segoro Mas</option>
+      <option>Semangat Mas</option>
+      <option>Selaras Mas</option>
+      <option>Sahabat Mas</option>
+    </select></div>
+    <div class="lbl">Tank No</div>
+    <div class="val"><input type="text" id="tank_no"></div>
+    <div class="lbl">Date Inspec</div>
+    <div class="val"><input type="text" id="date" class="date-mask" placeholder="DD-MM-YYYY"></div>
+    <div class="lbl">Date Report</div>
+    <div class="val"><input type="text" id="date_report" class="date-mask" placeholder="DD-MM-YYYY"></div>
+  </div>
+
+  <!-- COATING GRADING LEGEND 1 (green/yellow/red) -->
+  <div class="legendwrap">
+    <div>
+      <div class="cg-title">Coating Grading</div>
+      <table class="cg">
+        <tr><td class="w" style="background:#29f72e;">1</td><td>GOOD</td></tr>
+        <tr><td class="w" style="background:#ffff00;">2</td><td>FAIR</td></tr>
+        <tr><td class="w" style="background:#ff0000;">3</td><td>POOR</td></tr>
+      </table>
+    </div>
+    <div class="minibox"></div>
+  </div>
+
+  <div class="ud-cap">Under Deck</div>
+
+  <!-- CROSS SECTION DIAGRAM -->
+  <div class="diag-wrap scrollx">
+    <div class="side-note left">Port Longitudinal<br>bulkhead or<br>Side Shell</div>
+    <div class="side-note right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stbd longitudinal<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bulkhead or<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Side Shell</div>
+    <table class="diag" style="width:78%;">
+      <colgroup>
+        <col style="width:13%"><col style="width:10%"><col style="width:9%"><col style="width:11%">
+        <col style="width:12%"><col style="width:9%"><col style="width:11%"><col style="width:9%">
+        <col style="width:8%"><col style="width:8%">
+      </colgroup>
+      <!-- FWD TRANSFER BULKHEAD : 3 grade inputs (Excel J13:J15 + K13:K15) -->
+      <tr>
+        <td class="nb fbh-label" style="padding-bottom:2px;">Fwd transfer</td>
+        <td class="nb" colspan="3"></td><td class="nb"></td>
+        <td class="nb"></td><td class="nb" colspan="3"></td><td class="nb"></td>
+      </tr>
+      <tr style="height:24px;">
+        <td class="nb fbh-label" rowspan="2" style="vertical-align:top;">bulkhead</td>
+        <td class="nb" colspan="3"></td>
+        <td class="in"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="b">Upper</td>
+        <td class="nb" colspan="4"></td>
+      </tr>
+      <tr style="height:24px;">
+        <td class="nb" colspan="3"></td>
+        <td class="in"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="b">Middle</td>
+        <td class="nb" colspan="4"></td>
+      </tr>
+      <tr style="height:24px;">
+        <td class="nb" colspan="3"></td>
+        <td class="in"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="b">Lower</td>
+        <td class="nb" colspan="4"></td>
+      </tr>
+      <!-- UNDER DECK STRIPS (Excel F16:J16 + L16:O16) -->
+      <tr style="height:26px;">
+        <td class="in" colspan="4"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="nb" style="width:6px;"></td>
+        <td class="in" colspan="4"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="nb"></td>
+      </tr>
+      <!-- VERTICAL ZONE LABELS (Excel rows 17-20) -->
+      <tr>
+        <td class="vt">Upper</td><td class="vt" colspan="2">Middle</td><td class="vt">Lower</td>
+        <td class="vt" colspan="2">Bottom Shell</td>
+        <td class="vt">Lower</td><td class="vt" colspan="2">Middle</td><td class="vt">Upper</td>
+      </tr>
+      <!-- AFT TRANSFER BULKHEAD : 3 grade inputs (Excel J21:J23 + K21:K23) -->
+      <tr style="height:24px;">
+        <td class="nb" colspan="4"></td>
+        <td class="in"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="b">Lower</td>
+        <td class="nb" colspan="4"></td>
+      </tr>
+      <tr style="height:24px;">
+        <td class="nb fbh-label">Aft Transfer bulkhead</td>
+        <td class="nb" colspan="3"></td>
+        <td class="in"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="b">Middle</td>
+        <td class="nb" colspan="4"></td>
+      </tr>
+      <tr style="height:24px;">
+        <td class="nb" colspan="4"></td>
+        <td class="in"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td>
+        <td class="b">Upper</td>
+        <td class="nb" colspan="4"></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- COATING GRADING LEGEND 2 (with NS) -->
+  <div class="legend2">
+    <div class="cg-title">Coating Grading</div>
+    <table class="cg">
+      <tr><td class="w" style="background:#29f72e;">1</td><td>GOOD</td></tr>
+      <tr><td class="w" style="background:#ffff00;">2</td><td>FAIR</td></tr>
+      <tr><td class="w" style="background:#ff0000;">3</td><td>POOR</td></tr>
+      <tr><td class="w">NS</td><td>NOT SEEN</td></tr>
+    </table>
+  </div>
+
+  <!-- TANK STRUCTURE | GRADE  ||  TANK FITTINGS | GRADE -->
+  <div class="sf-wrap scrollx">
+    <table class="sf">
+      <tr><th>TANK STRUCTURE</th><th class="g">GRADE</th></tr>
+      <tr><td>Bottom Shell</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>DB Inb WT Girder</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Inb Longitudinal Bhd</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Shell</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Tranverse Bulkhead Fwd</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Tranverse Bulkhead Aft</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>DB Inner Bottom</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Upper Tank Top / Deck Head</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>&nbsp;</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+    </table>
+    <table class="sf">
+      <tr><th>TANK FITTINGS</th><th class="g">GRADE</th></tr>
+      <tr><td>Manhole Cover</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Tank Vent Pipes / Vent Heads</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Sound Pipe / Cap / Striker plate</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Tank remote gauging system</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Suct / Delivery Pipe/ Valve / Mounth</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Ladders and Platforms</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Other Internal Piping</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>&nbsp;</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>&nbsp;</td><td class="g"><select data-cg><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- OTHER | VALUE  (+ side notes) -->
+  <div class="other-wrap scrollx">
+    <table class="ov">
+      <tr><th colspan="5" style="width:190px;">OTHER</th><th colspan="2">VALUE</th></tr>
+      <tr>
+        <td class="lab" rowspan="2" colspan="3">Anode Wastage (%)</td>
+        <td class="sm">Total Good</td><td class="sm">Total Broken</td>
+        <td class="in" rowspan="2" colspan="2" style="height:48px;"><input type="text" id="anode_wastage" readonly></td>
+      </tr>
+      <tr>
+        <td class="in" style="height:24px;"><input type="text" id="anode_good"></td>
+        <td class="in"><input type="text" id="anode_broken"></td>
+      </tr>
+      <tr>
+        <td class="lab" colspan="3">Mud Accumalation (cm)</td>
+        <td class="in"><input type="text" id="mud_a"></td>
+        <td class="in"><input type="text" id="mud_b"></td>
+        <td class="in"><select id="mud_sel"><option value=""></option><option>&lt;=1</option><option>1,1 - 5</option><option>&gt;5</option></select></td>
+        <td class="in"><input type="text" id="mud_val" readonly></td>
+      </tr>
+    </table>
+    <div class="ov-notes">
+      Fotos have to be attached to this report as evidence<br><br>
+      Tank Inspections have to be conducted in accordance with <b>TANKS&nbsp; COATINGS CONDITION GUIDE</b>
+    </div>
+  </div>
+
+  <!-- REMARKS -->
+  <div class="boxrow">
+    <div class="lab">Remarks:</div>
+    <div class="area"><textarea id="remarks"></textarea></div>
+  </div>
+  <!-- CORRECTIVE ACTIONS -->
+  <div class="boxrow">
+    <div class="lab">Corrective Actions:</div>
+    <div class="area"><textarea id="corrective"></textarea></div>
+  </div>
+
+  <!-- SIGNATURES : Inspector | Ch Off | Master -->
+  <div class="sigbar">
+    <div class="sig"><div class="slab" style="min-width:86px;">Inspector</div><div class="sname"><input type="text" id="nm_inspector"></div></div>
+    <div class="sig"><div class="slab" style="min-width:64px;">Ch Off</div><div class="sname"><input type="text" id="nm_choff"></div></div>
+    <div class="sig"><div class="slab" style="min-width:70px;">Master</div><div class="sname"><input type="text" id="nm_master"></div></div>
+  </div>
+  <div class="signline" style="margin-top:8px;">
+    <div class="scell" id="sp-1">
+      <label class="btn no-print" for="up-1">+ Add TTD</label>
+      <input type="file" id="up-1" class="hidden" accept="image/*">
+      <div class="pv" id="pv-1"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-1','up-1')">&times;</button></div>
+    </div>
+    <div class="scell" id="sp-2">
+      <label class="btn no-print" for="up-2">+ Add TTD</label>
+      <input type="file" id="up-2" class="hidden" accept="image/*">
+      <div class="pv" id="pv-2"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-2','up-2')">&times;</button></div>
+    </div>
+    <div class="scell" id="sp-3">
+      <label class="btn no-print" for="up-3">+ Add TTD</label>
+      <input type="file" id="up-3" class="hidden" accept="image/*">
+      <div class="pv" id="pv-3"><img src="" alt=""><button type="button" class="remove no-print" onclick="clearSig('pv-3','up-3')">&times;</button></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== PAGE 2 : EVIDENCE ==================== -->
+<div class="page2" id="pdf-content-2">
+
+  <div class="hdr">
+    <div class="cell co">PT MENTARI MAS MULTIMODA</div>
+    <div class="cell ti">084-A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BALLAST TANK CONDITION REPORT (GENERAL)</div>
+    <div class="cell cs">CS</div>
+    <div class="cell smt">SMT</div>
+  </div>
+  <div class="rel">
+    <span>Release :</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rev.0 :</span>
+  </div>
+
+  <div class="ev-note">Fotos have to be attached to this report as evidence</div>
+  <div class="ev-box">
+    <div class="photo-grid" id="pg">
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+      <div class="photo-item"><input type="file" accept="image/*" onchange="loadPhoto(this)"><img src="" alt=""><button class="del-photo" onclick="removePhoto(this)">&times;</button><span>+ Click to add Photo</span></div>
+    </div>
+  </div>
+
+</div>
+
 <script>
+  const FORM_CODE = "084A";
+
+  /* ===== SIGNATURE UPLOAD ===== */
   function initSig(upId, pvId) {
     document.getElementById(upId).addEventListener('change', function(e) {
-      if(e.target.files && e.target.files[0]) {
+      if (e.target.files && e.target.files[0]) {
         var reader = new FileReader();
         reader.onload = function(x) {
           var pv = document.getElementById(pvId);
@@ -351,13 +423,13 @@
     pv.parentElement.querySelector('label').classList.remove('hidden');
     document.getElementById(upId).value = '';
   }
-  
   initSig('up-1', 'pv-1');
   initSig('up-2', 'pv-2');
   initSig('up-3', 'pv-3');
 
+  /* ===== PHOTO UPLOAD (evidence page) ===== */
   function loadPhoto(inp) {
-    if(inp.files && inp.files[0]) {
+    if (inp.files && inp.files[0]) {
       var reader = new FileReader();
       reader.onload = function(x) {
         var p = inp.parentElement;
@@ -369,7 +441,6 @@
       reader.readAsDataURL(inp.files[0]);
     }
   }
-
   function removePhoto(btn) {
     var p = btn.parentElement;
     p.querySelector('img').src = '';
@@ -379,25 +450,36 @@
     p.querySelector('input[type="file"]').value = '';
   }
 
+  /* ===== DATE MASK DD-MM-YYYY ===== */
   document.querySelectorAll('.date-mask').forEach(function(el) {
     el.addEventListener('input', function(e) {
       var v = e.target.value.replace(/\D/g, '').slice(0, 8);
-      if(v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
-      if(v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
+      if (v.length >= 3) v = v.slice(0, 2) + '-' + v.slice(2);
+      if (v.length >= 6) v = v.slice(0, 5) + '-' + v.slice(5);
       e.target.value = v;
     });
   });
 
-  function attachAutoResize(ta) {
-    ta.addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-    });
+  /* ===== EXCEL FORMULAS ===== */
+  // H42 = IF(OR(F43="",G43=""),"",F43/SUM(F43:G43))  -> Anode Wastage (%)
+  function recalcOther() {
+    var g = document.getElementById('anode_good').value.trim();
+    var b = document.getElementById('anode_broken').value.trim();
+    var out = document.getElementById('anode_wastage');
+    if (g === '' || b === '') { out.value = ''; return; }
+    var G = parseFloat(g), B = parseFloat(b);
+    if (isNaN(G) || isNaN(B) || (G + B) === 0) { out.value = ''; return; }
+    out.value = '' + Math.round((G / (G + B)) * 10000) / 10000;
   }
-  document.querySelectorAll('textarea').forEach(attachAutoResize);
+  ['anode_good', 'anode_broken'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', recalcOther);
+  });
+  // H44 = IF(G44="","",G44)  -> mirror of mud threshold dropdown
+  document.getElementById('mud_sel').addEventListener('change', function() {
+    document.getElementById('mud_val').value = this.value;
+  });
 
-  const FORM_CODE = "084A";
-
+  /* ===== SAVE & PRINT (portal) ===== */
   async function aksiSimpanDanCetak() {
     var vesselName = document.getElementById('vessel').value;
     if (!vesselName) { alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); return; }
@@ -415,24 +497,9 @@
       formTitle: document.title
     }, '*');
   }
+  var savePDF = aksiSimpanDanCetak;
 
-  /* EXCEL FORMULA PARITY */
-  // H42 = IF(OR(F43="",G43=""),"",F43/SUM(F43:G43))  -> Anode Wastage %
-  function recalcOther() {
-    var g = document.getElementById('anode_good').value.trim();
-    var b = document.getElementById('anode_broken').value.trim();
-    var out = document.getElementById('anode_wastage');
-    if (g === '' || b === '') { out.value = ''; return; }
-    var G = parseFloat(g), B = parseFloat(b);
-    if (isNaN(G) || isNaN(B) || (G + B) === 0) { out.value = ''; return; }
-    var pct = G / (G + B) * 100;
-    out.value = (Math.round(pct * 100) / 100) + '%';
-  }
-  ['anode_good','anode_broken'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', recalcOther);
-  });
-
-  /* TITLE SYNC */
+  /* ===== TITLE SYNC ===== */
   (function () {
     var sel = document.getElementById('vessel');
     var dt = document.getElementById('date');
@@ -446,7 +513,7 @@
     dt.addEventListener('input', updateTitle);
   })();
 
-  /* INIT_FORM from parent app */
+  /* ===== INIT_FORM from parent app ===== */
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'INIT_FORM') {
       var sel = document.getElementById('vessel');
@@ -459,9 +526,6 @@
       if (e.data.locked) sel.disabled = true;
     }
   });
-
-  // keep legacy name for any external callers
-  var savePDF = aksiSimpanDanCetak;
 </script>
 </body>
 </html>
