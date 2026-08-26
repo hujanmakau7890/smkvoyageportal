@@ -159,8 +159,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
                 # Form yang memerlukan TTD SI/FM (tambah kode form di sini jika diperlukan)
-                SI_TTD_FORMS = ["059-A", "059-B", "059-C", "059-D", "059-E", "059-F",
-                                "059A",  "059B",  "059C",  "059D",  "059E",  "059F"]
+                SI_TTD_FORMS = ["010", "059-A", "059-B", "059-C", "059-D", "059-E", "059-F",
+                                "010-RISK", "059A",  "059B",  "059C",  "059D",  "059E",  "059F"]
                 fname_check = os.path.basename(src_abs).upper()
                 needs_si_ttd = any(code.upper() in fname_check for code in SI_TTD_FORMS)
 

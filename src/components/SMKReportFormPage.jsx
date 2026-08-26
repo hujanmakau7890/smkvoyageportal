@@ -138,7 +138,7 @@ export default function SMKReportFormPage() {
       }
 
       // Determine destination: forms yang butuh approval masuk ke "Need Approval"
-      const REQUIRE_APPROVAL_FORMS = ['059A', '059B', '059C', '059D', '059E', '059F'];
+      const REQUIRE_APPROVAL_FORMS = ['010', '059A', '059B', '059C', '059D', '059E', '059F'];
       const rawCode = (payload.formCode || selectedForm?.code || '').replace(/[\s-]/g, '').toUpperCase();
       const xDestination = REQUIRE_APPROVAL_FORMS.includes(rawCode) ? 'Need Approval' : 'Laporan';
       if (!xDestination || !safeShip || !safeName) {
