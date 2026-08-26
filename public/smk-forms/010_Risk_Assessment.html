@@ -1,420 +1,71 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>010 Risk Assessment</title><style>
-*{box-sizing:border-box}
-body{margin:0;background:#e5e7eb;font-family:Arial,sans-serif;color:#111}
-.page{max-width:1400px;margin:20px auto;background:#fff;padding:22px;box-shadow:0 3px 14px #999}
-.tools{display:flex;justify-content:flex-end;margin-bottom:14px}
-.btn{border:0;border-radius:6px;color:#fff;font-weight:700;padding:10px 16px;cursor:pointer;background:#1769d2;font-size:13px}
-.btn:disabled{opacity:.6;cursor:wait}
+.ship-select{flex:1;min-width:0;border:0;border-bottom:1px solid #000;outline:0;padding:4px;background:#fff;color:#111;font:inherit} @media print{.ship-select{appearance:none!important;-webkit-appearance:none!important;background:transparent!important;border:0!important;border-bottom:1px dotted #000!important;color:#000!important}}
+*{box-sizing:border-box}body{margin:0;background:#e5e7eb;font-family:Arial,sans-serif;color:#111}.page{max-width:1400px;margin:20px auto;background:#fff;padding:24px;box-shadow:0 3px 14px #999}.toolbar{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:16px}.btn{border:0;border-radius:6px;color:#fff;font-weight:700;padding:10px 14px;cursor:pointer}.add{background:#15803d}.del{background:#dc2626}.print,.ttd{background:#1769d2}.header{border:2px solid #000;padding:8px;margin-bottom:9px}.header-top{display:grid;grid-template-columns:23% 54% 23%;align-items:start;border-bottom:2px solid #000;padding:4px 0 10px;min-height:80px}.company{font-size:14px;font-weight:700;text-transform:uppercase}.title{text-align:center;font-size:14px;font-weight:700}.status{display:flex;flex-direction:column;align-items:flex-end;gap:9px;padding-right:14px;font-size:11px}.status-box{display:inline-flex;border:1px solid #000;font-weight:700}.status-box span{padding:5px 8px}.status-box span+span{border-left:1px solid #000}.release{white-space:nowrap}.meta{display:grid;grid-template-columns:1fr 1fr;gap:7px 20px;padding-top:8px}.field{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700}.field input{flex:1;min-width:0;border:0;border-bottom:1px solid #000;outline:0;padding:4px}.section-choice{display:flex;align-items:center;gap:18px;flex-wrap:nowrap;padding:3px 2px}.radio-label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;line-height:1;cursor:pointer}.radio{appearance:none!important;-webkit-appearance:none!important;-moz-appearance:none!important;display:inline-block!important;position:relative!important;width:16px!important;height:16px!important;min-width:16px!important;min-height:16px!important;flex:0 0 16px!important;margin:0!important;padding:0!important;border:2px solid #000!important;border-radius:50%!important;background:#fff!important;box-sizing:border-box!important;overflow:visible!important}.radio:checked:after{content:"";display:block;position:absolute;width:7px;height:7px;border-radius:50%;background:#000;left:50%;top:50%;transform:translate(-50%,-50%)}.instructions{border:1px solid #000;padding:7px;font-size:9px;line-height:1.4;margin-bottom:9px}.instructions b{display:inline-block;width:65px}.table-wrap{overflow-x:auto}table{width:100%;min-width:1100px;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #000;padding:3px;font-size:8px;text-align:center;vertical-align:middle}th{background:#f3f4f6}.c-no{width:4%}.c-process{width:20%}.c-hazard{width:20%}.c-party{width:15%}.c-control{width:20%}.c-level,.c-trend{width:8%}.c-risk{width:9%}.cell,.area{width:100%;display:block;min-height:34px;border:0;outline:0;background:transparent;text-align:center;padding:3px;font:inherit}.area{resize:none;overflow:hidden;text-align:left}.bottom{display:grid;grid-template-columns:58% 42%;gap:12px;margin-top:12px}.signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border:1px solid #000;padding:8px;text-align:center}.sig-title,.role{font-size:8px;font-weight:700}.sig-space{height:75px;display:flex;align-items:center;justify-content:center}.sig-preview{display:none;position:relative;width:100%;height:100%;align-items:center;justify-content:center}.sig-preview img{max-width:100%;max-height:66px;object-fit:contain}.remove{position:absolute;right:0;top:0;width:17px;height:17px;border:0;border-radius:50%;background:#dc2626;color:#fff;font-weight:700;padding:0}.sig-name{width:100%;border:0;border-bottom:1px solid #000;outline:0;text-align:center}.notes{font-size:8px;font-weight:700;line-height:1.4;margin-top:7px}.matrix{border-collapse:collapse;min-width:0!important}.matrix th,.matrix td{font-size:7px;padding:3px}.matrix .side{font-weight:700;background:#f3f4f6}.hidden{display:none!important}
+@media(max-width:768px){.page{margin:0;padding:12px;box-shadow:none}.header-top{display:flex;flex-direction:column;align-items:center;gap:8px}.company,.title,.status{width:100%;text-align:center}.status{align-items:flex-end}.meta{grid-template-columns:1fr}.meta .field:nth-child(2){align-items:flex-start;flex-direction:column;gap:8px}.section-choice{width:100%;padding-left:0}.bottom{grid-template-columns:1fr}.signatures{grid-template-columns:repeat(3,minmax(0,1fr));padding:4px}.btn{font-size:10px;padding:8px}.ttd{font-size:8px;padding:5px}.sig-title,.role{font-size:7px}}
+@media print{@page{size:A4 landscape;margin:7mm}.no-print{display:none!important}html,body{margin:0;padding:0;background:#fff}.page{width:100%;max-width:none;margin:0;padding:0;box-shadow:none}.header-top{display:grid!important;grid-template-columns:23% 54% 23%!important}.company{text-align:left!important}.title{text-align:center!important}.status{align-items:flex-end!important;padding-right:14px!important}.meta{grid-template-columns:1fr 1fr!important}.section-choice{overflow:visible!important}.radio{width:14px!important;height:14px!important;min-width:14px!important;min-height:14px!important;flex-basis:14px!important;border:1.5px solid #000!important;print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}.table-wrap{overflow:visible!important}table{width:99.5%!important;min-width:0!important;margin:auto}.main-table th,.main-table td{font-size:6.8px!important;padding:1px!important}.cell,.area{min-height:23px!important;padding:1px!important;font-size:7px!important}.area{height:auto!important;overflow:hidden!important}.field input::placeholder,.cell::placeholder,.area::placeholder{color:transparent!important;opacity:0!important}
+select{appearance:none!important;-webkit-appearance:none!important;background-image:none!important}.bottom{grid-template-columns:58% 42%!important;break-inside:avoid}.sig-space{height:58px}.sig-preview:not(.hidden){display:flex!important}.sig-preview.hidden{display:none!important}.sig-preview img{max-height:50px}.matrix{width:100%!important}.matrix th,.matrix td{font-size:6px!important;padding:2px!important}}
 
-/* ===== HEADER (Excel B4:M6) ===== */
-.hdr{border:2px solid #000;display:grid;grid-template-columns:23% 54% 23%;align-items:stretch}
-.hdr>div{padding:6px 8px}
-.co{font-size:14px;font-weight:700;text-transform:uppercase;border-right:2px solid #000;display:flex;align-items:center}
-.ti{text-align:center;font-size:14px;font-weight:700;border-right:2px solid #000;display:flex;align-items:center;justify-content:center;line-height:1.5}
-.hright{display:flex;flex-direction:column;gap:5px}
-.csbox{display:inline-flex;border:1.5px solid #000;font-weight:700;font-size:12px;align-self:flex-end}
-.csbox span{padding:4px 12px}.csbox span+span{border-left:1.5px solid #000}
-.release{font-size:11px;white-space:nowrap;text-align:right}
-.statusline{display:flex;justify-content:flex-end;gap:10px;align-items:center;font-size:10px}
-.statusline .lbl{color:#555}
-select.statussel{border:1px solid #000;background:#fff;font-weight:700;font-size:11px;padding:2px 4px;outline:0}
-.cf-yellow{background:#ffff00!important}
-.cf-green{background:#92d050!important}
-.cf-red{background:#ff0000!important;color:#000}
+        @media print {
+          /* SMK: hide empty placeholders and select arrows in print */
+          input::placeholder,
+          textarea::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+          }
+          select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            background-image: none !important;
+          }
+          select:has(option:checked[value=""]) {
+            color: transparent !important;
+            text-shadow: none !important;
+          }
+        }
 
-/* ===== META ROWS (Excel B7:I8) ===== */
-.meta{display:grid;grid-template-columns:34% 33% 33%;gap:6px 14px;padding:10px 2px 8px}
-.field{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700}
-.field label.txt{white-space:nowrap}
-.field input[type=text]{flex:1;min-width:0;border:0;border-bottom:1px solid #000;outline:0;padding:3px;background:transparent;font:inherit}
-.field select.vessel{flex:1;min-width:0;border:0;border-bottom:1px solid #000;outline:0;padding:3px;background:#fff;font:inherit;font-weight:700}
-.secwrap{display:flex;gap:14px;flex:1}
-.secitem{display:inline-flex;align-items:center;gap:5px;font-weight:400}
-select.chk{width:40px;border:1px solid #000;background:#fff;text-align:center;font-weight:700;font-size:12px;padding:2px;outline:0}
-select.chk.blank{background:#f2f2f2}
-.datebox{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700}
-.datebox input{width:120px;border:1px solid #000;padding:3px 5px;outline:0;font:inherit;text-align:center}
-
-/* ===== INSTRUCTIONS (Excel B9:L14) ===== */
-.instructions{border:1.5px solid #000;padding:7px 9px;font-size:10.5px;line-height:1.55;margin-bottom:10px}
-.instructions b{font-size:10.5px}
-.instructions .id{margin-top:2px}
-
-/* ===== MAIN TABLE (Excel B15:L31) ===== */
-.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.main{width:100%;border-collapse:collapse;table-layout:fixed}
-table.main th,table.main td{border:1px solid #000;padding:3px 4px;font-size:9.5px;vertical-align:middle;word-wrap:break-word}
-table.main thead th{font-size:9px;text-align:center;line-height:1.35;background:#fff}
-table.main textarea{width:100%;min-height:34px;resize:none;border:0;outline:0;font:inherit;font-size:9.5px;padding:1px;background:transparent;display:block}
-table.main input.cell{width:100%;border:0;outline:0;font:inherit;font-size:9.5px;padding:1px;background:transparent}
-table.main td.c-no{text-align:center}
-table.main select.lv{width:100%;border:0;outline:0;background:transparent;font:inherit;font-size:9px;padding:1px;text-align:center;text-align-last:center}
-.col-no{width:5.7%}.col-pros{width:13.3%}.col-haz{width:15.9%}.col-party{width:19.1%}.col-ctrl{width:20.5%}.col-lvl{width:7.8%}.col-tr{width:8.2%}.col-rf{width:9.5%}
-
-/* ===== BOTTOM : signatures + matrix (Excel B32:L38) ===== */
-.bottom{display:grid;grid-template-columns:56% 44%;gap:14px;margin-top:12px;break-inside:avoid}
-.signatures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.sig{border:0;text-align:center;font-size:9px;line-height:1.4}
-.sig-title{font-weight:700;font-size:9px;min-height:30px}
-.sig-space{height:52px;display:flex;align-items:flex-end;justify-content:center}
-.sig-dotted{font-size:10px;letter-spacing:1px;margin-top:2px}
-.sig-preview img{max-height:46px;max-width:120px;object-fit:contain}
-.upload.hidden,.sig-preview.hidden{display:none!important}
-.upbtn{font-size:8px;padding:4px 8px}
-.notes{font-size:8.5px;margin-top:12px;line-height:1.5}
-table.matrix{width:100%;border-collapse:collapse}
-table.matrix th,table.matrix td{border:1px solid #000;font-size:8.5px;text-align:center;padding:4px 3px;line-height:1.3}
-table.matrix th{font-weight:700}
-.hidden{display:none!important}
-input::placeholder,textarea::placeholder{color:#aaa}
-
-@media(max-width:768px){
-  .page{margin:0;padding:12px;box-shadow:none}
-  .hdr{grid-template-columns:1fr;}
-  .co,.ti{border-right:0;border-bottom:1.5px solid #000}
-  .meta{grid-template-columns:1fr}
-  .bottom{grid-template-columns:1fr}
-  .signatures{grid-template-columns:repeat(3,minmax(0,1fr))}
-  table.main{min-width:900px}
-}
-@media print{
-  @page{size:A4 landscape;margin:7mm}
-  body{background:#fff}
-  .tools,.no-print{display:none!important}
-  .page{width:100%;max-width:none;margin:0;padding:0;box-shadow:none}
-  .hdr{grid-template-columns:23% 54% 23%!important}
-  .meta{grid-template-columns:34% 33% 33%!important}
-  .bottom{grid-template-columns:56% 44%!important}
-  select{appearance:none!important;-webkit-appearance:none!important;background-image:none!important}
-  select:has(option:checked[value=""]){color:transparent!important;text-shadow:none!important}
-  input::placeholder,textarea::placeholder{color:transparent!important;opacity:0!important}
-  .cf-yellow,.cf-green,.cf-red,select.chk.blank{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}
-  table.main th,table.main td{font-size:6.9px!important;padding:1.5px!important}
-  table.main textarea{font-size:6.9px!important;min-height:24px!important}
-  table.matrix th,table.matrix td{font-size:6.4px!important;padding:2px!important}
-  .instructions{font-size:7.6px!important;padding:4px 6px}
-  .field,.datebox{font-size:8px!important}
-  .sig-space{height:48px}
-}
-</style></head><body>
-
-<div class="tools no-print">
-  <button id="btn-print" class="btn" onclick="aksiSimpanDanCetak()">&#128196; Print / Simpan PDF</button>
-</div>
-
-<div class="page" id="pdf-content">
-
-  <!-- ===== EXCEL HELPER TABLE C2:F3 (hidden in Excel; formulas =D7 =I8 =K6 =F1) ===== -->
-  <div id="xl-mirror" aria-hidden="true" style="display:none">
-    <table>
-      <tr><td>Nama Kapal</td><td>Tanggal</td><td>Status</td><td>Status2</td></tr>
-      <tr><td id="m-nama"></td><td id="m-tanggal"></td><td id="m-status"></td><td id="m-status2"></td></tr>
-    </table>
-  </div>
-
-  <!-- ===== HEADER (Excel rows 4-6) ===== -->
-  <header class="hdr">
-    <div class="co">PT Mentari Mas Multimoda</div>
-    <div class="ti">010&nbsp;&nbsp;&nbsp;FORM OF RISK ASSESSMENT<br><span style="font-size:11px;font-weight:normal">FORM PENILAIAN RESIKO</span></div>
-    <div class="hright">
-      <div class="csbox"><span>CS</span><span>SET</span></div>
-      <div class="release">Release:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rev.0 :</div>
-      <div class="statusline">
-        <span class="lbl">Status</span>
-        <select id="report_status" class="statussel">
-          <option>Choose</option>
-          <option>Abort</option>
-          <option>Completed</option>
-        </select>
-        <span class="lbl">Status2</span>
-        <select id="status2" class="statussel">
-          <option value=""></option>
-          <option>Proggress</option>
-          <option>Completed</option>
-        </select>
-      </div>
-    </div>
-  </header>
-
-  <!-- ===== META (Excel rows 7-8) ===== -->
-  <div class="meta">
-    <label class="field"><label class="txt">Ship Name / Nama kapal :</label>
-      <select id="vessel" class="vessel">
-        <option value=""></option>
-        <option>Express Mas</option>
-        <option>Mavendra Mas</option>
-        <option>Prakarsa Mas</option>
-        <option>Pratama Mas</option>
-        <option>Segoro Mas</option>
-        <option>Sahabat Mas</option>
-        <option>Selaras Mas</option>
-        <option>Semangat Mas</option>
-      </select>
-    </label>
-    <div class="field"><label class="txt">Section / Bagian:<br><span style="font-weight:normal;font-size:9px">***Pls choose one</span></label>
-      <span class="secwrap">
-        <span class="secitem">Deck <select class="chk blank" id="chk-deck"><option value=""></option><option>&#10004;</option></select></span>
-        <span class="secitem">Mesin <select class="chk blank" id="chk-mesin"><option value=""></option><option>&#10004;</option></select></span>
-      </span>
-    </div>
-    <div class="field"><label class="txt">Assessment Date / Tanggal Penilaian:</label>
-      <input type="text" id="date" class="date-mask" placeholder="DD-MM-YYYY">
-    </div>
-    <label class="field" style="grid-column:1"><label class="txt">Work area assessed / Area kerja yang dinilai :</label>
-      <input type="text" id="work_area">
-    </label>
-  </div>
-
-  <!-- ===== INSTRUCTIONS (Excel rows 9-14) ===== -->
-  <section class="instructions">
-    <b>Instruction :</b><br>
-    1. Perform a Risk Assessment every time doing a job / activity in a particular work area that has never been assessed risks.<br>
-    2. The Master appoints one of his officers to conduct a risk assessment.<br>
-    3. Archieve the completed files on the SHIP ACTIVITY FILE
-    <div class="id">
-      <b>Instruksi</b><br>
-      1. Lakukan Penilaian Resiko setiap kali melakukan suatu pekerjaan/kegiatan pada suatu area kerja tertentu yang belum pernah dinilai resikonya.<br>
-      2. Nahkoda menunjuk salah satu perwiranya untuk melakukan Penilaian Resiko.<br>
-      3. Arsipkan file yang telah diisi dan dilengkapi pada FILE KEGIATAN KAPAL
-    </div>
-  </section>
-
-  <!-- ===== MAIN TABLE (Excel rows 15-31 : 15 baris data) ===== -->
-  <div class="table-wrap">
-    <table class="main">
-      <colgroup>
-        <col class="col-no"><col class="col-pros"><col class="col-haz"><col class="col-party">
-        <col class="col-ctrl"><col class="col-lvl"><col class="col-tr"><col class="col-rf">
-      </colgroup>
-      <thead>
-        <tr>
-          <th rowspan="2">Number<br>No.</th>
-          <th rowspan="2">Work processes / actions performed in the work area<br>Proses kerja / tindakan yang dilakukan di area kerja</th>
-          <th rowspan="2">The description of potential hazards associated with the activity<br>Deskripsi potensi bahaya yang berhubungan dengan kegiatan</th>
-          <th rowspan="2">The Parties / people who are potentially exposed to hazards<br>Pihak/orang yang berpotensi terkena dampak bahaya</th>
-          <th rowspan="2">The Control of hazards that have been done<br>Pengendalian bahaya yang telah dilakukan</th>
-          <th rowspan="2">Level of Dangerous**)<br>Tingkat Kegawatan**)</th>
-          <th rowspan="2">Trends occured**)<br>Kecenderungan terjadi**)</th>
-          <th rowspan="2">Risk Factors**)<br>Faktor Resiko**)</th>
-        </tr>
-        <tr></tr>
-      </thead>
-      <tbody id="rows"><!-- 15 rows injected by script --></tbody>
-    </table>
-  </div>
-
-  <!-- ===== BOTTOM : signatures + TABLE RISK FACTORS (Excel rows 32-38) ===== -->
-  <div class="bottom">
-    <div>
-      <section class="signatures" id="signatures"></section>
-      <div class="notes">
-        *) Scratch that is not appropriate / Coret yang tidak perlu<br>
-        **) Level of Dangerous, Trends Occurred, and Risk Factors refer to Table Risk Factors<br>
-        **) Tingkat Kegawatan, Kecenderungan Terjadi, dan Faktor Resiko mengacu kepada Tabel Faktor Resiko
-      </div>
-    </div>
-    <table class="matrix">
-      <tr>
-        <td colspan="2" rowspan="3" style="border:0"></td>
-        <th colspan="3">Level of Dangerous<br>Tingkat Kegawatan</th>
-      </tr>
-      <tr>
-        <th>Not Dangeorus</th><th>Dangerous</th><th>Very Dangerous</th>
-      </tr>
-      <tr>
-        <th>Tidak Gawat</th><th>Gawat</th><th>Sangat Gawat</th>
-      </tr>
-      <tr>
-        <th rowspan="3">Trens Occurred<br>Kecenderungan terjadi</th>
-        <th>Rarely / Jarang</th>
-        <td>Not Important<br>Tidak Penting</td>
-        <td>Can be tolerated<br>Dapat ditoleransi</td>
-        <td>Medium<br>Sedang</td>
-      </tr>
-      <tr>
-        <th>Often / Sering</th>
-        <td>Can be tolerated<br>Dapat ditoleransi</td>
-        <td>Medium<br>Sedang</td>
-        <td>Big<br>Besar</td>
-      </tr>
-      <tr>
-        <th>Very often<br>Sangat sering</th>
-        <td>Medium<br>Sedang</td>
-        <td>Big<br>Besar</td>
-        <td>Can't be Tolerated<br>Tidak dapat ditoleransi</td>
-      </tr>
-    </table>
-  </div>
-
-</div>
-
+</style></head><body><div class="page"><div class="toolbar no-print"><button class="btn add" id="addRow">+ Tambah Baris</button><button class="btn del" id="delRow">− Hapus Baris Terakhir</button><button class="btn print" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
+<header class="header"><div class="header-top"><div class="company">PT Mentari Mas Multimoda</div><div class="title">010 &nbsp; FORM OF RISK ASSESSMENT<br><span style="font-size:10px;font-weight:normal">FORM PENILAIAN RISIKO</span></div><div class="status"><div class="status-box"><span>CS</span><span>SET</span></div><div class="release">Release: &nbsp; Rev. 0 :</div></div></div><div class="meta"><label class="field">Ship Name / Nama Kapal: <select class="ship-select"><option value="">Pilih Kapal</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label><div class="field">Section / Bagian: <span class="section-choice"><label class="radio-label"><input class="radio" type="radio" name="section">Deck</label><label class="radio-label"><input class="radio" type="radio" name="section">Mesin</label></span></div><label class="field">Work area assessed / Area kerja yang dinilai: <input type="text"></label><label class="field">Assessment Date / Tanggal Penilaian: <input class="date-mask" type="text" placeholder="DD-MM-YYYY"></label></div></header>
+<section class="instructions"><b>Instruction:</b> 1. Perform a Risk Assessment every time doing a job/activity in a particular work area that has never been assessed risks. &nbsp; 2. The Master appoints one of his officers to conduct a risk assessment. &nbsp; 3. Archive completed files in the SHIP ACTIVITY FILE.<br><b>Instruksi:</b> 1. Lakukan Penilaian Risiko setiap kali melakukan pekerjaan/kegiatan di area kerja yang belum pernah dinilai risikonya. &nbsp; 2. Nakhoda menunjuk salah satu perwira untuk melakukan penilaian risiko. &nbsp; 3. Arsipkan file yang lengkap pada FILE KEGIATAN KAPAL.</section>
+<div class="table-wrap"><table class="main-table"><thead><tr><th class="c-no">Number<br>No.</th><th class="c-process">Work processes/actions performed in the work area<br>Proses kerja/tindakan di area kerja</th><th class="c-hazard">Description of potential hazards associated with activity<br>Deskripsi potensi bahaya</th><th class="c-party">Parties/people potentially exposed<br>Pihak/orang yang berpotensi terkena dampak</th><th class="c-control">Control of hazards already implemented<br>Pengendalian bahaya yang telah dilakukan</th><th class="c-level">Level of Dangerous**<br>Tingkat Kegawatan</th><th class="c-trend">Trends Occurred**<br>Kecenderungan Terjadi</th><th class="c-risk">Risk Factors**<br>Faktor Risiko</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="bottom"><div><section class="signatures" id="signatures"></section><div class="notes">*) Scratch that is not appropriate / Coret yang tidak perlu<br>**) Level of Dangerous, Trends Occurred, and Risk Factors refer to Table Risk Factors.<br>**) Tingkat Kegawatan, Kecenderungan Terjadi, dan Faktor Risiko mengacu kepada Tabel Faktor Risiko.</div></div><table class="matrix"><tr><th colspan="4">TABLE RISK FACTORS / TABEL FAKTOR RISIKO</th></tr><tr><th rowspan="2">Trends Occurred<br>Kecenderungan Terjadi</th><th colspan="3">Level of Dangerous / Tingkat Kegawatan</th></tr><tr><th>Not Dangerous<br>Tidak Gawat</th><th>Dangerous<br>Gawat</th><th>Very Dangerous<br>Sangat Gawat</th></tr><tr><td class="side">Rarely / Jarang</td><td>Not Important<br>Tidak Penting</td><td>Can be Tolerated<br>Dapat Ditoleransi</td><td>Medium<br>Sedang</td></tr><tr><td class="side">Often / Sering</td><td>Can be Tolerated<br>Dapat Ditoleransi</td><td>Medium<br>Sedang</td><td>Big<br>Besar</td></tr><tr><td class="side">Very Often<br>Sangat Sering</td><td>Medium<br>Sedang</td><td>Big<br>Besar</td><td>Can't be Tolerated<br>Tidak Dapat Ditoleransi</td></tr></table></div></div>
 <script>
-/* ================= EXCEL PARITY : 010 - Penilaian Resiko.xlsx ================= */
-
-/* ----- Main table : 15 rows exactly like Excel 17-31 ----- */
-var LEVEL_OPTS = ['','Not Dangeorus','Dangerous','Very Dangerous'];                 /* DV I17:I31 <- $I$34:$L$34 */
-var TREND_OPTS = ['','Rarely / Jarang','Often / Sering','Very often Sangat sering'];/* DV J17:J31 <- $H$36:$H$38 */
-var FACTOR_OPTS = ['','Not Important','Can be tolerated',"Can't be Tolerated"];     /* DV K17:L31 */
-(function buildRows(){
-  var tb = document.getElementById('rows');
-  var html = '';
-  for (var i = 0; i < 15; i++) {
-    html += '<tr>'
-      + '<td class="c-no"><input class="cell" type="text"></td>'
-      + '<td><textarea rows="2"></textarea></td>'
-      + '<td><textarea rows="2"></textarea></td>'
-      + '<td><textarea rows="2"></textarea></td>'
-      + '<td><textarea rows="2"></textarea></td>'
-      + '<td><select class="lv">' + LEVEL_OPTS.map(function(o){return '<option>'+o+'</option>';}).join('') + '</select></td>'
-      + '<td><select class="lv">' + TREND_OPTS.map(function(o){return '<option>'+o+'</option>';}).join('') + '</select></td>'
-      + '<td><select class="lv">' + FACTOR_OPTS.map(function(o){return '<option>'+o.replace(/&/g,'&amp;').replace(/'/g,'&#39;')+'</option>';}).join('') + '</select></td>'
-      + '</tr>';
-  }
-  tb.innerHTML = html;
-  tb.querySelectorAll('textarea').forEach(function(t){
-    t.addEventListener('input', function(){ t.style.height='auto'; t.style.height=t.scrollHeight+'px'; });
-  });
-})();
-
-/* ----- Conditional formatting (styles.xml dxfs 7-12) -----
-   K6 : containsText Choose -> #FFFF00 (dxf11) | Completed -> #92D050 (dxf10) | Abort -> #FF0000 (dxf9)
-   M6 : containsText Completed -> #92D050 (dxf8) | Proggress -> #FF0000 (dxf7)
-   F7:F8 : containsBlanks -> theme0 tint -0.05 ~= #F2F2F2 (dxf12)                       */
-function applyConditionalFormatting(){
-  var k = document.getElementById('report_status');
-  k.classList.remove('cf-yellow','cf-green','cf-red');
-  if (k.value.indexOf('Choose') !== -1) k.classList.add('cf-yellow');
-  if (k.value.indexOf('Completed') !== -1) k.classList.add('cf-green');
-  if (k.value.indexOf('Abort') !== -1) k.classList.add('cf-red');
-  var m = document.getElementById('status2');
-  m.classList.remove('cf-green','cf-red');
-  if (m.value.indexOf('Completed') !== -1) m.classList.add('cf-green');
-  if (m.value.indexOf('Proggress') !== -1) m.classList.add('cf-red');
-  document.querySelectorAll('select.chk').forEach(function(s){
-    s.classList.toggle('blank', s.value === '');
-  });
-}
-document.getElementById('report_status').addEventListener('change', applyConditionalFormatting);
-document.getElementById('status2').addEventListener('change', applyConditionalFormatting);
-document.querySelectorAll('select.chk').forEach(function(s){
-  s.addEventListener('change', applyConditionalFormatting);
-});
-applyConditionalFormatting();
-
-/* ----- Excel formulas F1==D7, C3==D7, D3==I8, E3==K6, F3==F1 (helper mirror) ----- */
-function recalcMirror(){
-  document.getElementById('m-nama').textContent   = document.getElementById('vessel').value;       /* =D7 */
-  document.getElementById('m-tanggal').textContent = document.getElementById('date').value;         /* =I8 */
-  document.getElementById('m-status').textContent = document.getElementById('report_status').value;/* =K6 */
-  document.getElementById('m-status2').textContent = document.getElementById('vessel').value;       /* =F1 -> =D7 */
-}
-['vessel','date','report_status'].forEach(function(id){
-  var el = document.getElementById(id);
-  el.addEventListener('change', recalcMirror);
-  el.addEventListener('input', recalcMirror);
-});
-recalcMirror();
-
-/* ----- Date mask DD-MM-YYYY ----- */
-document.querySelectorAll('.date-mask').forEach(function(el){
-  el.addEventListener('input', function(e){
-    var v = e.target.value.replace(/\D/g,'').slice(0,8);
-    if (v.length >= 3) v = v.slice(0,2) + '-' + v.slice(2);
-    if (v.length >= 6) v = v.slice(0,5) + '-' + v.slice(5);
-    e.target.value = v;
-  });
-});
-
-/* ----- Signatures : The Crew conducting the assessment / Checked by Master / Reported to DPA ----- */
-(function buildSignatures(){
-  var roles = [
-    ['The Crew conducting the assessment,', 'Crew Kapal yang melakukan penilaian,'],
-    ['Checked by / Diperiksa oleh,', 'Master / Nahkoda'],
-    ['Reported to / Dilaporkan kepada', 'DPA']
-  ];
-  var box = document.getElementById('signatures');
-  roles.forEach(function(r, idx){
-    var s = document.createElement('div');
-    s.className = 'sig';
-    s.innerHTML = '<div class="sig-title">' + r[0] + '<br>' + r[1] + '</div>'
-      + '<div class="sig-space">'
-      + '<label class="btn upbtn no-print upload" id="up-' + (idx+1) + '" style="background:#1769d2">+ Add TTD<input class="hiddenfile" type="file" accept="image/*" style="display:none"></label>'
-      + '<div class="sig-preview hidden" id="pv-' + (idx+1) + '"><img alt=""><button class="remove no-print" type="button" style="background:#ef4444;color:#fff;border:0;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer">&times;</button></div>'
-      + '</div>'
-      + '<div class="sig-dotted">( &#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230;&#8230; )</div>';
-    box.appendChild(s);
-    (function(){
-      var up = s.querySelector('.upload'), pv = s.querySelector('.sig-preview'), im = pv.querySelector('img');
-      up.querySelector('input[type=file]').addEventListener('change', function(e){
-        var f = e.target.files[0];
-        if (!f || !f.type || f.type.indexOf('image/') !== 0) return;
-        var rd = new FileReader();
-        rd.onload = function(x){
-          im.src = x.target.result;
-          pv.style.display = 'flex'; pv.classList.remove('hidden');
-          up.classList.add('hidden');
-        };
-        rd.readAsDataURL(f);
-      });
-      pv.querySelector('.remove').onclick = function(){
-        im.src = '';
-        up.querySelector('input[type=file]').value = '';
-        pv.style.display = 'none'; pv.classList.add('hidden'); up.classList.remove('hidden');
-      };
-    })();
-  });
-})();
-
-const FORM_CODE = "010";
-
-/* ----- SAVE & PRINT (portal integration) ----- */
-async function aksiSimpanDanCetak() {
-  var vesselName = document.getElementById('vessel').value;
-  if (!vesselName) { alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); return; }
-
-  var btn = document.getElementById('btn-print');
-  btn.disabled = true; btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
-  setTimeout(function(){ btn.disabled = false; btn.innerHTML = '&#128196; Print / Simpan PDF'; }, 500);
-
-  window.parent.postMessage({
-    type: 'SMK_SAVE_PDF',
-    name: document.title,
-    ship: vesselName,
-    date: document.getElementById('date').value || '',
-    formCode: FORM_CODE,
-    formTitle: document.title
-  }, '*');
-}
-var savePDF = aksiSimpanDanCetak;
-
-/* ----- TITLE SYNC ----- */
-(function () {
-  var sel = document.getElementById('vessel');
-  var dt = document.getElementById('date');
-  function updateTitle() {
-    var t = '010 Risk Assessment';
-    if (sel.value) t += ' - ' + sel.value;
-    if (dt.value) t += ' - ' + dt.value;
-    window.parent && window.parent.postMessage({ type:'FORM_TITLE', title:t }, '*');
-  }
-  sel.addEventListener('change', updateTitle);
-  dt.addEventListener('input', updateTitle);
-  updateTitle();
-})();
-
-/* ----- INIT_FORM from parent app ----- */
-window.addEventListener('message', function(e) {
-  if (e.data && e.data.type === 'INIT_FORM') {
-    var sel = document.getElementById('vessel');
-    if (e.data.vessel) {
-      var vLower = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
-      Array.from(sel.options).forEach(function(opt){
-        if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) sel.value = opt.value;
-      });
-    }
-    if (e.data.locked) sel.disabled = true;
-  }
-});
-</script>
-</body></html>
+const tbody=document.getElementById('rows');function grow(x){x.style.height='auto';x.style.height=x.scrollHeight+'px'}function addRow(n=''){const tr=document.createElement('tr');tr.innerHTML=`<td><input class="cell" type="text" value="${n}"></td>${Array.from({length:4},()=>'<td><textarea class="area" rows="2"></textarea></td>').join('')}<td><input class="cell" type="text"></td><td><input class="cell" type="text"></td><td><input class="cell" type="text"></td>`;tbody.appendChild(tr);tr.querySelectorAll('textarea').forEach(t=>t.oninput=()=>grow(t))}for(let i=1;i<=10;i++)addRow(i);document.getElementById('addRow').onclick=()=>addRow('');document.getElementById('delRow').onclick=()=>{const r=tbody.querySelectorAll('tr');if(r.length>1)r[r.length-1].remove()};document.querySelector('.date-mask').oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>2)v=v.slice(0,2)+'-'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5);e.target.value=v};document.querySelectorAll('.radio').forEach(r=>{r.onpointerdown=()=>r.dataset.was=r.checked?'1':'0';r.onclick=()=>{if(r.dataset.was==='1')r.checked=false}});
+const roles=[['The Crew conducting the assessment','Crew Kapal yang melakukan penilaian'],['Checked by / Diperiksa oleh','Master / Nakhoda'],['Reported to / Dilaporkan kepada','DPA']],box=document.getElementById('signatures');roles.forEach(([a,b])=>{const s=document.createElement('div');s.innerHTML=`<div class="sig-title">${a}<br>${b}</div><div class="sig-space"><label class="btn ttd no-print">+ Add TTD<input class="upload hidden" type="file" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div><input class="sig-name" type="text"><div class="role">${b}</div>`;box.appendChild(s);const up=s.querySelector('.upload'),pv=s.querySelector('.sig-preview'),lab=s.querySelector('.ttd'),im=pv.querySelector('img');up.onchange=e=>{const f=e.target.files[0];if(!f||!f.type.startsWith('image/'))return;const rd=new FileReader();rd.onload=x=>{im.src=x.target.result;lab.classList.add('hidden');pv.classList.remove('hidden');pv.style.display='flex'};rd.readAsDataURL(f)};s.querySelector('.remove').onclick=()=>{im.src='';up.value='';pv.classList.add('hidden');pv.style.display='none';lab.classList.remove('hidden')}});
+  // Print title: base + vessel + report month (from form fields)
+  (function(){try{
+    var base=document.title;
+    function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
+    function findVessel(){
+      var d=document.querySelector('input.vessel,select.vessel');
+      if(d)return d;
+      var els=document.querySelectorAll('label.f,label.field');
+      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+        if(/vessel|kapal|nama kapal|ship'?s? name|name of vessel/.test(t)){
+          var inp=els[i].querySelector('input,select');if(inp)return inp}}
+      return null}
+    function findDate(){
+      var d=document.querySelector('input.date');
+      if(d)return d;
+      var els=document.querySelectorAll('label.f,label.field');
+      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+        if(/date|tanggal/.test(t)){
+          var inp=els[i].querySelector('input');if(inp)return inp}}
+      return null}
+    function monthName(mm){return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][mm-1]||''}
+    function updateTitle(){
+      var v=findVessel(),d=findDate();
+      var vs=v?esc(v.value):'';var ds=d?esc(d.value):'';
+      var t=base;
+      if(vs)t+=' - '+vs;
+      if(ds){var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if(m){var mo=parseInt(m[2],10),yr=m[3];
+          if(mo>=1&&mo<=12)t+=' - '+monthName(mo)+' '+yr}else t+=' - '+ds}
+      document.title=t;
+      window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}
+    var v=findVessel(),d=findDate();
+    if(v){v.addEventListener('change',updateTitle);v.addEventListener('input',updateTitle)}
+    if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
+    updateTitle();
+  }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+</script></body></html>
