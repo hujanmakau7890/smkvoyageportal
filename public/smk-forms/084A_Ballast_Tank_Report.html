@@ -353,36 +353,37 @@ Actions:</label>
   function applyGradeCF(sel) {
     var zone = sel.getAttribute('data-cg');
     var v = sel.value;
-    if (v === '1')      sel.style.color = ZONE_GREEN[zone] || '#13FF01';
-    else if (v === '2') sel.style.color = Y;
-    else if (v === '3') sel.style.color = R;
-    else                sel.style.color = '';
+    // font stays black - the BACKGROUND carries the grade color (user preference)
+    if (v === '1')      sel.style.background = ZONE_GREEN[zone] || '#13FF01';
+    else if (v === '2') sel.style.background = Y;
+    else if (v === '3') sel.style.background = R;
+    else                sel.style.background = '';
   }
   document.querySelectorAll('select[data-cg]').forEach(function(sel) {
     sel.addEventListener('change', function(){ applyGradeCF(sel); });
     applyGradeCF(sel);
   });
 
-  // H42 anode wastage: <0.5 red, 0.5-0.69 yellow, >=0.7 green (Excel fmt 0%)
+  // H42 anode wastage: <50% red, 50-69% yellow, >=70% green (background carries the color, fmt 0%)
   function cfAnode() {
     var el = document.getElementById('anode_wastage');
     var v = el.value.trim();
-    if (v === '') { el.style.color = ''; return; }
+    if (v === '') { el.style.background = ''; return; }
     var n = parseFloat(v);
-    if (isNaN(n)) { el.style.color = ''; return; }
-    if (n < 50)       el.style.color = R;
-    else if (n < 70)  el.style.color = Y;
-    else              el.style.color = '#27FC04';
+    if (isNaN(n)) { el.style.background = ''; return; }
+    if (n < 50)       el.style.background = R;
+    else if (n < 70)  el.style.background = Y;
+    else              el.style.background = '#27FC04';
   }
 
-  // H44 mud: "<=1" -> #00FF00, "1,1 - 5" -> yellow, ">5" -> red
+  // H44 mud: "<=1" -> #00FF00, "1,1 - 5" -> yellow, ">5" -> red (background carries the color)
   function cfMud(el) {
     var v = el.value;
-    if (!v) { el.style.color = ''; return; }
-    if (v.indexOf('<=1') !== -1)          el.style.color = '#00FF00';
-    else if (v.indexOf('1,1 - 5') !== -1) el.style.color = Y;
-    else if (v.indexOf('>5') !== -1)      el.style.color = R;
-    else el.style.color = '';
+    if (!v) { el.style.background = ''; return; }
+    if (v.indexOf('<=1') !== -1)          el.style.background = '#00FF00';
+    else if (v.indexOf('1,1 - 5') !== -1) el.style.background = Y;
+    else if (v.indexOf('>5') !== -1)      el.style.background = R;
+    else el.style.background = '';
   }
 
   /* ===== DATE MASK (DD-MM-YYYY) ===== */
