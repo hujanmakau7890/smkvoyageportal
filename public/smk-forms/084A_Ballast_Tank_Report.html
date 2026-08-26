@@ -106,7 +106,7 @@
 <body>
 <div class="container" id="form-container">
   <div class="tools no-print">
-    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+    <button id="btn-print" class="btn" onclick="aksiSimpanDanCetak()">&#128196; Print / Simpan PDF</button>
   </div>
   <div class="page" id="pdf-content">
     
@@ -396,30 +396,56 @@
   }
   document.querySelectorAll('textarea').forEach(attachAutoResize);
 
-  function savePDF() {
-    var v = document.getElementById('vessel').value || 'UnknownVessel';
-    var d = document.getElementById('date').value || 'NoDate';
-    var el = document.getElementById('pdf-content');
-    
-    // Hide empty photo slots before printing
-    var photos = document.querySelectorAll('.photo-item');
-    photos.forEach(p => {
-      if(p.querySelector('input').value === '') { p.classList.add('no-print'); }
-    });
-    
-    var opt = {
-      margin:       [10, 10, 10, 10],
-      filename:     '084A_Ballast_Tank_Report_' + v + '_' + d + '.pdf',
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak:    { mode: 'css', avoid: ['tr', '.footer-section', '.notes-section', '.photo-item'] }
-    };
-    html2pdf().set(opt).from(el).save().then(() => {
-      // restore empty photo slots
-      photos.forEach(p => { p.classList.remove('no-print'); });
-    });
+  const FORM_CODE = "084A";
+
+  async function aksiSimpanDanCetak() {
+    var vesselName = document.getElementById('vessel').value;
+    if (!vesselName) { alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); return; }
+
+    var btn = document.getElementById('btn-print');
+    btn.disabled = true; btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
+    setTimeout(function(){ btn.disabled = false; btn.innerHTML = '&#128196; Print / Simpan PDF'; }, 500);
+
+    window.parent.postMessage({
+      type: 'SMK_SAVE_PDF',
+      name: document.title,
+      ship: vesselName,
+      date: document.getElementById('date').value || '',
+      formCode: FORM_CODE,
+      formTitle: document.title
+    }, '*');
   }
+
+  /* TITLE SYNC */
+  (function () {
+    var sel = document.getElementById('vessel');
+    var dt = document.getElementById('date');
+    function updateTitle() {
+      var t = '084A Ballast Tank Condition Report (General)';
+      if (sel.value) t += ' - ' + sel.value;
+      if (dt.value) t += ' - ' + dt.value;
+      window.parent && window.parent.postMessage({ type:'FORM_TITLE', title:t }, '*');
+    }
+    sel.addEventListener('change', updateTitle);
+    dt.addEventListener('input', updateTitle);
+  })();
+
+  /* INIT_FORM from parent app */
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'INIT_FORM') {
+      var sel = document.getElementById('vessel');
+      if (e.data.vessel) {
+        var vLower = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
+        Array.from(sel.options).forEach(function(opt){
+          if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) sel.value = opt.value;
+        });
+      }
+      if (e.data.locked) sel.disabled = true;
+    }
+  });
+
+  // keep legacy name for any external callers
+  var savePDF = aksiSimpanDanCetak;
 </script>
 </body>
 </html>
