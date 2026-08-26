@@ -122,6 +122,17 @@
     .xd-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   }
   .xd-wrap { overflow-x:auto; }
+
+  /* ===== DIAGRAM ZONE v5 : absolute geometry measured from the xlsx ===== */
+  .xd-wrap { overflow-x:auto; margin-bottom:14px; }
+  .dz { position:relative; margin:0 auto; }
+  .dz svg.art { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+  .dz .cf { position:absolute; z-index:0; }
+  .dz .cb { position:absolute; z-index:2; }
+  .dz .ct { position:absolute; z-index:2; white-space:pre; font-family:Arial, sans-serif; line-height:1.15; }
+  .dz select.cg { position:absolute; z-index:5; appearance:none; -webkit-appearance:none;
+                  background:transparent; border:0; outline:none; text-align:center;
+                  font-size:13px; font-family:inherit; color:#000; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -162,106 +173,199 @@
     <div class="item"><label>Date Report</label><input type="text" id="date_report" class="date-mask" placeholder="DD-MM-YYYY"></div>
   </div>
 
-  <!-- ==================== DIAGRAM ZONE ==================== -->
-  <div class="diag-zone">
-
-    <!-- LEFT RAIL : Coating Grading (C9:D12) + Condition Grading (C24:D28) -->
-    <div class="rail">
-      <div class="gblock">
-        <div class="gt">Coating Grading</div>
-        <div class="grow"><b>1</b><span style="background:#29f72e;">GOOD</span></div>
-        <div class="grow"><b>2</b><span style="background:#ffff00;">FAIR</span></div>
-        <div class="grow"><b>3</b><span style="background:#ff0000;">POOR</span></div>
-      </div>
-      <div class="gblock">
-        <div class="gt">Condition Grading</div>
-        <div class="grow"><b>1</b><span style="background:#29f72e;">GOOD</span></div>
-        <div class="grow"><b>2</b><span style="background:#ffff00;">FAIR</span></div>
-        <div class="grow"><b>3</b><span style="background:#ff0000;">POOR</span></div>
-        <div class="grow"><b>NS</b><span>NOT SEEN</span></div>
-      </div>
-    </div>
-
-    <!-- CANVAS : FPT cross-section -->
-    <div class="canvas xd-wrap">
-      <!-- SVG art layer: hull diagonals + curly braces (from xl/drawings/drawing1.xml) -->
-      <svg class="art" viewBox="0 0 660 306" preserveAspectRatio="none" aria-hidden="true">
-        <!-- hull wall diagonals (Straight Connector 8,9,13,14) -->
-        <!-- upper walls: from outer top of row-13 strips angling down-inward to aft-bulkhead box top -->
-        <line x1="66"  y1="62" x2="240" y2="150" stroke="#000" stroke-width="1.6"/>
-        <line x1="594" y1="62" x2="420" y2="150" stroke="#000" stroke-width="1.6"/>
-        <!-- lower walls: from aft-bulkhead box bottom down-inward to tank top line -->
-        <line x1="258" y1="212" x2="296" y2="272" stroke="#000" stroke-width="1.6"/>
-        <line x1="402" y1="212" x2="364" y2="272" stroke="#000" stroke-width="1.6"/>
-        <!-- Left brace hugging Port labels (Left Brace 22, col F rows 13-18) -->
-        <path d="M 56 64 Q 44 64 44 96 L 44 106 Q 44 118 32 118 Q 44 118 44 130 L 44 140 Q 44 172 56 172"
-              fill="none" stroke="#000" stroke-width="1.6"/>
-        <!-- Right brace hugging Stbd labels (Right Brace 20, cols Q-R rows 12-18) -->
-        <path d="M 604 58 Q 616 58 616 92 L 616 102 Q 616 114 628 114 Q 616 114 616 126 L 616 136 Q 616 170 604 170"
-              fill="none" stroke="#000" stroke-width="1.6"/>
-        <!-- Small left brace pointing at aft grade box (Left Brace 23, cols J-K rows 17-21) -->
-        <path d="M 214 168 Q 206 176 206 190 L 206 192 Q 206 198 198 198 Q 206 198 206 204 L 206 206 Q 206 220 214 228"
-              fill="none" stroke="#000" stroke-width="1.4"/>
-        <!-- Right brace pointing at lower grade box (Right Brace 21, col N rows 21-26) -->
-        <path d="M 420 196 Q 430 204 430 216 L 430 218 Q 430 224 438 224 Q 430 224 430 230 L 430 232 Q 430 244 420 252"
-              fill="none" stroke="#000" stroke-width="1.4"/>
-      </svg>
-
-      <!-- Control grid: cols G..R = 12 tracks; rows = xl r10..r26 -->
-      <div class="xdiag">
-        <!-- r10 (xl10): Bulbows Bow caption over K-M -->
-        <div class="cap" style="grid-column:5/8; grid-row:1;">&nbsp;&nbsp;Bulbows Bow</div>
-
-        <!-- r11-12 (xl11-12): L11:L12 Bulbows Bow grade -->
-        <div class="gcell boxed" style="grid-column:6; grid-row:2/4;">
-          <select data-cg="bb" aria-label="bulbows bow grade"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-        </div>
-
-        <!-- r13 (xl13): G13 Port-Upper | I13 Port-Lower | N13 Stbd-Lower | P13 Stbd-Upper -->
-        <div class="gcell" style="grid-column:1; grid-row:4;"><select data-cg="ud" aria-label="port side shell upper"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
-        <div class="gcell" style="grid-column:3; grid-row:4;"><select data-cg="ud" aria-label="port side shell lower"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
-        <div class="gcell" style="grid-column:8; grid-row:4;"><select data-cg="ud" aria-label="stbd side shell lower"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
-        <div class="gcell" style="grid-column:10; grid-row:4;"><select data-cg="ud" aria-label="stbd side shell upper"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div>
-
-        <!-- r14-17 (xl14-17): labels under the row-13 grades -->
-        <div class="lbl" style="grid-column:1/3; grid-row:5/9;">Upper</div>
-        <div class="lbl" style="grid-column:3/5; grid-row:5/9;">Lower</div>
-        <div class="lbl" style="grid-column:8/10; grid-row:5/9;">Lower</div>
-        <div class="lbl" style="grid-column:10/12; grid-row:5/9;">Upper</div>
-
-        <!-- side labels outside the hull lines -->
-        <div class="lbl" style="position:absolute; left:-6px; top:86px; transform:translateX(-100%);">Port Side<br>Shell</div>
-        <div class="lbl" style="position:absolute; right:-6px; top:86px; transform:translateX(100%);">Stbd Side<br>Shell</div>
-
-        <!-- r18 (xl18): K18 'Lower' above aft grade box -->
-        <div class="lbl" style="grid-column:5; grid-row:9;">Lower</div>
-
-        <!-- r19-20 (xl19-20): H19 'Aft Bulkhead' + K19:M20 grade box -->
-        <div class="lbl" style="grid-column:2/5; grid-row:10/12;">Aft&nbsp;Bulkhead</div>
-        <div class="gcell boxed" style="grid-column:5/8; grid-row:10/12;">
-          <select data-cg="aft" aria-label="aft bulkhead grade"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-        </div>
-
-        <!-- r21 (xl21): K21 'Upper' below aft grade box -->
-        <div class="lbl" style="grid-column:5; grid-row:12;">Upper</div>
-
-        <!-- r22 (xl22): L22 'Aft' -->
-        <div class="lbl" style="grid-column:6; grid-row:13;">Aft</div>
-
-        <!-- r23-25 (xl23-25): L23:L25 lower grade box -->
-        <div class="gcell boxed" style="grid-column:6; grid-row:14/17;">
-          <select data-cg="low" aria-label="lower section grade"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-        </div>
-
-        <!-- r26 (xl26): L26 'Fwd' -->
-        <div class="lbl" style="grid-column:6; grid-row:17;">Fwd</div>
-
-        <!-- r24 (xl24): N24 'Tank Top / Deck Head' bottom label -->
-        <div class="lbl" style="grid-column:8/12; grid-row:15; justify-content:flex-start;">&nbsp;Tank Top / Deck Head</div>
-      </div>
-    </div>
+  <!-- ==================== DIAGRAM ZONE (absolute px from Excel) ==================== -->
+  <div class="xd-wrap">
+    <div class="dz" style="width:1049px;height:562px;">
+      <svg class="art" viewBox="0 0 1049 562" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="493" y1="345" x2="531" y2="482" stroke="#4F81BD" stroke-width="2"/>
+            <line x1="596" y1="345" x2="632" y2="482" stroke="#4F81BD" stroke-width="2"/>
+            <line x1="598" y1="103" x2="635" y2="240" stroke="#4F81BD" stroke-width="2"/>
+            <line x1="492" y1="105" x2="537" y2="237" stroke="#4F81BD" stroke-width="2"/>
+            <path d="M 855 102 Q 864 102 864 146 L 864 162 Q 864 170 873 170 Q 864 170 864 178 L 864 194 Q 864 238 855 238" fill="none" stroke="#4F81BD" stroke-width="2"/>
+            <path d="M 639 347 Q 646 347 646 391 L 646 407 Q 646 415 652 415 Q 646 415 646 423 L 646 439 Q 646 483 639 483" fill="none" stroke="#4F81BD" stroke-width="2"/>
+            <path d="M 259 105 Q 247 105 247 148 L 247 164 Q 247 172 235 172 Q 247 172 247 180 L 247 196 Q 247 239 259 239" fill="none" stroke="#4F81BD" stroke-width="2"/>
+            <path d="M 492 237 Q 476 237 476 270 L 476 283 Q 476 289 460 289 Q 476 289 476 295 L 476 308 Q 476 341 492 341" fill="none" stroke="#4F81BD" stroke-width="2"/>
+                  </svg>
+      <div class="cf" style="left:38px;top:22px;width:59px;height:27px;background:#29F72E;"></div>
+            <div class="cf" style="left:38px;top:49px;width:59px;height:27px;background:#FFFF00;"></div>
+            <div class="cf" style="left:38px;top:76px;width:59px;height:27px;background:#FF0000;"></div>
+            <div class="cf" style="left:38px;top:427px;width:59px;height:27px;background:#29F72E;"></div>
+            <div class="cf" style="left:38px;top:454px;width:59px;height:27px;background:#FFFF00;"></div>
+            <div class="cf" style="left:38px;top:481px;width:59px;height:27px;background:#FF0000;"></div>
+            <div class="cb" style="left:0px;top:0px;width:38px;height:22px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:920px;top:0px;width:53px;height:22px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:22px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:38px;top:22px;width:59px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:97px;top:22px;width:60px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:157px;top:22px;width:55px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:920px;top:22px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:49px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:38px;top:49px;width:59px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:97px;top:49px;width:60px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:157px;top:49px;width:55px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:537px;top:49px;width:59px;height:27px;border-top:2px solid #000;border-right:2px solid #000;border-bottom:2px solid #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:49px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:76px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:38px;top:76px;width:59px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:97px;top:76px;width:60px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:157px;top:76px;width:55px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:537px;top:76px;width:59px;height:27px;border-right:2px solid #000;border-bottom:2px solid #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:76px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:103px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:103px;width:66px;height:27px;border-top:2px solid #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:336px;top:103px;width:68px;height:27px;border-top:2px solid #000;"></div>
+            <div class="cb" style="left:404px;top:103px;width:45px;height:27px;border-top:2px solid #000;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:449px;top:103px;width:43px;height:27px;border-top:2px solid #000;"></div>
+            <div class="cb" style="left:492px;top:103px;width:45px;height:27px;border-top:2px solid #000;"></div>
+            <div class="cb" style="left:596px;top:103px;width:42px;height:27px;border-top:2px solid #000;"></div>
+            <div class="cb" style="left:638px;top:103px;width:49px;height:27px;border-top:2px solid #000;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:687px;top:103px;width:56px;height:27px;border-top:2px solid #000;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:743px;top:103px;width:82px;height:27px;border-top:2px solid #000;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:825px;top:103px;width:36px;height:27px;border-top:2px solid #000;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:861px;top:103px;width:59px;height:27px;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:103px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:130px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:130px;width:66px;height:27px;border-right:1.5px dotted #000;border-bottom:2px solid #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:336px;top:130px;width:68px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:404px;top:130px;width:45px;height:27px;border-bottom:2px solid #000;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:638px;top:130px;width:49px;height:27px;border-right:1.5px dotted #000;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:687px;top:130px;width:56px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:743px;top:130px;width:82px;height:27px;border-right:2px solid #000;border-bottom:2px solid #000;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:825px;top:130px;width:36px;height:27px;border-right:2px solid #000;"></div>
+            <div class="cb" style="left:861px;top:130px;width:59px;height:27px;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:130px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:157px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:157px;width:66px;height:27px;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:336px;top:157px;width:68px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:404px;top:157px;width:45px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:687px;top:157px;width:56px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:743px;top:157px;width:82px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:825px;top:157px;width:36px;height:27px;border-right:2px solid #000;"></div>
+            <div class="cb" style="left:861px;top:157px;width:59px;height:27px;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:157px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:184px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:184px;width:66px;height:27px;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:336px;top:184px;width:68px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:404px;top:184px;width:45px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:687px;top:184px;width:56px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:743px;top:184px;width:82px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:825px;top:184px;width:36px;height:27px;border-right:2px solid #000;"></div>
+            <div class="cb" style="left:861px;top:184px;width:59px;height:27px;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:184px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:211px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:211px;width:66px;height:27px;border-bottom:2px solid #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:336px;top:211px;width:68px;height:27px;border-right:1.5px dotted #000;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:404px;top:211px;width:45px;height:27px;border-bottom:2px solid #000;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:449px;top:211px;width:43px;height:27px;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:638px;top:211px;width:49px;height:27px;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:687px;top:211px;width:56px;height:27px;border-right:1.5px dotted #000;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:743px;top:211px;width:82px;height:27px;border-bottom:2px solid #000;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:825px;top:211px;width:36px;height:27px;border-right:2px solid #000;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:861px;top:211px;width:59px;height:27px;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:211px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:238px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:238px;width:66px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:492px;top:238px;width:45px;height:27px;border-top:2px solid #000;border-right:2px solid #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:537px;top:238px;width:59px;height:27px;border-top:2px solid #000;"></div>
+            <div class="cb" style="left:596px;top:238px;width:42px;height:27px;border-top:2px solid #000;border-right:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:238px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:265px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:265px;width:66px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:336px;top:265px;width:68px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:492px;top:265px;width:45px;height:27px;border-right:2px solid #000;border-bottom:1.5px dotted #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:537px;top:265px;width:59px;height:27px;border-bottom:1.5px dotted #000;"></div>
+            <div class="cb" style="left:596px;top:265px;width:42px;height:27px;border-right:2px solid #000;border-bottom:1.5px dotted #000;"></div>
+            <div class="cb" style="left:920px;top:265px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:292px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:292px;width:66px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:336px;top:292px;width:68px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:492px;top:292px;width:45px;height:27px;border-right:2px solid #000;border-bottom:1.5px dotted #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:537px;top:292px;width:59px;height:27px;border-bottom:1.5px dotted #000;"></div>
+            <div class="cb" style="left:596px;top:292px;width:42px;height:27px;border-right:2px solid #000;border-bottom:1.5px dotted #000;"></div>
+            <div class="cb" style="left:920px;top:292px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:319px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:319px;width:66px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:336px;top:319px;width:68px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:492px;top:319px;width:45px;height:27px;border-right:2px solid #000;border-bottom:2px solid #000;border-left:2px solid #000;"></div>
+            <div class="cb" style="left:537px;top:319px;width:59px;height:27px;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:596px;top:319px;width:42px;height:27px;border-right:2px solid #000;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:319px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:346px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:270px;top:346px;width:66px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:336px;top:346px;width:68px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:537px;top:346px;width:59px;height:27px;border-right:1.5px dotted #000;"></div>
+            <div class="cb" style="left:596px;top:346px;width:42px;height:27px;border-left:1.5px dotted #000;"></div>
+            <div class="cb" style="left:920px;top:346px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:373px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:920px;top:373px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:400px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:920px;top:400px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:427px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:38px;top:427px;width:59px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:97px;top:427px;width:60px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:157px;top:427px;width:55px;height:27px;border-top:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:212px;top:427px;width:58px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:920px;top:427px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:454px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:38px;top:454px;width:59px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:97px;top:454px;width:60px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:157px;top:454px;width:55px;height:27px;border-top:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:212px;top:454px;width:58px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:537px;top:454px;width:59px;height:27px;border-bottom:2px solid #000;"></div>
+            <div class="cb" style="left:920px;top:454px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:481px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:38px;top:481px;width:59px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:97px;top:481px;width:60px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:157px;top:481px;width:55px;height:27px;border-top:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:212px;top:481px;width:58px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:920px;top:481px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="cb" style="left:0px;top:508px;width:38px;height:27px;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:38px;top:508px;width:59px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:97px;top:508px;width:60px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;border-left:1px solid #000;"></div>
+            <div class="cb" style="left:157px;top:508px;width:55px;height:27px;border-top:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:212px;top:508px;width:58px;height:27px;border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;"></div>
+            <div class="cb" style="left:920px;top:508px;width:53px;height:27px;border-right:1px solid #000;"></div>
+            <div class="ct" style="left:40px;top:0px;height:22px;font-size:13px;">Coating Grading</div>
+            <div class="ct" style="left:40px;top:22px;height:27px;font-size:13px;font-weight:bold;">1</div>
+            <div class="ct" style="left:99px;top:22px;height:27px;font-size:13px;">GOOD</div>
+            <div class="ct" style="left:494px;top:22px;height:27px;font-size:13px;">Bulbows Bow</div>
+            <div class="ct" style="left:40px;top:49px;height:27px;font-size:13px;font-weight:bold;">2</div>
+            <div class="ct" style="left:99px;top:49px;height:27px;font-size:13px;">FAIR</div>
+            <div class="ct" style="left:40px;top:76px;height:27px;font-size:13px;font-weight:bold;">3</div>
+            <div class="ct" style="left:99px;top:76px;height:27px;font-size:13px;">POOR</div>
+            <div class="ct" style="left:539px;top:103px;height:27px;font-size:13px;">Fwd</div>
+            <div class="ct" style="left:272px;top:130px;height:27px;font-size:13px;">Upper</div>
+            <div class="ct" style="left:406px;top:130px;height:27px;font-size:13px;">Lower</div>
+            <div class="ct" style="left:640px;top:130px;height:27px;font-size:13px;">Lower</div>
+            <div class="ct" style="left:745px;top:130px;height:27px;font-size:13px;">Upper</div>
+            <div class="ct" style="left:99px;top:157px;height:27px;font-size:13px;">Port Side Shell</div>
+            <div class="ct" style="left:863px;top:157px;height:27px;font-size:13px;">Stbd Side</div>
+            <div class="ct" style="left:863px;top:184px;height:27px;font-size:13px;">Shell</div>
+            <div class="ct" style="left:539px;top:211px;height:27px;font-size:13px;">Aft</div>
+            <div class="ct" style="left:494px;top:238px;height:27px;font-size:13px;">Lower</div>
+            <div class="ct" style="left:338px;top:265px;height:27px;font-size:13px;">Aft Bulkhead</div>
+            <div class="ct" style="left:494px;top:319px;height:27px;font-size:13px;">Upper</div>
+            <div class="ct" style="left:539px;top:346px;height:27px;font-size:13px;">Aft</div>
+            <div class="ct" style="left:40px;top:400px;height:27px;font-size:13px;">Condition Grading</div>
+            <div class="ct" style="left:640px;top:400px;height:27px;font-size:13px;">Tank Top / Deck Head</div>
+            <div class="ct" style="left:40px;top:427px;height:27px;font-size:13px;font-weight:bold;">1</div>
+            <div class="ct" style="left:99px;top:427px;height:27px;font-size:13px;">GOOD</div>
+            <div class="ct" style="left:40px;top:454px;height:27px;font-size:13px;font-weight:bold;">2</div>
+            <div class="ct" style="left:99px;top:454px;height:27px;font-size:13px;">FAIR</div>
+            <div class="ct" style="left:539px;top:454px;height:27px;font-size:13px;">Fwd</div>
+            <div class="ct" style="left:40px;top:481px;height:27px;font-size:13px;font-weight:bold;">3</div>
+            <div class="ct" style="left:99px;top:481px;height:27px;font-size:13px;">POOR</div>
+            <div class="ct" style="left:40px;top:508px;height:27px;font-size:13px;font-weight:bold;">NS</div>
+            <div class="ct" style="left:99px;top:508px;height:27px;font-size:13px;">NOT SEEN</div>
+            <select class="cg" data-cg="bb" aria-label="bulbows bow grade" style="left:537px;top:49px;width:59px;height:54px;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+            <select class="cg" data-cg="ud" aria-label="port side shell upper" style="left:270px;top:103px;width:66px;height:27px;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+            <select class="cg" data-cg="ud" aria-label="port side shell lower" style="left:404px;top:103px;width:45px;height:27px;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+            <select class="cg" data-cg="ud" aria-label="stbd side shell lower" style="left:638px;top:103px;width:49px;height:27px;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+            <select class="cg" data-cg="ud" aria-label="stbd side shell upper" style="left:743px;top:103px;width:82px;height:27px;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+            <select class="cg" data-cg="aft" aria-label="aft bulkhead grade" style="left:492px;top:265px;width:45px;height:54px;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+            <select class="cg" data-cg="low" aria-label="tank top / deck head grade" style="left:537px;top:373px;width:59px;height:81px;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+          </div>
   </div>
-
   <!-- STRUCTURE / FITTINGS (Excel rows 30-39) -->
   <div class="sf-wrap">
     <table class="tbl">
