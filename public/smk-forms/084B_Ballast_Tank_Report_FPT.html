@@ -120,13 +120,16 @@
     @page { size:A4 portrait; margin:10mm 10mm 5mm 15mm; }
   }
   @media screen and (max-width:768px) {
-    .info-grid, .footer-grid { grid-template-columns:1fr; }
+    .info-grid { grid-template-columns:1fr; }
     .diag-zone { grid-template-columns:1fr; }
     .rail { flex-direction:row; justify-content:flex-start; }
-    .sf-wrap { grid-template-columns:1fr; }
-    .footer-grid { gap:12px; }
+    /* STRUCTURE/FITTINGS & signatures stay HORIZONTAL (Excel parity):
+       they scroll sideways on narrow screens instead of stacking */
+    .sf-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .sf-wrap { grid-template-columns:1fr 1fr; gap:14px; min-width:640px; }
+    .footer-grid { gap:10px; }
+    .sig-item .label { font-size:11px; }
     .other-wrap { flex-direction:column; }
-    .xd-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   }
   .xd-wrap { overflow-x:auto; }
 
@@ -198,7 +201,8 @@
       <select class="cg" data-cg="low" aria-label="tank top deck head grade" style="left:59.560%;top:65.202%;width:6.923%;height:14.060%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
           </div>
   </div>
-  <!-- STRUCTURE / FITTINGS (Excel rows 30-39) -->
+  <!-- STRUCTURE / FITTINGS (Excel rows 30-39) — side by side, Excel parity -->
+  <div class="sf-scroll">
   <div class="sf-wrap">
     <table class="tbl">
       <tr><th>TANKS STRUCTURE</th><th style="width:56px;">GRADE</th></tr>
@@ -224,6 +228,7 @@
       <tr><td>&nbsp;</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td>&nbsp;</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
     </table>
+  </div>
   </div>
 
   <!-- OTHER | VALUE (Excel rows 41-44) -->
