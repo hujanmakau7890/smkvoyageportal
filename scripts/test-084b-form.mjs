@@ -15,10 +15,12 @@ assert.match(html, /#FFFF00/, 'grade yellow');
 assert.match(html, /#FF0000/, 'grade red');
 assert.match(html, /applyGradeCF/, 'CF logic');
 assert.doesNotMatch(html, /sel\.style\.color = (Y|R|GREEN)/, 'font must stay black; background carries color');
-// Diagram dropdowns = exact Excel validation ranges
+// Diagram dropdowns = exact Excel validation ranges (v4 rebuild)
 const cnt = (re) => (html.match(re) || []).length;
-assert.equal(cnt(/data-cg="bulk"/g), 3, 'bulbous bow 2 + aft bulkhead 1 = Excel L11:L12 + K19:M20');
-assert.equal(cnt(/data-cg="ud"/g), 4, 'port Upper/Lower + stbd Lower/Upper = Excel G13:J13 + N13:Q13');
+assert.equal(cnt(/data-cg="bb"/g), 1, 'Bulbows Bow = Excel L11:L12 single grade');
+assert.equal(cnt(/data-cg="ud"/g), 4, 'port Upper/Lower + stbd Lower/Upper = Excel G13,I13,N13,P13');
+assert.equal(cnt(/data-cg="aft"/g), 1, 'Aft Bulkhead = Excel K19:M20');
+assert.equal(cnt(/data-cg="low"/g), 1, 'lower box = Excel L23:L25');
 assert.equal(cnt(/data-cg="struct"/g), 9, 'structure grades H31:H39');
 assert.equal(cnt(/data-cg="fit"/g), 9, 'fittings grades Q31:R39');
 // Diagram content
