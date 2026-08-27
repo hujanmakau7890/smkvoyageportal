@@ -60,7 +60,85 @@ for(let i=1;i<=22;i++)row(i);add.onclick=()=>row();del.onclick=()=>{let r=b.quer
   }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
 </script>
     <script>
+        // === SUPABASE CONFIG ===
+        let SUPA_URL  = "";
+        let SUPA_KEY  = "";
         const FORM_CODE = "018";
+
+        async function supa(method, table, params, body) {
+            let url = `${SUPA_URL}/rest/v1/${table}`;
+            if (params) url += '?' + new URLSearchParams(params).toString();
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'apikey': SUPA_KEY,
+                    'Authorization': 'Bearer ' + SUPA_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+                },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(txt);
+            }
+            const txt = await res.text();
+            return txt ? JSON.parse(txt) : [];
+        }
+
+        // === LOAD FROM SUPABASE ===
+        async function loadFromSupabase() {
+            const vesselName = document.querySelector('.ship-select').value;
+            if (!vesselName) return;
+
+            // Clear first
+            const dateInput = document.querySelector('.date');
+            if (dateInput) dateInput.value = '';
+            const masterInput = document.querySelector('.nm');
+            if (masterInput) masterInput.value = '';
+            const noteInput = document.querySelector('.foot textarea');
+            if (noteInput) noteInput.value = '';
+            
+            const tbody = document.getElementById('rows');
+            // Reset to 22 rows if it was changed
+            tbody.innerHTML = '';
+            for(let i=1; i<=22; i++) row(i);
+            
+            try {
+                const rows = await supa('GET', 'smk_form_data', {
+                    'vessel_name': `eq.${vesselName}`,
+                    'form_code': `eq.${FORM_CODE}`,
+                    'select': 'form_data',
+                    'limit': 1
+                });
+                if (!rows || rows.length === 0) return;
+                const fd = rows[0].form_data;
+                if (!fd) return;
+
+                if (dateInput && fd.report_date) dateInput.value = fd.report_date;
+                if (masterInput && fd.master_name) masterInput.value = fd.master_name;
+                if (noteInput && fd.note) noteInput.value = fd.note;
+
+                if (fd.rows?.length) {
+                    tbody.innerHTML = '';
+                    for (let i = 0; i < fd.rows.length; i++) {
+                        row(i + 1);
+                        const r = fd.rows[i];
+                        if (!r) continue;
+                        const trs = tbody.querySelectorAll('tr');
+                        const tr = trs[trs.length - 1];
+                        const inputs = tr.querySelectorAll('input');
+                        for (let c = 0; c < 16; c++) {
+                            if (inputs[c] && r[`col${c}`] !== undefined) {
+                                inputs[c].value = r[`col${c}`];
+                            }
+                        }
+                        // Re-trigger color update for dates
+                        tr.querySelectorAll('.cert-date').forEach(inp => updateCertificateColor(inp));
+                    }
+                }
+            } catch(err) { console.error('Gagal load data:', err); }
+        }
 
         // === SAVE & PRINT ===
         async function aksiSimpanDanCetak() {
@@ -89,26 +167,57 @@ for(let i=1;i<=22;i++)row(i);add.onclick=()=>row();del.onclick=()=>{let r=b.quer
                 rowsData.push(rowObj);
             });
 
-                            btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
-                setTimeout(() => {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-
+            try {
+                if (SUPA_URL && SUPA_KEY) {
+                    await supa('POST', 'smk_form_data', null, {
+                        vessel_name: vesselName,
+                        form_code: FORM_CODE,
+                        form_data: {
+                            report_date: dateInput?.value || '',
+                            master_name: masterInput?.value || '',
+                            note: noteInput?.value || '',
+                            rows: rowsData
+                        },
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
+                setTimeout(() => { 
+                    btn.innerHTML = originalHtml; 
+                    btn.disabled = false; 
+                    const dateInput = document.querySelector('.date');
                     window.parent.postMessage({
                         type: 'SMK_SAVE_PDF',
                         name: document.title,
                         ship: vesselName,
-                        date: placeDate.split(',').pop().trim() || '', // rough date extraction
+                        date: dateInput ? dateInput.value : '',
                         formCode: FORM_CODE,
                         formTitle: document.title
                     }, '*');
                 }, 500);
+            } catch(err) {
+                console.error(err);
+                alert('Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false;
+                const dateInput = document.querySelector('.date');
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vesselName,
+                    date: dateInput ? dateInput.value : '',
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }
         }
 
         // === INIT DATA FROM REACT (terima dari React via postMessage) ===
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'INIT_FORM') {
-
+                SUPA_URL = e.data.supabaseUrl;
+                SUPA_KEY = e.data.supabaseKey;
+                
                 const sel = document.querySelector('.ship-select');
                 if (e.data.vessel) {
                     const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
@@ -118,7 +227,7 @@ for(let i=1;i<=22;i++)row(i);add.onclick=()=>row();del.onclick=()=>{let r=b.quer
                 }
                 if (e.data.locked) sel.disabled = true;
                 
-                
+                if (sel.value) loadFromSupabase();
             }
         });
 
