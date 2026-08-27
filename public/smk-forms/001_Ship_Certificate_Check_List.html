@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>001 Ship Certificate Check List</title>
-    <script src="https://cdn.tailwindcss.com">  // Print title: base + vessel + report month (from form fields)
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>  // Print title: base + vessel + report month (from form fields)
   (function(){try{
     var base=document.title;
     function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
@@ -503,9 +504,31 @@
 </script>
 
     <script>
-
-        
+        // === SUPABASE CONFIG ===
+        let SUPA_URL  = "";
+        let SUPA_KEY  = "";
         const FORM_CODE = "001";
+
+        async function supa(method, table, params, body) {
+            let url = `${SUPA_URL}/rest/v1/${table}`;
+            if (params) url += '?' + new URLSearchParams(params).toString();
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'apikey': SUPA_KEY,
+                    'Authorization': 'Bearer ' + SUPA_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+                },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(txt);
+            }
+            const txt = await res.text();
+            return txt ? JSON.parse(txt) : [];
+        }
 
         // === EXPIRY DATE CHECK ===
         function parseDateDDMMYYYY(s) {
@@ -536,6 +559,52 @@
             document.addEventListener(evt, e => { if (e.target?.tagName === 'INPUT') checkExpiryDates(); })
         );
 
+        // === LOAD FROM SUPABASE ===
+        async function loadFromSupabase() {
+            const vesselName = document.querySelector('.ship-select').value;
+            if (!vesselName) return;
+            
+            // CLEAR EXISTING FORM DATA FIRST
+            const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+            if (dateInput) dateInput.value = '';
+            const masterInput = document.querySelectorAll('input.border-b.border-black.text-center')[0];
+            if (masterInput) masterInput.value = '';
+            document.querySelectorAll('#cert-tbody input').forEach(inp => inp.value = '');
+            checkExpiryDates();
+            
+            try {
+                const rows = await supa('GET', 'smk_form_data', {
+                    'vessel_name': `eq.${vesselName}`,
+                    'form_code': `eq.${FORM_CODE}`,
+                    'select': 'form_data',
+                    'limit': 1
+                });
+                if (!rows || rows.length === 0) return;
+                const fd = rows[0].form_data;
+                if (!fd) return;
+
+                const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+                if (dateInput && fd.report_date) dateInput.value = fd.report_date;
+
+                const masterInput = document.querySelectorAll('input.border-b.border-black.text-center')[0];
+                if (masterInput && fd.master_name) masterInput.value = fd.master_name;
+
+                if (fd.rows?.length) {
+                    document.querySelectorAll('#cert-tbody tr').forEach((tr, i) => {
+                        const r = fd.rows[i]; if (!r) return;
+                        const inp = tr.querySelectorAll('input');
+                        if (inp[0]) inp[0].value = r.issued_place || '';
+                        if (inp[1]) inp[1].value = r.date_of_issued || '';
+                        if (inp[2]) inp[2].value = r.expired_date || '';
+                        if (inp[3]) inp[3].value = r.last_survey || '';
+                        if (inp[4]) inp[4].value = r.next_survey || '';
+                        if (inp[5]) inp[5].value = r.remarks || '';
+                    });
+                }
+                if (dateInput) dateInput.dispatchEvent(new Event('input'));
+                checkExpiryDates();
+            } catch(err) { console.error('Gagal load data:', err); }
+        }
 
         // === SAVE & PRINT ===
         async function aksiSimpanDanCetak() {
@@ -565,26 +634,56 @@
                 });
             });
 
-                            btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
-                setTimeout(() => {
-                    btn.innerHTML = originalHtml;
-                    btn.disabled = false;
-
+            try {
+                if (SUPA_URL && SUPA_KEY) {
+                    await supa('POST', 'smk_form_data', null, {
+                        vessel_name: vesselName,
+                        form_code: FORM_CODE,
+                        form_data: {
+                            report_date: dateInput?.value || '',
+                            master_name: masterInput?.value || '',
+                            rows: rowsData
+                        },
+                        updated_at: new Date().toISOString()
+                    });
+                }
+                btn.innerHTML = '✅ Berhasil! Membuat PDF...';
+                setTimeout(() => { 
+                    btn.innerHTML = originalHtml; 
+                    btn.disabled = false; 
+                    const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
                     window.parent.postMessage({
                         type: 'SMK_SAVE_PDF',
                         name: document.title,
                         ship: vesselName,
-                        date: placeDate.split(',').pop().trim() || '', // rough date extraction
+                        date: dateInput ? dateInput.value : '',
                         formCode: FORM_CODE,
                         formTitle: document.title
                     }, '*');
                 }, 500);
+            } catch(err) {
+                console.error(err);
+                alert('Peringatan: Gagal menyimpan data ke database (' + err.message + '). PDF tetap akan dibuat.');
+                btn.innerHTML = originalHtml; 
+                btn.disabled = false;
+                const dateInput = document.querySelector('input[placeholder="DD-MM-YYYY"]');
+                window.parent.postMessage({
+                    type: 'SMK_SAVE_PDF',
+                    name: document.title,
+                    ship: vesselName,
+                    date: dateInput ? dateInput.value : '',
+                    formCode: FORM_CODE,
+                    formTitle: document.title
+                }, '*');
+            }
         }
 
         // === INIT DATA FROM REACT (terima dari React via postMessage) ===
         window.addEventListener('message', function(e) {
             if (e.data && e.data.type === 'INIT_FORM') {
-
+                SUPA_URL = e.data.supabaseUrl;
+                SUPA_KEY = e.data.supabaseKey;
+                
                 const sel = document.querySelector('.ship-select');
                 if (e.data.vessel) {
                     const vLower = (e.data.vessel || '').toLowerCase().replace(/_/g,' ');
@@ -594,7 +693,7 @@
                 }
                 if (e.data.locked) sel.disabled = true;
                 
-                
+                if (sel.value) loadFromSupabase();
             }
         });
 
