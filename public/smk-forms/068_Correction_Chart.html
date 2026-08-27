@@ -81,7 +81,7 @@
 <body>
 <div class="container" id="form-container">
   <div class="tools no-print">
-    <button class="btn" onclick="savePDF()">&#128196; Print / Simpan PDF</button>
+    <button class="btn" id="btn-print" onclick="aksiSimpanDanCetak()">&#128196; Print / Simpan PDF</button>
   </div>
   <div class="page" id="pdf-content">
     
@@ -98,7 +98,7 @@
     
     <div class="info-row">
       <div class="item"><label>MV / Nama Kapal :</label>
-        <select id="vessel">
+        <select id="vessel" class="ship-select">
           <option value="">Pilih Kapal</option>
           <option value="Sahabat Mas">Sahabat Mas</option>
           <option value="Semangat Mas">Semangat Mas</option>
@@ -529,6 +529,152 @@
     };
     html2pdf().set(opt).from(el).save();
   }
+
+  // === SUPABASE CONFIG ===
+  let SUPA_URL = "";
+  let SUPA_KEY = "";
+  const FORM_CODE = "068";
+
+  async function supa(method, table, params, body) {
+    let url = `${SUPA_URL}/rest/v1/${table}`;
+    if (params) url += '?' + new URLSearchParams(params).toString();
+    const res = await fetch(url, {
+      method,
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if (!res.ok) { const txt = await res.text(); throw new Error(txt); }
+    const txt = await res.text();
+    return txt ? JSON.parse(txt) : [];
+  }
+
+  // === LOAD FROM SUPABASE ===
+  async function loadFromSupabase() {
+    const vesselName = document.getElementById('vessel').value;
+    if (!vesselName) return;
+    const dateEl = document.getElementById('date');
+    const savedDate = dateEl ? dateEl.value : '';
+    // clear table inputs but keep structure — refill from DB if exists
+    const tbody = document.querySelector('#main-table tbody');
+    try {
+      const rows = await supa('GET', 'smk_form_data', {
+        'vessel_name': `eq.${vesselName}`,
+        'form_code': `eq.${FORM_CODE}`,
+        'select': 'form_data',
+        'limit': 1
+      });
+      if (!rows || rows.length === 0) return;
+      const fd = rows[0].form_data;
+      if (!fd) return;
+      if (dateEl && fd.report_date) dateEl.value = fd.report_date;
+      if (fd.rows && fd.rows.length) {
+        // ensure enough rows
+        while (tbody.querySelectorAll('tr').length < fd.rows.length) addRow('main-table');
+        const trs = tbody.querySelectorAll('tr');
+        trs.forEach((tr, i) => {
+          const r = fd.rows[i];
+          if (!r) return;
+          const inputs = tr.querySelectorAll('input');
+          // order: NO BPI/NTM, Received Date, Correction Date, Indo Chart, British Chart, Paraf 2nd, Signed Master
+          if (inputs[0]) inputs[0].value = r.bpi_no || '';
+          if (inputs[1]) inputs[1].value = r.received_date || '';
+          if (inputs[2]) inputs[2].value = r.correction_date || '';
+          if (inputs[3]) inputs[3].value = r.indo_chart || '';
+          if (inputs[4]) inputs[4].value = r.british_chart || '';
+          if (inputs[5]) inputs[5].value = r.paraf_2nd || '';
+          if (inputs[6]) inputs[6].value = r.signed_master || '';
+        });
+      }
+    } catch(err) { console.error('Gagal load 068:', err); }
+  }
+
+  // === SAVE & PRINT ===
+  async function aksiSimpanDanCetak() {
+    const vesselName = document.getElementById('vessel').value;
+    if (!vesselName) { alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); return; }
+    const btn = document.getElementById('btn-print');
+    const originalHtml = btn ? btn.innerHTML : '';
+    if (btn) { btn.innerHTML = '\u23F3 Menyimpan Data...'; btn.disabled = true; }
+    const dateEl = document.getElementById('date');
+    const rowsData = [];
+    document.querySelectorAll('#main-table tbody tr').forEach(tr => {
+      const inp = tr.querySelectorAll('input');
+      rowsData.push({
+        bpi_no: inp[0] ? inp[0].value : '',
+        received_date: inp[1] ? inp[1].value : '',
+        correction_date: inp[2] ? inp[2].value : '',
+        indo_chart: inp[3] ? inp[3].value : '',
+        british_chart: inp[4] ? inp[4].value : '',
+        paraf_2nd: inp[5] ? inp[5].value : '',
+        signed_master: inp[6] ? inp[6].value : ''
+      });
+    });
+    try {
+      if (SUPA_URL && SUPA_KEY) {
+        await supa('POST', 'smk_form_data', null, {
+          vessel_name: vesselName,
+          form_code: FORM_CODE,
+          form_data: { report_date: dateEl ? dateEl.value : '', rows: rowsData },
+          updated_at: new Date().toISOString()
+        });
+      }
+      if (btn) btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
+      setTimeout(() => {
+        if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+        const d = dateEl ? dateEl.value : '';
+        window.parent.postMessage({ type: 'SMK_SAVE_PDF', name: document.title, ship: vesselName, date: d, formCode: FORM_CODE, formTitle: document.title }, '*');
+        // fallback: if not in iframe, also do direct html2pdf
+        if (window.parent === window) savePDF();
+      }, 500);
+    } catch(err) {
+      console.error(err);
+      alert('Peringatan: Gagal menyimpan ke database (' + err.message + '). PDF tetap akan dibuat.');
+      if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+      const d = dateEl ? dateEl.value : '';
+      window.parent.postMessage({ type: 'SMK_SAVE_PDF', name: document.title, ship: vesselName, date: d, formCode: FORM_CODE, formTitle: document.title }, '*');
+      if (window.parent === window) savePDF();
+    }
+  }
+
+  // === INIT DATA FROM REACT ===
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'INIT_FORM') {
+      SUPA_URL = e.data.supabaseUrl || '';
+      SUPA_KEY = e.data.supabaseKey || '';
+      const sel = document.getElementById('vessel');
+      if (e.data.vessel && sel) {
+        const vLower = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
+        Array.from(sel.options).forEach(opt => { if (opt.value.toLowerCase().replace(/_/g,' ') === vLower) sel.value = opt.value; });
+      }
+      if (e.data.locked && sel) sel.disabled = true;
+      if (sel && sel.value) loadFromSupabase();
+    }
+  });
+  document.getElementById('vessel').addEventListener('change', loadFromSupabase);
+
+  // Print title: base + vessel + report month
+  (function(){try{
+    var base=document.title;
+    function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
+    function findVessel(){ return document.getElementById('vessel'); }
+    function findDate(){ return document.getElementById('date'); }
+    function monthName(mm){return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][mm-1]||''}
+    function updateTitle(){
+      var v=findVessel(),d=findDate();
+      var vs=v?esc(v.value):'';var ds=d?esc(d.value):'';
+      var t=base; if(vs)t+=' - '+vs;
+      if(ds){var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/); if(m){var mo=parseInt(m[2],10),yr=m[3]; if(mo>=1&&mo<=12)t+=' - '+monthName(mo)+' '+yr}else t+=' - '+ds}
+      document.title=t; window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}
+    var v=findVessel(),d=findDate();
+    if(v){v.addEventListener('change',updateTitle);v.addEventListener('input',updateTitle)}
+    if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
+    updateTitle();
+  }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
 </script>
 </body>
 </html>
