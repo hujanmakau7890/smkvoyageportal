@@ -939,9 +939,6 @@ export default function SMKRekap(){
 
   const total=data.length, done=data.filter(d=>d.status==="C").length;
   const pctAll=total?Math.round(done/total*100):0;
-  const curM=new Date().getMonth()+1;
-  const curMD=data.filter(d=>d.month===curM);
-  const curPct=curMD.length?Math.round(curMD.filter(d=>d.status==="C").length/curMD.length*100):0;
 
   const handleToggle=useCallback(async ({vessel,code,month})=>{
     const row = data.find(r=>r.vessel===vessel && r.form_code===code && r.month===month);
@@ -1001,7 +998,7 @@ export default function SMKRekap(){
             {l:"Progress",   v:`${pctAll}%`,  c:"#34d399"},
             {l:"Selesai",    v:done,           c:"#60a5fa"},
             {l:"Pending",    v:total-done,     c:"#fb923c"},
-            {l:`Bln ${MO[curM-1]}`, v:`${curPct}%`, c:"#a78bfa"},
+
           ].map(s=>(
             <div key={s.l} style={{textAlign:"center"}}>
               <div style={{fontSize:22,fontWeight:800,color:s.c,lineHeight:1}}>{s.v}</div>
