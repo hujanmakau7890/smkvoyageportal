@@ -851,24 +851,20 @@ export default function SMKRekap(){
   const [siVessels, setSiVessels] = useState([]);
 
   const fetchData=useCallback(async ()=>{
-    // PostgREST caps at 1000 rows/req, paginate to get all
-    let all=[];
-    let page=0,sz=1000,hasMore=true;
-    while(hasMore){
-      const {data:pageData,error:err}=await supabase
-        .from('smk_rekap')
-        .select('*')
-        .eq('year',year)
-        .range(page*sz,(page+1)*sz-1);
-      if(err){ setError(err.message); break; }
-      if(pageData?.length){ all=[...all,...pageData]; page++; }
-      else hasMore=false;
-    }
-    if(all.length>0){
+    // 10k max rows (self-hosted, .env PGRST_DB_MAX_ROWS=10000) → cukup 1× fetch
+    const {data:all,error:err}=await supabase
+      .from('smk_rekap')
+      .select('*')
+      .eq('year',year)
+      .limit(10000);
+    if(err){ setError(err.message); setLoading(false); return; }
+    if(all?.length){
       setData(all.map(r=>({...r, code: r.form_code})));
       const max=Math.max(...all.map(r=>new Date(r.updated_at||0).getTime()));
       setLastUpd(max>0 ? new Date(max) : null);
       setError(null);
+    } else {
+      setData([]);
     }
     setLoading(false);
   },[year]);
