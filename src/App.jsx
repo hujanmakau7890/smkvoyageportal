@@ -5843,34 +5843,29 @@ export default function App() {
     } catch (err) { console.error("Error loading cons_me:", err); }
   };
 
+  // Opsi A: dashboard ringan — select kolom ringan saja (tanpa events/tanks/cargo_rows JSON gede)
+  // Full detail (events/tanks) hanya load saat Edit/View via loadReportById
+  const REPORT_LIGHT_COLS = "id,ship,voy,type,ts,master,port,rmk,dist_go,eta_dest,tug,ttl_dist,steam,avg_spd,manouvr_dist,lat,t0,t1,user_id";
+  const loadReportById = async (id) => {
+    const { data, error } = await supabase.from('reports').select('*').eq('id', id).single();
+    if (error) throw error;
+    const r = data;
+    const events = r.events ? (typeof r.events === 'string' ? JSON.parse(r.events) : r.events) : {};
+    const tanks = r.tanks ? (typeof r.tanks === 'string' ? JSON.parse(r.tanks) : r.tanks) : {};
+    const flatTanks = {};
+    Object.entries(tanks).forEach(([key, val]) => {
+      if (key.startsWith("tk_") && val && typeof val === "object") {
+        Object.entries(val).forEach(([phaseKey, phaseVal]) => { flatTanks[`${key}_${phaseKey}`] = phaseVal; });
+      } else { flatTanks[key] = val; }
+    });
+    return { ...r, cargoRows: r.cargo_rows ? (typeof r.cargo_rows === 'string' ? JSON.parse(r.cargo_rows) : r.cargo_rows) : [], ...events, ...flatTanks };
+  };
   const loadReports = async () => {
     try {
-      const { data, error } = await supabase.from('reports').select('*').order('ts', { ascending: false });
+      const { data, error } = await supabase.from('reports').select(REPORT_LIGHT_COLS).order('ts', { ascending: false }).limit(10000);
       if (error) throw error;
-      // Parse cargo_rows, events, tanks from JSON strings and flatten them
-      // back into the same flat tk_<tank>_<phase> / bk_<tank> / rob_<tank>
-      // keys the rest of the app (TankSection, buildWA, fuel calculations,
-      // etc.) expects directly on the report object.
-      const transformed = (data || []).map(r => {
-        const events = r.events ? (typeof r.events === 'string' ? JSON.parse(r.events) : r.events) : {};
-        const tanks = r.tanks ? (typeof r.tanks === 'string' ? JSON.parse(r.tanks) : r.tanks) : {};
-        const flatTanks = {};
-        Object.entries(tanks).forEach(([key, val]) => {
-          if (key.startsWith("tk_") && val && typeof val === "object") {
-            Object.entries(val).forEach(([phaseKey, phaseVal]) => {
-              flatTanks[`${key}_${phaseKey}`] = phaseVal;
-            });
-          } else {
-            flatTanks[key] = val;
-          }
-        });
-        return {
-          ...r,
-          cargoRows: r.cargo_rows ? (typeof r.cargo_rows === 'string' ? JSON.parse(r.cargo_rows) : r.cargo_rows) : [],
-          ...events,
-          ...flatTanks,
-        };
-      });
+      // Light: tanpa JSON berat, langsung pakai row ringan untuk dashboard/log/mgmt
+      const transformed = (data || []).map(r => ({ ...r, cargoRows: [] }));
       setReports(transformed);
     } catch (err) { console.error("Error loading reports:", err); }
   };
