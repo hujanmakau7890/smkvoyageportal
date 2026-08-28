@@ -57,6 +57,7 @@ const PIC_RULES = {
   CE:     f => f.dept === "Engine",
   "2E":   f => f.pic === "2E",
 };
+const normCode = c => (c||"").replace(/[\s-]/g,"").toUpperCase();
 
 function sched(ket) {
   switch(ket){
@@ -94,24 +95,26 @@ function buildData(year) {
 
 function calcPIC(rows, picMonth, vessel) {
   const out={};
+  const lookupNorm={};
+  rows.forEach(r=>{
+    const k=normCode(r.code||r.form_code||"");
+    if(!lookupNorm[k]) lookupNorm[k]={};
+    if(r.status==="C" || lookupNorm[k][r.month]==null) lookupNorm[k][r.month]=r.status;
+  });
   Object.entries(PIC_RULES).forEach(([role,rule])=>{
     const matchedForms = FORMS.filter(f => (!f.exclude || !f.exclude.includes(vessel)) && rule(f));
-    const codes = matchedForms.map(f=>f.code);
-    
     let expectedTotal = 0;
     matchedForms.forEach(f => {
       const scheduleArray = sched(f.ket);
-      if (picMonth === "Semua") {
-        expectedTotal += scheduleArray.reduce((sum, val) => sum + val, 0);
-      } else {
-        const monthIndex = Number(picMonth) - 1;
-        expectedTotal += scheduleArray[monthIndex];
-      }
+      if (picMonth === "Semua") expectedTotal += scheduleArray.reduce((a,b)=>a+b,0);
+      else expectedTotal += scheduleArray[Number(picMonth)-1];
     });
-
-    const sub = rows.filter(r=>codes.includes(r.code) && r.status === "C");
-    const done = sub.length;
-    
+    let done=0;
+    matchedForms.forEach(f=>{
+      const k=normCode(f.code); const s=sched(f.ket);
+      if(picMonth==="Semua") s.forEach((a,mi)=>{ if(a && lookupNorm[k]?.[mi+1]==="C") done++; });
+      else { const mi=Number(picMonth)-1; if(s[mi] && lookupNorm[k]?.[mi+1]==="C") done++; }
+    });
     out[role]={done,total:expectedTotal,pct:expectedTotal?Math.round(done/expectedTotal*100):0};
   });
   return out;
@@ -176,28 +179,36 @@ function VesselTable({vessel,data,isAdmin,onToggle}){
   const [picMonth, setPicMonth] = useState(new Date().getMonth() + 1);
   const vRows=data.filter(d=>d.vessel===vessel);
   const lookup={};
-  vRows.forEach(r=>{if(!lookup[r.code])lookup[r.code]={};lookup[r.code][r.month]=r.status;});
+  const lookupNorm={};
+  vRows.forEach(r=>{
+    const code = r.code || r.form_code || "";
+    if(!lookup[code]) lookup[code]={};
+    lookup[code][r.month]=r.status;
+    const k=normCode(code);
+    if(!lookupNorm[k]) lookupNorm[k]={};
+    if(r.status==="C" || lookupNorm[k][r.month]==null) lookupNorm[k][r.month]=r.status;
+  });
   const vesselForms = FORMS.filter(f => !f.exclude || !f.exclude.includes(vessel));
   const forms=deptF==="Semua"?vesselForms:vesselForms.filter(f=>f.dept===deptF);
-  
-  const mRows = picMonth === "Semua" ? vRows : vRows.filter(r => r.month === Number(picMonth));
   let expectedFormTotal = 0;
   forms.forEach(f => {
     const s = sched(f.ket);
-    if (picMonth === "Semua") {
-      expectedFormTotal += s.reduce((sum, val) => sum + val, 0);
-    } else {
-      expectedFormTotal += s[Number(picMonth) - 1];
-    }
+    if (picMonth === "Semua") expectedFormTotal += s.reduce((a,b)=>a+b,0);
+    else expectedFormTotal += s[Number(picMonth)-1];
   });
-  const validCodes = forms.map(f => f.code);
-  const done = mRows.filter(r => r.status === "C" && validCodes.includes(r.code)).length;
+  let done = 0;
+  forms.forEach(f=>{
+    const k=normCode(f.code); const s=sched(f.ket);
+    if(picMonth==="Semua") s.forEach((a,mi)=>{ if(a && lookupNorm[k]?.[mi+1]==="C") done++; });
+    else { const mi=Number(picMonth)-1; if(s[mi] && lookupNorm[k]?.[mi+1]==="C") done++; }
+  });
   const total = expectedFormTotal;
   const pct=total?Math.round(done/total*100):0;
-  
   const mStats=MO.map((_,mi)=>{
-    const m=mi+1,md=vRows.filter(r=>r.month===m),d=md.filter(r=>r.status==="C").length;
-    return{total:md.length,done:d,pct:md.length?Math.round(d/md.length*100):null};
+    const m=mi+1;
+    const expected = forms.filter(f=>sched(f.ket)[mi]).length;
+    const d = forms.filter(f=>sched(f.ket)[mi] && lookupNorm[normCode(f.code)]?.[m]==="C").length;
+    return{total:expected,done:d,pct:expected?Math.round(d/expected*100):null};
   });
   return <div>
     <div style={{background:"#1e3a5f",color:"#fff",padding:"14px 20px"}}>
@@ -262,7 +273,8 @@ function VesselTable({vessel,data,isAdmin,onToggle}){
               <td style={{...TD,textAlign:"center",color:"#9ca3af"}}>{f.ket}</td>
               {MO.map((_,mi)=>{
                 if(!sc2[mi]) return <td key={mi} style={{...TD,textAlign:"center",background:"#fce7f3",color:"#dc2626",fontWeight:700}}>X</td>;
-                return <Cell key={mi} status={lookup[f.code]?.[mi+1]||""} isAdmin={isAdmin} vessel={vessel} code={f.code} month={mi+1} onToggle={onToggle}/>;
+                const st = lookup[f.code]?.[mi+1] || lookupNorm[normCode(f.code)]?.[mi+1] || "";
+                return <Cell key={mi} status={st} isAdmin={isAdmin} vessel={vessel} code={f.code} month={mi+1} onToggle={onToggle}/>;
               })}
             </tr>;
           })}
@@ -277,27 +289,32 @@ function SummaryView({data}){
   const [summaryMonth, setSummaryMonth] = useState(new Date().getMonth() + 1);
   const stats=VESSELS.map(v=>{
     const vRows=data.filter(d=>d.vessel===v);
-    
     const vesselForms = FORMS.filter(f => !f.exclude || !f.exclude.includes(v));
+    const lookupNorm={};
+    vRows.forEach(r=>{
+      const k=normCode(r.code||r.form_code||"");
+      if(!lookupNorm[k]) lookupNorm[k]={};
+      if(r.status==="C" || lookupNorm[k][r.month]==null) lookupNorm[k][r.month]=r.status;
+    });
     let expectedFormTotal = 0;
     vesselForms.forEach(f => {
       const s = sched(f.ket);
-      if (summaryMonth === "Semua") {
-        expectedFormTotal += s.reduce((sum, val) => sum + val, 0);
-      } else {
-        expectedFormTotal += s[Number(summaryMonth) - 1];
-      }
+      if (summaryMonth === "Semua") expectedFormTotal += s.reduce((a,b)=>a+b,0);
+      else expectedFormTotal += s[Number(summaryMonth)-1];
     });
-    
-    const mRows = summaryMonth === "Semua" ? vRows : vRows.filter(r => r.month === Number(summaryMonth));
-    const validCodes = vesselForms.map(f => f.code);
-    const done = mRows.filter(r => r.status === "C" && validCodes.includes(r.code)).length;
+    let done=0;
+    vesselForms.forEach(f=>{
+      const k=normCode(f.code); const s=sched(f.ket);
+      if(summaryMonth==="Semua") s.forEach((a,mi)=>{ if(a && lookupNorm[k]?.[mi+1]==="C") done++; });
+      else { const mi=Number(summaryMonth)-1; if(s[mi] && lookupNorm[k]?.[mi+1]==="C") done++; }
+    });
     const total = expectedFormTotal;
     const pct = total ? Math.round(done/total*100) : 0;
-    
     const months=MO.map((_,mi)=>{
-      const m=mi+1,md=vRows.filter(r=>r.month===m),d=md.filter(r=>r.status==="C").length;
-      return{total:md.length,done:d,pct:md.length?Math.round(d/md.length*100):null};
+      const m=mi+1;
+      const expected = vesselForms.filter(f=>sched(f.ket)[mi]).length;
+      const d = vesselForms.filter(f=>sched(f.ket)[mi] && lookupNorm[normCode(f.code)]?.[m]==="C").length;
+      return{total:expected,done:d,pct:expected?Math.round(d/expected*100):null};
     });
     return{vessel:v,total,done,pct,months,picScores:calcPIC(mRows, summaryMonth, v)};
   });
