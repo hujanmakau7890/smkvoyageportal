@@ -105,18 +105,21 @@
   .hidden { display:none !important; }
 
   @media print {
+    .xd-wrap { overflow: visible !important; }
+    .dz img.sheet { display: block; width: 100%; height: auto; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background:#fff; }
     .tools, .no-print { display:none !important; }
     .page { box-shadow:none; margin:0; padding:0; max-width:none; }
     input::placeholder, textarea::placeholder { color:transparent !important; }
     select { appearance:none !important; -webkit-appearance:none !important; }
     .xd-wrap { overflow:visible !important; }
-    .dz { zoom:0.66; }
+    .dz { position: relative; width: 100%; max-width: 1000px; margin: 20px auto; }
     select.cg { position:absolute; z-index:5; opacity:0; border:0; background:rgba(255,255,255,0.55);
                 font:inherit; color:#000; text-align:center; }
     select.cg:focus { outline:1px dashed #4F81BD; opacity:1; background:rgba(255,255,255,0.92); }
     select.cf-on { opacity:1 !important; background:transparent; border:0; font-weight:bold; text-align:center; }
-    .dz img.sheet { position:absolute; inset:0; width:100%; height:100%; display:block; }
+    .dz img.sheet { display: block; width: 100%; height: auto; }
     @page { size:A4 portrait; margin:10mm 10mm 5mm 15mm; }
   }
   @media screen and (max-width:768px) {
@@ -135,7 +138,7 @@
 
   /* ===== DIAGRAM ZONE v5 : absolute geometry measured from the xlsx ===== */
   .xd-wrap { overflow-x:auto; margin-bottom:14px; }
-  .dz { position:relative; margin:0 auto; }
+  .dz { position: relative; width: 100%; max-width: 1000px; margin: 20px auto; }
   .dz svg.art { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
   .dz .cf { position:absolute; z-index:0; }
   .dz .cb { position:absolute; z-index:2; }
@@ -186,20 +189,32 @@
     <div class="item"><label>Date Report</label><input type="text" id="date_report" class="date-mask" placeholder="DD-MM-YYYY"></div>
   </div>
 
-  <!-- ==================== DIAGRAM ZONE (absolute px from Excel) ==================== -->
-  <div class="xd-wrap">
-    <div class="dz" style="width:910px;height:569px;">
-      <img class="sheet" src="assets/084B_diagram.png" alt="Diagram Fore Peak Tank (citra asli Excel)">
-      <select class="cg" data-cg="bb" aria-label="bulbows bow grade" style="left:59.670%;top:9.490%;width:6.703%;height:8.963%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="ud" aria-label="port side shell upper" style="left:28.242%;top:18.805%;width:14.725%;height:4.394%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="ud" aria-label="port side shell lower" style="left:42.967%;top:18.805%;width:11.319%;height:4.394%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="ud" aria-label="stbd side shell lower" style="left:71.319%;top:18.805%;width:11.538%;height:4.394%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="ud" aria-label="stbd side shell upper" style="left:82.857%;top:18.805%;width:14.726%;height:4.394%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="l14" aria-label="fore peak centreline column grade" style="left:59.560%;top:23.199%;width:6.923%;height:14.060%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="aft" aria-label="aft bulkhead upper" style="left:54.505%;top:46.573%;width:16.703%;height:4.745%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="aft" aria-label="aft bulkhead lower" style="left:54.505%;top:51.318%;width:16.703%;height:4.745%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="low" aria-label="tank top deck head grade" style="left:59.560%;top:65.202%;width:6.923%;height:14.060%;"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-          </div>
+  <!-- ==================== DIAGRAM : IMAGE OVERLAY ==================== -->
+  <style>
+      .dz { position: relative; width: 100%; max-width: 1000px; margin: 20px auto; }
+      .dz img.sheet { display: block; width: 100%; height: auto; }
+      select.cg { 
+          position: absolute; z-index: 5; opacity: 0; border: 0; background: rgba(255,255,255,0.55);
+          font: inherit; color: #000; text-align: center; font-weight: bold; cursor: pointer;
+      }
+      select.cg:hover { opacity: 0.3; border: 1px dashed #000; }
+      select.cg:focus { outline: 2px dashed #4F81BD; opacity: 1; background: rgba(255,255,255,0.92); z-index: 10; }
+      select.cf-on { opacity: 1 !important; background: transparent; border: 0; font-weight: bold; text-align: center; }
+      select.cf-on:hover { opacity: 0.8 !important; border: 1px dashed #000; }
+  </style>
+  <div class="xd-wrap" style="overflow-x:auto; margin-bottom: 20px;">
+    <div class="dz">
+      <img class="sheet" src="../images/084B_Ballast_Tank_Report_FPT.png" alt="Diagram FPT">
+      <select class="cg" data-cg="bb" title="Bulbous Bow" style="left:55.90%;top:9.79%;width:6.10%;height:8.90%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="ud" title="Port Side Shell - Upper" style="left:27.40%;top:19.40%;width:11.80%;height:4.27%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="ud" title="Port Side Shell - Lower" style="left:39.20%;top:19.40%;width:11.80%;height:4.27%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="ud" title="Stbd Side Shell - Lower" style="left:66.50%;top:19.40%;width:11.90%;height:4.27%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="ud" title="Stbd Side Shell - Upper" style="left:78.40%;top:19.40%;width:11.90%;height:4.27%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="l14" title="Fwd Transfer Bulkhead" style="left:55.80%;top:23.84%;width:6.30%;height:14.06%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="aft" title="Aft Bulkhead - Lower" style="left:51.20%;top:47.33%;width:15.20%;height:4.80%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="aft" title="Aft Bulkhead - Upper" style="left:51.20%;top:52.14%;width:15.20%;height:4.80%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="low" title="Tank Top / Deck Head" style="left:55.80%;top:66.37%;width:6.30%;height:14.06%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+    </div>
   </div>
   <!-- STRUCTURE / FITTINGS (Excel rows 30-39) — side by side, Excel parity -->
   <div class="sf-scroll">
@@ -337,6 +352,7 @@ Actions:</label>
     const bg = cfStyle(sel);
     sel.classList.toggle('cf-on', !!bg);
     sel.style.background = bg;
+    sel.classList.toggle("cf-on", bg !== "");
 
     var v = sel.value;
     if (v === '1')      sel.style.background = GREEN;

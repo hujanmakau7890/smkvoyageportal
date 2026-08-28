@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>084C - Ballast Tank Condition Report (Void)</title>
+<title>084F - Cargo Hold Condition Report</title>
 <style>
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:#e5e7eb; font-family:Arial, sans-serif; color:#111; font-size:13px; }
@@ -142,7 +142,7 @@
   <div class="head">
     <div class="top">
       <div class="company">PT Mentari Mas Multimoda</div>
-      <div class="title">084-C&ensp;&mdash;&ensp;Ballast Tank Condition Report (Void)</div>
+      <div class="title">084-F&ensp;&mdash;&ensp;Cargo Hold Condition Report</div>
       <div class="st">
         <div class="code"><span>CS</span><span>SMT</span></div>
       </div>
@@ -163,7 +163,7 @@
       <option>Selaras Mas</option>
       <option>Sahabat Mas</option>
     </select></div>
-    <div class="item"><label>Tank No</label><input type="text" id="tank_no"></div>
+    <div class="item"><label>Hatch</label><input type="text" id="tank_no"></div>
     <div class="item"><label>Date Inspec</label><input type="text" id="date" class="date-mask" placeholder="DD-MM-YYYY"></div>
     <div class="item"><label>Date Report</label><input type="text" id="date_report" class="date-mask" placeholder="DD-MM-YYYY"></div>
   </div>
@@ -176,7 +176,8 @@
     <span class="chip"><i class="sw"></i>&nbsp;NS&nbsp;=&nbsp;NOT SEEN</span>
   </div>
 
-      <!-- ==================== DIAGRAM : IMAGE OVERLAY ==================== -->
+        
+              <!-- ==================== DIAGRAM : IMAGE OVERLAY ==================== -->
   <style>
       .dz { position: relative; width: 100%; max-width: 1000px; margin: 20px auto; }
       .dz img.sheet { display: block; width: 100%; height: auto; }
@@ -191,75 +192,58 @@
   </style>
   <div class="xd-wrap" style="overflow-x:auto; margin-bottom: 20px;">
     <div class="dz">
-      <img class="sheet" src="../images/084C_Ballast_Tank_Report_Void.png" alt="Diagram Void Tank">
-      <select class="cg" data-cg="struct" title="Tank Top / Deck Head" style="left:42.40%;top:2.42%;width:12.90%;height:5.93%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="bulk" title="Fwd Transfer Bulkhead - Upper" style="left:42.30%;top:21.10%;width:5.00%;height:12.31%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="bulk" title="Fwd Transfer Bulkhead - Lower" style="left:42.30%;top:33.41%;width:5.00%;height:12.31%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="struct" title="Port Longitudinal - Upper" style="left:20.40%;top:45.93%;width:12.10%;height:5.93%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="struct" title="Port Longitudinal - Lower" style="left:32.70%;top:45.93%;width:9.50%;height:5.93%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="struct" title="Hold Bottom" style="left:42.40%;top:45.93%;width:12.90%;height:5.93%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="struct" title="Stbd Longitudinal - Lower" style="left:55.50%;top:45.93%;width:15.10%;height:5.93%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="struct" title="Stbd Longitudinal - Upper" style="left:70.80%;top:45.93%;width:13.50%;height:5.93%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="bulk" title="Aft Transfer Bulkhead - Lower" style="left:42.40%;top:76.92%;width:4.90%;height:11.54%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select class="cg" data-cg="bulk" title="Aft Transfer Bulkhead - Upper" style="left:42.40%;top:88.46%;width:4.90%;height:11.54%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <img class="sheet" src="../images/084F_Cargo_Hold_Inspection_Report.png" alt="Diagram Cargo Hold">
+      <select class="cg" data-cg="struct" title="Hatch Cover" style="left:39.80%;top:4.57%;width:13.40%;height:4.25%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Fwd Transfer Bulkhead - Upper" style="left:39.80%;top:18.43%;width:5.10%;height:9.13%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Fwd Transfer Bulkhead - Lower" style="left:39.80%;top:27.56%;width:5.10%;height:9.13%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Port Longitudinal - Upper" style="left:19.70%;top:37.17%;width:9.80%;height:4.41%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Port Longitudinal - Lower" style="left:29.70%;top:37.17%;width:9.90%;height:4.41%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Hold Bottom" style="left:39.80%;top:37.17%;width:13.40%;height:4.41%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Stbd Longitudinal - Lower" style="left:53.40%;top:37.17%;width:15.80%;height:4.41%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Stbd Longitudinal - Upper" style="left:69.40%;top:37.17%;width:14.10%;height:4.41%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Aft Transfer Bulkhead - Lower" style="left:39.80%;top:60.31%;width:5.10%;height:9.13%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Aft Transfer Bulkhead - Upper" style="left:39.80%;top:69.45%;width:5.10%;height:9.13%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
     </div>
   </div>
-  <!-- ==================== STRUCTURE / FITTINGS ==================== -->
+    <!-- ==================== STRUCTURE / FITTINGS ==================== -->
   <div class="sf-wrap">
     <table class="tbl">
-      <tr><th>TANK STRUCTURE</th><th style="width:56px;">GRADE</th></tr>
-      <tr><td>Tank Bottom</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Port Longitudinals Bulkhead</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Stbd Longitudinal Bulkhead</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Fwd Transverse Bulkhead</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Aft Transverse Bulkhead</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><th>TANK TOP</th><th style="width:56px;">GRADE</th></tr>
       <tr><td>Tank Top</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Cones</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Guide Fittings</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Bilge Entries</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Manholes</td><td class="g"><select data-cg="struct"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td style="height:27px;"></td><td class="g"></td></tr>
       <tr><td style="height:27px;"></td><td class="g"></td></tr>
       <tr><td style="height:27px;"></td><td class="g"></td></tr>
     </table>
     <table class="tbl">
-      <tr><th>TANK FITTINGS</th><th style="width:56px;">GRADE</th></tr>
-      <tr><td>Manhole Cover</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Tank Vent Pipes / Vent Heads</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Sound Pipe / Cap / Striker plate</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Tank remote gauging system</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Suct / Delivery Pipe/ Valve / Mounth</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Ladders and Platforms</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
-      <tr><td>Other Internal Piping</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><th>HATCH</th><th style="width:56px;">GRADE</th></tr>
+      <tr><td>Hatch Entry</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Cross Ways</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Reeling/Safety Relling</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Piping System</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Pumps/Valves</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Cell Guides /Brackets</td><td class="g"><select data-cg="fit"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
       <tr><td style="height:27px;"></td><td class="g"></td></tr>
       <tr><td style="height:27px;"></td><td class="g"></td></tr>
     </table>
   </div>
-
-
-  <!-- ==================== OTHER | VALUE (Excel rows 41-44) ==================== -->
-  <div class="other-wrap">
-    <table class="ov">
-      <tr><th colspan="3">OTHER</th><th colspan="2">VALUE</th></tr>
-      <tr>
-        <td rowspan="2">Anode Wastage (%)</td>
-        <td style="font-size:11px; text-align:center;">Total Good</td>
-        <td style="font-size:11px; text-align:center;">Total Broken</td>
-        <td class="in" rowspan="2" style="min-width:80px;"><input type="text" id="anode_wastage" readonly></td>
-      </tr>
-      <tr>
-        <td class="in"><input type="text" id="anode_good"></td>
-        <td class="in"><input type="text" id="anode_broken"></td>
-      </tr>
-      <tr>
-        <td>Mud Accumalation (cm)</td>
-        <td class="in" colspan="2"><select id="mud_sel" style="color:#002060;"><option value=""></option><option>&lt;=1</option><option>1,1 - 5</option><option>&gt;5</option></select></td>
-        <td class="in"><input type="text" id="mud_val" readonly></td>
-      </tr>
+  
+  <div class="sf-wrap" style="margin-top:20px;">
+    <table class="tbl">
+      <tr><th>OTHER</th><th>VALUE</th></tr>
+      <tr><td>Container Securing Equipment</td><td class="g"><select data-cg="other"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
+      <tr><td>Lightning System</td><td class="g"><select data-cg="other"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></td></tr>
     </table>
-    <div class="ov-notes">
-      Fotos have to be attached to this report as evidence<br><br>
-      Tank Inspections have to be conducted in accordance with <b>TANKS&nbsp; COATINGS CONDITION GUIDE</b>
+    <div style="flex:1; margin-left:20px; font-size:12px;">
+      <p style="margin:0 0 5px 0;">Fotos have to be attached to this report as evidence</p>
+      <p style="margin:0 0 5px 0;">Cargo Hold Inspections have to be conducted in accordance with</p>
+      <p style="margin:0; font-weight:bold;">CARGO HOLD COATINGS CONDITION GUIDE</p>
     </div>
   </div>
-
-  <!-- REMARKS / CORRECTIVE ACTIONS (Excel B46 / B50) -->
+<!-- REMARKS / CORRECTIVE ACTIONS (Excel B46 / B50) -->
   <div class="notes-section">
     <label>Remarks:</label>
     <textarea id="remarks"></textarea>
@@ -317,176 +301,32 @@ Actions:</label>
 </div>
 
 <script>
-  const FORM_CODE = "084C";
+  const FORM_CODE = "084F";
 
-  /* ============================================================
-     CONDITIONAL FORMATTING - exact dxf colors from the Excel file
-     ============================================================ */
   var Y = '#FFFF00', R = '#FF0000';
-  var ZONE_GREEN = { ud:'#05FB11', struct:'#13FF01', fit:'#13FF01', bulk:'#66FF33' };
+  var ZONE_GREEN = { ud:'#05FB11', struct:'#13FF01', fit:'#13FF01', bulk:'#66FF33', other:'#13FF01' };
 
   function applyGradeCF(sel) {
     var zone = sel.getAttribute('data-cg');
     var v = sel.value;
-    // font stays black - the BACKGROUND carries the grade color (user preference)
     if (v === '1')      sel.style.background = ZONE_GREEN[zone] || '#13FF01';
     else if (v === '2') sel.style.background = Y;
     else if (v === '3') sel.style.background = R;
     else                sel.style.background = '';
-    sel.classList.toggle('cf-on', v !== '');
+    sel.classList.toggle("cf-on", v !== "");
   }
   document.querySelectorAll('select[data-cg]').forEach(function(sel) {
     sel.addEventListener('change', function(){ applyGradeCF(sel); });
     applyGradeCF(sel);
   });
 
-  // H42 anode wastage: <50% red, 50-69% yellow, >=70% green (background carries the color, fmt 0%)
-  function cfAnode() {
-    var el = document.getElementById('anode_wastage');
-    var v = el.value.trim();
-    if (v === '') { el.style.background = ''; return; }
-    var n = parseFloat(v);
-    if (isNaN(n)) { el.style.background = ''; return; }
-    if (n < 50)       el.style.background = R;
-    else if (n < 70)  el.style.background = Y;
-    else              el.style.background = '#27FC04';
-  }
-
-  // H44 mud: "<=1" -> #00FF00, "1,1 - 5" -> yellow, ">5" -> red (background carries the color)
-  function cfMud(el) {
-    var v = el.value;
-    if (!v) { el.style.background = ''; return; }
-    if (v.indexOf('<=1') !== -1)          el.style.background = '#00FF00';
-    else if (v.indexOf('1,1 - 5') !== -1) el.style.background = Y;
-    else if (v.indexOf('>5') !== -1)      el.style.background = R;
-    else el.style.background = '';
-  }
-
-  /* ===== DATE MASK (DD-MM-YYYY) ===== */
-  document.querySelectorAll('.date-mask').forEach(function(el) {
-    el.addEventListener('input', function(e) {
-      var d = e.target.value.replace(/\D/g,'').slice(0,8);
-      var v = d;
-      if (d.length >= 5) v = d.slice(0,2)+'-'+d.slice(2,4)+'-'+d.slice(4);
-      else if (d.length >= 3) v = d.slice(0,2)+'-'+d.slice(2);
-      e.target.value = v;
-    });
-  });
-
-  /* ===== EXCEL FORMULAS ===== */
-  // H42 = IF(OR(F43="",G43=""),"",F43/SUM(F43:G43))  number format 0%
-  function recalcOther() {
-    var g = document.getElementById('anode_good').value.trim();
-    var b = document.getElementById('anode_broken').value.trim();
-    var out = document.getElementById('anode_wastage');
-    if (g === '' || b === '') { out.value = ''; cfAnode(); return; }
-    var G = parseFloat(g), B = parseFloat(b);
-    if (isNaN(G) || isNaN(B) || (G+B) === 0) { out.value = ''; cfAnode(); return; }
-    out.value = Math.round(G/(G+B)*100) + '%';
-    cfAnode();
-  }
-  ['anode_good','anode_broken'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', recalcOther);
-  });
-
-  // H44 = IF(G44="","",G44)  -> mirror of threshold dropdown
-  document.getElementById('mud_sel').addEventListener('change', function(){
-    var mv = document.getElementById('mud_val');
-    mv.value = this.value;
-    cfMud(mv);
-  });
-
-  /* ===== SIGNATURE UPLOAD ===== */
-  function initSig(upId, pvId) {
-    document.getElementById(upId).addEventListener('change', function(e){
-      if (e.target.files && e.target.files[0]) {
-        var rd = new FileReader();
-        rd.onload = function(x){
-          var pv = document.getElementById(pvId);
-          pv.querySelector('img').src = x.target.result;
-          pv.style.display = 'flex';
-          pv.parentElement.querySelector('label').classList.add('hidden');
-        };
-        rd.readAsDataURL(e.target.files[0]);
-      }
-    });
-  }
-  function clearSig(pvId, upId) {
-    var pv = document.getElementById(pvId);
-    pv.querySelector('img').src = '';
-    pv.style.display = 'none';
-    pv.parentElement.querySelector('label').classList.remove('hidden');
-    document.getElementById(upId).value = '';
-  }
-  initSig('up-1','pv-1'); initSig('up-2','pv-2'); initSig('up-3','pv-3');
-
-  /* ===== PHOTO UPLOAD ===== */
-  function loadPhoto(inp) {
-    if (inp.files && inp.files[0]) {
-      var rd = new FileReader();
-      rd.onload = function(x){
-        var p = inp.parentElement;
-        p.querySelector('img').src = x.target.result;
-        p.querySelector('img').style.display = 'block';
-        p.querySelector('.del-photo').style.display = 'block';
-        p.querySelector('span').style.display = 'none';
-      };
-      rd.readAsDataURL(inp.files[0]);
-    }
-  }
-  function removePhoto(btn) {
-    var p = btn.parentElement;
-    p.querySelector('img').src = '';
-    p.querySelector('img').style.display = 'none';
-    btn.style.display = 'none';
-    p.querySelector('span').style.display = 'block';
-    p.querySelector('input[type=file]').value = '';
-  }
-
-  /* ===== SAVE & PRINT (portal) ===== */
-  async function aksiSimpanDanCetak() {
-    var vesselName = document.getElementById('vessel').value;
-    if (!vesselName) { alert('Pilih Kapal terlebih dahulu sebelum Print/Simpan!'); return; }
-
-    var btn = document.getElementById('btn-print');
-    btn.disabled = true; btn.innerHTML = '\u2705 Berhasil! Membuat PDF...';
-    setTimeout(function(){ btn.disabled = false; btn.innerHTML = '&#128196; Print / Simpan PDF'; }, 500);
-
+  window.saveAsPDF = function() {
     window.parent.postMessage({
       type: 'SMK_SAVE_PDF',
-      name: document.title,
-      ship: vesselName,
-      date: document.getElementById('date').value || '',
       formCode: FORM_CODE,
-      formTitle: document.title
+      data: {}
     }, '*');
-  }
-  var savePDF = aksiSimpanDanCetak;
-
-  /* ===== TITLE SYNC ===== */
-  function updateTitle() {
-    var sel = document.getElementById('vessel');
-    var t = '084C Ballast Tank Condition Report (Void)';
-    if (sel.value) t += ' - ' + sel.value;
-    var dt = document.getElementById('date').value;
-    if (dt) t += ' - ' + dt;
-    window.parent && window.parent.postMessage({ type:'FORM_TITLE', title:t }, '*');
-  }
-  document.getElementById('vessel').addEventListener('change', updateTitle);
-
-  /* ===== INIT_FORM from parent app ===== */
-  window.addEventListener('message', function(e){
-    if (e.data && e.data.type === 'INIT_FORM') {
-      var sel = document.getElementById('vessel');
-      if (e.data.vessel) {
-        var vl = String(e.data.vessel).toLowerCase().replace(/_/g,' ');
-        Array.from(sel.options).forEach(function(o){
-          if (o.value.toLowerCase().replace(/_/g,' ') === vl) sel.value = o.value;
-        });
-      }
-      if (e.data.locked) sel.disabled = true;
-    }
-  });
+  };
 </script>
 </body>
 </html>

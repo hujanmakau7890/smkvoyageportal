@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>049 - Crankshaft Deflection Auxiliary Engine</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 11px; }
+  .tools { max-width: 960px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 960px; margin: 10px auto 24px; background: #fff; padding: 40px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 200px 1fr 200px; border: 1px solid #000; align-items: stretch; text-align: center; margin-bottom: 20px; }
+  .head > div { padding: 10px; border-right: 1px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+  .title { font-size: 14px; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 12px; font-weight: bold; }
+  .info-table td { padding: 6px 8px; vertical-align: middle; }
+  .info-table input[type="text"], .info-table select { width: 100%; max-width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 12px; font-weight: bold; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .diagram-area { text-align: center; margin: 20px 0; }
+  .diagram-area img { max-width: 100%; max-height: 400px; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; font-size: 11px; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 6px 4px; vertical-align: middle; }
+  .tbl th { font-weight: bold; text-align: center; background: #f2f2f2; }
+  
+  .tbl input[type="text"] { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 11px; text-align: center; }
+  
+  .section-title { font-weight: bold; font-size: 12px; margin-bottom: 5px; }
+  
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 55px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+  .sig-box { min-height: 80px; width: 220px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+  
+  .loading-cond { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; font-weight: bold; }
+  .loading-cond label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  
+  @media print {
+    body { background: #fff; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; border: none; }
+    input::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      049 &nbsp;&nbsp;&nbsp; CRANKSHAFT DEFLECTION AUXILIARY ENGINE
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:1px solid #000;">
+          <div style="flex:1; border-right:1px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">SMT</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <colgroup><col width="12%"><col width="2%"><col width="36%"><col width="12%"><col width="2%"><col width="36%"></colgroup>
+    <tr>
+      <td>Vessel</td><td>:</td>
+      <td>
+        <select class="ship-select" id="ship_name">
+          <option value=""></option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+        </select>
+      </td>
+      <td>Master</td><td>:</td>
+      <td><input type="text"></td>
+    </tr>
+    <tr>
+      <td>Engine Type</td><td>:</td>
+      <td><input type="text"></td>
+      <td>Ch. Eng</td><td>:</td>
+      <td><input type="text"></td>
+    </tr>
+    <tr>
+      <td>Inspection date</td><td>:</td>
+      <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+      <td>AE No</td><td>:</td>
+      <td><input type="text"></td>
+    </tr>
+    <tr>
+      <td colspan="3"></td>
+      <td>Checked by</td><td>:</td>
+      <td><input type="text"></td>
+    </tr>
+  </table>
+
+  <div class="diagram-area">
+    <img src="../images/049.1.png" alt="Diagram AE">
+  </div>
+
+  <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-weight:bold; font-size:12px;">
+    <div>Crankunit Measurement</div>
+    <div style="display:flex; gap:10px;">
+      <div>Id. No. of Measuring Gauge : <input type="text" style="width:120px; border:0; border-bottom:1px dotted #000; outline:none; font-family:inherit; font-weight:bold;"></div>
+      <div>Measuring result : <input type="text" style="width:120px; border:0; border-bottom:1px dotted #000; outline:none; font-family:inherit; font-weight:bold;"></div>
+    </div>
+  </div>
+
+  <table class="tbl">
+    <colgroup>
+      <col width="25%">
+      <col width="7.5%"><col width="7.5%"><col width="7.5%"><col width="7.5%"><col width="7.5%">
+      <col width="7.5%"><col width="7.5%"><col width="7.5%"><col width="7.5%"><col width="7.5%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th style="text-align:left;">Crankpin position</th>
+        <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+        <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="font-weight:normal; background:transparent;">1 Near bottom STB.</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">2 Starboard</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">3 Top</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">4 Port</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">5 Near Bottom, Port</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">Bottom 1/2 (1+5)=B</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:bold; background:#f2f2f2;">Deflections from Vertical Misalignment</td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">Top-Bottom (3-B)=V</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:bold; background:#f2f2f2;">Deflections from Horizontal Misalignment</td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">Stb.-Port (2-4)=H</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:bold; background:#f2f2f2;">Check on Gauge Readings</td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td><td style="background:#f2f2f2; border:0; border-bottom:1px solid #000;"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">Top+Bottom (3+B)=C</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+      <tr><td style="font-weight:normal; background:transparent;">Stb.+Port (2+4)+D</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold; vertical-align:top; border-right:0;">Remark:</td>
+        <td colspan="10" style="text-align:justify; padding-left:10px; font-style:italic; border-left:0;">
+          C and D should be nearly the same. If C and D are not nearly equal this may indicate the dial gauge has moved, or has been read incorrectly. In this case, the reading should therefore be repeated and checked. If C and D still differ, this may either be due to journal ovality/eccentricity, or it may be because the journal is not resting in the main bearing (clearence underneath)
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Crankunit Check</div>
+  <table class="tbl">
+    <colgroup>
+      <col width="10%">
+      <col width="8%"><col width="8%"><col width="8%"><col width="8%"><col width="8%">
+      <col width="8%"><col width="8%"><col width="8%"><col width="8%"><col width="8%">
+      <col width="10%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Unit</th>
+        <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+        <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+        <th>Camsh gear</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-weight:bold;">Ok</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div class="loading-cond">
+    Loading Condition : 
+    <label><input type="checkbox"> Full</label>
+    <label><input type="checkbox"> 1/2 full</label>
+    <label><input type="checkbox"> Empty</label>
+    <div style="margin-left: 20px;">Ballast in mts : <input type="text" style="width:80px; border:0; border-bottom:1px dotted #000; outline:none; font-family:inherit; font-weight:bold;"></div>
+  </div>
+  
+  <div class="loading-cond" style="margin-bottom: 20px;">
+    <div style="width: 25%;">Draught fwd : <input type="text" style="width:80px; border:0; border-bottom:1px dotted #000; outline:none; font-family:inherit; font-weight:bold;"></div>
+    <div style="width: 25%;">Draught aft : <input type="text" style="width:80px; border:0; border-bottom:1px dotted #000; outline:none; font-family:inherit; font-weight:bold;"></div>
+    <div style="width: 25%;">Eng. Temp. : <input type="text" style="width:80px; border:0; border-bottom:1px dotted #000; outline:none; font-family:inherit; font-weight:bold;"></div>
+  </div>
+
+  <div style="display:flex; font-weight:bold; font-size:12px; margin-bottom:40px;">
+    <div style="width: 80px;">Remark :</div>
+    <div style="flex:1;">
+      <textarea style="width:100%; min-height:50px; border:0; border-bottom:1px dotted #000; outline:none; resize:vertical; font-family:inherit; font-size:12px;"></textarea>
+    </div>
+  </div>
+  
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 0 40px;">
+    <div style="font-weight: bold; font-size: 12px; padding-bottom: 20px;">
+      Date : <input type="text" class="date-mask" placeholder="DD-MM-YYYY" style="width:100px; border:0; border-bottom:1px dotted #000; outline:none; font-family:inherit; font-weight:bold;">
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Checked by," style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Chief Engineer</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Knowledge by," style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Master</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "049";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+  
+  // Signature Upload Logic
+  document.querySelectorAll('.upload').forEach(up => {
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      };
+      r.readAsDataURL(f);
+    };
+    
+    rem.onclick = () => {
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    };
+  });
+  
+  // Also encode local img to base64 for PDF save compatibility (so it can be exported correctly without broken paths)
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.diagram-area img').forEach(img => {
+      fetch(img.src).then(res => res.blob()).then(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => { img.src = reader.result; };
+        reader.readAsDataURL(blob);
+      });
+    });
+  });
+</script>
+</body>
+</html>

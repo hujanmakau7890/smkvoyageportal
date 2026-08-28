@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>037-B - Interview Form</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 12px; line-height: 1.3; }
+  .tools { max-width: 960px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 960px; margin: 10px auto 24px; background: #fff; padding: 30px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; text-align: center; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+  .title { font-size: 16px; font-weight: bold; text-transform: uppercase; }
+  
+  .top-checks { display: flex; gap: 20px; font-weight: bold; margin-bottom: 15px; }
+  .top-checks label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
+  .tbl td, .tbl th { border: 1px solid #000; padding: 4px 6px; vertical-align: middle; }
+  .tbl th { background: #f2f2f2; font-weight: bold; text-align: center; }
+  
+  .tbl input[type="text"] { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 12px; }
+  .tbl select { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 12px; }
+  
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+  
+  .eval-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; table-layout: fixed; }
+  .eval-table td, .eval-table th { border: 1px solid #000; padding: 3px 4px; vertical-align: middle; }
+  .eval-table th { background: #f2f2f2; font-weight: bold; text-align: center; }
+  .eval-table input[type="text"] { width: 100%; border: 0; text-align: center; background: transparent; outline: none; font-family: inherit; font-size: 11px; }
+  
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 55px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+  
+  .notes { margin-bottom: 15px; font-size: 11px; font-style: italic; font-weight: bold; }
+  
+  @media print {
+    body { background: #fff; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; border: none; }
+    input::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">037-B   ENGINEERS INTERVIEW FORM</div>
+  </div>
+
+  <div class="top-checks">
+    <label><input type="checkbox"> Promotion</label>
+    <label><input type="checkbox"> New Appointment</label>
+    <label><input type="checkbox"> Rank</label>
+  </div>
+
+  <table class="tbl">
+    <colgroup><col width="40%"><col width="60%"></colgroup>
+    <tr><td>Date:</td><td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td></tr>
+    <tr><td>Name:</td><td><input type="text"></td></tr>
+    <tr><td>Years in previous/present rank</td><td><input type="text"></td></tr>
+    <tr><td>Previous experience relevant?</td><td><input type="text"></td></tr>
+    <tr><td>Promotion recommendations (by whom)</td><td><input type="text"></td></tr>
+    
+    <tr><td>Documented Education checked</td><td><select><option></option><option>YES</option><option>NO</option></select></td></tr>
+    <tr><td>Documented Sea Service checked</td><td><select><option></option><option>YES</option><option>NO</option></select></td></tr>
+    <tr><td>IMO Courses/Endorsements checked</td><td><select><option></option><option>YES</option><option>NO</option></select></td></tr>
+    <tr><td>Practical training (ERM, special engine training, etc.)</td><td><input type='text'></td></tr>
+
+    <tr><td>Qualified for position?</td><td><select><option></option><option>YES</option><option>NO</option></select></td></tr>
+
+  </table>
+
+  <div style="font-weight: bold; margin-bottom: 5px;">First Impressions</div>
+  <table class="tbl">
+    <colgroup><col width="20%"><col width="13%"><col width="20%"><col width="13%"><col width="20%"><col width="14%"></colgroup>
+    <tr>
+      <td style="background:#f2f2f2; font-weight:bold; text-align:center;">Appearance</td>
+      <td><input type="text" style="text-align:center;"></td>
+      <td style="background:#f2f2f2; font-weight:bold; text-align:center;">Health</td>
+      <td><input type="text" style="text-align:center;"></td>
+      <td style="background:#f2f2f2; font-weight:bold; text-align:center;">Attitude</td>
+      <td><input type="text" style="text-align:center;"></td>
+    </tr>
+    <tr>
+      <td style="background:#f2f2f2; font-weight:bold; text-align:center;">Reason for joining Principal</td>
+      <td colspan="5"><input type="text"></td>
+    </tr>
+  </table>
+
+  <div style="font-weight: bold; margin: 10px 0; text-align: center; background:#f2f2f2; padding:5px; border:1px solid #000;">Judgement / Rating**</div>
+
+  <table class="eval-table">
+    <colgroup>
+      <col width="35%">
+      <col width="7%">
+      <col width="7%">
+      <col width="1%">
+      <col width="36%">
+      <col width="7%">
+      <col width="7%">
+    </colgroup>
+    <tr>
+      <th>Criteria</th>
+      <th>Int. 1</th>
+      <th>Int. 2</th>
+      <th style="background:#fff; border-top:0; border-bottom:0;"></th>
+      <th>Criteria</th>
+      <th>Int. 1</th>
+      <th>Int. 2</th>
+    </tr>
+
+    <tr>
+      <td>1. Experience with 2 stroke engine</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td style="border:0;"></td>
+      <td>8. Class / Survey / CMS</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    </tr>
+
+    <tr>
+      <td>2. Experience with 4 stroke engine</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td style="border:0;"></td>
+      <td>9. Safety / Security / PSC / US Coast Guard</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    </tr>
+
+    <tr>
+      <td>3. Experience with Boilers</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td style="border:0;"></td>
+      <td>10. ISM / ISPS matters</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    </tr>
+
+    <tr>
+      <td>4. Experience with electric systems</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td style="border:0;"></td>
+      <td>11. Automation and Control</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    </tr>
+
+    <tr>
+      <td>5. General engineering knowledge</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td style="border:0;"></td>
+      <td>12. (Technical) English</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    </tr>
+
+    <tr>
+      <td>6. MARPOL</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td style="border:0;"></td>
+      <td>13. Risk Management</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    </tr>
+
+    <tr>
+      <td>7. Dry Dock experience</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+      <td style="border:0;"></td>
+      <td>14. Piracy experience</td>
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    </tr>
+
+  </table>
+
+  <table class="tbl">
+    <colgroup><col width="40%"><col width="60%"></colgroup>
+    <tr><td>Previous Sea Service (Trading areas, etc.)</td><td><input type="text"></td></tr>
+    <tr><td>Crew Nationality experience</td><td><input type='text'></td></tr>
+
+    <tr><td>Remarks from Applicant</td><td><input type="text"></td></tr>
+    <tr><td>Psycho Test result (%)</td><td><input type="text"></td></tr>
+    <tr><td>Ready to join (state date)</td><td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td></tr>
+    <tr><td>Potential for promotion</td><td><input type="text"></td></tr>
+  </table>
+
+  <table class="tbl" style="text-align: center;">
+    <colgroup><col width="20%"><col width="40%"><col width="40%"></colgroup>
+    <tr>
+      <th></th>
+      <th>Interviewer 1</th>
+      <th>Interviewer 2</th>
+    </tr>
+    <tr>
+      <td style="text-align:left; font-weight:bold;">Name</td>
+      <td><input type="text" style="text-align:center;"></td>
+      <td><input type="text" style="text-align:center;"></td>
+    </tr>
+    <tr>
+      <td style="text-align:left; font-weight:bold;">ACCEPTED<br><span style="font-size:10px; font-weight:normal;">(Note: only yes if approved for direct employment for the position)</span></td>
+      <td><select style="text-align-last:center;"><option></option><option>YES</option><option>NO</option></select></td>
+      <td><select style="text-align-last:center;"><option></option><option>YES</option><option>NO</option></select></td>
+    </tr>
+    <tr>
+      <td style="text-align:left; font-weight:bold;">Recommendations / Remarks:<br><span style="font-size:10px; font-weight:normal;">(Further training required)<br>(Requires certificate)<br>(Requires practical coaching)</span></td>
+      <td style="padding:0;">
+        <textarea style="width:100%; min-height:80px; border:0; outline:none; resize:none; padding:4px; font-family:inherit; font-size:11px;"></textarea>
+      </td>
+      <td style="padding:0;">
+        <textarea style="width:100%; min-height:80px; border:0; outline:none; resize:none; padding:4px; font-family:inherit; font-size:11px;"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left; font-weight:bold;">Signature</td>
+      <td style="padding:10px;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+      </td>
+      <td style="padding:10px;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="notes">
+    * File in HRIS / Cape Database if accepted<br>
+    ** RATING: (1) Excellent; (2) Good; (3) Satisfactory; (4) Improvement required; (5) Unsatisfactory
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "{data['code']}";
+  window.saveAsPDF = function() {{
+    window.parent.postMessage({{ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {{}} }}, '*');
+  }};
+  
+  // Date mask
+  function mask(e) {{
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }}
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+  
+  // Signature Upload Logic
+  document.querySelectorAll('.upload').forEach(up => {{
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {{
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {{
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      }};
+      r.readAsDataURL(f);
+    }};
+    
+    rem.onclick = () => {{
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    }};
+  }});
+</script>
+</body>
+</html>

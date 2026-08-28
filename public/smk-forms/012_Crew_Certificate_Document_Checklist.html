@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>012 - Crew Certificate & Document Checklist</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 13px; }
+  .tools { max-width: 960px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 960px; margin: 10px auto 24px; background: #fff; padding: 40px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 200px 1fr 200px; border: 1px solid #000; align-items: stretch; text-align: center; margin-bottom: 25px; }
+  .head > div { padding: 10px; border-right: 1px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+  .title { font-size: 14px; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
+  
+  .instructions { font-size: 11px; margin-bottom: 20px; line-height: 1.5; font-weight: bold; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; font-size: 12px; }
+  .info-table td { padding: 4px 6px; vertical-align: middle; }
+  .info-table input[type="text"], .info-table select { width: 100%; max-width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 12px; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; font-size: 12px; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 6px; vertical-align: middle; }
+  .tbl th { font-weight: bold; text-align: center; background: #f2f2f2; }
+  
+  .tbl input[type="text"], .tbl input[type="checkbox"] { width: 100%; max-width: 100%; box-sizing: border-box; border: 0; font-family: inherit; font-size: 12px; background: transparent; outline: none; padding: 2px; }
+  .tbl input[type="text"] { text-align: center; }
+  
+  .signatures { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; margin-top: 50px; gap: 20px; }
+  .sig-box { min-height: 80px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+  .sig-line { border-bottom: 1px solid #000; width: 80%; margin-bottom: 5px; }
+  
+  .section-title { font-weight: bold; padding: 6px; background: #e5e7eb; border: 1px solid #000; border-bottom: 0; text-transform: uppercase; font-size: 12px; }
+  
+  @media print {
+    body { background: #fff; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; border: none; }
+    input::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
+  }
+
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 55px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      012<br>CEKLIST SERTIFIKAT DAN DOKUMEN ABK<br>CREW CERTIFICATE AND DOCUMENT CHECKLIST
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:1px solid #000;">
+          <div style="flex:1; border-right:1px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">C</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">SET</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release: 11 Dec 2017<br>Rev.03: 24.10.22</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="instructions">
+    Instructions / Instruksi :<br>
+    1. ABK yang akan bergabung harus mematuhi STCW '95, daftar ini harus dilengkapi oleh staf crewing dan double cek oleh Manajer Crewing<br>
+    &nbsp;&nbsp;&nbsp; (Crew would joint the ship shall be comply the STCW '95, filling this checklist carried-out check by crewing staff and to be doubled-check by Crewing Manager)<br>
+    2. Ketika ABK mutasi turun, tuliskan "dikembalikan" pada kolom Keterangan untuk mengkonfirmasi penerimaan<br>
+    &nbsp;&nbsp;&nbsp; (When the Crew Sign-Off, to be write down "returned" on the coloum Remark to confirm of receipt)
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="20%">Nama Kapal<br>Name of Vessel</td><td width="2%">:</td>
+      <td width="28%">
+        <select class="ship-select" id="ship_name">
+          <option value=""></option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+        </select>
+      </td>
+      <td width="22%">Kapal Sebelumnya (Temas)<br>Ex Vessel</td><td width="2%">:</td>
+      <td width="26%"><input type="text"></td>
+    </tr>
+    <tr>
+      <td>Nama ABK<br>Name of Crew</td><td>:</td>
+      <td><input type="text"></td>
+      <td>Tgl Awal / Date of Sign-On<br>Selesai / Date of Sign-Off</td><td>:</td>
+      <td>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <input type="text" class="date-mask" placeholder="DD-MM-YYYY">
+          <input type="text" class="date-mask" placeholder="DD-MM-YYYY">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>ID Pelaut<br>Seaman Code</td><td>:</td>
+      <td><input type="text"></td>
+      <td>Pelabuhan Awal / Port of Sign-On<br>Selesai / Port of Sign-Off</td><td>:</td>
+      <td>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <input type="text">
+          <input type="text">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>TTL<br>Place & Date of Birth</td><td>:</td>
+      <td>
+        <div style="display:flex; gap:4px; align-items:center;">
+          <input type="text" style="width:50%" placeholder="Place"> ,
+          <input type="text" class="date-mask" placeholder="DD-MM-YYYY" style="width:45%">
+        </div>
+      </td>
+      <td>Jabatan<br>Rank</td><td>:</td>
+      <td><input type="text"></td>
+    </tr>
+  </table>
+
+  <table class="tbl">
+    <colgroup>
+      <col width="5%">
+      <col width="30%">
+      <col width="15%">
+      <col width="15%">
+      <col width="15%">
+      <col width="20%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th colspan="2">Jenis Dokumen<br>Documents</th>
+        <th>No.<br>Number</th>
+        <th>Tanggal terbit<br>Date Of Issued</th>
+        <th>Tanggal berakhir<br>Date of Expiry</th>
+        <th>Keterangan<br>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td style="text-align:center; font-weight:bold;">A.</td>
+        <td style="text-align:left;">Buku Pelaut / Seaman's Book</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">B.</td>
+        <td style="text-align:left;">Paspor / Passport</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">C.</td>
+        <td style="text-align:left;">Sertifikat Medis / Medical Certificate</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">D.</td>
+        <td style="text-align:left;">Vaccination COVID-19</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">E.</td>
+        <td style="text-align:left;">Yellow Book</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td colspan="6" style="background:#e5e7eb; font-weight:bold; text-align:left; padding-left:10px;">Sertifikat Kompetensi / COC - Certificate Of Competency (STCW '95)</td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">F.</td>
+        <td style="text-align:left;">National Certificate *</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">G.</td>
+        <td style="text-align:left;">Pengukuhan / Endorsed</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">H.</td>
+        <td style="text-align:left;">GMDSS</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td colspan="6" style="background:#e5e7eb; font-weight:bold; text-align:left; padding-left:10px;">Sertifikat Keterampilan / COP - Certificate of Proficiency</td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;">I.</td>
+        <td style="text-align:left;">BST</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">SCRB</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">AFF</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">ORU</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">Rating</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">MFA</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">MC</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">SSO</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">IMDG</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">BRM</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">ERM</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">RADAR</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">ARPA</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">Food Handling</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">ECDIS Gen</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">ECDIS Spec</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">SAT</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+      <tr>
+        <td style="text-align:center; font-weight:bold;"></td>
+        <td style="text-align:left;">SDSD</td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+        
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">Dokumen Lainnya / Other Documents</div>
+  <table class="tbl" style="margin-top:0; border-top:0;">
+    <colgroup>
+      <col width="5%">
+      <col width="60%">
+      <col width="10%">
+      <col width="25%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th colspan="2"></th>
+        <th>√ / X</th>
+        <th>Keterangan<br>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td style="text-align:center; font-weight:bold;">J.</td>
+        <td style="text-align:left;">Form Ahli Waris</td>
+        <td><select style="width:100%; border:0; background:transparent; font-family:inherit; outline:none; text-align:center;"><option></option><option>√</option><option>X</option></select></td>
+        <td><input type="text"></td>
+      </tr>
+    
+      <tr>
+        <td style="text-align:center; font-weight:bold;">K.</td>
+        <td style="text-align:left;">Buku Tabungan / Home Alotment Statement/Saving Bank Account</td>
+        <td><select style="width:100%; border:0; background:transparent; font-family:inherit; outline:none; text-align:center;"><option></option><option>√</option><option>X</option></select></td>
+        <td><input type="text"></td>
+      </tr>
+    
+      <tr>
+        <td style="text-align:center; font-weight:bold;">L.</td>
+        <td style="text-align:left;">Ceklist Familiarisasi Sebelum Bergabung (Form 013 A/B) / Familiarization Before Join Ship Checklist</td>
+        <td><select style="width:100%; border:0; background:transparent; font-family:inherit; outline:none; text-align:center;"><option></option><option>√</option><option>X</option></select></td>
+        <td><input type="text"></td>
+      </tr>
+    
+      <tr>
+        <td style="text-align:center; font-weight:bold;">M.</td>
+        <td style="text-align:left;">Statement Letter And Professional Commitment / Surat Pernyataan dan Komitmen Profesional</td>
+        <td><select style="width:100%; border:0; background:transparent; font-family:inherit; outline:none; text-align:center;"><option></option><option>√</option><option>X</option></select></td>
+        <td><input type="text"></td>
+      </tr>
+    
+      <tr>
+        <td style="text-align:center; font-weight:bold;">N.</td>
+        <td style="text-align:left;">NPWP</td>
+        <td><select style="width:100%; border:0; background:transparent; font-family:inherit; outline:none; text-align:center;"><option></option><option>√</option><option>X</option></select></td>
+        <td><input type="text"></td>
+      </tr>
+    
+      <tr>
+        <td style="text-align:center; font-weight:bold;">O.</td>
+        <td style="text-align:left;">BPJS Kesehatan</td>
+        <td><select style="width:100%; border:0; background:transparent; font-family:inherit; outline:none; text-align:center;"><option></option><option>√</option><option>X</option></select></td>
+        <td><input type="text"></td>
+      </tr>
+    
+      <tr>
+        <td style="text-align:center; font-weight:bold;">P.</td>
+        <td style="text-align:left;">BPJS Ketenagakerjaan</td>
+        <td><select style="width:100%; border:0; background:transparent; font-family:inherit; outline:none; text-align:center;"><option></option><option>√</option><option>X</option></select></td>
+        <td><input type="text"></td>
+      </tr>
+    
+    </tbody>
+  </table>
+
+  <div class="signatures">
+    <div class="sig-box">
+      <div>Prepared by,<br>Crewing Staff</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+    <div class="sig-box">
+      <div>Checked by,<br>Crewing Manager</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+    <div class="sig-box">
+      <div>Rechecked by,<br>Superintendent / Fleet Manager</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+  </div>
+  
+  <div style="margin-top:20px; font-size:11px; font-weight:bold;">
+    * Note:<br>
+    DC = Deck Class (ANT)<br>
+    EC = Engineer Class (ATT)<br>
+    D/EWK = Deck/Engine Watch Keeping
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "012";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+
+  document.querySelectorAll('.upload').forEach(up => {
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      };
+      r.readAsDataURL(f);
+    };
+    
+    rem.onclick = () => {
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    };
+  });
+</script>
+</body>
+</html>

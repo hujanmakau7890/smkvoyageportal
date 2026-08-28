@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>011 - Attendance List</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 13px; }
+  .tools { max-width: 960px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 960px; margin: 10px auto 24px; background: #fff; padding: 40px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 200px 1fr 200px; border: 1px solid #000; align-items: stretch; text-align: center; margin-bottom: 25px; }
+  .head > div { padding: 10px; border-right: 1px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+  .title { font-size: 16px; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+  .info-table td { padding: 4px 0; vertical-align: middle; }
+  .info-table input[type="text"] { width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 13px; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 6px; vertical-align: middle; }
+  .tbl th { font-weight: bold; text-align: center; background: #f2f2f2; }
+  .tbl td { text-align: center; }
+  
+  .tbl input[type="text"] { width: 100%; max-width: 100%; box-sizing: border-box; border: 0; text-align: center; font-family: inherit; font-size: 13px; background: transparent; outline: none; padding: 4px; }
+  
+  @media print {
+    body { background: #fff; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; border: none; }
+    input::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      011 &nbsp;&nbsp; ATTENDANCE LIST OF MEETING<br>
+      / DAFTAR HADIR PERTEMUAN / RAPAT
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:1px solid #000;">
+          <div style="flex:1; border-right:1px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">SET</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px;">Release : Rev.0</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table" style="width: 50%;">
+    <tr>
+      <td width="35%">Meeting Event / Acara Pertemuan</td>
+      <td width="5%">:</td>
+      <td width="60%"><input type="text"></td>
+    </tr>
+    <tr>
+      <td>Date / Tanggal</td>
+      <td>:</td>
+      <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+    <tr>
+      <td>Place / Tempat</td>
+      <td>:</td>
+      <td><input type="text"></td>
+    </tr>
+  </table>
+
+  <table class="tbl">
+    <colgroup>
+      <col width="5%">
+      <col width="35%">
+      <col width="30%">
+      <col width="15%">
+      <col width="15%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th rowspan="2">No.</th>
+        <th rowspan="2">Name / Nama</th>
+        <th rowspan="2">Rank / Jabatan</th>
+        <th colspan="2">Signature / Tanda-tangan</th>
+      </tr>
+      <tr>
+        <th style="height: 10px;"></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>1</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">1.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>2</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">2.</td>
+      </tr>
+    
+      <tr>
+        <td>3</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">3.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>4</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">4.</td>
+      </tr>
+    
+      <tr>
+        <td>5</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">5.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>6</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">6.</td>
+      </tr>
+    
+      <tr>
+        <td>7</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">7.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>8</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">8.</td>
+      </tr>
+    
+      <tr>
+        <td>9</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">9.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>10</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">10.</td>
+      </tr>
+    
+      <tr>
+        <td>11</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">11.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>12</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">12.</td>
+      </tr>
+    
+      <tr>
+        <td>13</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">13.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>14</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">14.</td>
+      </tr>
+    
+      <tr>
+        <td>15</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">15.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>16</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">16.</td>
+      </tr>
+    
+      <tr>
+        <td>17</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">17.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>18</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">18.</td>
+      </tr>
+    
+      <tr>
+        <td>19</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;">19.</td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;"></td>
+      </tr>
+    
+      <tr>
+        <td>20</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px; height: 35px;"></td>
+        <td style="text-align: left; vertical-align: top; font-size: 10px; padding: 4px;">20.</td>
+      </tr>
+    
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const FORM_CODE = "011";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+</script>
+</body>
+</html>

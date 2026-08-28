@@ -134,6 +134,26 @@ export default function SMKReportFormPage() {
           }
         }
 
+
+        // Ubah semua image jadi base64 agar bisa dirender oleh server PDF
+        const imgs = clone.querySelectorAll("img");
+        for (let img of imgs) {
+          if (img.src && !img.src.startsWith('data:')) {
+            try {
+              const res = await fetch(img.src);
+              const blob = await res.blob();
+              const b64 = await new Promise(r => {
+                const reader = new FileReader();
+                reader.onloadend = () => r(reader.result);
+                reader.readAsDataURL(blob);
+              });
+              img.setAttribute("src", b64);
+            } catch (err) {
+              console.warn("Gagal konversi gambar ke base64:", err);
+            }
+          }
+        }
+
         html = `<!doctype html>${clone.outerHTML}`;
       }
 

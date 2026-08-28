@@ -113,6 +113,9 @@
   .hidden { display:none !important; }
 
   @media print {
+    .xd-wrap { overflow: visible !important; }
+    .dz img.sheet { display: block; width: 100%; height: auto; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background:#fff; }
     .tools, .no-print { display:none !important; }
     .page { box-shadow:none; margin:0; padding:0; max-width:none; }
@@ -173,63 +176,38 @@
     <span class="chip"><i class="sw"></i>&nbsp;NS&nbsp;=&nbsp;NOT SEEN</span>
   </div>
 
-  <!-- ==================== DIAGRAM : EXACT EXCEL GRID (rows 11-23, cols C..P) ==================== -->
-  <div class="xd-wrap"><div class="xdiag">
-
-    <div class="xd-cap">Under Deck</div>
-
-    <!-- fwd transfer bulkhead label -->
-    <div class="fwd-label">Fwd transfer<br>bulkhead</div>
-
-    <!-- fwd grade stack (Excel J13:J15 + K13:K15) -->
-    <div class="stackbox stack-fwd">
-      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
-      <div class="sl">Upper</div>
-      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
-      <div class="sl">Middle</div>
-      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
-      <div class="sl">Lower</div>
+    <!-- ==================== DIAGRAM : IMAGE OVERLAY ==================== -->
+  <style>
+      .dz { position: relative; width: 100%; max-width: 1000px; margin: 20px auto; }
+      .dz img.sheet { display: block; width: 100%; height: auto; }
+      select.cg { 
+          position: absolute; z-index: 5; opacity: 0; border: 0; background: rgba(255,255,255,0.55);
+          font: inherit; color: #000; text-align: center; font-weight: bold; cursor: pointer;
+      }
+      select.cg:hover { opacity: 0.3; border: 1px dashed #000; }
+      select.cg:focus { outline: 2px dashed #4F81BD; opacity: 1; background: rgba(255,255,255,0.92); z-index: 10; }
+      select.cf-on { opacity: 1 !important; background: transparent; border: 0; font-weight: bold; text-align: center; }
+      select.cf-on:hover { opacity: 0.8 !important; border: 1px dashed #000; }
+  </style>
+  <div class="xd-wrap" style="overflow-x:auto; margin-bottom: 20px;">
+    <div class="dz">
+      <img class="sheet" src="../images/084A_Ballast_Tank_Report.png" alt="Diagram Ballast Tank">
+      <select class="cg" data-cg="struct" title="Under Deck" style="left:43.50%;top:4.15%;width:14.10%;height:3.41%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Fwd Transfer Bulkhead - Upper" style="left:43.50%;top:27.56%;width:7.00%;height:6.18%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Fwd Transfer Bulkhead - Middle" style="left:43.50%;top:33.74%;width:7.00%;height:6.18%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Fwd Transfer Bulkhead - Lower" style="left:43.50%;top:39.92%;width:7.00%;height:6.18%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Port Longitudinal - Upper" style="left:20.70%;top:46.83%;width:7.50%;height:6.10%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Port Longitudinal - Middle" style="left:28.20%;top:46.83%;width:7.50%;height:6.10%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Port Longitudinal - Lower" style="left:35.70%;top:46.83%;width:7.50%;height:6.10%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Bottom Shell" style="left:43.50%;top:46.83%;width:14.10%;height:6.10%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Stbd Longitudinal - Lower" style="left:57.90%;top:46.83%;width:7.43%;height:6.10%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Stbd Longitudinal - Middle" style="left:65.33%;top:46.83%;width:7.43%;height:6.10%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="struct" title="Stbd Longitudinal - Upper" style="left:72.77%;top:46.83%;width:7.43%;height:6.10%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Aft Transfer Bulkhead - Lower" style="left:43.50%;top:79.27%;width:7.00%;height:6.18%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Aft Transfer Bulkhead - Middle" style="left:43.50%;top:85.45%;width:7.00%;height:6.18%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
+      <select class="cg" data-cg="bulk" title="Aft Transfer Bulkhead - Upper" style="left:43.50%;top:91.62%;width:7.00%;height:6.18%;"><option></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
     </div>
-
-    <!-- under deck strips (Excel F16:J16 and L16:O16) -->
-    <div class="strip strip-l">
-      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-    </div>
-    <div class="strip strip-r">
-      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-      <select data-cg="ud" class="ud-sel"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select>
-    </div>
-
-    <!-- main band (Excel rows 17-20): port zones | bottom shell | stbd zones -->
-    <div class="side-lab lab-port">Port Longitudinal<br>bulkhead or<br>Side Shell</div>
-    <div class="band band-port">
-      <div>Upper</div><div>Middle</div><div>Lower</div>
-    </div>
-    <div class="band band-bs">
-      <div>Bottom Shell</div>
-    </div>
-    <div class="band band-stbd">
-      <div>Lower</div><div>Middle</div><div>Upper</div>
-    </div>
-    <div class="side-lab lab-stbd">stbd longitudinal<br>bulkhead or<br>Side Shell</div>
-
-    <!-- aft transfer bulkhead label + grade stack (Excel F22 + J21:J23/K21:K23) -->
-    <div class="aft-label">Aft Transfer bulkhead</div>
-    <div class="stackbox stack-aft">
-      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
-      <div class="sl">Lower</div>
-      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
-      <div class="sl">Middle</div>
-      <div class="sc"><div class="dd" style="flex:1;"><select data-cg="bulk"><option value=""></option><option>1</option><option>2</option><option>3</option><option>NS</option></select></div></div>
-      <div class="sl">Upper</div>
-    </div>
-
-  </div></div>
-
+  </div>
   <!-- ==================== STRUCTURE / FITTINGS (Excel rows 30-39) ==================== -->
   <div class="sf-wrap">
     <table class="tbl">
@@ -284,7 +262,7 @@
     </div>
   </div>
 
-  <!-- REMARKS / CORRECTIVE ACTIONS (Excel B46 / B50) -->
+  <!-- REMARKS / CORRECTIVE ACTIONS --><div style="page-break-before: always; break-before: page; clear: both;"> (Excel B46 / B50) -->
   <div class="notes-section">
     <label>Remarks:</label>
     <textarea id="remarks"></textarea>
@@ -338,7 +316,7 @@ Actions:</label>
       </div>
     </div>
   </div>
-
+  </div>
 </div>
 
 <script>
@@ -358,6 +336,7 @@ Actions:</label>
     else if (v === '2') sel.style.background = Y;
     else if (v === '3') sel.style.background = R;
     else                sel.style.background = '';
+    sel.classList.toggle('cf-on', v !== '');
   }
   document.querySelectorAll('select[data-cg]').forEach(function(sel) {
     sel.addEventListener('change', function(){ applyGradeCF(sel); });

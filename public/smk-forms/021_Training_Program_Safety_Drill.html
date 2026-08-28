@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>021 - Training Program Safety Equipment Drill</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 11px; }
+  .tools { max-width: 980px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 980px; margin: 10px auto 24px; background: #fff; padding: 30px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 200px 1fr 200px; border: 1px solid #000; align-items: stretch; text-align: center; margin-bottom: 25px; }
+  .head > div { padding: 10px; border-right: 1px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+  .title { font-size: 12px; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; font-size: 12px; font-weight: bold; }
+  .info-table td { padding: 4px 6px; vertical-align: middle; }
+  .info-table input[type="text"], .info-table select { width: 100%; max-width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 12px; font-weight: bold; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; font-size: 10px; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
+  .tbl th { font-weight: bold; text-align: center; background: #f2f2f2; }
+  
+  .tbl input[type="text"] { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 10px; text-align: center; }
+  
+  .signatures { display: flex; justify-content: flex-end; text-align: center; margin-top: 40px; font-size: 12px; font-weight: bold; }
+  .sig-box { min-height: 80px; width: 250px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+  .sig-line { border-bottom: 1px solid #000; width: 100%; margin-bottom: 5px; }
+  
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 55px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+  
+  .notes { margin-bottom: 20px; font-weight: bold; font-size: 10px; font-style: italic; }
+  
+  @media print {
+    body { background: #fff; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; border: none; }
+    input::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 landscape; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      021 &nbsp;&nbsp; TRAINING PROGRAM, SAFETY EQUIPMENT DRILL<br>
+      PROGRAM PELAKSANAAN PELATIHAN/LATIHAN DAN PERAGAAN PERALATAN KESELAMATAN
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:1px solid #000;">
+          <div style="flex:1; border-right:1px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">THN</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="15%">YEAR / TAHUN</td><td width="2%">:</td>
+      <td width="23%"><input type="text"></td>
+      <td width="20%">SHIP NAME / NAMA KAPAL</td><td width="2%">:</td>
+      <td width="38%">
+        <select class="ship-select" id="ship_name">
+          <option value=""></option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <table class="tbl">
+    <colgroup>
+      <col width="40%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+      <col width="5%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th rowspan="2">TYPE OF TRAINING PROGRAM, SAFETY EQUIPMENT DRILL<br>JENIS PELATIHAN/LATIHAN/PERAGAAN DIKAPAL</th>
+        <th colspan="12">MONTH / BULAN</th>
+      </tr>
+      <tr>
+        <th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th><th>MAY</th><th>JUN</th>
+        <th>JUL</th><th>AUG</th><th>SEP</th><th>OCT</th><th>NOV</th><th>DEC</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td style="font-weight:bold;">Fire Drill / Latihan Kebakaran (Checklist 022)</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:normal;">&nbsp;&nbsp;&nbsp;&nbsp;On Deck / di Geladak</td>
+<td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td></tr>
+
+      <tr>
+        <td style="font-weight:normal;">&nbsp;&nbsp;&nbsp;&nbsp;On Engine Room / di Kamar Mesin</td>
+<td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td></tr>
+
+      <tr>
+        <td style="font-weight:normal;">&nbsp;&nbsp;&nbsp;&nbsp;On Accomodation Room / di ruang Akomodasi</td>
+<td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td><td style="background:#f2f2f2;"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Fire Demonstration including Fire Extinguisher Equipment and Fixed Installation and Emergency Fire Pump Operation / Peragaan Kebakaran termasuk pemakaian peralatan pemadam Kebakaran Dan Instalasi Tetap serta Pengoperasian Pompa Kebakaran Darurat<br><br><span style="font-weight:normal; font-style:italic;">Performed every month simultaneously with fire drills, Permanent Installation / CO2 System Performance is implemented with a technical simulation of operation / Dilaksanakan setiap bulan bersamaan dengan latihan kebakaran, Peragaan Instalasi Tetap / CO2 System dilaksanakan dengan simulasi teknis pengoperasian</span></td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Abandon Ship Drill / Latihan Meninggalkan Kapal (Checklist 023)</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Demonstration of abandon ship includes the launch of lifeboat / liferaft under special ship conditions: sink / aground / burn / crash / Peragaan Meninggalkan Kapal termasuk peluncuran sekoci / liferaft dg kondisi kapal khusus : tenggelam / kandas / terbakar / tabrakan<br><br><span style="font-weight:normal; font-style:italic;">Launch & maneuvers Lifeboat (PS / STB) are conducted quarterly by the related crew; The lifeboat area to the embarkation deck (PS / STB) & LifeRaft Simulation (PS / STB) is conducted monthly by related crew / Peluncuran & Manuver sekoci (PS/STB) tiap triwulan oleh crew terkait; Area sekoci sampai dek embarkasi (PS/STB) & Simulasi LifeRaft (PS/STB) setiap bulan oleh crew terkait.</span></td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Safety Equipment Demonstration Drill / Latihan Peragaan Peralatan Keselamatan (Checklist 024)</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Demonstration includes LifeJacket, Resistant Clothes, Breathing Apparatus, etc. / Peragaan meliputi LifeJacket, Baju Tahan Api, Alat Bantu Pernafasan<br><br><span style="font-weight:normal; font-style:italic;">Performed every 3 months, the schedule can be adjusted with the period that has been running on the ship / Dilaksanakan setiap 3 bulan, schedule bisa disesuaikan dg periode yg sudah berjalan di kapal</span></td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Enclosed Space Drill / Latihan Memasuki Ruangan Tertutup (Checklist 025)</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Oil Spillage Drill / Latihan Pencegahan Pencemaran (Checklist 026)</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Emergency Steering Drill / Latihan Kemudi Darurat (Checklist 027)</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Man Over Board & Recovery Drill / Latihan Penyelamatan Orang Jatuh ke Laut & Pemulihannya (Checklist 028)</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">DI DARAT</td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+      <tr>
+        <td style="font-weight:bold;">Table Top Drill / Latihan Tim Tanggap Darurat - Table Top Drill (Checklist 030)<br><br><span style="font-weight:normal; font-style:italic;">Performed at least onces a year, The schedule will be determined by DPA. Dilaksanakan minimal sekali setahun, schedule akan ditentukan oleh DPA.</span></td>
+<td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+
+    </tbody>
+  </table>
+
+  <div class="notes">
+    ** Drill Schedule can be adjusted by Master based on the vessel schedule accordingly and attached form 011, however drill period must be conducted based on SMM and SOLAS<br>
+    ** Tulis program pelatihan/latihan/peragaan pada kolom bulan yang sesuai & dilampirkan daftar hadir (011), rincian dicatat di logbook kapal & checklist terkait di kapal/kantor
+  </div>
+
+  <div style="display:flex; justify-content:flex-end;">
+    <div style="text-align:center;">
+      <div style="display:flex; gap:10px; align-items:center; margin-bottom:5px; font-weight:bold; justify-content:center;">
+        <input type="text" placeholder="(Place)" style="border:0; border-bottom:1px dotted #000; outline:none; text-align:center; font-family:inherit; font-size:12px; font-weight:bold; width:120px;">,
+        <input type="text" class="date-mask" placeholder="DD-MM-YYYY" style="border:0; border-bottom:1px dotted #000; outline:none; text-align:center; font-family:inherit; font-size:12px; font-weight:bold; width:100px;">
+      </div>
+      <div class="sig-box">
+        <div style="width:100%;">
+          <div class="sig-space">
+            <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+            <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+          </div>
+          <input type="text" placeholder="Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+        </div>
+        <div>DPA</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "021";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+  
+  // Signature Upload Logic
+  document.querySelectorAll('.upload').forEach(up => {
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      };
+      r.readAsDataURL(f);
+    };
+    
+    rem.onclick = () => {
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    };
+  });
+</script>
+</body>
+</html>

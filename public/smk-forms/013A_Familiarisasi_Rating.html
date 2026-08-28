@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>013-A - Familiarization Checklist</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 13px; line-height: 1.4; }
+  .tools { max-width: 960px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 960px; margin: 10px auto 24px; background: #fff; padding: 40px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 200px 1fr 200px; border: 1px solid #000; align-items: stretch; text-align: center; margin-bottom: 25px; }
+  .head > div { padding: 10px; border-right: 1px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+  .title { font-size: 14px; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
+  
+  .instructions { font-size: 12px; margin-bottom: 20px; }
+  .instructions ol { padding-left: 20px; }
+  .instructions li { margin-bottom: 8px; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; font-size: 13px; font-weight: bold; }
+  .info-table td { padding: 6px 6px; vertical-align: middle; }
+  .info-table input[type="text"], .info-table select { width: 100%; max-width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 13px; font-weight: bold; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; font-size: 12px; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 6px 10px; vertical-align: middle; }
+  .tbl th { font-weight: bold; text-align: center; background: #f2f2f2; }
+  
+  .tbl select { width: 100%; border: 0; background: transparent; font-family: inherit; font-size: 14px; font-weight: bold; outline: none; text-align: center; text-align-last: center; }
+  
+  .signatures { display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; margin-top: 40px; gap: 15px; font-size: 12px; font-weight: bold; }
+  .sig-box { min-height: 80px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+  .sig-line { border-bottom: 1px solid #000; width: 90%; margin-bottom: 5px; }
+  
+  .notes { margin-bottom: 20px; font-weight: bold; font-size: 12px; }
+  .notes textarea { width: 100%; min-height: 60px; border: 1px solid #000; font-family: inherit; padding: 5px; outline: none; resize: vertical; }
+  
+  @media print {
+    body { background: #fff; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; border: none; }
+    input::placeholder, textarea::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
+  }
+
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 55px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      013-A<br>FAMILRIZATION CHECK LIST BEFORE JOINT ON BOARD FOR RATING<br>CHEKLIST FAMILIRISASI SEBELUM BERGABUNG DENGAN KAPAL UNTUK RATING
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:1px solid #000;">
+          <div style="flex:1; border-right:1px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">C</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">SET</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <b>Instruction / Instruksi :</b>
+    <ol>
+      <li>
+        All New Crew members must be carried out the familiarization before joint on board.<br>
+        <i>Semua awak kapal baru harus dilakukan familirisasi tersebut dibawah ini sebelum ditugaskan naik kapal.</i>
+      </li>
+      <li>
+        Familiarization by DPA or DPA may assign a staff or QSS Team member to familiarize. DPA must ensure that the orientation is done before the new crew is assigned to board the ship. The familiarization of the Company's Policy as per the National & International Regulations and STCW 1978 and its Amendment is performed by the Staff of Sea Personnel under the supervision of the Crewing Manager.<br>
+        <i>Familirisasi dilakukan oleh DPA atau DPA dapat menugaskan seorang staf atau QSS Team untuk melakukan familirisasi. DPA harus meyakinkan bahwa orientasi dilakukan sebelum awak kapal baru tersebut ditugaskan naik kapal. Familirisasi Kebijakan perusahaan sesuai Peraturan Nasional & Internasional serta STCW 1978 dan Amandemennya dilakukan oleh Staf Personalia Laut di bawah pengawasan Manager Personalia Laut.</i>
+      </li>
+      <li>
+        Put a mark (√) for the things done and the sign (X) for things that have not been done.<br>
+        <i>Beri tanda ( √ ) untuk hal-hal yang dikerjakan dan tanda ( X ) untuk hal-hal yang belum dikerjakan.</i>
+      </li>
+      <li>
+        Archive the completed form and signed on the file of the Personnel File concerned.<br>
+        <i>Arsipkan form yang telah dilengkapi dan ditanda-tangani pada arsip File Personil yang bersangkutan.</i>
+      </li>
+    </ol>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="20%">Name / Nama</td><td width="2%">:</td>
+      <td width="28%"><input type="text"></td>
+      <td width="20%">Rank / Jabatan</td><td width="2%">:</td>
+      <td width="28%"><input type="text"></td>
+    </tr>
+    <tr>
+      <td>Ship Name / Nama Kapal</td><td>:</td>
+      <td>
+        <select id="ship_name">
+          <option value=""></option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+        </select>
+      </td>
+      <td>Date / Tanggal</td><td>:</td>
+      <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <table class="tbl">
+    <colgroup>
+      <col width="85%">
+      <col width="15%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Content / Materi</th>
+        <th>√ / X</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>Personnel Regulations within the Company (working hours & rest hours, discipline, salary, leave, contract,etc)<br><i>Peraturan Personalia didalam Perusahaan (jam kerja & jam istirahat, disiplin, gaji, cuti, kontrak dsb)</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Corporate Safety Policy - Drug & Alchohol Policy<br><i>Kebijakan Keselamatan Perusahaan - Kebijakan obat obatan & minuman beralkohol</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>General Manual Company Safety Management System<br><i>Secara umum Manual Sistem Manajemen Keselamatan Perusahaan</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Duties and Responsibilities on the Ship<br><i>Tugas dan Tangung jawab di Kapal</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Ship Operational Procedures<br><i>Prosedur terkait didalam operasional kapal</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Ship Emergency Procedures<br><i>Prosedur terkait jika kapal dalam keadaan darurat</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Ship Maintenance Procedures<br><i>Prosedur perawatan kapal</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Safety training procedures on board<br><i>Prosedur pelatihan keselamatan di kapal</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Crew Complain Procedure<br><i>Prosedur komplain crew</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Refresh ISM - ISPS - MLC Code<br><i>Penyegaran ISM - ISPS - MLC Code</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+      <tr>
+        <td>Personal Protectived Equipments used on board<br><i>Penggunaan Alat Pelindung Diri diatas kapal</i></td>
+        <td><select><option></option><option>√</option><option>X</option></select></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="notes">
+    Note / Catatan :<br>
+    <textarea></textarea>
+  </div>
+  
+  
+
+  
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 30px; font-weight: bold; font-size: 12px; text-align: center;">
+    
+    <!-- Header Row -->
+    <div style="grid-column: 1;">
+      Acknowledged<br>Mengetahui
+    </div>
+    <div style="grid-column: 2 / 5;">
+      Provides Familiarization / Yang Memberikan Familirisasi
+    </div>
+    <div style="grid-column: 5;">
+      Accepting Familiarization<br>Yang Menerima Familirisasi
+    </div>
+
+    <!-- Signature Boxes Row -->
+    <div class="sig-box" style="margin-top: 10px;">
+      <div>Crewing Manager</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+
+    <div class="sig-box" style="margin-top: 10px;">
+      <div>DPA or QSS Team</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+
+    <div class="sig-box" style="margin-top: 10px;">
+      <div>SI / Fleet Manager</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+
+    <div class="sig-box" style="margin-top: 10px;">
+      <div>Crewing Staff</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+
+    <div class="sig-box" style="margin-top: 10px;">
+      <div>Crew</div>
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<script>
+  const FORM_CODE = "013-A";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+
+  document.querySelectorAll('.upload').forEach(up => {
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      };
+      r.readAsDataURL(f);
+    };
+    
+    rem.onclick = () => {
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    };
+  });
+</script>
+</body>
+</html>
