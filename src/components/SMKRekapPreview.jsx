@@ -851,20 +851,26 @@ export default function SMKRekap(){
   const [siVessels, setSiVessels] = useState([]);
 
   const fetchData=useCallback(async ()=>{
-    // 10k max rows (self-hosted, .env PGRST_DB_MAX_ROWS=10000) → cukup 1× fetch
-    const {data:all,error:err}=await supabase
-      .from('smk_rekap')
-      .select('*')
-      .eq('year',year)
-      .limit(10000);
-    if(err){ setError(err.message); setLoading(false); return; }
-    if(all?.length){
-      setData(all.map(r=>({...r, code: r.form_code})));
-      const max=Math.max(...all.map(r=>new Date(r.updated_at||0).getTime()));
-      setLastUpd(max>0 ? new Date(max) : null);
+    try {
+      const {data:all,error:err}=await supabase
+        .from('smk_rekap')
+        .select('*')
+        .eq('year',year)
+        .limit(10000);
+      if(err){ setError(err.message); setLoading(false); return; }
+      if(all?.length){
+        setData(all.map(r=>({...r, code: r.form_code})));
+        const max=Math.max(...all.map(r=>new Date(r.updated_at||0).getTime()));
+        setLastUpd(max>0 ? new Date(max) : null);
+        setError(null);
+      } else {
+        setData([]);
+        setError(null);
+      }
+    } catch(e){
+      // Network/CORS transient — jangan full-screen error, biar retry via realtime
+      console.warn("Rekap fetch transient:", e?.message);
       setError(null);
-    } else {
-      setData([]);
     }
     setLoading(false);
   },[year]);
