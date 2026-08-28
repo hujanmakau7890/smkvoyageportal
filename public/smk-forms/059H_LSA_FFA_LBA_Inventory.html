@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>059H - LSA, FFA, LBA Inventory List</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 11px; }
+  .tools { max-width: 1000px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 1000px; margin: 10px auto 24px; background: #fff; padding: 30px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 250px 1fr 200px; border: 2px solid #000; align-items: stretch; text-align: center; margin-bottom: 15px; }
+  .head > div { padding: 10px; border-right: 2px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+  .title { font-size: 14px; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; font-weight: bold; }
+  .info-table td { padding: 4px 6px; vertical-align: middle; }
+  .info-table input[type="text"], .info-table select { width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 12px; font-weight: bold; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .section-title { font-size: 12px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; table-layout: fixed; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
+  .tbl th { font-weight: bold; text-align: center; background: #f2f2f2; }
+  .tbl td.num { text-align: center; font-weight: bold; width: 30px; }
+  .tbl input[type="text"] { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 11px; text-align: center; }
+  .tbl input.left-text { text-align: left; }
+  
+  .notes { margin-bottom: 20px; font-size: 11px; font-weight: bold; }
+  .notes textarea { width: 100%; min-height: 50px; border: 1px solid #000; outline: none; font-family: inherit; font-size: 11px; padding: 5px; resize: vertical; }
+  
+  .signatures { display: flex; justify-content: space-between; text-align: center; margin-top: 10px; font-size: 12px; font-weight: bold; padding: 0 20px; }
+  .sig-box { width: 220px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 55px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+  
+  .page-break { page-break-after: always; margin-bottom: 40px; border-bottom: 2px dashed #999; padding-bottom: 40px; }
+  
+  @media print {
+    body { background: #fff; margin:0; padding:0; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; width: 100%; zoom: 0.95; }
+    .page-break { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    input::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
+    .pv:not(.hidden) { display: flex !important; }
+  }
+</style>
+
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+
+  <!-- ================= LSA SECTION ================= -->
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      059-H1<br>INVENTORY LIST LIFE SAVING APPLIANCE (LSA)
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:2px solid #000;">
+          <div style="flex:1; border-right:2px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">TRW</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="5%">MV</td><td width="2%">:</td>
+      <td width="43%">
+        <select id="ship_name1">
+          <option value=""></option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+        </select>
+      </td>
+      <td width="15%">Date of Report</td><td width="2%">:</td>
+      <td width="33%"><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">1. LIFE SAVING APPLIANCE (LSA)</div>
+  <table class="tbl">
+    <colgroup>
+      <col width="5%"><col width="23%"><col width="6%"><col width="8%"><col width="8%">
+      <col width="5%"><col width="23%"><col width="6%"><col width="8%"><col width="8%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Nama Barang<br>Name of Equipments</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+        <th>Condition</th>
+        <th>No.</th>
+        <th>Nama Barang<br>Name of Equipments</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="num">1</td>
+        <td><input type="text" class="left-text" value="Life Jacket w/ light & whistle"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">23</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">2</td>
+        <td><input type="text" class="left-text" value="Inflant Life Jacket"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">24</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">3</td>
+        <td><input type="text" class="left-text" value="Inmersion Suite"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">25</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">4</td>
+        <td><input type="text" class="left-text" value="TPA (thermal Protecting Suite)"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">26</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">5</td>
+        <td><input type="text" class="left-text" value="Life Buoy w/ Line & Self Igniting Light"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">27</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">6</td>
+        <td><input type="text" class="left-text" value="Life Buoy w/ Line & Smoke(S) (MOB)"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">28</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">7</td>
+        <td><input type="text" class="left-text" value="Life Buoy w/ Line"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">29</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">8</td>
+        <td><input type="text" class="left-text" value="Life Buoy"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">30</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">9</td>
+        <td><input type="text" class="left-text" value="Parchuse Signal (Bridge)"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">31</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">10</td>
+        <td><input type="text" class="left-text" value="Line Throwing Appartus"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">32</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">11</td>
+        <td><input type="text" class="left-text" value="General Emergency Alarm"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">33</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">12</td>
+        <td><input type="text" class="left-text" value="Public Address System"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">34</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">13</td>
+        <td><input type="text" class="left-text" value="IMO Symbol & Safety Sign"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">35</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">14</td>
+        <td><input type="text" class="left-text" value="Radar / AIS SART"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">36</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">15</td>
+        <td><input type="text" class="left-text" value="EPIRB"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">37</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">16</td>
+        <td><input type="text" class="left-text" value="HRU EPIRB"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">38</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">17</td>
+        <td><input type="text" class="left-text" value="Inflatable Life Raft (Throw system)"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">39</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">18</td>
+        <td><input type="text" class="left-text" value="Inflatable Life Raft (Launching system)"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">40</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">19</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">41</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">20</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">42</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">21</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">43</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">22</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">44</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="notes">
+    Catatan / Notes :<br>
+    <textarea></textarea>
+  </div>
+  
+  <div class="signatures">
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Report by 3rd Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Checked by Chief Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Knowledge by Master,</div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ================= FFA SECTION ================= -->
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      059-H2<br>INVENTORY LIST FIRE FIGHTING APPLIANCE (FFA)
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:2px solid #000;">
+          <div style="flex:1; border-right:2px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">TRW</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="5%">MV</td><td width="2%">:</td>
+      <td width="43%"><input type="text" id="ship_name2" readonly></td>
+      <td width="15%">Date of Report</td><td width="2%">:</td>
+      <td width="33%"><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">2. FIRE FIGHTING APPLIANCE (FFA)</div>
+  <table class="tbl">
+    <colgroup>
+      <col width="5%"><col width="23%"><col width="6%"><col width="8%"><col width="8%">
+      <col width="5%"><col width="23%"><col width="6%"><col width="8%"><col width="8%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Nama Barang<br>Name of Equipments</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+        <th>Condition</th>
+        <th>No.</th>
+        <th>Nama Barang<br>Name of Equipments</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="num">1</td>
+        <td><input type="text" class="left-text" value="EEBD"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">22</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">2</td>
+        <td><input type="text" class="left-text" value="Breathing Apparatus Complete"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">23</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">3</td>
+        <td><input type="text" class="left-text" value="Spare Botols Breathing Apparatus"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">24</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">4</td>
+        <td><input type="text" class="left-text" value="Fire Man Outfit Complete"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">25</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">5</td>
+        <td><input type="text" class="left-text" value="International Shore Connection"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">26</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">6</td>
+        <td><input type="text" class="left-text" value="Hose & Nozzle"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">27</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">7</td>
+        <td><input type="text" class="left-text" value="Foam portable 6 Kg"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">28</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">8</td>
+        <td><input type="text" class="left-text" value="Foam Portable 9 Kg"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">29</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">9</td>
+        <td><input type="text" class="left-text" value="Foam Portable 45 Kg"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">30</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">10</td>
+        <td><input type="text" class="left-text" value="Chemical Portable 6 Kg"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">31</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">11</td>
+        <td><input type="text" class="left-text" value="Chemical Portable 9 Kg"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">32</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">12</td>
+        <td><input type="text" class="left-text" value="CO2 Portable 9 Kg"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">33</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">13</td>
+        <td><input type="text" class="left-text" value="CO2 System Permanent:"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">34</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">14</td>
+        <td><input type="text" class="left-text" value="  a. Botols CO2 45 Kg"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">35</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">15</td>
+        <td><input type="text" class="left-text" value="  b. Last Hydro test botols (Last Tera)"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">36</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">16</td>
+        <td><input type="text" class="left-text" value="etc"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">37</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">17</td>
+        <td><input type="text" class="left-text" value="etc"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">38</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">18</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">39</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">19</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">40</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">20</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">41</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">21</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td class="num">42</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="notes">
+    Catatan / Notes :<br>
+    <textarea></textarea>
+  </div>
+  
+  <div class="signatures">
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Report by 3rd Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Checked by Chief Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Knowledge by Master,</div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ================= LBA SECTION ================= -->
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      059-H3<br>DAFTAR INVENTARIS ALAT SEKOCI<br>INVENTORY LIST LIFE BOAT APPLIANCE (LBA)
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:2px solid #000;">
+          <div style="flex:1; border-right:2px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">TRW</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="5%">MV</td><td width="2%">:</td>
+      <td width="43%"><input type="text" id="ship_name3" readonly></td>
+      <td width="15%">Date of Report</td><td width="2%">:</td>
+      <td width="33%"><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">3. PERLENGKAPAN SEKOCI & PERAHU PENYELAMAT (LIFE BOAT & RESCUE BOAT EQUIPMENTS)</div>
+  
+  <style>
+    /* LBA table specific styles */
+    .tbl-lba { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 9px; table-layout: fixed; }
+    .tbl-lba th, .tbl-lba td { border: 1px solid #000; padding: 2px; vertical-align: middle; text-align: center; }
+    .tbl-lba th { background: #f2f2f2; font-weight: bold; }
+    .tbl-lba input[type="text"] { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 9px; text-align: center; }
+    .tbl-lba input.left-text { text-align: left; }
+  </style>
+
+  <table class="tbl-lba">
+    <colgroup>
+      <col width="3%"><col width="12%"><col width="3%"><col width="7%">
+      <col width="3%"><col width="12%"><col width="3%"><col width="7%">
+      <col width="3%"><col width="12%"><col width="3%"><col width="7%">
+      <col width="3%"><col width="12%"><col width="3%"><col width="7%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Port Life Boat (No.1)</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+        <th>No.</th>
+        <th>Starboard Life Boat (No 2)</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+        <th>No.</th>
+        <th>Free Fall Lifeboat</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+        <th>No.</th>
+        <th>Rescue Boat</th>
+        <th>Qty</th>
+        <th>Expired Date</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>1</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>1</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>1</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>1</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>2</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>2</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>2</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>2</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>3</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>3</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>3</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>3</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>4</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>4</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>4</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>4</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>5</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>5</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>5</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>5</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>6</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>6</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>6</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>6</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>7</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>7</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>7</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>7</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>8</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>8</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>8</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>8</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>9</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>9</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>9</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>9</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>10</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>10</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>10</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>10</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>11</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>11</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>11</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>11</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>12</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>12</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>12</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>12</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>13</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>13</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>13</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>13</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>14</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>14</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>14</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>14</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>15</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>15</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>15</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>15</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>16</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>16</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>16</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>16</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>17</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>17</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>17</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>17</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>18</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>18</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>18</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>18</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>19</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>19</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>19</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>19</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>20</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>20</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>20</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>20</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>21</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>21</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>21</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>21</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>22</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>22</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>22</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>22</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>23</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>23</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>23</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>23</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>24</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>24</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>24</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>24</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>25</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>25</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>25</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>25</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>26</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>26</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>26</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>26</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>27</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>27</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>27</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>27</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>28</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>28</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>28</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>28</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>29</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>29</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>29</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>29</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>30</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>30</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>30</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>30</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+      <tr>
+        <td>31</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>31</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>31</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+        <td>31</td><td><input type="text" class="left-text"></td><td><input type="text"></td><td><input type="text" class="date-mask expiry-date" placeholder="DD-MM-YYYY"></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="notes">
+    Catatan / Notes : (Qty : Jumlah peralatan yang ada dalam sekoci / perahu penyelamat)<br>
+    <textarea></textarea>
+  </div>
+  
+  <div class="signatures">
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Report by 3rd Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Checked by Chief Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div>Knowledge by Master,</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "059-H";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+  
+  // Signature Upload Logic
+  document.querySelectorAll('.upload').forEach(up => {
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      };
+      r.readAsDataURL(f);
+    };
+    
+    rem.onclick = () => {
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    };
+  });
+  
+  // Sync Ship Name across the 3 sections
+  const shipSelect = document.getElementById('ship_name1');
+  const shipInput2 = document.getElementById('ship_name2');
+  const shipInput3 = document.getElementById('ship_name3');
+  shipSelect.addEventListener('change', (e) => {
+    shipInput2.value = e.target.value;
+    shipInput3.value = e.target.value;
+  });
+
+  // Expiry Date Color Coding
+  function checkExpiry(input) {
+    let v = input.value;
+    if (v.length === 10) {
+      let parts = v.split('-');
+      let d = parseInt(parts[0], 10);
+      let m = parseInt(parts[1], 10) - 1;
+      let y = parseInt(parts[2], 10);
+      
+      let expDate = new Date(y, m, d);
+      let today = new Date();
+      today.setHours(0,0,0,0);
+      
+      let diffTime = expDate - today;
+      let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 0) {
+        input.style.backgroundColor = '#fca5a5'; // Red
+      } else if (diffDays <= 30) {
+        input.style.backgroundColor = '#fef08a'; // Yellow
+      } else {
+        input.style.backgroundColor = 'transparent';
+      }
+    } else {
+      input.style.backgroundColor = 'transparent';
+    }
+  }
+
+  document.querySelectorAll('.expiry-date').forEach(input => {
+    input.addEventListener('input', () => checkExpiry(input));
+    input.addEventListener('blur', () => checkExpiry(input));
+  });
+</script>
+
+</body>
+</html>

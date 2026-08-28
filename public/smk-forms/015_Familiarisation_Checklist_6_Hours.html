@@ -22,7 +22,31 @@
           }
         }
 
-</style></head><body><div class="page"><div class="toolbar no-print"><button class="btn" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
+</style>
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head><body><div class="page"><div class="toolbar no-print"><button class="btn" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
 <header class="header"><div class="header-top"><div class="company">PT Mentari Mas Multimoda</div><div class="title">015 &nbsp; FAMILIARISATION CHECKLIST<br><span style="font-size:10px;font-weight:normal">6 HOURS OF JOINING VESSEL</span></div><div class="status"><div class="status-box"><span>S</span><span>SET</span></div><div class="release">Release : &nbsp; Rev. 0 :</div></div></div></header>
 <section class="instructions"><b>Instruction / Instruksi:</b>1. All new crew members shall complete familiarisation within 6 hours of joining the vessel or before sailing, whichever comes first / Semua awak kapal baru harus melaksanakan familirisasi dalam 6 jam setelah naik kapal atau sebelum kapal berangkat.<br>2. The Master may appoint an Officer/Engineer/Safety Officer to guide the new crew; the Safety Officer shall check and verify completion / Nakhoda dapat menunjuk Mualim/Masinis/Perwira Keselamatan untuk memandu serta memverifikasi pelaksanaan.<br>3. Mark Yes for completed items and No for items not completed / Tandai Yes untuk yang sudah dan No untuk yang belum dikerjakan.<br>4. Archive completed and signed forms in the ship's familiarisation file / Arsipkan formulir yang lengkap dan ditandatangani.</section>
 <section class="meta"><label class="field">Crew / Rank: <input type="text"></label><label class="field">Port: <input type="text"></label><label class="field">Vessel: <select class="ship-select"><option value="">Pilih Kapal</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label><label class="field">Date &amp; Time Sign Onboard: <input type="text" class="datetime-mask" placeholder="DD-MM-YYYY HH:MM"></label><div></div><label class="field">Date &amp; Time Familiarisation: <input type="text" class="datetime-mask" placeholder="DD-MM-YYYY HH:MM"></label></section>

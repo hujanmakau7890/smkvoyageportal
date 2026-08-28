@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>059-G - Nav Equipment, Publication Book & Chart Inventory List</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 11px; }
+  .tools { max-width: 1000px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 1000px; margin: 10px auto 24px; background: #fff; padding: 30px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 250px 1fr 200px; border: 2px solid #000; align-items: stretch; text-align: center; margin-bottom: 15px; }
+  .head > div { padding: 10px; border-right: 2px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+  .title { font-size: 14px; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; font-weight: bold; }
+  .info-table td { padding: 4px 6px; vertical-align: middle; }
+  .info-table input[type="text"], .info-table select { width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 12px; font-weight: bold; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .section-title { font-size: 12px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 9px; table-layout: fixed; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 3px; vertical-align: middle; text-align: center; }
+  .tbl th { font-weight: bold; background: #f2f2f2; }
+  .tbl td.num { font-weight: bold; }
+  .tbl input[type="text"] { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 9px; text-align: center; }
+  .tbl input.left-text { text-align: left; }
+  
+  .signatures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; font-weight: bold; font-size: 11px; padding: 0 20px; }
+  .sig-box { display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+  .sig-space { height: 60px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 55px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+  
+  .page-break { page-break-after: always; margin-bottom: 40px; border-bottom: 2px dashed #999; padding-bottom: 40px; }
+</style>
+<style id="global-print-fix">
+@media print {
+    body { background: #fff; margin:0; padding:0; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; width: 100%; zoom: 0.95; }
+    .page-break { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    input::-webkit-input-placeholder, input::-moz-placeholder, input:-ms-input-placeholder, input::placeholder { color: transparent !important; opacity: 0 !important; }
+    select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; background-image: none !important; background-color: transparent !important; border: none !important; }
+    select { border-bottom: 1px dotted #000 !important; }
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 10mm; }
+    .pv:not(.hidden) { display: flex !important; }
+}
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+
+  <!-- ================= G1 SECTION ================= -->
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      059-G1<br>NAVIGATION EQUIPMENTS INVENTORY LIST
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:2px solid #000;">
+          <div style="flex:1; border-right:2px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">TRW</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="5%">MV</td><td width="2%">:</td>
+      <td width="43%">
+        <select id="ship_name1">
+          <option value=""></option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+        </select>
+      </td>
+      <td width="15%">Date of Report</td><td width="2%">:</td>
+      <td width="33%"><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">NAVIGATION EQUIPMENTS</div>
+  <table class="tbl">
+    <colgroup>
+      <col width="4%"><col width="17%"><col width="8%"><col width="7%"><col width="7%"><col width="7%">
+      <col width="4%"><col width="17%"><col width="8%"><col width="7%"><col width="7%"><col width="7%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>No.</th><th>NAMA BARANG<br>NAME OF EQUIPMENT</th><th>Merk</th><th>Type</th><th>Serial No</th><th>Condition</th>
+        <th>No.</th><th>NAMA BARANG<br>NAME OF EQUIPMENT</th><th>Merk</th><th>Type</th><th>Serial No</th><th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="num">1</td>
+        <td><input type="text" class="left-text" value="Magnetic Compass"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">25</td>
+        <td><input type="text" class="left-text" value="Wheather Faximile"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">2</td>
+        <td><input type="text" class="left-text" value="Master Gyro"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">26</td>
+        <td><input type="text" class="left-text" value="Echosunder"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">3</td>
+        <td><input type="text" class="left-text" value="Auto Pilot"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">27</td>
+        <td><input type="text" class="left-text" value="ECDIS"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">4</td>
+        <td><input type="text" class="left-text" value="Repeater Wing Bridge Stbd"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">28</td>
+        <td><input type="text" class="left-text" value="VDR"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">5</td>
+        <td><input type="text" class="left-text" value="Repeater Wing Bridge Port"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">29</td>
+        <td><input type="text" class="left-text" value="Baromether"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">6</td>
+        <td><input type="text" class="left-text" value="Repeater for Auto Pilot"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">30</td>
+        <td><input type="text" class="left-text" value="Speed Log"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">7</td>
+        <td><input type="text" class="left-text" value="Wind Indicator (Anemometer)"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">31</td>
+        <td><input type="text" class="left-text" value="Thermometer"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">8</td>
+        <td><input type="text" class="left-text" value="Rudder Angle Indicator"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">32</td>
+        <td><input type="text" class="left-text" value="Two Way Radio GMDSS"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">9</td>
+        <td><input type="text" class="left-text" value="RPM Indicator"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">33</td>
+        <td><input type="text" class="left-text" value="etc"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">10</td>
+        <td><input type="text" class="left-text" value="Thermometer"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">34</td>
+        <td><input type="text" class="left-text" value="etc"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">11</td>
+        <td><input type="text" class="left-text" value="Barometer"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">35</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">12</td>
+        <td><input type="text" class="left-text" value="Radar (Arpa) No 1"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">36</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">13</td>
+        <td><input type="text" class="left-text" value="Radar (Arpa) No 2"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">37</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">14</td>
+        <td><input type="text" class="left-text" value="BNWAS (Bridge Navigational Warning Alarm System)"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">38</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">15</td>
+        <td><input type="text" class="left-text" value="GPS No 1"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">39</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">16</td>
+        <td><input type="text" class="left-text" value="GPS No 2"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">40</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">17</td>
+        <td><input type="text" class="left-text" value="VHF DSC No 1"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">41</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">18</td>
+        <td><input type="text" class="left-text" value="VHF DSC No 2"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">42</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">19</td>
+        <td><input type="text" class="left-text" value="Inmarsat C No 1 (LRIT)"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">43</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">20</td>
+        <td><input type="text" class="left-text" value="Inmarsat C No 2"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">44</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">21</td>
+        <td><input type="text" class="left-text" value="Printer Inmarsat C"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">45</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">22</td>
+        <td><input type="text" class="left-text" value="NBDP"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">46</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">23</td>
+        <td><input type="text" class="left-text" value="MF/ HF Radio"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">47</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">24</td>
+        <td><input type="text" class="left-text" value="Navtex"></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">48</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+    </tbody>
+  </table>
+  
+  <div class="signatures">
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Prepared by 2nd Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Checked by Chief Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Knowledge by Master,</div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ================= G2 SECTION ================= -->
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      059-G2<br>PUBLICATION BOOK INVENTORY LIST
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:2px solid #000;">
+          <div style="flex:1; border-right:2px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">TRW</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="5%">MV</td><td width="2%">:</td>
+      <td width="43%"><input type="text" id="ship_name2" readonly></td>
+      <td width="15%">Date of Report</td><td width="2%">:</td>
+      <td width="33%"><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">PUBLICATION BOOK</div>
+  <table class="tbl">
+    <colgroup>
+      <col width="4%"><col width="15%"><col width="6%">
+      <col width="4%"><col width="15%"><col width="6%">
+      <col width="4%"><col width="15%"><col width="6%">
+      <col width="4%"><col width="15%"><col width="6%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>No.</th><th>PUBLICATION BOOK</th><th>Tahun Edisi<br>Edition Year</th>
+        <th>No.</th><th>PUBLICATION BOOK</th><th>Tahun Edisi<br>Edition Year</th>
+        <th>No.</th><th>PUBLICATION BOOK</th><th>Tahun Edisi<br>Edition Year</th>
+        <th>No.</th><th>PUBLICATION BOOK</th><th>Tahun Edisi<br>Edition Year</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="num">1</td><td><input type="text" class="left-text" value="Solas"></td><td><input type="text"></td>
+        <td class="num">25</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">49</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">73</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">2</td><td><input type="text" class="left-text" value="Marpol"></td><td><input type="text"></td>
+        <td class="num">26</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">50</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">74</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">3</td><td><input type="text" class="left-text" value="STCW"></td><td><input type="text"></td>
+        <td class="num">27</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">51</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">75</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">4</td><td><input type="text" class="left-text" value="ISM Code"></td><td><input type="text"></td>
+        <td class="num">28</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">52</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">76</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">5</td><td><input type="text" class="left-text" value="ISPS Code"></td><td><input type="text"></td>
+        <td class="num">29</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">53</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">77</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">6</td><td><input type="text" class="left-text" value="IMDG Code"></td><td><input type="text"></td>
+        <td class="num">30</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">54</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">78</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">7</td><td><input type="text" class="left-text" value="Tide Table of Indonesia Archiprlago"></td><td><input type="text"></td>
+        <td class="num">31</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">55</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">79</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">8</td><td><input type="text" class="left-text" value="Tidal Stream Table Indonesia"></td><td><input type="text"></td>
+        <td class="num">32</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">56</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">80</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">9</td><td><input type="text" class="left-text" value="Buku Kepanduan Bahari"></td><td><input type="text"></td>
+        <td class="num">33</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">57</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">81</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">10</td><td><input type="text" class="left-text" value="Daftar Suar Indonesia"></td><td><input type="text"></td>
+        <td class="num">34</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">58</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">82</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">11</td><td><input type="text" class="left-text" value="Daftar Stasiun Radio Pantai"></td><td><input type="text"></td>
+        <td class="num">35</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">59</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">83</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">12</td><td><input type="text" class="left-text" value="Almanak Nautika"></td><td><input type="text"></td>
+        <td class="num">36</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">60</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">84</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">13</td><td><input type="text" class="left-text" value="SOPEP Book"></td><td><input type="text"></td>
+        <td class="num">37</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">61</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">85</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">14</td><td><input type="text" class="left-text" value="Garbage record book"></td><td><input type="text"></td>
+        <td class="num">38</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">62</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">86</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">15</td><td><input type="text" class="left-text" value="Garbage Management Plan"></td><td><input type="text"></td>
+        <td class="num">39</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">63</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">87</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">16</td><td><input type="text" class="left-text" value="IMDG Code"></td><td><input type="text"></td>
+        <td class="num">40</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">64</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">88</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">17</td><td><input type="text" class="left-text" value="IAMSAR Vol 1"></td><td><input type="text"></td>
+        <td class="num">41</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">65</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">89</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">18</td><td><input type="text" class="left-text" value="etc"></td><td><input type="text"></td>
+        <td class="num">42</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">66</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">90</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">19</td><td><input type="text" class="left-text" value="etc"></td><td><input type="text"></td>
+        <td class="num">43</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">67</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">91</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">20</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">44</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">68</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">92</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">21</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">45</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">69</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">93</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">22</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">46</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">70</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">94</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">23</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">47</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">71</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">95</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">24</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">48</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">72</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+        <td class="num">96</td><td><input type="text" class="left-text" value=""></td><td><input type="text"></td>
+      </tr>
+
+    </tbody>
+  </table>
+  
+  <div class="signatures">
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Prepared by 2nd Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Checked by Chief Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Knowledge by Master,</div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ================= G3 SECTION ================= -->
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      059-G3<br>CHART INVENTORY LIST
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:2px solid #000;">
+          <div style="flex:1; border-right:2px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">TRW</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="5%">MV</td><td width="2%">:</td>
+      <td width="43%"><input type="text" id="ship_name3" readonly></td>
+      <td width="15%">Date of Report</td><td width="2%">:</td>
+      <td width="33%"><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">INDONESIA CHART</div>
+  <table class="tbl">
+    <colgroup>
+      <col width="4%"><col width="15%"><col width="6%">
+      <col width="4%"><col width="15%"><col width="6%">
+      <col width="4%"><col width="15%"><col width="6%">
+      <col width="4%"><col width="15%"><col width="6%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>No.</th><th>No Peta</th><th>Tahun Edisi<br>Edition Year</th>
+        <th>No.</th><th>No Peta</th><th>Tahun Edisi<br>Edition Year</th>
+        <th>No.</th><th>No Peta</th><th>Tahun Edisi<br>Edition Year</th>
+        <th>No.</th><th>No Peta</th><th>Tahun Edisi<br>Edition Year</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td class="num">1</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">28</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">55</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">82</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">2</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">29</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">56</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">83</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">3</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">30</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">57</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">84</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">4</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">31</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">58</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">85</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">5</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">32</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">59</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">86</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">6</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">33</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">60</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">87</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">7</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">34</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">61</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">88</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">8</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">35</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">62</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">89</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">9</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">36</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">63</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">90</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">10</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">37</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">64</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">91</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">11</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">38</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">65</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">92</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">12</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">39</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">66</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">93</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">13</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">40</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">67</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">94</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">14</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">41</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">68</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">95</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">15</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">42</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">69</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">96</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">16</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">43</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">70</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">97</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">17</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">44</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">71</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">98</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">18</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">45</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">72</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">99</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">19</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">46</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">73</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">100</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">20</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">47</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">74</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">101</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">21</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">48</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">75</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">102</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">22</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">49</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">76</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">103</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">23</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">50</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">77</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">104</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">24</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">51</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">78</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">105</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">25</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">52</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">79</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">106</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">26</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">53</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">80</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">107</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td class="num">27</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">54</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">81</td><td><input type="text"></td><td><input type="text"></td>
+        <td class="num">108</td><td><input type="text"></td><td><input type="text"></td>
+      </tr>
+
+    </tbody>
+  </table>
+  
+  <div class="signatures">
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Prepared by 2nd Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Checked by Chief Officer,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width:100%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: bold;">
+      </div>
+      <div>Knowledge by Master,</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "059-G";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+  
+  // Signature Upload Logic
+  document.querySelectorAll('.upload').forEach(up => {
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      };
+      r.readAsDataURL(f);
+    };
+    
+    rem.onclick = () => {
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    };
+  });
+  
+  // Sync Ship Name across the 3 sections
+  const shipSelect = document.getElementById('ship_name1');
+  const shipInput2 = document.getElementById('ship_name2');
+  const shipInput3 = document.getElementById('ship_name3');
+  shipSelect.addEventListener('change', (e) => {
+    shipInput2.value = e.target.value;
+    shipInput3.value = e.target.value;
+  });
+</script>
+</body>
+</html>

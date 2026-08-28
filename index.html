@@ -1,6 +1,24 @@
 <!doctype html>
 <html lang="id">
   <head>
+<script>
+  window.addEventListener('error', function(event) {
+    var err = document.createElement('div');
+    err.style.position = 'fixed';
+    err.style.top = '0';
+    err.style.left = '0';
+    err.style.width = '100%';
+    err.style.zIndex = '99999';
+    err.style.background = 'red';
+    err.style.color = 'white';
+    err.style.padding = '20px';
+    err.style.whiteSpace = 'pre-wrap';
+    err.style.overflow = 'auto';
+    err.innerText = 'Global Error: ' + event.message + '\n' + (event.error ? event.error.stack : '');
+    document.body.appendChild(err);
+  });
+</script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#0b1120" />

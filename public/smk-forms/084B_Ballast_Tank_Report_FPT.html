@@ -150,6 +150,30 @@
   .dz select.cg:hover, .dz select.cg:focus { opacity:1; outline:1px dashed #4F81BD; background:rgba(255,255,255,.92); }
   .dz select.cf-on { opacity:1; font-weight:bold; }
 </style>
+
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
 </head>
 <body>
 

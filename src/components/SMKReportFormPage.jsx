@@ -60,8 +60,16 @@ export default function SMKReportFormPage() {
     return () => window.removeEventListener("message", handleMessage);
   }, [handleSavePdf]);
 
+  // Anti double-submit: dedup payload (klik 2× / message duplikat iframe) dalam 10 dtk
+  const lastSubmitRef = useRef({ key: "", at: 0 });
   async function handleSavePdf(payload) {
     try {
+      const dedupKey = JSON.stringify([payload.formCode, payload.ship, payload.date, payload.name || ""]);
+      const now = Date.now();
+      if (dedupKey === lastSubmitRef.current.key && now - lastSubmitRef.current.at < 10000) {
+        return; // abaikan kirim kedua dalam 10 dtk
+      }
+      lastSubmitRef.current = { key: dedupKey, at: now };
       const safeName = (payload.name || `smk_${Date.now()}.pdf`).replace(/[^a-zA-Z0-9._-]/g, "_");
       const safeShip = (payload.ship || "Tanpa_Nama_Kapal")
         .replace(/[^a-zA-Z0-9._-]/g, "_")

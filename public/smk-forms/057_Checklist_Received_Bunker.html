@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>057 - Checklist Received Bunker</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#e5e7eb;font-family:Arial,sans-serif;color:#000;font-size:11px}
+  .tools{max-width:960px;margin:14px auto 0;text-align:right}
+  .btn{border:0;border-radius:6px;background:#1769d2;color:#fff;font-weight:700;padding:9px 14px;cursor:pointer;font-family:inherit}
+  .page{max-width:960px;margin:10px auto 24px;background:#fff;padding:28px 32px 32px;box-shadow:0 3px 14px #999}
+  .head{display:grid;grid-template-columns:190px 1fr 170px;border:1px solid #000;align-items:stretch;text-align:center;margin-bottom:12px}
+  .head>div{padding:8px;border-right:1px solid #000;display:flex;flex-direction:column;justify-content:center}
+  .head>div:last-child{border-right:0;padding:0}
+  .company{font-size:11px;font-weight:700;text-transform:uppercase;line-height:1.2}
+  .title{font-size:12px;font-weight:800;text-transform:uppercase;line-height:1.35}
+  .head-right{display:flex;flex-direction:column;height:100%}
+  .head-right-top{display:flex;height:48%;border-bottom:1px solid #000}
+  .head-right-top>div{flex:1;display:flex;align-items:center;justify-content:center;font-weight:700;border-right:1px solid #000;font-size:10px}
+  .head-right-top>div:last-child{border-right:0}
+  .head-right-bottom{height:52%;display:flex;align-items:center;justify-content:flex-start;font-size:9px;padding:4px 8px;gap:6px}
+  .info-row{display:flex;gap:14px;margin-bottom:12px;font-size:11px;font-weight:700;flex-wrap:wrap}
+  .info-row>div{flex:1;display:flex;align-items:center;gap:6px;min-width:180px}
+  .info-row input,.info-row select{flex:1;border:0;border-bottom:1px dotted #000;background:transparent;outline:none;font-family:inherit;font-size:11px;font-weight:700;padding:2px 4px}
+  .info-row select.ship-select{border-bottom-style:solid}
+  .section-head{width:100%;border-collapse:collapse;margin-top:10px;table-layout:fixed}
+  .section-head th{border:1px solid #000;padding:5px 6px;font-size:11px;font-weight:800;text-align:center;background:#f2f2f2}
+  .section-head th:first-child{width:32px}
+  .section-head th:nth-child(2){text-align:left}
+  .section-head th:nth-child(3),.section-head th:nth-child(4){width:52px}
+  .tbl{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:0}
+  .tbl td{border:1px solid #000;padding:4px 5px;vertical-align:top;font-size:10px;line-height:1.35;word-wrap:break-word}
+  .tbl td:first-child{width:32px;text-align:center;font-weight:700}
+  .tbl td:nth-child(3),.tbl td:nth-child(4){width:52px;text-align:center;padding:6px 0}
+  .radio{width:16px;height:16px;border-radius:50%;border:2px solid #6b7280;display:inline-block;cursor:pointer;background:#fff;vertical-align:middle}
+  .radio.on{background:#2563eb;border-color:#1e40af;box-shadow:inset 0 0 0 3px #fff}
+  @media print{ .radio.on{background:#2563eb!important;-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+  .sec-title{border:1px solid #000;border-bottom:0;background:#dbeafe;text-align:center;font-weight:800;font-size:11px;padding:6px}
+  .notes-label{font-weight:800;font-size:11px;margin:14px 0 5px}
+  .notes-box{border:1px solid #000;min-height:90px;padding:6px}
+  .notes-box textarea{width:100%;min-height:78px;border:0;outline:none;resize:vertical;font-family:inherit;font-size:11px}
+  .sigs{display:flex;justify-content:space-between;gap:16px;margin-top:22px;text-align:center}
+  .sig{flex:1}
+  .sig-title{font-size:11px;font-weight:700;margin-bottom:6px}
+  .sig-space{height:70px;border-bottom:1px solid #000;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:4px}
+  .sig-space .add{font-size:10px;padding:4px 8px;border-radius:4px}
+  .sig-preview{display:none;width:100%;height:100%;align-items:center;justify-content:center;position:relative}
+  .sig-preview img{max-width:100%;max-height:62px;object-fit:contain}
+  .sig-preview .remove{position:absolute;right:2px;top:2px;width:18px;height:18px;border:0;border-radius:50%;background:#dc2626;color:#fff;font-weight:700;cursor:pointer}
+  .hidden{display:none!important}
+  .sig-name{font-size:11px;font-weight:700}
+  .sig-role{font-size:10px;color:#374151}
+  .footer{margin-top:18px;display:flex;justify-content:space-between;font-size:8px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:6px}
+  @media print{
+    body{background:#fff}
+    .tools,.no-print{display:none!important}
+    .page{box-shadow:none;margin:0;padding:0;max-width:none;border:none}
+    input::placeholder,textarea::placeholder{color:transparent!important}
+    select{appearance:none;-webkit-appearance:none}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    @page{size:A4 portrait;margin:10mm}
+  }
+</style>
+
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+<div class="page" id="form-container">
+
+  <div class="head">
+    <div class="company">PT MENTARI MAS<br>MULTIMODA</div>
+    <div class="title">057 &nbsp; CHECK LIST RECEIVED BUNKER /<br>CEKLIST PENGISIAN BUNKER</div>
+    <div>
+      <div class="head-right">
+        <div class="head-right-top"><div>S</div><div>SET</div></div>
+        <div class="head-right-bottom">Release : Rev.0 :</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div>MV : <select class="ship-select" id="ship_name"><option value=""></option><option>Express Mas</option><option>Mavendra Mas</option><option>Prakarsa Mas</option><option>Pratama Mas</option><option>Sahabat Mas</option><option>Segoro Mas</option><option>Selaras Mas</option><option>Semangat Mas</option></select></div>
+    <div>Port of : <input type="text" id="port_of"></div>
+    <div>Date : <input type="text" id="date_field" class="date-mask" placeholder="DD-MM-YYYY"></div>
+  </div>
+
+  <!-- PERSIAPAN AWAL -->
+  <div class="sec-title">PERSIAPAN AWAL / EARLY PREPARATION</div>
+  <table class="section-head"><tr><th>No</th><th>Uraian / Description</th><th>Yes</th><th>No</th></tr></table>
+  <table class="tbl" id="tbl-early">
+    <tr><td>1</td><td>Harus diyakini bahwa semua personil yang terlibat siap dan tanggap atas segala kemungkinan yang terjadi / All involved personal ready and responsive to all possibilities that occur</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>2</td><td>Diskusi rencana pengisian BBM &amp; urutan pengisian tangki dengan Mualim yang terlibat /<br>Discuss filling bunker plan with officer duty for order filling tank</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>3</td><td>Tutup dan amankan semua katup buangan / Closed for all exits valves</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>4</td><td>Tutup dan pasang flensa kedap untuk manifol yang tidak dipakai /<br>Closed used blind flange for otherside of manifold</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>5</td><td>Sumbat semua buangan air geladak agar kedap minyak (air) /<br>Closed all drain hole till tight for oil (water)</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>6</td><td>Siapkan material penyerap (oil absorbent) di lokasi tertentu /<br>Prepareness of oil absorbent in specific location</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>7</td><td>Siapkan SOPEP material dekat bunker manifold /<br>Prepared SOPEP material near bunker manifold</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>8</td><td>Siapkan sarana komunikasi antara tempat tempat pengisian , Mualim jaga dan kamar mesin /<br>Prepare of system communication between manifold, officer on duty and engine room</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>9</td><td>Pastikan apakah konfirmasi ruang masih tersedia dari tangki BBM diisi /<br>Make sure volume tk still enough space</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>10</td><td>High level alarm tangki BBM berfungsi / High level alarm normal function</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>11</td><td>Sarana PMK telah disiapkan / Fire fighting equipment ready to used</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+  </table>
+
+  <!-- MENJELANG PENGISIAN -->
+  <div class="sec-title">MENJELANG PENGISIAN / APPROCHED FILLING</div>
+  <table class="section-head"><tr><th>No</th><th>Uraian / Description</th><th>Yes</th><th>No</th></tr></table>
+  <table class="tbl">
+    <tr><td>1</td><td>Minta "Certificate of Bunker Quality" dari kapal bunker, check water &amp; sulfur content dll /<br>Checked cert bunker quality from bunker tanker, check water &amp; sulfur content etc</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>2</td><td>Pasang bunker drip di antara selang dengan bunker manifold di kapal utk pengambilan sampel selama bunker / Fixing bunker drip in bunker manifold for take sample during bunker</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>3</td><td>Sounding &amp; cek semua tanki BBM kapal dan catat di filling rate record (Form 060A) /<br>Sounding &amp; check all of vessel feul tank and record in Filling Rate Record (Form 060A)</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>4</td><td>Cek angka flow meter dan catat di filling rate record (Form 060A) /<br>Check flow meter and note in filling rate record (Form 060A)</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>5</td><td>Konfirmasi mengenai Rate pengisian Pompa masuk (MT/Jam) dengan kapal bunker,suhu pada saat pengisian / Confirmation with bunker tanker for Pumping in filling rate (MT/Hours), temperature during filling</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>6</td><td>Diskusi prosedure darurat dengan buker tanker /<br>Discuss about emergency procedure response with bunker tanker</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>7</td><td>Siapkan jalur komunikasi antara kapal dengan bunker tanker /<br>Prepare communication system between vessel &amp; bunker tanker</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>8</td><td>Botol botol sampel apakah sudah disiapkan /<br>Sample botols was ready</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>9</td><td>Persiapkan pipa isi dan buka katup-katup yang diperlukan /<br>Prepare filling pipe and opened valve needed</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+  </table>
+
+  <!-- SELAMA PENGISIAN -->
+  <div class="sec-title">SELAMA PENGISIAN / DURING FILLING</div>
+  <table class="section-head"><tr><th>No</th><th>Uraian / Description</th><th>Yes</th><th>No</th></tr></table>
+  <table class="tbl">
+    <tr><td>1</td><td>Catat waktu mulai pemompaan &amp; tekana awal harus minimal /<br>Record commence pumping &amp; start with minimal pressure</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>2</td><td>Monitor tekanan pipa pengisian &amp; cek kebocoran selang /<br>Monitor pressure &amp; check leak of hose</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>3</td><td>Ambil sampel lewat bunker drip selama pengisian dan photo /<br>Take it sample used drip during bunker received &amp; photo</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>4</td><td>Cek suhu bahan bakar selama pengisian /<br>Cek temperature feul during bunker</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>5</td><td>Keringkan selang setelah selesai pengisian dan tutup semua katup isi /<br>Drying hose after completed filling and closed all valves</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+  </table>
+
+  <!-- SETELAH SELESAI -->
+  <div class="sec-title">SETELAH SELESAI PENGISIAN / COMPLETED FILLING</div>
+  <table class="section-head"><tr><th>No</th><th>Uraian / Description</th><th>Yes</th><th>No</th></tr></table>
+  <table class="tbl">
+    <tr><td>1</td><td>Catat waktu selesai pemompaan /<br>Record time completed pump</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>2</td><td>Lepaskan bunker drip dari manifold dan bersihkan /<br>Opened &amp; Cleaned up bunker drip than keep in it's place</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>3</td><td>Tutup dan pemasangan flensa buta di pipa pengisian /<br>Closed used blank flange in filling pipe</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>4</td><td>Kocok tabung penampungan sampel dan bagi sampel ke dalam 4 botol dan taruh tgl, nama, ttd kedua pihak kapal bunker &amp; segel / Shake tube shelter of bunker sampler , divide be 4 botols and put date, bunker tanker name, sign both Party seal &amp; stamps</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>5</td><td>Cek flow meter akhir dan catat di filling rate record (Form 058A) /<br>Check last flow meter and note in filling rate record (Form 058A)</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>6</td><td>Sounding semua tanki bahan bakar kapal dan catat di filling rate record (Form 058A) /<br>Sounding all feul tank vessel and note in filling rate record (form 058A)</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>7</td><td>Ukur suhu minyak dalam tangki bahan bakar /<br>Cek temperature feul in all tank</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>8</td><td>Hitung volume semua tanki menggunakan BUNKER MASTER berdasarkan hasil sounding /<br>Calculated all tank volume used BUNKER MASTER base on sounding</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>9</td><td>Mengisi bunker delivery note mengacu kepada hasil perhitungan pada Filling Rate Record /<br>Fill in Filling Rate record (Form 058A) base on calculation</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+    <tr><td>10</td><td>Isi oil record book &amp; Log Book /<br>Fill in oil record book &amp; Log Book</td><td><span class="radio" data-v="0"></span></td><td><span class="radio" data-v="0"></span></td></tr>
+  </table>
+
+  <div class="notes-label">Chief Engineer Notes or orther Instruction :</div>
+  <div class="notes-box"><textarea id="ce_notes" placeholder=""></textarea></div>
+
+  <div class="sigs">
+    <div class="sig">
+      <div class="sig-title">Prepared by 3rd Engineer,</div>
+      <div class="sig-space">
+        <label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+        <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+      </div>
+      <div class="sig-name">Signed &amp; Name</div>
+    </div>
+    <div class="sig">
+      <div class="sig-title">Checked by Chief Engineer,</div>
+      <div class="sig-space">
+        <label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+        <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+      </div>
+      <div class="sig-name">Signed &amp; Name</div>
+    </div>
+    <div class="sig">
+      <div class="sig-title">Knowledge by Master</div>
+      <div class="sig-space">
+        <label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+        <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+      </div>
+      <div class="sig-name">Signed &amp; Name</div>
+    </div>
+  </div>
+
+  <div class="footer"><span>057 - Checklist Received Bunker.xlsx</span><span>Page 1 of 1</span></div>
+
+</div>
+
+<script>
+  const FORM_CODE = "057";
+  window.saveAsPDF = function(){ window.parent.postMessage({type:'SMK_SAVE_PDF',formCode:FORM_CODE,data:{}},'*'); };
+
+  function mask(e){ let v=e.target.value.replace(/\D/g,'').slice(0,8); if(v.length>2) v=v.slice(0,2)+'-'+v.slice(2); if(v.length>5) v=v.slice(0,5)+'-'+v.slice(5); e.target.value=v; }
+  document.querySelectorAll('.date-mask').forEach(x=>x.addEventListener('input',mask));
+
+  document.querySelectorAll('.upload').forEach(up=>{
+    const space=up.closest('.sig-space'); const pv=space.querySelector('.sig-preview'); const lab=space.querySelector('.add'); const im=pv.querySelector('img'); const rem=pv.querySelector('.remove');
+    up.onchange=e=>{ const f=e.target.files[0]; if(!f||!f.type.startsWith('image/')) return; const r=new FileReader(); r.onload=x=>{ im.src=x.target.result; lab.classList.add('hidden'); pv.classList.remove('hidden'); pv.style.display='flex'; }; r.readAsDataURL(f); };
+    rem.onclick=()=>{ im.src=''; up.value=''; pv.classList.add('hidden'); pv.style.display='none'; lab.classList.remove('hidden'); };
+  });
+
+
+  // Yes/No radio bulat: klik biru, klik lagi hilang; Yes dan No saling eksklusif per baris
+  document.querySelectorAll('.tbl tr').forEach(tr=>{
+    const cells=[...tr.querySelectorAll('td')];
+    if(cells.length<4) return;
+    const yes=cells[2].querySelector('.radio'), no=cells[3].querySelector('.radio');
+    if(!yes||!no) return;
+    function toggle(el, other){
+      const on = el.classList.contains('on');
+      if(on){ el.classList.remove('on'); el.dataset.v='0'; }
+      else { el.classList.add('on'); el.dataset.v='1'; other.classList.remove('on'); other.dataset.v='0'; }
+    }
+    yes.addEventListener('click', ()=>toggle(yes,no));
+    no.addEventListener('click', ()=>toggle(no,yes));
+  });
+  // Title + supabase messaging handled by SMKReportFormPage injection; keep local title updater
+  (function(){ try{
+    var base=document.title;
+    function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
+    function findVessel(){ return document.getElementById('ship_name'); }
+    function monthName(m){return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][m-1]||''}
+    function upd(){ var v=findVessel(), d=document.getElementById('date_field'); var vs=v?esc(v.value):''; var ds=d?esc(d.value):''; var t=base; if(vs) t+=' - '+vs; if(ds){ var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/); if(m){ var mo=parseInt(m[2],10),yr=m[3]; if(mo>=1&&mo<=12) t+=' - '+monthName(mo)+' '+yr; } else t+=' - '+ds; } document.title=t; try{window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}catch(e){} }
+    var v=findVessel(), d=document.getElementById('date_field'); if(v) v.addEventListener('change',upd); if(d) d.addEventListener('input',upd); upd();
+  }catch(e){} })();
+</script>
+</body>
+</html>

@@ -24,7 +24,31 @@ select{appearance:none!important;-webkit-appearance:none!important;background-im
           }
         }
 
-</style></head><body><div class="page"><div class="toolbar no-print"><button class="btn add" id="addRow">+ Tambah Baris</button><button class="btn del" id="delRow">− Hapus Baris Terakhir</button><button class="btn print" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
+</style>
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head><body><div class="page"><div class="toolbar no-print"><button class="btn add" id="addRow">+ Tambah Baris</button><button class="btn del" id="delRow">− Hapus Baris Terakhir</button><button class="btn print" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
 <header class="header"><div class="header-top"><div class="company">PT Mentari Mas Multimoda</div><div class="title">010 &nbsp; FORM OF RISK ASSESSMENT<br><span style="font-size:10px;font-weight:normal">FORM PENILAIAN RISIKO</span></div><div class="status"><div class="status-box"><span>CS</span><span>SET</span></div><div class="release">Release: &nbsp; Rev. 0 :</div></div></div><div class="meta"><label class="field">Ship Name / Nama Kapal: <select class="ship-select"><option value="">Pilih Kapal</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label><div class="field">Section / Bagian: <span class="section-choice"><label class="radio-label"><input class="radio" type="radio" name="section">Deck</label><label class="radio-label"><input class="radio" type="radio" name="section">Mesin</label></span></div><label class="field">Work area assessed / Area kerja yang dinilai: <input type="text"></label><label class="field">Assessment Date / Tanggal Penilaian: <input class="date-mask" type="text" placeholder="DD-MM-YYYY"></label></div></header>
 <section class="instructions"><b>Instruction:</b> 1. Perform a Risk Assessment every time doing a job/activity in a particular work area that has never been assessed risks. &nbsp; 2. The Master appoints one of his officers to conduct a risk assessment. &nbsp; 3. Archive completed files in the SHIP ACTIVITY FILE.<br><b>Instruksi:</b> 1. Lakukan Penilaian Risiko setiap kali melakukan pekerjaan/kegiatan di area kerja yang belum pernah dinilai risikonya. &nbsp; 2. Nakhoda menunjuk salah satu perwira untuk melakukan penilaian risiko. &nbsp; 3. Arsipkan file yang lengkap pada FILE KEGIATAN KAPAL.</section>
 <div class="table-wrap"><table class="main-table"><thead><tr><th class="c-no">Number<br>No.</th><th class="c-process">Work processes/actions performed in the work area<br>Proses kerja/tindakan di area kerja</th><th class="c-hazard">Description of potential hazards associated with activity<br>Deskripsi potensi bahaya</th><th class="c-party">Parties/people potentially exposed<br>Pihak/orang yang berpotensi terkena dampak</th><th class="c-control">Control of hazards already implemented<br>Pengendalian bahaya yang telah dilakukan</th><th class="c-level">Level of Dangerous**<br>Tingkat Kegawatan</th><th class="c-trend">Trends Occurred**<br>Kecenderungan Terjadi</th><th class="c-risk">Risk Factors**<br>Faktor Risiko</th></tr></thead><tbody id="rows"></tbody></table></div>

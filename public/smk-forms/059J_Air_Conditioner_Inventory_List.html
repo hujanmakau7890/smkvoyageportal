@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>059-J - Air Conditioner (AC) Inventory List</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e5e7eb; font-family: Arial, sans-serif; color: #000; font-size: 11px; }
+  .tools { max-width: 1000px; margin: 14px auto 0; text-align: right; }
+  .btn { border: 0; border-radius: 6px; background: #1769d2; color: #fff; font-weight: 700; padding: 10px 15px; cursor: pointer; font-family: inherit; }
+  .page { max-width: 1000px; margin: 10px auto 24px; background: #fff; padding: 30px; box-shadow: 0 3px 14px #999; position: relative; }
+  
+  .head { display: grid; grid-template-columns: 200px 1fr 200px; border: 2px solid #000; align-items: stretch; text-align: center; margin-bottom: 20px; }
+  .head > div { padding: 10px; border-right: 2px solid #000; display: flex; flex-direction: column; justify-content: center; }
+  .head > div:last-child { border-right: 0; }
+  .company { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+  .title { font-size: 16px; font-weight: bold; text-transform: uppercase; line-height: 1.2; }
+  
+  .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; font-weight: bold; }
+  .info-table td { padding: 4px 6px; vertical-align: middle; }
+  .info-table input[type="text"], .info-table select { width: 100%; border: 0; border-bottom: 1px dotted #000; font-family: inherit; font-size: 13px; font-weight: bold; padding: 2px 4px; background: transparent; outline: none; }
+  
+  .tbl { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 10px; table-layout: fixed; }
+  .tbl th, .tbl td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; }
+  .tbl th { background: #f2f2f2; font-weight: bold; }
+  .tbl input[type="text"] { width: 100%; border: 0; background: transparent; outline: none; font-family: inherit; font-size: 10px; text-align: center; }
+  .tbl input.left-text { text-align: left; }
+  
+  .signatures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; font-weight: bold; font-size: 12px; }
+  .sig-box { display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+  .sig-space { height: 80px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border-bottom: 1px solid #000; margin-bottom: 5px; }
+  .sig-space .btn { font-size: 10px; padding: 4px 8px; margin: 0; cursor: pointer; border-radius: 4px; }
+  .sig-preview { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .sig-preview img { max-width: 100%; max-height: 75px; object-fit: contain; }
+  .remove { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: 700; padding: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+  
+  @media print {
+    body { background: #fff; }
+    .tools, .no-print { display: none !important; }
+    .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+    input::placeholder { color: transparent !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 15mm; }
+  }
+</style>
+
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head>
+<body>
+<div class="tools no-print">
+  <button class="btn" onclick="window.saveAsPDF()">Save PDF</button>
+</div>
+
+<div class="page" id="form-container">
+  <div class="head">
+    <div class="company">PT MENTARI MAS MULTIMODA</div>
+    <div class="title">
+      059-J<br>AIR CONDITIONER (AC) INVENTORY LIST
+    </div>
+    <div style="padding:0;">
+      <div style="display:flex; flex-direction:column; padding:0; justify-content:center; height: 100%;">
+        <div style="display:flex; height:50%; border-bottom:2px solid #000;">
+          <div style="flex:1; border-right:2px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold;">CS</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">TRW</div>
+        </div>
+        <div style="height:50%; display:flex; align-items:center; justify-content:center; font-size:11px; text-align: left; padding-left: 10px;">Release:<br>Rev.0:</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="info-table">
+    <colgroup><col width="5%"><col width="2%"><col width="43%"><col width="22%"><col width="2%"><col width="26%"></colgroup>
+    <tr>
+      <td>MV</td><td>:</td>
+      <td>
+        <select>
+          <option value=""></option>
+          <option value="Express Mas">Express Mas</option>
+          <option value="Mavendra Mas">Mavendra Mas</option>
+          <option value="Prakarsa Mas">Prakarsa Mas</option>
+          <option value="Pratama Mas">Pratama Mas</option>
+          <option value="Sahabat Mas">Sahabat Mas</option>
+          <option value="Segoro Mas">Segoro Mas</option>
+          <option value="Selaras Mas">Selaras Mas</option>
+          <option value="Semangat Mas">Semangat Mas</option>
+        </select>
+      </td>
+      <td>Date & Month of Report</td><td>:</td>
+      <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+    </tr>
+  </table>
+
+  <table class="tbl">
+    <colgroup>
+      <col width="4%">
+      <col width="20%">
+      <col width="14%">
+      <col width="6%">
+      <col width="9%">
+      <col width="6%">
+      <col width="15%">
+      <col width="11%">
+      <col width="15%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>AC Position</th>
+        <th>Merk</th>
+        <th>PK</th>
+        <th>Power</th>
+        <th>Hz</th>
+        <th>Tanggal / Bulan / Tahun Pemasangan</th>
+        <th>Condition</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td style="font-weight:bold;">1</td>
+        <td><input type="text" class="left-text" value="Bridge"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">2</td>
+        <td><input type="text" class="left-text" value="Mess Room Officer"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">3</td>
+        <td><input type="text" class="left-text" value="Mess Room ABK"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">4</td>
+        <td><input type="text" class="left-text" value="Ship Office"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">5</td>
+        <td><input type="text" class="left-text" value="Meeting Room"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">6</td>
+        <td><input type="text" class="left-text" value="Engine Control Room"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">7</td>
+        <td><input type="text" class="left-text" value="Master Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">8</td>
+        <td><input type="text" class="left-text" value="Ch. Engineer Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">9</td>
+        <td><input type="text" class="left-text" value="Pilot Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">10</td>
+        <td><input type="text" class="left-text" value="Owner Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">11</td>
+        <td><input type="text" class="left-text" value="Ch. Officer Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">12</td>
+        <td><input type="text" class="left-text" value="2nd Engineer Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">13</td>
+        <td><input type="text" class="left-text" value="2nd Officer Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">14</td>
+        <td><input type="text" class="left-text" value="3rd Officer Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">15</td>
+        <td><input type="text" class="left-text" value="3rd Engineer Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">16</td>
+        <td><input type="text" class="left-text" value="4th Engineer Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">17</td>
+        <td><input type="text" class="left-text" value="Electrician Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">18</td>
+        <td><input type="text" class="left-text" value="Boswain Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">19</td>
+        <td><input type="text" class="left-text" value="Engine Foreman Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">20</td>
+        <td><input type="text" class="left-text" value="Cook Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">21</td>
+        <td><input type="text" class="left-text" value="AB-1 Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">22</td>
+        <td><input type="text" class="left-text" value="AB-2 Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">23</td>
+        <td><input type="text" class="left-text" value="AB-3 Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">24</td>
+        <td><input type="text" class="left-text" value="Oiler-1 Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">25</td>
+        <td><input type="text" class="left-text" value="Oiler 2 Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">26</td>
+        <td><input type="text" class="left-text" value="Oiler-3 Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">27</td>
+        <td><input type="text" class="left-text" value="Mess Boy Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">28</td>
+        <td><input type="text" class="left-text" value="Deck Cadet Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">29</td>
+        <td><input type="text" class="left-text" value="Engine Cadet Cabin"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">30</td>
+        <td><input type="text" class="left-text" value="Hospital Room"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">31</td>
+        <td><input type="text" class="left-text" value="Passage way 1st Deck"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">32</td>
+        <td><input type="text" class="left-text" value="Passage way 2nd Deck"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">33</td>
+        <td><input type="text" class="left-text" value="Passage Way 3rd Deck"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">34</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">35</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">36</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">37</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">38</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">39</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">40</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">41</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">42</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">43</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">44</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+      <tr>
+        <td style="font-weight:bold;">45</td>
+        <td><input type="text" class="left-text" value=""></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="text" class="date-mask" placeholder="DD-MM-YYYY"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+
+    </tbody>
+  </table>
+  
+  <div class="signatures">
+    <div class="sig-box">
+      <div style="width: 80%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div style="margin-top: 5px;">Reported by Chief Engineer</div>
+    </div>
+    <div class="sig-box">
+      <div style="width: 80%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div style="margin-top: 5px;">Checked by Master,</div>
+    </div>
+    <div class="sig-box">
+      <div style="width: 80%;">
+        <div class="sig-space">
+          <label class="btn no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
+          <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
+        </div>
+        <input type="text" placeholder="Signed & Name" style="width: 100%; text-align: center; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: bold;">
+      </div>
+      <div style="margin-top: 5px;">Recheck by SI / FM</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const FORM_CODE = "059-J";
+  window.saveAsPDF = function() {
+    window.parent.postMessage({ type: 'SMK_SAVE_PDF', formCode: FORM_CODE, data: {} }, '*');
+  };
+  
+  // Date mask
+  function mask(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+    if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+    e.target.value = v;
+  }
+  document.querySelectorAll('.date-mask').forEach(x => x.oninput = mask);
+  
+  // Signature Upload Logic
+  document.querySelectorAll('.upload').forEach(up => {
+    const pv = up.closest('.sig-space').querySelector('.sig-preview');
+    const lab = up.closest('.btn');
+    const im = pv.querySelector('img');
+    const rem = pv.querySelector('.remove');
+    
+    up.onchange = e => {
+      const f = e.target.files[0];
+      if(!f || !f.type.startsWith('image/')) return;
+      const r = new FileReader();
+      r.onload = x => {
+        im.src = x.target.result;
+        lab.classList.add('hidden');
+        pv.classList.remove('hidden');
+        pv.style.display = 'flex';
+      };
+      r.readAsDataURL(f);
+    };
+    
+    rem.onclick = () => {
+      im.src = '';
+      up.value = '';
+      pv.classList.add('hidden');
+      pv.style.display = 'none';
+      lab.classList.remove('hidden');
+    };
+  });
+</script>
+</body>
+</html>

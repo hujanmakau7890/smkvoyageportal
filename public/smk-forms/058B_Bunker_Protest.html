@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>058-B - Bunker Protest</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#e5e7eb;font-family:Arial,sans-serif;color:#000;font-size:11px}
+  .tools{max-width:960px;margin:14px auto 0;text-align:right}
+  .btn{border:0;border-radius:6px;background:#1769d2;color:#fff;font-weight:700;padding:9px 14px;cursor:pointer;font-family:inherit}
+  .page{max-width:960px;margin:10px auto 24px;background:#fff;padding:32px 36px 32px;box-shadow:0 3px 14px #999}
+  .head{display:grid;grid-template-columns:190px 1fr 170px;border:1px solid #000;align-items:stretch;text-align:center;margin-bottom:16px}
+  .head>div{padding:8px;border-right:1px solid #000;display:flex;flex-direction:column;justify-content:center}
+  .head>div:last-child{border-right:0;padding:0}
+  .company{font-size:11px;font-weight:700;text-transform:uppercase;line-height:1.2}
+  .title{font-size:12px;font-weight:800;text-transform:uppercase;line-height:1.35}
+  .head-right{display:flex;flex-direction:column;height:100%}
+  .head-right-top{display:flex;height:48%;border-bottom:1px solid #000}
+  .head-right-top>div{flex:1;display:flex;align-items:center;justify-content:center;font-weight:700;border-right:1px solid #000;font-size:10px}
+  .head-right-top>div:last-child{border-right:0}
+  .head-right-bottom{height:52%;display:flex;align-items:center;justify-content:flex-start;font-size:9px;padding:4px 8px;gap:6px}
+  .ship-box{max-width:520px;margin:0 auto 10px;text-align:center}
+  .ship-box select{width:100%;border:1px solid #000;border-radius:4px;padding:6px 8px;font-family:inherit;font-size:12px;font-weight:700;background:#fff;outline:none;text-align:center;text-align-last:center}
+  .ship-label{font-size:10px;margin-top:3px}
+  .date-row{display:flex;align-items:center;gap:8px;margin:14px 0 10px;font-size:11px;font-weight:700;max-width:260px}
+  .date-row input{flex:1;border:0;border-bottom:1px dotted #000;background:transparent;outline:none;font-family:inherit;font-size:11px;font-weight:700;padding:2px 4px}
+  .letter-title{text-align:center;margin:16px 0 14px}
+  .letter-title .id{font-size:14px;font-weight:800}
+  .letter-title .en{font-size:11px;margin-top:2px}
+  .field{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:11px}
+  .field span{white-space:nowrap;font-weight:700;min-width:110px}
+  .field input{flex:1;border:0;border-bottom:1px dotted #000;background:transparent;outline:none;font-family:inherit;font-size:11px;padding:2px 4px}
+  .subject{margin-top:12px;font-size:11px}
+  .subject .row{display:flex;align-items:center;gap:6px;margin:4px 0}
+  .subject input{flex:1;border:0;border-bottom:1px dotted #000;background:transparent;outline:none;font-family:inherit;font-size:11px;padding:2px 4px}
+  .subject .sub{font-style:italic;text-align:center;font-size:10px;color:#374151;margin-top:4px}
+  .body-text{margin-top:14px;font-size:11px;line-height:1.4}
+  .body-text .en{font-style:italic;color:#374151}
+  .big-box{border:1px solid #000;min-height:88px;padding:6px;margin-top:6px}
+  .big-box textarea{width:100%;min-height:76px;border:0;outline:none;resize:vertical;font-family:inherit;font-size:11px}
+  .bunker-line{margin-top:10px;font-size:11px}
+  .bunker-line .row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0}
+  .bunker-line input{border:0;border-bottom:1px dotted #000;background:transparent;outline:none;font-family:inherit;font-size:11px;padding:1px 4px;min-width:120px;flex:1}
+  .bunker-line .en{font-style:italic;font-size:10px;color:#374151}
+  .closing{display:flex;justify-content:space-between;gap:24px;margin-top:22px}
+  .closing>div{flex:1;text-align:center}
+  .closing .lbl{font-size:11px;font-weight:700}
+  .sig-space{height:70px;border-bottom:1px solid #000;display:flex;align-items:center;justify-content:center;position:relative;margin:8px 0 4px}
+  .sig-space .add{font-size:10px;padding:4px 8px;border-radius:4px}
+  .sig-preview{display:none;width:100%;height:100%;align-items:center;justify-content:center;position:relative}
+  .sig-preview img{max-width:100%;max-height:62px;object-fit:contain}
+  .sig-preview .remove{position:absolute;right:2px;top:2px;width:18px;height:18px;border:0;border-radius:50%;background:#dc2626;color:#fff;font-weight:700;cursor:pointer}
+  .hidden{display:none!important}
+  .note-small{font-size:8px;color:#6b7280;font-style:italic;margin-top:4px}
+  .footer{margin-top:18px;display:flex;justify-content:space-between;font-size:8px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:6px}
+  @media print{ body{background:#fff} .tools,.no-print{display:none!important} .page{box-shadow:none;margin:0;padding:0;max-width:none;border:none} input::placeholder,textarea::placeholder{color:transparent!important} select{appearance:none;-webkit-appearance:none} *{-webkit-print-color-adjust:exact;print-color-adjust:exact} @page{size:A4 portrait;margin:10mm} }
+</style>
+
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head>
+<body>
+<div class="tools no-print"><button class="btn" onclick="window.saveAsPDF()">Save PDF</button></div>
+<div class="page" id="form-container">
+
+  <div class="head">
+    <div class="company">PT MENTARI MAS<br>MULTIMODA</div>
+    <div class="title">058-B<br>BUNKER PROTEST</div>
+    <div><div class="head-right"><div class="head-right-top"><div>CS</div><div>SET</div></div><div class="head-right-bottom">Release : Rev.0 :</div></div></div>
+  </div>
+
+  <div class="ship-box">
+    <select class="ship-select" id="ship_name"><option value=""></option><option>Express Mas</option><option>Mavendra Mas</option><option>Prakarsa Mas</option><option>Pratama Mas</option><option>Sahabat Mas</option><option>Segoro Mas</option><option>Selaras Mas</option><option>Semangat Mas</option></select>
+    <div class="ship-label">Ship's Name / Nama Kapal</div>
+  </div>
+
+  <div class="date-row">Tanggal (date) : <input type="text" id="date_field" class="date-mask" placeholder="DD-MM-YYYY"><span style="font-size:8px;font-weight:400">(dd.mm.yyyy)</span></div>
+
+  <div class="letter-title"><div class="id">SURAT PROTEST</div><div class="en">(Letter of Protest)</div></div>
+
+  <div class="field"><span>Kepada / to</span> : <input type="text"></div>
+  <div class="field"><span>Chartener / owner</span> : <input type="text"></div>
+  <div class="field"><span>address</span> : <input type="text"></div>
+
+  <div class="subject">
+    <div class="row">Perihal : SURAT PROTES UNTUK PENERIMAAN MINYAK (BUNKER) PADA : <input type="text" placeholder="tanggal"></div>
+    <div class="sub">Sub: LETTER OF PROTEST FOR BUNKERING OPERATION ON ( DATE )</div>
+  </div>
+
+  <div class="body-text">
+    <div>Yth. Bapak dan Ibu, berikut deskripsi protes terhadap (Alasan dan Penjelasan)</div>
+    <div class="en">Dear Ladies and Gentlemen, This is to protest againsts (Reason and explanation of fuel claim)</div>
+    <div class="big-box"><textarea placeholder=""></textarea></div>
+  </div>
+
+  <div class="bunker-line">
+    <div class="row">Bunker disediakan oleh Bunker Tanker : <input type="text"> &nbsp; Pada : <input type="text" style="max-width:130px"> &nbsp; Di : <input type="text" style="max-width:140px"></div>
+    <div class="en">The bunkers were supplied by Bunker Tanker (Name of Bunker Tanker) On (Date) at (Location).</div>
+  </div>
+
+  <div class="bunker-line">
+    <div class="row">Saya, Nakhoda dari Kapal : <input type="text">, dengan ini mengirimkan protes atas bunker sesuai penjelasan di atas.</div>
+    <div class="en">I am, the Master of the MV (Name of Vessel) herewith protest against the bunker according to the explanation above.</div>
+  </div>
+
+  <div class="closing">
+    <div>
+      <div class="lbl">Dengan hormat,<br>Yours faithfully,</div>
+      <div class="sig-space"><label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div>
+      <div style="font-size:10px;font-weight:700">(Name of Master of Vessel &amp; Stamps)</div>
+      <div class="note-small">Catatan &amp; Lampiran (note &amp; attach)</div>
+    </div>
+    <div>
+      <div class="lbl">Mengetahui,<br>Acknowledge Received,</div>
+      <div class="sig-space"><label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div>
+      <div style="font-size:10px;font-weight:700">(Name &amp; signature of Master/Cargo officer Bunker Tanker &amp; Stamps)</div>
+      <div style="margin-top:14px" class="sig-space"><label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div>
+      <div style="font-size:10px;font-weight:700">(Name, signature &amp; stamp of Surveyor)</div>
+    </div>
+  </div>
+
+  <div class="footer"><span>058-B - BUNKER PROTEST.xlsx</span><span>Page 1 of 1</span></div>
+
+</div>
+
+<script>
+  const FORM_CODE = "058-B";
+  window.saveAsPDF = function(){ window.parent.postMessage({type:'SMK_SAVE_PDF',formCode:FORM_CODE,data:{}},'*'); };
+  function mask(e){ let v=e.target.value.replace(/\D/g,'').slice(0,8); if(v.length>2) v=v.slice(0,2)+'-'+v.slice(2); if(v.length>5) v=v.slice(0,5)+'-'+v.slice(5); e.target.value=v; }
+  document.querySelectorAll('.date-mask').forEach(x=>x.addEventListener('input',mask));
+  document.querySelectorAll('.upload').forEach(up=>{
+    const space=up.closest('.sig-space'); const pv=space.querySelector('.sig-preview'); const lab=space.querySelector('.add'); const im=pv.querySelector('img'); const rem=pv.querySelector('.remove');
+    up.onchange=e=>{ const f=e.target.files[0]; if(!f||!f.type.startsWith('image/')) return; const r=new FileReader(); r.onload=x=>{ im.src=x.target.result; lab.classList.add('hidden'); pv.classList.remove('hidden'); pv.style.display='flex'; }; r.readAsDataURL(f); };
+    rem.onclick=()=>{ im.src=''; up.value=''; pv.classList.add('hidden'); pv.style.display='none'; lab.classList.remove('hidden'); };
+  });
+  (function(){ try{
+    var base=document.title;
+    function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
+    function upd(){ var v=document.getElementById('ship_name'), d=document.getElementById('date_field'); var vs=v?esc(v.value):''; var ds=d?esc(d.value):''; var t=base; if(vs) t+=' - '+vs; if(ds){ var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/); if(m){ var mo=parseInt(m[2],10),yr=m[3]; var months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']; if(mo>=1&&mo<=12) t+=' - '+months[mo-1]+' '+yr; } else t+=' - '+ds; } document.title=t; try{window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}catch(e){} }
+    var v=document.getElementById('ship_name'), d=document.getElementById('date_field'); if(v) v.addEventListener('change',upd); if(d) d.addEventListener('input',upd); upd();
+  }catch(e){} })();
+</script>
+</body>
+</html>

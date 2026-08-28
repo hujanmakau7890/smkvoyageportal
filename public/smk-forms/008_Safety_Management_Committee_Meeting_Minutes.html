@@ -23,7 +23,31 @@
           }
         }
 
-</style></head><body><div class="page"><div class="toolbar no-print"><button class="print-btn" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
+</style>
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head><body><div class="page"><div class="toolbar no-print"><button class="print-btn" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
 <header class="header"><div class="header-top"><div class="company">PT Mentari Mas Multimoda</div><div class="title">008 &nbsp; NOTULEN RAPAT KOMITE MANAJEMEN KESELAMATAN<br><span style="font-size:10px;font-weight:normal">MINUTES OF SAFETY MANAGEMENT COMMITTEE MEETING</span></div><div class="status-area"><div class="status-box"><span>CS</span><span>SET</span></div><div class="release">Release : &nbsp; Rev. 0 :</div></div></div><div class="meta"><label class="field">Tanggal Rapat / Meeting Date: <input class="date-mask" type="text" placeholder="DD-MM-YYYY"></label><label class="field">Tempat / Place: <input type="text"></label><label class="field">Page: <input type="text" inputmode="numeric"></label></div></header>
 <div class="attendance"><span>Daftar Hadir Terlampir / List of Attendees (Form-011)</span><span>Checked</span></div><div class="table-wrap"><table><thead><tr><th class="number">No.</th><th class="agenda">Agenda Rapat / Meeting Agenda</th><th class="check">Yes</th><th class="check">No</th></tr></thead><tbody id="agenda"></tbody></table></div>
 <section class="results"><div class="results-title">Hasil Evaluasi dan Rekomendasi Rapat / Results of the Meeting Evaluation and Recommendation:</div><textarea></textarea></section><div class="note">Bila tidak cukup, pakai lembar tambahan / If not enough, use an extra sheet (BLANK SHEET)</div><section class="signatures" id="signatures"></section></div>

@@ -6,6 +6,30 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#e5e7eb;font:12px Arial,sans-serif;color:#111}.page{width:210mm;min-height:297mm;margin:12px auto;background:#fff;padding:12mm;box-shadow:0 2px 8px #999}.tools{display:flex;justify-content:flex-end;margin-bottom:10px}.btn{border:0;border-radius:5px;background:#1769d2;color:#fff;font-weight:bold;padding:10px 16px;cursor:pointer}.btn:disabled{opacity:.7}.head{border:1.5px solid #111}.head-top{display:grid;grid-template-columns:28% 50% 22%;border-bottom:1px solid #111;min-height:68px}.company{font-weight:bold;padding:9px}.title{text-align:center;font-weight:bold;font-size:15px;padding:12px 5px;line-height:1.35;border-left:1px solid #111;border-right:1px solid #111}.status{padding:7px;font-size:10px;text-align:center}.status b{display:inline-block;border:1px solid #111;padding:3px 6px;margin-bottom:6px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:8px}.field{display:flex;align-items:center;gap:5px;min-width:0}.field label{font-weight:bold;white-space:nowrap}.field input,.field select,.field textarea{width:100%;min-width:0;border:0;border-bottom:1px solid #111;background:transparent;padding:3px;outline:none;font:inherit}.section{margin-top:12px;border:1px solid #111}.section-title{font-weight:bold;background:#f1f5f9;padding:5px 7px;border-bottom:1px solid #111}.content{padding:8px}.intro{line-height:1.5;margin:7px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 15px}.full{grid-column:1/-1}.lined{border-bottom:1px solid #111;min-height:25px;padding:3px}.lined label{font-weight:bold}.lined input,.lined textarea{border:0;width:calc(100% - 5px);outline:none;background:transparent;font:inherit}.lined textarea{resize:vertical;min-height:38px;vertical-align:top}.signature{margin-top:25px;margin-left:auto;width:48%;text-align:center;break-inside:avoid;page-break-inside:avoid}.signature .space{height:55px}.doctor-note{margin-top:14px;font-style:italic;font-weight:bold}.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;padding:8px}.checks label{display:flex;gap:6px;align-items:center}.doctor-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #111}.doctor-grid .cell{padding:7px;border-right:1px solid #111;border-bottom:1px solid #111;min-height:70px}.doctor-grid .cell:nth-child(even){border-right:0}.doctor-grid .wide{grid-column:1/-1}.doctor-grid label{display:block;font-weight:bold;margin-bottom:5px}.doctor-grid input,.doctor-grid textarea{width:100%;border:0;border-bottom:1px solid #111;outline:0;background:transparent;font:inherit;padding:3px}.doctor-grid textarea{min-height:45px;resize:vertical}.doctor-signatures{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px;break-inside:avoid;page-break-inside:avoid}.doctor-signatures .sig{min-height:115px;text-align:center}.doctor-signatures textarea{width:100%;height:58px;border:0;border-bottom:1px solid #111;resize:none;outline:0;font:inherit}.notice{padding:7px;font-size:11px;line-height:1.35}.no-print{display:block}@media print{@page{size:A4 portrait;margin:10mm}.no-print{display:none!important}body{background:#fff}.page{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}.section,.signature,.doctor-signatures{break-inside:avoid;page-break-inside:avoid}input,textarea,select{color:#111!important}select{appearance:none;-webkit-appearance:none}}@media screen and (max-width:760px){.page{width:100%;padding:14px;margin:0}.head-top,.grid,.doctor-grid,.doctor-signatures,.meta{grid-template-columns:1fr}.title{border-top:1px solid #111;border-bottom:1px solid #111;border-left:0;border-right:0}.doctor-grid .cell{border-right:0}.signature{width:100%}}
 </style>
+
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
 </head>
 <body><main class="page">
 <div class="tools no-print"><button id="btn-print" class="btn" onclick="saveAndPrint()">Print / Simpan PDF</button></div>

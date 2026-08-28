@@ -535,10 +535,8 @@ class Handler(BaseHTTPRequestHandler):
 
                 shutil.move(pdf_tmp, tmp)
 
-                # Jika tujuan Need Approval, simpan juga HTML aslinya untuk TTD inject saat Approve
-                if destination == "Need Approval":
-                    html_backup = os.path.join(d, fname.replace(".pdf", ".html"))
-                    shutil.copy(html_path, html_backup)
+                # HTML backup tidak disimpan (hanya PDF sesuai permintaan user)
+                pass  # no html_backup
 
                 try:
                     os.remove(html_path)

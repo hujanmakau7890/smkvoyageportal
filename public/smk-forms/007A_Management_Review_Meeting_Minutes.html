@@ -23,7 +23,31 @@
           }
         }
 
-</style></head><body><div class="page"><div class="toolbar no-print"><button class="print-btn" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
+</style>
+<style id="global-print-fix">
+@media print {
+    input::-webkit-input-placeholder, 
+    input::-moz-placeholder, 
+    input:-ms-input-placeholder, 
+    input::placeholder {
+        color: transparent !important;
+        opacity: 0 !important;
+    }
+    select {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: none !important;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    /* Specifically for bottom-border selects if they were styled */
+    select { border-bottom: 1px dotted #000 !important; }
+    /* Some selects have border: 0 */
+    .tbl select { border: 0 !important; border-bottom: 0 !important; }
+}
+</style>
+</head><body><div class="page"><div class="toolbar no-print"><button class="print-btn" onclick="window.print()">🖨 Print / Simpan PDF</button></div>
 <header class="header"><div class="header-top"><div class="company">PT Mentari Mas Multimoda</div><div class="title">007-A &nbsp; NOTULEN RAPAT MANAGEMENT REVIEW<br><span style="font-size:10px;font-weight:normal">NOTULEN REVIEW MANAGEMENT MEETING</span></div><div class="status-area"><div class="status-box"><span>CS</span><span>THN</span></div><div class="release">Release : &nbsp; Rev. 00 :</div></div></div><div class="meta"><label class="field">Date of Meeting: <input type="text" class="date-mask" placeholder="DD-MM-YYYY"></label><label class="field">Place: <input type="text"></label><div class="field pages">Page: <input type="text" inputmode="numeric"> of <input type="text" inputmode="numeric"></div></div></header>
 <div class="attendance"><span>Daftar Hadir Terlampir / List of Attendance in attach (Form 011)</span><span>Checked:</span></div>
 <div class="table-wrap"><table><thead><tr><th class="agenda-no">No.</th><th class="agenda-text">Agenda Rapat / Meeting Agenda</th><th class="agenda-check">Yes</th><th class="agenda-check">No</th></tr></thead><tbody id="agenda"></tbody></table></div>
