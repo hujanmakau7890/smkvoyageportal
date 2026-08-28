@@ -230,7 +230,7 @@ function VesselTable({vessel,data,isAdmin,onToggle}){
         <div style={{fontSize:32,fontWeight:800,color:pct>=90?"#34d399":pct>=75?"#fbbf24":"#f87171",lineHeight:1}}>{pct}%</div>
       </div>
       {isAdmin && <div style={{fontSize:10,color:"#fbbf24",marginTop:4,marginBottom:8}}>Admin edit mode aktif — klik cell C/S untuk toggle</div>}
-      <PICCards rows={mRows} picMonth={picMonth} vessel={vessel}/>
+      <PICCards rows={vRows} picMonth={picMonth} vessel={vessel}/>
     </div>
     <div style={{background:"#f8fafc",padding:"8px 16px",display:"flex",gap:6,borderBottom:"1px solid #e5e7eb",alignItems:"center"}}>
       <span style={{fontSize:11,color:"#64748b",marginRight:4}}>Dept:</span>
@@ -316,7 +316,7 @@ function SummaryView({data}){
       const d = vesselForms.filter(f=>sched(f.ket)[mi] && lookupNorm[normCode(f.code)]?.[m]==="C").length;
       return{total:expected,done:d,pct:expected?Math.round(d/expected*100):null};
     });
-    return{vessel:v,total,done,pct,months,picScores:calcPIC(mRows, summaryMonth, v)};
+    return{vessel:v,total,done,pct,months,picScores:calcPIC(vRows, summaryMonth, v)};
   });
   const cs=p=>{
     if(p===null) return{color:"#d1d5db"};
