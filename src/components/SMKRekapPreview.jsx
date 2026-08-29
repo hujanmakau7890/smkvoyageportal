@@ -712,6 +712,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
 
   const handleView = async (vessel, file) => {
     try {
+      const isHtml = file.path.toLowerCase().endsWith(".html");
       const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(file.path)}&t=${Date.now()}`;
       const dlRes = await fetch(dlUrl, {
         cache: "no-store",
@@ -721,6 +722,11 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
         const blob = await dlRes.blob();
         const url = URL.createObjectURL(blob);
         window.open(url, "_blank");
+        // Untuk HTML, browser akan render langsung; untuk PDF tetap preview
+        // Cleanup URL setelah 60 detik agar viewer tidak putus
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      } else {
+        throw new Error("Gagal membuka: " + dlRes.status);
       }
     } catch (e) {
       alert("Gagal membuka file: " + e.message);

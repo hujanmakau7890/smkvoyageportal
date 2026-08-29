@@ -71,11 +71,19 @@ class Handler(BaseHTTPRequestHandler):
                 if not os.path.isfile(abs_path):
                     self.send_error(404, "Not found")
                     return
+                # HTML-only Need Approval: serve dengan Content-Type tepat + anti-cache
+                low = abs_path.lower()
+                if low.endswith(".html"):
+                    ctype = "text/html; charset=utf-8"
+                    disp = f"inline; filename=\"{os.path.basename(abs_path)}\""
+                else:
+                    ctype = "application/pdf"
+                    disp = f"inline; filename=\"{os.path.basename(abs_path)}\""
                 self.send_response(200)
                 self._cors()
-                self.send_header("Content-Type", "application/pdf")
+                self.send_header("Content-Type", ctype)
                 self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-                self.send_header("Content-Disposition", f"inline; filename=\"{os.path.basename(abs_path)}\"")
+                self.send_header("Content-Disposition", disp)
                 self.send_header("Content-Length", str(os.path.getsize(abs_path)))
                 self.end_headers()
                 with open(abs_path, "rb") as f:
@@ -144,7 +152,12 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_error(404, "Source file not found")
                     return
                 # Build destination: replace "Need Approval" with "Laporan"
+                # HTML-only: jika src .html, dst jadi .pdf di Laporan (re-render dengan TTD)
+                is_html_src = src_abs.lower().endswith(".html")
                 rel_from_na = os.path.relpath(src_abs, os.path.join(STORAGE_ROOT, "Need Approval"))
+                if is_html_src:
+                    # ganti .html -> .pdf untuk dst
+                    rel_from_na = rel_from_na[:-5] + ".pdf"
                 dst_abs = os.path.normpath(os.path.join(ROOT, rel_from_na))
                 os.makedirs(os.path.dirname(dst_abs), exist_ok=True)
                 
@@ -165,19 +178,22 @@ class Handler(BaseHTTPRequestHandler):
                 fname_check = os.path.basename(src_abs).upper()
                 needs_si_ttd = any(code.upper() in fname_check for code in SI_TTD_FORMS)
 
-                # Inject TTD ke HTML lalu re-render ke PDF (jika ada HTML backup)
-                html_src = src_abs.replace(".pdf", ".html")
-                # Handle duplicate counter: pdf may be xxx.pdf but html is xxx (1).html
-                if not os.path.isfile(html_src):
-                    base_h, ext_h = os.path.splitext(html_src)
-                    for i in range(1, 10):
-                        cand = f"{base_h} ({i}){ext_h}"
-                        if os.path.isfile(cand):
-                            html_src = cand
-                            break
+                # HTML-only: html_src adalah src_abs itu sendiri jika .html; untuk .pdf cari backup .html
+                if is_html_src:
+                    html_src = src_abs
+                else:
+                    html_src = src_abs.replace(".pdf", ".html")
+                    # Handle duplicate counter: pdf may be xxx.pdf but html is xxx (1).html (file lama)
+                    if not os.path.isfile(html_src):
+                        base_h, ext_h = os.path.splitext(html_src)
+                        for i in range(1, 10):
+                            cand = f"{base_h} ({i}){ext_h}"
+                            if os.path.isfile(cand):
+                                html_src = cand
+                                break
                 sig_injected = False
 
-                # Fallback: jika HTML backup tidak ada (file lama pre-1c55ad1), inject TTD langsung ke PDF
+                # Fallback: jika HTML tidak ada (file lama pre-1c55ad1), inject TTD langsung ke PDF via overlay
                 pdf_only_injected = False
                 if needs_si_ttd and approver_email and not os.path.isfile(html_src):
                     safe_email_fb = re.sub(r"[^a-zA-Z0-9@._-]","_", approver_email)
@@ -359,14 +375,30 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_error(404, "Source file not found")
                     return
                 
-                # Hapus PDF
-                os.remove(src_abs)
-                
-                # Hapus HTML backup jika ada
-                html_src = src_abs.replace(".pdf", ".html")
-                if os.path.isfile(html_src):
-                    try: os.remove(html_src)
+                # HTML-only reject: hapus source apapun (.html atau .pdf) + pair nya
+                low = src_abs.lower()
+                if low.endswith(".html"):
+                    try: os.remove(src_abs)
                     except: pass
+                    # jika ada pdf lama dengan nama sama (migrasi hybrid), hapus juga
+                    pdf_pair = src_abs[:-5] + ".pdf"
+                    if os.path.isfile(pdf_pair):
+                        try: os.remove(pdf_pair)
+                        except: pass
+                elif low.endswith(".pdf"):
+                    try: os.remove(src_abs)
+                    except: pass
+                    html_pair = src_abs[:-4] + ".html"
+                    if os.path.isfile(html_pair):
+                        try: os.remove(html_pair)
+                        except: pass
+                    # juga handle (1).html case
+                    base_h = src_abs[:-4]
+                    for i in range(1, 10):
+                        cand = f"{base_h} ({i}).html"
+                        if os.path.isfile(cand):
+                            try: os.remove(cand)
+                            except: pass
                 
                 res = {"ok": True}
                 self.send_response(200)
@@ -461,7 +493,11 @@ class Handler(BaseHTTPRequestHandler):
                         files = []
                         for dirpath, _, filenames in os.walk(vessel_path):
                             for fn in sorted(filenames):
-                                if fn.startswith(".") or not fn.lower().endswith(".pdf"):
+                                if fn.startswith("."):
+                                    continue
+                                low = fn.lower()
+                                # HTML-only Need Approval: tampilkan .html dan tetap support .pdf lama (migrasi)
+                                if not (low.endswith(".html") or low.endswith(".pdf")):
                                     continue
                                 full = os.path.join(dirpath, fn)
                                 rel = os.path.relpath(full, NEED_APPROVAL_ROOT)
@@ -583,6 +619,29 @@ class Handler(BaseHTTPRequestHandler):
             tmp = p + ".tmp"
 
             if is_html:
+                # Need Approval HTML-only: simpan .html saja, preview tetap tampil di UI
+                # Laporan tetap render PDF seperti biasa
+                if destination == "Need Approval":
+                    html_name = fname.replace(".pdf", ".html")
+                    base_html, ext_html = os.path.splitext(html_name)
+                    counter_h = 1
+                    new_html = html_name
+                    while os.path.exists(os.path.join(d, new_html)):
+                        new_html = f"{base_html} ({counter_h}){ext_html}"
+                        counter_h += 1
+                    html_name = new_html
+                    p = os.path.join(d, html_name)
+                    with open(p, "wb") as f:
+                        f.write(body)
+                    rel = os.path.join(path_prefix, ship, year, month, html_name)
+                    res = {"ok": True, "path": rel, "size": len(body)}
+                    self.send_response(200)
+                    self._cors()
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(json.dumps(res).encode())
+                    return
+
                 os.makedirs(RENDER_TMP, exist_ok=True)
                 html_path = os.path.join(RENDER_TMP, fname.replace(".pdf", ".html"))
                 # Form 010 dan hasil referensi menggunakan A4 landscape.
@@ -610,15 +669,6 @@ class Handler(BaseHTTPRequestHandler):
                     raise RuntimeError(f"Chromium render failed: {e}")
 
                 shutil.move(pdf_tmp, tmp)
-
-                # Simpan HTML backup untuk Need Approval (diperlukan untuk inject TTD saat approve)
-                # Untuk 059A-F dan 010, TTD SI/FM & DPA di-inject ke HTML sebelum re-render PDF
-                if destination == "Need Approval":
-                    html_backup = p.replace(".pdf", ".html")
-                    try:
-                        shutil.copy(html_path, html_backup)
-                    except Exception:
-                        pass
 
                 try:
                     os.remove(html_path)
