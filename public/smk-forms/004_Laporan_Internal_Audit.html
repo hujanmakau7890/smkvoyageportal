@@ -110,9 +110,16 @@
         .foto-box { break-inside: avoid; }
         .foto-preview { cursor: pointer; }
         .foto-preview img { max-width: 100%; max-height: 100%; }
+        .sig-wrap { position: relative; cursor: pointer; }
+        .sig-wrap canvas { touch-action: none; width: 100%; height: 72px; display: block; background: #fff; border: 1px dashed #94a3b8; }
+        .sig-wrap.has-sig canvas { border-style: solid; border-color: #000; }
+        .sig-wrap .sig-img { max-width: 100%; max-height: 72px; display: none; margin: 0 auto; }
+        .sig-wrap.has-img .sig-img { display: block; }
+        .sig-wrap.has-img canvas { display: none; }
         @media print {
             .no-print { display: none !important; }
             .a4-page { box-shadow: none; margin: 0; }
+            .sig-wrap canvas { border: 1px solid #000 !important; }
         }
     </style>
     <script>
@@ -286,19 +293,37 @@
                 <td class="w-[50%] border border-black">Auditee</td>
             </tr>
             <tr>
-                <td class="h-24 border border-black align-bottom pb-2">
-                    <div class="w-[80%] mx-auto border-b border-black h-16 mb-1 relative">
-                        <!-- Signature Space -->
-                    </div>
-                    <div>Nama & Tanda Tangan</div>
+                <td class="border border-black align-bottom pb-2 p-2">
+                    <div class="sig-wrap" onclick="openSig(this)">
+                            <canvas width="260" height="72"></canvas>
+                            <img class="sig-img" />
+                            <input type="hidden" class="sig-data" />
+                            <div class="no-print flex gap-1 justify-center mt-1">
+                                <button type="button" onclick="event.stopPropagation(); clearSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Clear</button>
+                                <button type="button" onclick="event.stopPropagation(); uploadSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Upload</button>
+                                <input type="file" accept="image/*" class="hidden" onchange="loadSigImage(this)" />
+                                <button type="button" onclick="event.stopPropagation(); addSig(this)" class="px-2 py-1 text-[10px] bg-blue-600 text-white rounded hover:bg-blue-700">+ Add TTD</button>
+                            </div>
+                        </div>
+                    <div class="mt-1">Nama & Tanda Tangan</div>
                     <div class="small-italic">Name & Signature</div>
+                    <input type="text" placeholder="Nama Auditor" class="mt-1 text-center text-sm border border-dashed border-slate-300 p-1">
                 </td>
-                <td class="h-24 border border-black align-bottom pb-2">
-                    <div class="w-[80%] mx-auto border-b border-black h-16 mb-1 relative">
-                        <!-- Signature Space -->
-                    </div>
-                    <div>Nama & Tanda Tangan</div>
+                <td class="border border-black align-bottom pb-2 p-2">
+                    <div class="sig-wrap" onclick="openSig(this)">
+                            <canvas width="260" height="72"></canvas>
+                            <img class="sig-img" />
+                            <input type="hidden" class="sig-data" />
+                            <div class="no-print flex gap-1 justify-center mt-1">
+                                <button type="button" onclick="event.stopPropagation(); clearSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Clear</button>
+                                <button type="button" onclick="event.stopPropagation(); uploadSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Upload</button>
+                                <input type="file" accept="image/*" class="hidden" onchange="loadSigImage(this)" />
+                                <button type="button" onclick="event.stopPropagation(); addSig(this)" class="px-2 py-1 text-[10px] bg-blue-600 text-white rounded hover:bg-blue-700">+ Add TTD</button>
+                            </div>
+                        </div>
+                    <div class="mt-1">Nama & Tanda Tangan</div>
                     <div class="small-italic">Name & Signature</div>
+                    <input type="text" placeholder="Nama Auditee" class="mt-1 text-center text-sm border border-dashed border-slate-300 p-1">
                 </td>
             </tr>
         </table>
@@ -383,13 +408,33 @@
                 <textarea></textarea>
             </div>
             <div class="flex border-t border-black bg-white">
-                <div class="w-1/2 border-r border-black flex flex-col justify-end p-2 h-24 text-center">
-                    <div class="border-b border-black w-[80%] mx-auto mb-1"></div>
-                    <div class="font-bold">Auditor Signature</div>
+                <div class="w-1/2 border-r border-black p-2 text-center">
+                    <div class="sig-wrap" onclick="openSig(this)">
+                            <canvas width="260" height="72"></canvas>
+                            <img class="sig-img" />
+                            <input type="hidden" class="sig-data" />
+                            <div class="no-print flex gap-1 justify-center mt-1">
+                                <button type="button" onclick="event.stopPropagation(); clearSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Clear</button>
+                                <button type="button" onclick="event.stopPropagation(); uploadSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Upload</button>
+                                <input type="file" accept="image/*" class="hidden" onchange="loadSigImage(this)" />
+                                <button type="button" onclick="event.stopPropagation(); addSig(this)" class="px-2 py-1 text-[10px] bg-blue-600 text-white rounded hover:bg-blue-700">+ Add TTD</button>
+                            </div>
+                        </div>
+                    <div class="font-bold mt-1">Auditor Signature</div>
                 </div>
-                <div class="w-1/2 flex flex-col justify-end p-2 h-24 text-center">
-                    <div class="border-b border-black w-[80%] mx-auto mb-1"></div>
-                    <div class="font-bold">Auditee Signature</div>
+                <div class="w-1/2 p-2 text-center">
+                    <div class="sig-wrap" onclick="openSig(this)">
+                            <canvas width="260" height="72"></canvas>
+                            <img class="sig-img" />
+                            <input type="hidden" class="sig-data" />
+                            <div class="no-print flex gap-1 justify-center mt-1">
+                                <button type="button" onclick="event.stopPropagation(); clearSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Clear</button>
+                                <button type="button" onclick="event.stopPropagation(); uploadSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Upload</button>
+                                <input type="file" accept="image/*" class="hidden" onchange="loadSigImage(this)" />
+                                <button type="button" onclick="event.stopPropagation(); addSig(this)" class="px-2 py-1 text-[10px] bg-blue-600 text-white rounded hover:bg-blue-700">+ Add TTD</button>
+                            </div>
+                        </div>
+                    <div class="font-bold mt-1">Auditee Signature</div>
                 </div>
             </div>
             <div class="flex border-t border-black bg-white">
@@ -413,10 +458,20 @@
                 <textarea></textarea>
             </div>
             <div class="flex border-t border-black bg-white items-center">
-                <div class="w-[35%] border-r border-black p-2 h-28 flex flex-col justify-end text-center">
-                    <div class="font-bold mb-8">Penanggung jawab tindakan perbaikan (tanda tangan)</div>
-                    <div class="border-b border-black w-[80%] mx-auto mb-1"></div>
-                    <div>Nama / Jabatan</div>
+                <div class="w-[35%] border-r border-black p-2 text-center">
+                    <div class="font-bold mb-1">Penanggung jawab tindakan perbaikan (tanda tangan)</div>
+                    <div class="sig-wrap" onclick="openSig(this)">
+                            <canvas width="260" height="72"></canvas>
+                            <img class="sig-img" />
+                            <input type="hidden" class="sig-data" />
+                            <div class="no-print flex gap-1 justify-center mt-1">
+                                <button type="button" onclick="event.stopPropagation(); clearSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Clear</button>
+                                <button type="button" onclick="event.stopPropagation(); uploadSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Upload</button>
+                                <input type="file" accept="image/*" class="hidden" onchange="loadSigImage(this)" />
+                                <button type="button" onclick="event.stopPropagation(); addSig(this)" class="px-2 py-1 text-[10px] bg-blue-600 text-white rounded hover:bg-blue-700">+ Add TTD</button>
+                            </div>
+                        </div>
+                    <div class="mt-1">Nama / Jabatan</div>
                     <div class="small-italic">Name / Position</div>
                 </div>
                 <div class="w-[65%] p-4 text-[12px] leading-relaxed">
@@ -446,22 +501,32 @@
             <div class="h-32 bg-gray-custom p-2">
                 <textarea></textarea>
             </div>
-            <div class="flex border-t border-black bg-white h-24">
-                <div class="w-[60%] border-r border-black p-2 flex flex-col justify-end text-center">
-                    <div class="flex justify-around items-end h-full">
-                        <div class="w-[40%]">
-                            <div class="border-b border-black w-full mb-1"></div>
-                            <div class="font-bold">Auditor Name</div>
+            <div class="flex border-t border-black bg-white">
+                <div class="w-[60%] border-r border-black p-2 text-center">
+                    <div class="flex justify-around gap-2">
+                        <div class="flex-1">
+                            <div class="border-b border-slate-300 h-8 flex items-center justify-center"><input type="text" placeholder="Auditor Name" class="text-center text-xs w-full"></div>
+                            <div class="font-bold text-xs mt-1">Auditor Name</div>
                         </div>
-                        <div class="w-[40%]">
-                            <div class="border-b border-black w-full mb-1"></div>
-                            <div class="font-bold">Verification Date</div>
+                        <div class="flex-1">
+                            <div class="border-b border-slate-300 h-8 flex items-center justify-center"><input type="text" placeholder="Verification Date" class="text-center text-xs w-full"></div>
+                            <div class="font-bold text-xs mt-1">Verification Date</div>
                         </div>
                     </div>
                 </div>
-                <div class="w-[40%] flex flex-col justify-end p-2 text-center">
-                    <div class="w-[80%] mx-auto border-b border-black mb-1"></div>
-                    <div class="font-bold">Auditor Signature</div>
+                <div class="w-[40%] p-2 text-center">
+                    <div class="sig-wrap" onclick="openSig(this)">
+                            <canvas width="260" height="72"></canvas>
+                            <img class="sig-img" />
+                            <input type="hidden" class="sig-data" />
+                            <div class="no-print flex gap-1 justify-center mt-1">
+                                <button type="button" onclick="event.stopPropagation(); clearSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Clear</button>
+                                <button type="button" onclick="event.stopPropagation(); uploadSig(this)" class="px-2 py-1 text-[10px] border border-slate-300 rounded bg-white hover:bg-slate-50">Upload</button>
+                                <input type="file" accept="image/*" class="hidden" onchange="loadSigImage(this)" />
+                                <button type="button" onclick="event.stopPropagation(); addSig(this)" class="px-2 py-1 text-[10px] bg-blue-600 text-white rounded hover:bg-blue-700">+ Add TTD</button>
+                            </div>
+                        </div>
+                    <div class="font-bold mt-1">Auditor Signature</div>
                 </div>
             </div>
         </div>
@@ -576,6 +641,38 @@ function addPage(){
 window.addPage = addPage;
 window.addFoto = addFoto;
 window.previewFoto = previewFoto;
+// Signature pad logic (per canvas, base64 di .sig-data untuk PDF export)
+function initSigPad(wrap){
+  const c = wrap.querySelector('canvas');
+  const sigData = wrap.querySelector('.sig-data');
+  const imgEl = wrap.querySelector('.sig-img');
+  if(!c || c._inited) return;
+  const ctx = c.getContext('2d');
+  ctx.lineWidth = 1.8; ctx.lineCap='round'; ctx.strokeStyle='#000';
+  let drawing=false, has=false;
+  function pos(e){ const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:(t.clientX-r.left)*(c.width/r.width), y:(t.clientY-r.top)*(c.height/r.height)};}
+  function start(e){ drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();}
+  function move(e){ if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); has=true; wrap.classList.add('has-sig'); e.preventDefault();}
+  function end(){ if(!drawing) return; drawing=false; if(has){ sigData.value=c.toDataURL('image/png'); wrap.classList.add('has-sig'); } }
+  c.addEventListener('mousedown', start); c.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+  c.addEventListener('touchstart', start, {passive:false}); c.addEventListener('touchmove', move, {passive:false}); c.addEventListener('touchend', end);
+  c._inited=true;
+}
+function openSig(wrap){ initSigPad(wrap); }
+function clearSig(btn){
+  const wrap = btn.closest('.sig-wrap'); const c=wrap.querySelector('canvas'); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
+  wrap.querySelector('.sig-data').value=''; wrap.querySelector('.sig-img').src=''; wrap.classList.remove('has-sig','has-img');
+}
+function uploadSig(btn){ const wrap=btn.closest('.sig-wrap'); wrap.querySelector('input[type=file]').click(); }
+function loadSigImage(inp){
+  const f=inp.files[0]; if(!f) return; const r=new FileReader(); r.onload=e=>{
+    const wrap=inp.closest('.sig-wrap'); const img=wrap.querySelector('.sig-img'); img.src=e.target.result; wrap.classList.add('has-img');
+    wrap.querySelector('.sig-data').value=e.target.result;
+  }; r.readAsDataURL(f);
+}
+function addSig(btn){ const wrap=btn.closest('.sig-wrap'); initSigPad(wrap); wrap.scrollIntoView({behavior:'smooth', block:'center'}); }
+document.querySelectorAll('.sig-wrap').forEach(initSigPad);
+
 </script>
 
 </body>
