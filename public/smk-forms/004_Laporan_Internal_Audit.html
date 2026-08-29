@@ -475,7 +475,7 @@
         <!-- Toolbar lampiran -->
         <div class="no-print flex flex-wrap gap-2 justify-center mt-4">
             <button onclick="addFoto()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-sm">+ Add Foto</button>
-            <button onclick="addPage()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-sm">+ Add Page</button>
+            <button onclick="addPage()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-sm">+ Add Page (Element ISM)</button>
             <button onclick="window.print()" class="px-5 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded font-bold text-sm">Print / Simpan PDF</button>
         </div>
 
@@ -528,37 +528,49 @@ function checkEmpty(grid){
   if(grid.children.length===0){
     const ph=document.createElement('div');
     ph.className='foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white';
-    ph.textContent='Belum ada foto. Klik "+ Add Foto" untuk menambah.';
+    ph.textContent='Belum ada foto. Klik " + Add Foto" untuk menambah.';
     grid.appendChild(ph);
   }
 }
-let extraPageNo=1;
+// Add Page = duplikasi FULL 004 Attach per element ISM (NCR lengkap + lampiran foto), bukan cuma foto
+let attachNo=1;
 function addPage(){
-  extraPageNo++;
+  attachNo++;
+  const tpl = document.getElementById('attach-page-1');
+  if(!tpl){ alert('Template 004 Attach tidak ditemukan'); return; }
   const container=document.getElementById('extra-pages');
-  const gridId='foto-grid-'+extraPageNo;
-  const page=document.createElement('div');
-  page.className='a4-page';
-  page.innerHTML=`
-    <table class="w-full header-table border-collapse mb-1">
-      <tr><td class="w-[25%] p-2">PT MENTARI MAS MULTIMODA</td><td class="w-[60%] p-2 text-[12px]">004 (Attach) LAMPIRAN FOTO ${extraPageNo} / PHOTO ATTACHMENT ${extraPageNo}</td><td class="w-[7%] p-2">CS</td><td class="w-[8%] p-2">SET</td></tr>
-    </table>
-    <div class="text-[11px] mb-3 font-sans">Release : <span class="ml-[40%]">Rev.0 :</span></div>
-    <div class="border border-black">
-      <div class="p-2 font-bold border-b border-black bg-white">LAMPIRAN FOTO ${extraPageNo} / <span class="small-italic font-normal">PHOTO ATTACHMENT ${extraPageNo} :</span></div>
-      <div id="${gridId}" class="grid grid-cols-2 gap-4 p-4 bg-gray-custom min-h-[380px]">
-        <div class="foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white">Belum ada foto. Klik "+ Add Foto" untuk menambah.</div>
-      </div>
-    </div>
-    <div class="no-print flex flex-wrap gap-2 justify-center mt-4">
-      <button onclick="addFoto('${gridId}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs">+ Add Foto ke Hal ${extraPageNo}</button>
-      <button onclick="this.closest('.a4-page').remove()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs">− Hapus Halaman</button>
-    </div>
+  const clone = tpl.cloneNode(true);
+  clone.id = 'attach-page-'+attachNo;
+  clone.removeAttribute('id'); clone.id='attach-page-'+attachNo;
+  // reset inputs in clone
+  clone.querySelectorAll('input[type=text]').forEach(i=> i.value='');
+  clone.querySelectorAll('textarea').forEach(t=> t.value='');
+  clone.querySelectorAll('.checkbox-box.checked').forEach(c=> c.classList.remove('checked'));
+  // reset foto grid inside clone: kosongkan foto, pasang id baru
+  const newGridId='foto-grid-'+attachNo;
+  const grid = clone.querySelector('#foto-grid');
+  if(grid){
+    grid.id = newGridId;
+    grid.innerHTML='<div class="foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white">Belum ada foto. Klik "+ Add Foto" untuk menambah (ISM Element '+attachNo+').</div>';
+  }
+  // update titles to element suffix
+  clone.querySelectorAll('.header-table td').forEach(td=>{
+    if(td.textContent.includes('LAPORAN KETIDAKSESUAIAN')) td.innerHTML='004 (Attach) LAPORAN KETIDAKSESUAIAN (NON CONFORMITY REPORT) — ISM Element '+attachNo+' / Elemen '+attachNo;
+  });
+  // add per-page toolbar at bottom of clone
+  const bar=document.createElement('div');
+  bar.className='no-print flex flex-wrap gap-2 justify-center mt-4';
+  bar.innerHTML=`
+    <button onclick="addFoto('${newGridId}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs">+ Add Foto (Elemen ${attachNo})</button>
+    <button onclick="this.closest('.a4-page').remove()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs">− Hapus Halaman Elemen ${attachNo}</button>
   `;
-  // fix gridId in onclick (template literal already interpolated, need to keep literal)
-  page.querySelector('button').setAttribute('onclick', "addFoto('"+gridId+"')");
-  container.appendChild(page);
-  window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+  // ensure literal onclick
+  clone.appendChild(bar);
+  // need to fix onclick literal for foto
+  setTimeout(()=>{ const b=bar.querySelector('button'); if(b) b.setAttribute('onclick', "addFoto('"+newGridId+"')"); }, 0);
+  // also inject add-page helper buttons at end of last extra-page section? keep main toolbar, clone stands alone
+  container.appendChild(clone);
+  window.scrollTo({top: clone.offsetTop, behavior: 'smooth'});
 }
 </script>
 
