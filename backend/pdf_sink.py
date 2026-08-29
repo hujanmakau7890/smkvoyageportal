@@ -168,6 +168,53 @@ class Handler(BaseHTTPRequestHandler):
                 html_src = src_abs.replace(".pdf", ".html")
                 sig_injected = False
 
+                # Fallback: jika HTML backup tidak ada (file lama pre-1c55ad1), inject TTD langsung ke PDF
+                pdf_only_injected = False
+                if needs_si_ttd and approver_email and not os.path.isfile(html_src):
+                    safe_email_fb = re.sub(r"[^a-zA-Z0-9@._-]","_", approver_email)
+                    sig_path_fb = os.path.join(SIGNATURE_DIR, safe_email_fb + ".png")
+                    if os.path.isfile(sig_path_fb):
+                        try:
+                            # Inject TTD langsung ke PDF via overlay: buat PDF TTD transparan lalu merge
+                            import tempfile
+                            with open(sig_path_fb, "rb") as _sf:
+                                sig_bytes = _sf.read()
+                            sig_b64_fb = base64.b64encode(sig_bytes).decode()
+                            # Render HTML kecil berisi TTD, lalu convert ke PDF overlay dan merge dengan pdf asli
+                            # Simpler: gunakan HTML backup rekonstruksi dari pdf? Tidak ada — jadi pakai pypdf jika ada, else abort fallback
+                            # Coba import pypdf / PyPDF2 untuk overlay
+                            try:
+                                from pypdf import PdfReader, PdfWriter
+                            except ImportError:
+                                try:
+                                    from PyPDF2 import PdfReader, PdfWriter
+                                except ImportError:
+                                    PdfReader = None
+                            if PdfReader is not None:
+                                # Buat PDF overlay 1 halaman A4 landscape dengan TTD di posisi DPA/SI (kanan bawah)
+                                overlay_html = f'''<!doctype html><html><head><style>@page{{size:A4 landscape;margin:0}}body{{margin:0;position:relative;width:297mm;height:210mm}}img{{position:absolute;right:18mm;bottom:14mm;max-width:38mm;max-height:16mm;object-fit:contain}}</style></head><body><img src="data:image/png;base64,{sig_b64_fb}"></body></html>'''
+                                ov_html = tempfile.mktemp(suffix=".html")
+                                ov_pdf = tempfile.mktemp(suffix=".pdf")
+                                with open(ov_html, "w") as _f: _f.write(overlay_html)
+                                subprocess.run([CHROMIUM, "--headless", "--disable-gpu", "--no-sandbox", "--print-to-pdf="+ov_pdf, "--print-to-pdf-landscape", "--no-pdf-header-footer", ov_html], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                reader_main = PdfReader(src_abs)
+                                reader_ov = PdfReader(ov_pdf)
+                                writer = PdfWriter()
+                                for i, page in enumerate(reader_main.pages):
+                                    if i == len(reader_main.pages)-1:
+                                        page.merge_page(reader_ov.pages[0])
+                                    writer.add_page(page)
+                                writer.write(dst_abs)
+                                for _tmp in [ov_html, ov_pdf]:
+                                    try: os.remove(_tmp)
+                                    except: pass
+                                sig_injected = True
+                                pdf_only_injected = True
+                            else:
+                                print("[InjectTTD] pypdf not available, cannot fallback inject")
+                        except Exception as _fb_err:
+                            print(f"[InjectTTD fallback] Error: {_fb_err}")
+
                 if needs_si_ttd and approver_email and os.path.isfile(html_src):
                     safe_email = re.sub(r"[^a-zA-Z0-9@._-]","_", approver_email)
                     sig_path = os.path.join(SIGNATURE_DIR, safe_email + ".png")
@@ -247,7 +294,7 @@ class Handler(BaseHTTPRequestHandler):
                         except Exception as inj_err:
                             print(f"[InjectTTD] Error: {inj_err}")
 
-                if not sig_injected:
+                if not sig_injected and not pdf_only_injected:
                     shutil.move(src_abs, dst_abs)
 
                 # Hapus HTML backup setelah approve
