@@ -158,7 +158,7 @@ class Handler(BaseHTTPRequestHandler):
                 rel_from_na = os.path.relpath(dst_abs, ROOT)
 
 
-                # Form yang memerlukan TTD SI/FM (tambah kode form di sini jika diperlukan)
+                # Form yang memerlukan TTD approver: 059* (SI/FM) dan 010 (DPA/admin) — kecuali 059G/H
                 SI_TTD_FORMS = ["010", "059-A", "059-B", "059-C", "059-D", "059-E", "059-F",
                                 "010-RISK", "059A",  "059B",  "059C",  "059D",  "059E",  "059F"]
                 fname_check = os.path.basename(src_abs).upper()
@@ -185,28 +185,42 @@ class Handler(BaseHTTPRequestHandler):
                             # dan set display:flex agar terlihat saat print
                             import re as _re
 
-                            # Cari semua blok sig-preview yang img src-nya masih kosong
-                            # Ganti yang terakhir (asumsi: SI = slot paling terakhir)
+                            injected = False
+                            # --- Pola A: 059A/B/C style: sig-preview + <img alt=""> (tanpa src) ---
                             preview_pattern = _re.compile(
-                                r'(<div[^>]*class="[^"]*sig-preview[^"]*"[^>]*>)\s*(<img[^>]*src="")[^>]*(>)',
+                                r'(<div[^>]*class="[^"]*sig-preview[^"]*"[^>]*>)\s*<img[^>]*>',
                                 _re.IGNORECASE
                             )
                             matches = list(preview_pattern.finditer(html))
                             if matches:
-                                # Ganti match terakhir = slot SI/FM
                                 m = matches[-1]
-                                replacement = (
-                                    m.group(1).replace('hidden','').replace('  ',' ')
-                                    .replace('class="', 'class="') +
-                                    f'<img src="{sig_b64}" style="max-height:60px;max-width:100%;object-fit:contain;">'
-                                )
-                                # Set display flex agar tampak saat print
+                                orig = m.group(0)
+                                div_open = m.group(1)
+                                # hapus hidden dari div
+                                div_open_fixed = div_open.replace(' hidden','').replace('hidden ','').replace('"hidden"','""')
+                                if 'style=' not in div_open_fixed:
+                                    div_open_fixed = div_open_fixed.replace('>', ' style="display:flex !important;" >')
+                                replacement = div_open_fixed + f'<img src="{sig_b64}" style="max-height:60px;max-width:100%;object-fit:contain;display:block;">'
                                 html = html[:m.start()] + replacement + html[m.end():]
-                                # Hapus class hidden dari div sig-preview terakhir
-                                html = html.replace(
-                                    html[m.start():m.start()+len(m.group(1))],
-                                    m.group(1).replace(' hidden','').replace('hidden ','')
+                                injected = True
+                            else:
+                                # --- Pola B: 059D style: <div id="pv.*" class="pv"> + <img alt="signature"> ---
+                                pv_pattern = _re.compile(
+                                    r'(<div[^>]*class="[^"]*\bpv\b[^"]*"[^>]*>)\s*<img[^>]*>',
+                                    _re.IGNORECASE
                                 )
+                                pv_matches = list(pv_pattern.finditer(html))
+                                if pv_matches:
+                                    m = pv_matches[-1]
+                                    orig = m.group(0)
+                                    div_open = m.group(1)
+                                    if 'style=' not in div_open:
+                                        div_open_fixed = div_open.replace('>', ' style="display:flex !important;" >')
+                                    else:
+                                        div_open_fixed = div_open.replace('display:none', 'display:flex')
+                                    replacement = div_open_fixed + f'<img src="{sig_b64}" style="max-height:60px;max-width:100%;object-fit:contain;display:block;">'
+                                    html = html[:m.start()] + replacement + html[m.end():]
+                                    injected = True
 
                             # Tulis HTML yang sudah dimodifikasi ke tmp
                             html_inj = html_src + ".injected.html"
