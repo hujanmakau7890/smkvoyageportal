@@ -217,6 +217,9 @@ class Handler(BaseHTTPRequestHandler):
                                 for _tmp in [ov_html, ov_pdf]:
                                     try: os.remove(_tmp)
                                     except: pass
+                                # hapus file asal Need Approval setelah sukses inject fallback
+                                try: os.remove(src_abs)
+                                except: pass
                                 sig_injected = True
                                 pdf_only_injected = True
                             else:
@@ -295,6 +298,9 @@ class Handler(BaseHTTPRequestHandler):
                             subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                             shutil.move(pdf_tmp, dst_abs)
                             sig_injected = True
+                            # hapus file asal Need Approval setelah sukses re-render dengan TTD
+                            try: os.remove(src_abs)
+                            except: pass
 
                             # Hapus file sementara
                             for f in [html_inj]:
