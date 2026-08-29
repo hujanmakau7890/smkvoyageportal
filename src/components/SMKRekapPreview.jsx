@@ -781,7 +781,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
               ✍️ {sigPreview ? "Ubah TTD" : "Atur TTD Saya"}
             </button>
           )}
-          <button onClick={fetchFiles} style={{padding: "6px 12px", fontSize: 12, borderRadius: 4, border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer"}}>↻ Refresh</button>
+          <button onClick={fetchFiles} style={{padding: "6px 14px", fontSize: 12, borderRadius: 6, border: "1px solid #2563eb", background: "#2563eb", color:"#fff", cursor: "pointer", fontWeight:700, boxShadow:"0 1px 3px rgba(37,99,235,.3)"}}>↻ Refresh</button>
         </div>
       </div>
 
