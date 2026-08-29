@@ -469,10 +469,11 @@ function CariLaporanView() {
     try {
       const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://api.voyageportal.my.id";
       const baseUrl = uploadUrl.replace(/\/+$/, "");
-      const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(path)}`;
+      const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(path)}&t=${Date.now()}`;
       
       const res = await fetch(dlUrl, {
-        headers: { "X-Token": "smk-laporan-2026" }
+        cache: "no-store",
+        headers: { "X-Token": "smk-laporan-2026", "Pragma": "no-cache", "Cache-Control": "no-cache" }
       });
       
       if (!res.ok) throw new Error("Gagal mengunduh PDF");
@@ -711,9 +712,10 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
 
   const handleView = async (vessel, file) => {
     try {
-      const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(file.path)}`;
+      const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(file.path)}&t=${Date.now()}`;
       const dlRes = await fetch(dlUrl, {
-        headers: { "X-Token": "smk-laporan-2026" }
+        cache: "no-store",
+        headers: { "X-Token": "smk-laporan-2026", "Pragma": "no-cache", "Cache-Control": "no-cache" }
       });
       if (dlRes.ok) {
         const blob = await dlRes.blob();

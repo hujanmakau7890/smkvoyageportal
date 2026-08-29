@@ -74,7 +74,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self._cors()
                 self.send_header("Content-Type", "application/pdf")
-                self.send_header("Content-Disposition", f"attachment; filename=\"{os.path.basename(abs_path)}\"")
+                self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+                self.send_header("Content-Disposition", f"inline; filename=\"{os.path.basename(abs_path)}\"")
                 self.send_header("Content-Length", str(os.path.getsize(abs_path)))
                 self.end_headers()
                 with open(abs_path, "rb") as f:
