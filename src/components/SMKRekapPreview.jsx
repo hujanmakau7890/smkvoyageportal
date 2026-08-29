@@ -473,7 +473,7 @@ function CariLaporanView() {
       
       const res = await fetch(dlUrl, {
         cache: "no-store",
-        headers: { "X-Token": "smk-laporan-2026", "Pragma": "no-cache", "Cache-Control": "no-cache" }
+        headers: { "X-Token": "smk-laporan-2026" }
       });
       
       if (!res.ok) throw new Error("Gagal mengunduh PDF");
@@ -712,22 +712,25 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
 
   const handleView = async (vessel, file) => {
     try {
-      const isHtml = file.path.toLowerCase().endsWith(".html");
       const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(file.path)}&t=${Date.now()}`;
       const dlRes = await fetch(dlUrl, {
         cache: "no-store",
-        headers: { "X-Token": "smk-laporan-2026", "Pragma": "no-cache", "Cache-Control": "no-cache" }
+        headers: { "X-Token": "smk-laporan-2026" }
       });
-      if (dlRes.ok) {
-        const blob = await dlRes.blob();
-        const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
-        // Untuk HTML, browser akan render langsung; untuk PDF tetap preview
-        // Cleanup URL setelah 60 detik agar viewer tidak putus
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
-      } else {
-        throw new Error("Gagal membuka: " + dlRes.status);
+      if (!dlRes.ok) throw new Error("Gagal membuka: " + dlRes.status);
+      const blob = await dlRes.blob();
+      const url = URL.createObjectURL(blob);
+      const win = window.open(url, "_blank");
+      // Fallback jika popup diblock: download langsung
+      if (!win) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.path.split('/').pop() || "preview.html";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (e) {
       alert("Gagal membuka file: " + e.message);
     }
