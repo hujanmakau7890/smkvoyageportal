@@ -2,6 +2,7 @@ export const SMK_FORMS = [
   { code: "001", title: "Checklist Surat Kapal", category: "Checklist", file: "001_Ship_Certificate_Check_List.html" },
   { code: "002", title: "Checklist Klass Status Survey", category: "Checklist", file: "002_Class_Status_Survey_Check_List.html" },
   { code: "003", title: "Jadwal Eksternal & Internal Audit", category: "Audit", file: "003_Internal_Audit_Schedule.html" },
+  { code: "004", title: "Laporan Internal Audit", category: "Audit", file: "004_Laporan_Internal_Audit.html" },
   { code: "005", title: "Catatan Internal Audit", category: "Audit", file: "005_Internal_Audit_Notes.html" },
   { code: "006", title: "Program Management Review, Komite Keselamatan dan Safety Meeting", category: "Rapat", file: "006_Program_Review_Safety_Meeting.html" },
   { code: "007-A", title: "Notulen Rapat Management Review", category: "Rapat", file: "007A_Management_Review_Meeting_Minutes.html" },

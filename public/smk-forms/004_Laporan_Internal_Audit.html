@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>004 - Laporan Internal Audit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            input[type="text"], textarea {
+                border: none !important;
+                background: transparent !important;
+                resize: none;
+                box-shadow: none !important;
+                outline: none !important;
+            }
+        }
+        
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12px;
+            color: #000;
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 10mm;
+            margin: 10mm auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .border-collapse {
+            border-collapse: collapse;
+        }
+        
+        table.border-table th, table.border-table td {
+            border: 1px solid #000;
+            padding: 2px 4px;
+        }
+        
+        .header-table td {
+            border: 1px solid #000;
+            text-align: center;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        .bg-gray-custom {
+            background-color: #f2f2f2;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            border: 1px solid transparent;
+            background-color: transparent;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            border-bottom: 1px solid #000;
+        }
+        
+        .checkbox-box {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            margin-right: 4px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+        .checkbox-box.checked::after {
+            content: '✓';
+            display: block;
+            text-align: center;
+            line-height: 10px;
+            font-size: 12px;
+        }
+
+        .small-italic {
+            font-size: 10px;
+            font-style: italic;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            font-size: inherit;
+            background: transparent;
+        }
+    </style>
+    <script>
+        function toggleCheckbox(el) {
+            el.classList.toggle('checked');
+        }
+    </script>
+</head>
+<body>
+
+    <!-- PAGE 1: 004 Lap -->
+    <div class="a4-page">
+        <!-- Header -->
+        <table class="w-full header-table border-collapse mb-1">
+            <tr>
+                <td class="w-[25%] p-2">PT MENTARI MAS MULTIMODA</td>
+                <td class="w-[60%] p-2">004 LAPORAN INTERNAL AUDIT / INTERNAL AUDIT REPORT</td>
+                <td class="w-[7%] p-2">CS</td>
+                <td class="w-[8%] p-2">SET</td>
+            </tr>
+        </table>
+        <div class="text-[11px] mb-3 font-sans">
+            Release : <span class="ml-10">Rev.0 :</span>
+        </div>
+
+        <!-- Info Section -->
+        <table class="w-full border-collapse mb-3">
+            <tr>
+                <td class="w-[20%] py-1">No.Audit / Audit No</td>
+                <td class="w-[2%]">:</td>
+                <td class="w-[30%] border-b border-black bg-gray-custom"><input type="text"></td>
+                <td class="w-[5%]"></td>
+                <td class="w-[20%] py-1">Tanggal Audit / Date</td>
+                <td class="w-[2%]">:</td>
+                <td class="w-[21%] border-b border-black bg-gray-custom"><input type="text"></td>
+            </tr>
+            <tr>
+                <td class="py-2" colspan="3"></td>
+                <td></td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="py-1">Auditor</td>
+                <td>:</td>
+                <td class="border-b border-black bg-gray-custom"><input type="text"></td>
+                <td></td>
+                <td class="py-1">Unit Kerja yg Diaudit /<br><span class="small-italic">work unit to be audited</span></td>
+                <td>:</td>
+                <td class="border-b border-black bg-gray-custom"><input type="text"></td>
+            </tr>
+            <tr>
+                <td class="py-2" colspan="3"></td>
+                <td></td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="py-1">Lingkup Audit /<br><span class="small-italic">Scope of Audit</span></td>
+                <td>:</td>
+                <td colspan="5" class="border-b border-black bg-gray-custom"><input type="text"></td>
+            </tr>
+            <tr>
+                <td class="py-2" colspan="7"></td>
+            </tr>
+            <tr>
+                <td class="py-1">Jenis Audit / Type</td>
+                <td>:</td>
+                <td colspan="5">
+                    <div class="flex items-center gap-8">
+                        <div>
+                            <div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Internal Audit
+                        </div>
+                        <div class="flex items-center flex-1">
+                            <div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Audit Tambahan/Additional: 
+                            <div class="border-b border-black border-dotted bg-gray-custom flex-1 ml-2"><input type="text"></div>
+                        </div>
+                    </div>
+                    <div class="small-italic mt-1">(tandai pada kotak yang sesuai)</div>
+                    <div class="small-italic text-right mr-[15%] -mt-4">(alasan audit tambahan)</div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Table 1: Auditee List -->
+        <table class="w-full border-table mb-4 text-center">
+            <tr class="font-bold bg-white">
+                <td rowspan="2" class="w-[4%]">No</td>
+                <td class="w-[21%]">Nama Auditee</td>
+                <td class="w-[10%]">Jabatan</td>
+                <td class="w-[13%]">Tanda Tangan</td>
+                <td rowspan="2" class="w-[4%]">No</td>
+                <td class="w-[21%]">Nama Auditee</td>
+                <td class="w-[10%]">Jabatan</td>
+                <td class="w-[13%]">Tanda Tangan</td>
+            </tr>
+            <tr class="small-italic bg-white">
+                <td>Name of Auditee</td>
+                <td>rank</td>
+                <td>Sign</td>
+                <td>Name of Auditee</td>
+                <td>rank</td>
+                <td>Sign</td>
+            </tr>
+            <!-- 15 Rows -->
+            <script>
+                for(let i=1; i<=15; i++) {
+                    document.write(`
+                        <tr class="h-6 bg-gray-custom">
+                            <td>${i}</td>
+                            <td><input type="text" class="text-center bg-transparent"></td>
+                            <td><input type="text" class="text-center bg-transparent"></td>
+                            <td></td>
+                            <td>${i+15}</td>
+                            <td><input type="text" class="text-center bg-transparent"></td>
+                            <td><input type="text" class="text-center bg-transparent"></td>
+                            <td></td>
+                        </tr>
+                    `);
+                }
+            </script>
+        </table>
+
+        <!-- Table 2: Audit Activities -->
+        <table class="w-full border-table mb-4 text-center">
+            <tr class="font-bold bg-white h-8">
+                <td class="w-[5%]">No</td>
+                <td class="w-[55%]">Aktifitas Audit / Audit Activity</td>
+                <td class="w-[10%]">Mulai/Start</td>
+                <td class="w-[10%]">Durasi/Duration</td>
+                <td class="w-[20%]">Keterangan/Remark</td>
+            </tr>
+            <!-- 7 Rows -->
+            <script>
+                for(let i=1; i<=7; i++) {
+                    document.write(`
+                        <tr class="h-6 bg-gray-custom">
+                            <td>${i}</td>
+                            <td><input type="text" class="text-left bg-transparent px-1"></td>
+                            <td><input type="text" class="text-center bg-transparent"></td>
+                            <td><input type="text" class="text-center bg-transparent"></td>
+                            <td><input type="text" class="text-left bg-transparent px-1"></td>
+                        </tr>
+                    `);
+                }
+            </script>
+        </table>
+
+        <!-- Summary & Signatures -->
+        <table class="w-full mb-8">
+            <tr>
+                <td class="w-[30%]">
+                    <div class="font-bold">Kesimpulan Hasil Audit :</div>
+                    <div class="small-italic">Summary of Audit:</div>
+                </td>
+                <td class="w-[70%]">
+                    <div class="flex gap-10 font-bold">
+                        <div><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> MJR</div>
+                        <div><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> NC</div>
+                        <div><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> OBS</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="w-[70%] mx-auto text-center border-collapse border-table">
+            <tr class="h-8 font-bold">
+                <td class="w-[50%] border border-black">Auditor</td>
+                <td class="w-[50%] border border-black">Auditee</td>
+            </tr>
+            <tr>
+                <td class="h-24 border border-black align-bottom pb-2">
+                    <div class="w-[80%] mx-auto border-b border-black h-16 mb-1 relative">
+                        <!-- Signature Space -->
+                    </div>
+                    <div>Nama & Tanda Tangan</div>
+                    <div class="small-italic">Name & Signature</div>
+                </td>
+                <td class="h-24 border border-black align-bottom pb-2">
+                    <div class="w-[80%] mx-auto border-b border-black h-16 mb-1 relative">
+                        <!-- Signature Space -->
+                    </div>
+                    <div>Nama & Tanda Tangan</div>
+                    <div class="small-italic">Name & Signature</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- PAGE BREAK -->
+    <div class="page-break"></div>
+
+    <!-- PAGE 2: 004 attach -->
+    <div class="a4-page">
+        <!-- Header -->
+        <table class="w-full header-table border-collapse mb-1">
+            <tr>
+                <td class="w-[25%] p-2">PT MENTARI MAS MULTIMODA</td>
+                <td class="w-[60%] p-2 text-[12px]">004 (Attach) LAPORAN KETIDAKSESUAIAN (NON COMFORMITY REPORT)</td>
+                <td class="w-[7%] p-2">CS</td>
+                <td class="w-[8%] p-2">SET</td>
+            </tr>
+        </table>
+        <div class="text-[11px] mb-3 font-sans">
+            Release : <span class="ml-[40%]">Rev.0 :</span>
+        </div>
+
+        <!-- Info Section -->
+        <table class="w-full mb-3 text-[12px]">
+            <tr>
+                <td class="w-[25%] py-1">Unit Kerja yang diaudit / <span class="small-italic">Audited Work Unit</span></td>
+                <td class="w-[2%]">:</td>
+                <td class="w-[38%] border-b border-black border-dotted bg-gray-custom"><input type="text"></td>
+                <td class="w-[15%] py-1 pl-4">Tanggal / <span class="small-italic">Date</span></td>
+                <td class="w-[2%]">:</td>
+                <td class="w-[18%] border-b border-black border-dotted bg-gray-custom"><input type="text"></td>
+            </tr>
+            <tr>
+                <td class="py-1 mt-2 block">Nama Auditor / <span class="small-italic">Auditor Name</span></td>
+                <td>:</td>
+                <td class="border-b border-black border-dotted bg-gray-custom"><input type="text"></td>
+                <td colspan="3"></td>
+            </tr>
+        </table>
+
+        <!-- NCR Types -->
+        <table class="w-full mb-3 text-[12px]">
+            <tr>
+                <td class="w-[15%] font-bold align-top pt-1">JENIS NCR:</td>
+                <td class="w-[25%] py-1"><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Inspection</td>
+                <td class="w-[30%] py-1"><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Internal Audit</td>
+                <td class="w-[10%] py-1">No.Audit</td>
+                <td class="w-[2%]">:</td>
+                <td class="w-[18%] border-b border-black border-dotted bg-gray-custom"><input type="text"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="py-1"><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Accident</td>
+                <td class="py-1"><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Incident</td>
+                <td class="py-1">No.NCR</td>
+                <td>:</td>
+                <td class="border-b border-black border-dotted bg-gray-custom"><input type="text"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="py-1"><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> PSC Deficiency</td>
+                <td class="py-1"><div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Penyimpangan dari SMK</td>
+                <td colspan="3"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="py-1 flex items-center col-span-2 whitespace-nowrap">
+                    <div class="checkbox-box" onclick="toggleCheckbox(this)"></div> Lain : <div class="w-48 border-b border-black border-dotted bg-gray-custom inline-block ml-2"><input type="text"></div>
+                </td>
+                <td class="py-1" colspan="2"></td>
+                <td class="small-italic text-right pt-2" colspan="3">***(tandai pada kotak yang sesuai)</td>
+            </tr>
+        </table>
+
+        <!-- Temuan Ketidaksesuaian -->
+        <div class="border border-black mb-4">
+            <div class="p-2 font-bold border-b border-black bg-white">
+                TEMUAN KETIDAK-SESUAIAN / <span class="small-italic font-normal">NON CONFORMITY FINDINGS :</span>
+            </div>
+            <div class="h-48 bg-gray-custom p-2">
+                <textarea></textarea>
+            </div>
+            <div class="flex border-t border-black bg-white">
+                <div class="w-1/2 border-r border-black flex flex-col justify-end p-2 h-24 text-center">
+                    <div class="border-b border-black w-[80%] mx-auto mb-1"></div>
+                    <div class="font-bold">Auditor Signature</div>
+                </div>
+                <div class="w-1/2 flex flex-col justify-end p-2 h-24 text-center">
+                    <div class="border-b border-black w-[80%] mx-auto mb-1"></div>
+                    <div class="font-bold">Auditee Signature</div>
+                </div>
+            </div>
+            <div class="flex border-t border-black bg-white">
+                <div class="w-1/2 border-r border-black p-2">
+                    Tanggal Kadaluarsa : <div class="w-32 border-b border-black border-dotted bg-gray-custom inline-block ml-2"><input type="text"></div><br>
+                    <span class="small-italic">Due Date</span>
+                </div>
+                <div class="w-1/2 p-2">
+                    Nama / Jabatan : <div class="w-[60%] border-b border-black border-dotted bg-gray-custom inline-block ml-2"><input type="text"></div><br>
+                    <span class="small-italic">Name/ Position</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deskripsi Tindakan Perbaikan -->
+        <div class="border border-black mb-4">
+            <div class="p-2 font-bold border-b border-black bg-white">
+                DESKRIPSI TINDAKAN PERBAIKAN / <span class="small-italic font-normal">DESCRIPTION OF CORECTIVE ACTION :</span>
+            </div>
+            <div class="h-40 bg-gray-custom p-2">
+                <textarea></textarea>
+            </div>
+            <div class="flex border-t border-black bg-white items-center">
+                <div class="w-[35%] border-r border-black p-2 h-28 flex flex-col justify-end text-center">
+                    <div class="font-bold mb-8">Penanggung jawab tindakan perbaikan (tanda tangan)</div>
+                    <div class="border-b border-black w-[80%] mx-auto mb-1"></div>
+                    <div>Nama / Jabatan</div>
+                    <div class="small-italic">Name / Position</div>
+                </div>
+                <div class="w-[65%] p-4 text-[12px] leading-relaxed">
+                    <div class="flex items-start mb-2">
+                        <div class="checkbox-box mt-1 shrink-0" onclick="toggleCheckbox(this)"></div>
+                        <div class="ml-2 font-bold">
+                            Tindakan Perbaikan dilaksanakan secara memuaskan <br>
+                            <span class="small-italic font-normal">Corrective action is carried out satisfactorily</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="checkbox-box mt-1 shrink-0" onclick="toggleCheckbox(this)"></div>
+                        <div class="ml-2 font-bold">
+                            Tindakan Perbaikan belum dilaksanakan secara memuaskan & perlu dukungan staf *darat/laut sesuai kebutuhan<br>
+                            <span class="small-italic font-normal">Corrective Action has not been implemented satisfactorily & need support staff * land / sea as needed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verifikasi Tindakan Perbaikan -->
+        <div class="border border-black">
+            <div class="p-2 font-bold border-b border-black bg-white">
+                VERIFIKASI TINDAKAN PERBAIKAN / <span class="small-italic font-normal">VERIFICATION OF CORECTIVE ACTION :</span>
+            </div>
+            <div class="h-32 bg-gray-custom p-2">
+                <textarea></textarea>
+            </div>
+            <div class="flex border-t border-black bg-white h-24">
+                <div class="w-[60%] border-r border-black p-2 flex flex-col justify-end text-center">
+                    <div class="flex justify-around items-end h-full">
+                        <div class="w-[40%]">
+                            <div class="border-b border-black w-full mb-1"></div>
+                            <div class="font-bold">Auditor Name</div>
+                        </div>
+                        <div class="w-[40%]">
+                            <div class="border-b border-black w-full mb-1"></div>
+                            <div class="font-bold">Verification Date</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-[40%] flex flex-col justify-end p-2 text-center">
+                    <div class="w-[80%] mx-auto border-b border-black mb-1"></div>
+                    <div class="font-bold">Auditor Signature</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
