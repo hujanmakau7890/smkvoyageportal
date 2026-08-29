@@ -629,11 +629,11 @@ function checkEmpty(grid){
 // Add Page = duplikasi 2 halaman per element ISM: 1 halaman Attach (NCR) + 1 halaman Foto
 let attachNo=1;
 function addPage(){
+  try{
   attachNo++;
-  let tplAttach = document.getElementById('attach-page-1');
-  if(!tplAttach) tplAttach = document.querySelector('.a4-page#attach-page-1') || document.querySelectorAll('.a4-page')[1];
-  let tplFoto = document.getElementById('foto-page-1');
-  if(!tplAttach || !tplFoto){ alert('Template 004 tidak ditemukan (#attach-page-1 / #foto-page-1). Cek HTML.'); return; }
+  let tplAttach = document.getElementById('attach-page-1') || document.querySelector('.a4-page#attach-page-1') || document.querySelectorAll('.a4-page')[1];
+  let tplFoto = document.getElementById('foto-page-1') || document.querySelector('.a4-page#foto-page-1');
+  if(!tplAttach || !tplFoto){ alert('Template 004 tidak ditemukan (#attach-page-1 / #foto-page-1 attachNo='+attachNo+'). Cek HTML.'); console.error('tpl missing', tplAttach, tplFoto); return; }
   const container=document.getElementById('extra-pages');
   // Clone Attach (NCR) — tanpa foto grid (foto ada di halaman terpisah)
   const cloneAttach = tplAttach.cloneNode(true);
@@ -662,18 +662,17 @@ function addPage(){
   // Toolbar per pasangan: di halaman Foto ada Add Foto + Hapus Pasangan
   const oldBar = cloneFoto.querySelector('.no-print.flex');
   if(oldBar){
-    oldBar.innerHTML=`
-    <button onclick="addFoto('${newGridId}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs">+ Add Foto</button>
-    <button onclick="removeAttachPair('${attachNo}')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs">\u2212 Hapus Element</button>
-  `;
+    oldBar.innerHTML='';
+    const b1=document.createElement('button'); b1.className='px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs'; b1.textContent='+ Add Foto';
+    const gid=newGridId; b1.addEventListener('click', ()=> addFoto(gid)); oldBar.appendChild(b1);
+    const b2=document.createElement('button'); b2.className='px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs'; b2.textContent='\u2212 Hapus Element';
+    const ano=String(attachNo); b2.addEventListener('click', ()=> removeAttachPair(ano)); oldBar.appendChild(b2);
   }
   // page-breaks are handled by CSS page-break-after on .a4-page, no extra div needed, but add visual gap on screen
   container.appendChild(cloneAttach);
   container.appendChild(cloneFoto);
-  // fix onclick literal
-  setTimeout(()=>{ const b=oldBar && oldBar.querySelector('button'); if(b) b.setAttribute('onclick', "addFoto('"+newGridId+"')"); }, 0);
   window.scrollTo({top: cloneFoto.offsetTop, behavior: 'smooth'});
-}
+  }catch(e){ alert('Add Page error: '+e.message); console.error(e); } }
 function removeAttachPair(no){
   const a=document.getElementById('attach-page-'+no);
   const f=document.getElementById('foto-page-'+no);
