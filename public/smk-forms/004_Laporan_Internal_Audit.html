@@ -117,14 +117,19 @@
         .sig-wrap.has-img .sig-img { display: block; }
         .sig-wrap.has-img .sig-placeholder { display: none; }
         @media print {
-            @page { margin: 6mm 10mm; }
+            @page { margin: 4mm 7mm; }
             .no-print { display: none !important; }
-            .a4-page { box-shadow: none; margin: 0; padding: 4mm 10mm !important; min-height: auto !important; page-break-after: always; break-after: page; page-break-inside: auto; }
+            .a4-page { box-shadow: none; margin: 0; padding: 2mm 7mm !important; min-height: auto !important; height: auto !important; page-break-after: always; break-after: page; page-break-inside: auto; overflow: hidden; }
             .a4-page:last-child { page-break-after: auto; break-after: auto; }
             .border-table, .sig-wrap { break-inside: avoid; page-break-inside: avoid; }
-            .sig-wrap .sig-box { border: 1px solid #000 !important; height: 40px !important; }
-            .sig-wrap .sig-img { max-height: 40px !important; }
+            .sig-wrap .sig-box { border: 1px solid #000 !important; height: 32px !important; }
+            .sig-wrap .sig-img { max-height: 32px !important; }
             input[type="text"]::placeholder { color: transparent !important; }
+            /* Attach page tighter */
+            #attach-page-1, #foto-page-1 { font-size: 10px; }
+            #attach-page-1 .header-table td, #foto-page-1 .header-table td { font-size: 10px; padding: 2px !important; }
+            #attach-page-1 textarea, #foto-page-1 textarea { font-size: 10px; }
+            #extra-pages .a4-page { font-size: 10px; }
         }
     </style>
     <script>
@@ -412,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function(){ document.querySelector
             <div class="p-2 font-bold border-b border-black bg-white">
                 TEMUAN KETIDAK-SESUAIAN / <span class="small-italic font-normal">NON CONFORMITY FINDINGS :</span>
             </div>
-            <div class="h-24 bg-gray-custom p-2">
+            <div class="h-10 bg-gray-custom p-2">
                 <textarea></textarea>
             </div>
             <div class="flex border-t border-black bg-white">
@@ -462,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function(){ document.querySelector
             <div class="p-2 font-bold border-b border-black bg-white">
                 DESKRIPSI TINDAKAN PERBAIKAN / <span class="small-italic font-normal">DESCRIPTION OF CORECTIVE ACTION :</span>
             </div>
-            <div class="h-20 bg-gray-custom p-2">
+            <div class="h-14 bg-gray-custom p-2">
                 <textarea></textarea>
             </div>
             <div class="flex border-t border-black bg-white items-center">
@@ -506,7 +511,7 @@ document.addEventListener('DOMContentLoaded', function(){ document.querySelector
             <div class="p-2 font-bold border-b border-black bg-white">
                 VERIFIKASI TINDAKAN PERBAIKAN / <span class="small-italic font-normal">VERIFICATION OF CORECTIVE ACTION :</span>
             </div>
-            <div class="h-16 bg-gray-custom p-2">
+            <div class="h-10 bg-gray-custom p-2">
                 <textarea></textarea>
             </div>
             <div class="flex border-t border-black bg-white">
@@ -560,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function(){ document.querySelector
             <div class="p-2 font-bold border-b border-black bg-white">
                 LAMPIRAN FOTO / <span class="small-italic font-normal">PHOTO ATTACHMENT :</span>
             </div>
-            <div id="foto-grid" class="grid grid-cols-2 gap-4 p-4 bg-gray-custom min-h-[480px]">
+            <div id="foto-grid" class="grid grid-cols-2 gap-4 p-4 bg-gray-custom min-h-[420px]">
                 <div class="foto-placeholder text-center text-gray-500 col-span-2 py-20 border-2 border-dashed border-gray-400 bg-white">Belum ada foto. Klik "+ Add Foto" untuk menambah. (Max 4 foto per halaman, foto akan tercetak rapi tanpa pecah halaman)</div>
             </div>
         </div>
