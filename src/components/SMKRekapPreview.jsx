@@ -627,6 +627,15 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
 
   const handleApprove = async (vessel, file) => {
     if (!canApproveLocal) return; // admin + superintendent bisa approve
+    // Optimistic: hilangkan dari UI langsung (tanpa tunggu server/refresh)
+    const backup = filesByVessel;
+    setFilesByVessel(prev => {
+      const next = { ...prev };
+      const arr = (next[vessel] || []).filter(f => f.path !== file.path);
+      if (arr.length === 0) delete next[vessel];
+      else next[vessel] = arr;
+      return next;
+    });
     setLoading(true);
     try {
       const emailParam = approverEmail ? `&email=${encodeURIComponent(approverEmail)}` : "";
@@ -663,10 +672,13 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
         alert(`File di-approve, TAPI gagal update rekap:\n${e.message}`);
       }
 
-      await fetchFiles();
+      // sync final dari server (jangan revert optimistic bila sudah sukses)
+      fetchFiles().catch(()=>{});
       if (onApproveSuccess) onApproveSuccess();
     } catch (err) {
+      setFilesByVessel(backup); // revert optimistic
       alert("Gagal approve file: " + err.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -764,7 +776,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
       <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12}}>
         <h2 style={{fontSize: 18, fontWeight: 800, color: "#1e3a5f", margin: 0}}>📋 Menunggu Persetujuan (Need Approval)</h2>
         <div style={{display:"flex", gap:8}}>
-          {isAdmin && (
+          {canApproveLocal && (
             <button onClick={() => setShowSigPanel(p=>!p)} style={{padding: "6px 12px", fontSize: 12, borderRadius: 4, border: "1px solid #3b82f6", background: sigPreview?"#eff6ff":"#fff", color:"#1d4ed8", cursor: "pointer", fontWeight:600}}>
               ✍️ {sigPreview ? "Ubah TTD" : "Atur TTD Saya"}
             </button>
