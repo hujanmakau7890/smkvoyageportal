@@ -627,16 +627,10 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
 
   const handleApprove = async (vessel, file) => {
     if (!canApproveLocal) return; // admin + superintendent bisa approve
-    // Optimistic: hilangkan dari UI langsung (tanpa tunggu server/refresh)
-    const backup = filesByVessel;
-    setFilesByVessel(prev => {
-      const next = { ...prev };
-      const arr = (next[vessel] || []).filter(f => f.path !== file.path);
-      if (arr.length === 0) delete next[vessel];
-      else next[vessel] = arr;
-      return next;
-    });
     setLoading(true);
+    // delay 300ms agar server selesai move + inject TTD sebelum UI hilang (hindari muncul lagi)
+    await new Promise(r => setTimeout(r, 300));
+    const backup = filesByVessel;
     try {
       const emailParam = approverEmail ? `&email=${encodeURIComponent(approverEmail)}` : "";
       const res = await fetch(`${baseUrl}/approve?path=${encodeURIComponent(file.path)}${emailParam}`, {
@@ -644,6 +638,14 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
       });
       const result = await res.json();
       if (!result.ok) throw new Error(result.error || "Gagal approve");
+      // hilangkan dari UI setelah server confirm (300ms delay sudah dilewati)
+      setFilesByVessel(prev => {
+        const next = { ...prev };
+        const arr = (next[vessel] || []).filter(f => f.path !== file.path);
+        if (arr.length === 0) delete next[vessel];
+        else next[vessel] = arr;
+        return next;
+      });
 
       // Update rekap SMK ke "C" setelah approve
       try {
@@ -672,11 +674,8 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
         alert(`File di-approve, TAPI gagal update rekap:\n${e.message}`);
       }
 
-      // sync final dari server (jangan revert optimistic bila sudah sukses)
-      fetchFiles().catch(()=>{});
       if (onApproveSuccess) onApproveSuccess();
     } catch (err) {
-      setFilesByVessel(backup); // revert optimistic
       alert("Gagal approve file: " + err.message);
     } finally {
       setLoading(false);
