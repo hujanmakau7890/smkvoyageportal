@@ -552,18 +552,15 @@ function addPage(){
   const grid = clone.querySelector('#foto-grid');
   if(grid){
     grid.id = newGridId;
-    grid.innerHTML='<div class="foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white">Belum ada foto. Klik "+ Add Foto" untuk menambah (ISM Element '+attachNo+').</div>';
+    grid.innerHTML='<div class="foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white">Belum ada foto. Klik "+ Add Foto" untuk menambah.</div>';
   }
-  // update titles to element suffix
-  clone.querySelectorAll('.header-table td').forEach(td=>{
-    if(td.textContent.includes('LAPORAN KETIDAKSESUAIAN')) td.innerHTML='004 (Attach) LAPORAN KETIDAKSESUAIAN (NON CONFORMITY REPORT) — ISM Element '+attachNo+' / Elemen '+attachNo;
-  });
+  // header tetap sama per halaman (tanpa suffix Element), sesuai instruksi
   // add per-page toolbar at bottom of clone
   const bar=document.createElement('div');
   bar.className='no-print flex flex-wrap gap-2 justify-center mt-4';
   bar.innerHTML=`
-    <button onclick="addFoto('${newGridId}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs">+ Add Foto (Elemen ${attachNo})</button>
-    <button onclick="this.closest('.a4-page').remove()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs">− Hapus Halaman Elemen ${attachNo}</button>
+    <button onclick="addFoto('${newGridId}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs">+ Add Foto</button>
+    <button onclick="this.closest('.a4-page').remove()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs">− Hapus Halaman</button>
   `;
   // ensure literal onclick
   clone.appendChild(bar);
