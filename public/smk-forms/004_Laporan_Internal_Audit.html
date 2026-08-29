@@ -304,7 +304,7 @@
     <div class="page-break"></div>
 
     <!-- PAGE 2: 004 attach -->
-    <div class="a4-page">
+    <div class="a4-page" id="attach-page-1">
         <!-- Header -->
         <table class="w-full header-table border-collapse mb-1">
             <tr>
@@ -536,8 +536,9 @@ function checkEmpty(grid){
 let attachNo=1;
 function addPage(){
   attachNo++;
-  const tpl = document.getElementById('attach-page-1');
-  if(!tpl){ alert('Template 004 Attach tidak ditemukan'); return; }
+  let tpl = document.getElementById('attach-page-1');
+  if(!tpl) tpl = document.querySelector('.a4-page#attach-page-1') || document.querySelectorAll('.a4-page')[1];
+  if(!tpl){ alert('Template 004 Attach tidak ditemukan (#attach-page-1). Cek HTML mengandung id attach-page-1.'); return; }
   const container=document.getElementById('extra-pages');
   const clone = tpl.cloneNode(true);
   clone.id = 'attach-page-'+attachNo;
