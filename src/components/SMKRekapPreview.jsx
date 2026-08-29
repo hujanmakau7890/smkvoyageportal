@@ -563,9 +563,10 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
   const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://api.voyageportal.my.id";
   const baseUrl = uploadUrl.replace(/\/+$/, "");
 
+  const canApproveLocal = isAdmin || isSuperintendent;
   // Load TTD yang sudah tersimpan
   useEffect(() => {
-    if (!approverEmail || !isAdmin) return;
+    if (!approverEmail || !canApproveLocal) return;
     fetch(`${baseUrl}/get-signature?email=${encodeURIComponent(approverEmail)}`, {
       headers: { "X-Token": "smk-laporan-2026" }
     }).then(r => r.json()).then(res => {
@@ -573,7 +574,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
         setSigPreview("data:image/png;base64," + res.signature_b64);
       }
     }).catch(() => {});
-  }, [approverEmail, baseUrl, isAdmin]);
+  }, [approverEmail, baseUrl, canApproveLocal]);
 
   const handleSigUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -625,7 +626,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
   }, []);
 
   const handleApprove = async (vessel, file) => {
-    if (!isAdmin) return; // double check
+    if (!canApproveLocal) return; // admin + superintendent bisa approve
     setLoading(true);
     try {
       const emailParam = approverEmail ? `&email=${encodeURIComponent(approverEmail)}` : "";
@@ -671,7 +672,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
   };
 
   const handleReject = (vessel, file) => {
-    if (!isAdmin) return;
+    if (!canApproveLocal) return;
     setRejectTarget({ vessel, file });
   };
 
@@ -772,7 +773,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
         </div>
       </div>
 
-      {isAdmin && showSigPanel && (
+      {canApproveLocal && showSigPanel && (
         <div style={{background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:16, marginBottom:16}}>
           <div style={{fontSize:13, fontWeight:700, color:"#1e40af", marginBottom:8}}>✍️ Tanda Tangan Digital Saya ({approverEmail})</div>
           <div style={{fontSize:12, color:"#64748b", marginBottom:12}}>
