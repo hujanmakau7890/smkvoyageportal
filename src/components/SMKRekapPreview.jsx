@@ -447,7 +447,7 @@ function CariLaporanView() {
     setLoading(true);
     setError(null);
     try {
-      const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://api.voyageportal.my.id";
+      const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
   const baseUrl = uploadUrl.replace(/\/+$/, "");
   const url = new URL(baseUrl + "/list-laporan");
       if (vessel) url.searchParams.append("vessel", vessel);
@@ -467,7 +467,7 @@ function CariLaporanView() {
 
   const handleDownload = async (path) => {
     try {
-      const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://api.voyageportal.my.id";
+      const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
       const baseUrl = uploadUrl.replace(/\/+$/, "");
       const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(path)}&t=${Date.now()}`;
       
@@ -561,7 +561,7 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
   const [showSigPanel, setShowSigPanel] = useState(false);
   const [rejectTarget, setRejectTarget] = useState(null);
 
-  const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://api.voyageportal.my.id";
+  const uploadUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_UPLOAD_URL) || "https://upload.voyageportal.my.id";
   const baseUrl = uploadUrl.replace(/\/+$/, "");
 
   const canApproveLocal = isAdmin || isSuperintendent;

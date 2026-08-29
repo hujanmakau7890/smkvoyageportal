@@ -79,7 +79,7 @@ export default function SMKReportFormPage() {
       const dateMatch = String(payload.date || "").match(/^(\d{2})-(\d{2})-(\d{4})$/);
       const year = dateMatch ? dateMatch[3] : String(new Date().getFullYear());
       const month = dateMatch ? MONTHS[Number(dateMatch[2]) - 1] : MONTHS[new Date().getMonth()];
-      const uploadUrl = (import.meta.env.VITE_UPLOAD_URL || "https://api.voyageportal.my.id").replace(/\/+$/, "");
+      const uploadUrl = (import.meta.env.VITE_UPLOAD_URL || "https://upload.voyageportal.my.id").replace(/\/+$/, "");
 
       const iframe = iframeRef.current;
       const sourceDoc = iframe?.contentDocument;
@@ -469,7 +469,7 @@ export default function SMKReportFormPage() {
       // Send config and vessel info to iframe for auto-select & lock
       setTimeout(() => {
         try {
-          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://api.voyageportal.my.id";
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://upload.voyageportal.my.id";
           const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
           iframe.contentWindow.postMessage({ 
             type: 'INIT_FORM', 
