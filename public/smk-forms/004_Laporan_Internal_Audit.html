@@ -528,7 +528,7 @@ function checkEmpty(grid){
   if(grid.children.length===0){
     const ph=document.createElement('div');
     ph.className='foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white';
-    ph.textContent='Belum ada foto. Klik " + Add Foto" untuk menambah.';
+    ph.textContent='Belum ada foto. Klik \"+ Add Foto\" untuk menambah.';
     grid.appendChild(ph);
   }
 }
@@ -572,6 +572,9 @@ function addPage(){
   container.appendChild(clone);
   window.scrollTo({top: clone.offsetTop, behavior: 'smooth'});
 }
+window.addPage = addPage;
+window.addFoto = addFoto;
+window.previewFoto = previewFoto;
 </script>
 
 </body>
