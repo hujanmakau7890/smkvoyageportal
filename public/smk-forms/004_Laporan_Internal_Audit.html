@@ -106,6 +106,14 @@
             font-size: inherit;
             background: transparent;
         }
+        .foto-grid { min-height: 120px; }
+        .foto-box { break-inside: avoid; }
+        .foto-preview { cursor: pointer; }
+        .foto-preview img { max-width: 100%; max-height: 100%; }
+        @media print {
+            .no-print { display: none !important; }
+            .a4-page { box-shadow: none; margin: 0; }
+        }
     </style>
     <script>
         function toggleCheckbox(el) {
@@ -454,7 +462,105 @@
             </div>
         </div>
 
+        <!-- LAMPIRAN FOTO -->
+        <div class="border border-black mt-6" id="lampiran-foto">
+            <div class="p-2 font-bold border-b border-black bg-white">
+                LAMPIRAN FOTO / <span class="small-italic font-normal">PHOTO ATTACHMENT :</span>
+            </div>
+            <div id="foto-grid" class="grid grid-cols-2 gap-4 p-4 bg-gray-custom min-h-[220px]">
+                <div class="foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white">Belum ada foto. Klik "+ Add Foto" untuk menambah.</div>
+            </div>
+        </div>
+
+        <!-- Toolbar lampiran -->
+        <div class="no-print flex flex-wrap gap-2 justify-center mt-4">
+            <button onclick="addFoto()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-sm">+ Add Foto</button>
+            <button onclick="addPage()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-sm">+ Add Page</button>
+            <button onclick="window.print()" class="px-5 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded font-bold text-sm">Print / Simpan PDF</button>
+        </div>
+
     </div>
+
+    <!-- Extra attachment pages container -->
+    <div id="extra-pages"></div>
+
+<script>
+let fotoCount=0;
+function addFoto(gridId){
+  const gid = gridId || 'foto-grid';
+  const grid = document.getElementById(gid);
+  if(!grid) return;
+  const ph = grid.querySelector('.foto-placeholder');
+  if(ph) ph.remove();
+  fotoCount++;
+  const box = document.createElement('div');
+  box.className = 'foto-box border border-black bg-white p-2 flex flex-col break-inside-avoid';
+  box.innerHTML = `
+    <div class="foto-preview flex-1 border-2 border-dashed border-gray-400 bg-gray-50 flex items-center justify-center h-48 overflow-hidden relative">
+      <span class="text-gray-400 text-xs text-center px-2">Klik untuk pilih foto<br><span class="text-[10px]">JPG / PNG</span></span>
+      <img class="hidden w-full h-full object-contain absolute inset-0 bg-white" />
+      <input type="file" accept="image/*" class="hidden" onchange="previewFoto(this)" />
+    </div>
+    <input type="text" placeholder="Keterangan foto / Caption..." class="mt-2 text-center border-b border-dotted border-black text-[11px] p-1 bg-transparent">
+    <button onclick="this.closest('.foto-box').remove(); checkEmpty(grid)" class="no-print mt-2 text-xs text-red-600 hover:text-red-800">× Hapus Foto</button>
+  `;
+  const preview = box.querySelector('.foto-preview');
+  preview.addEventListener('click', ()=> preview.querySelector('input[type=file]').click());
+  grid.appendChild(box);
+}
+function previewFoto(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wrap = input.closest('.foto-preview');
+    const img = wrap.querySelector('img');
+    const span = wrap.querySelector('span');
+    img.src = e.target.result;
+    img.classList.remove('hidden');
+    span.classList.add('hidden');
+    wrap.classList.remove('border-dashed');
+    wrap.classList.add('border-solid');
+  };
+  reader.readAsDataURL(file);
+}
+function checkEmpty(grid){
+  if(grid.children.length===0){
+    const ph=document.createElement('div');
+    ph.className='foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white';
+    ph.textContent='Belum ada foto. Klik "+ Add Foto" untuk menambah.';
+    grid.appendChild(ph);
+  }
+}
+let extraPageNo=1;
+function addPage(){
+  extraPageNo++;
+  const container=document.getElementById('extra-pages');
+  const gridId='foto-grid-'+extraPageNo;
+  const page=document.createElement('div');
+  page.className='a4-page';
+  page.innerHTML=`
+    <table class="w-full header-table border-collapse mb-1">
+      <tr><td class="w-[25%] p-2">PT MENTARI MAS MULTIMODA</td><td class="w-[60%] p-2 text-[12px]">004 (Attach) LAMPIRAN FOTO ${extraPageNo} / PHOTO ATTACHMENT ${extraPageNo}</td><td class="w-[7%] p-2">CS</td><td class="w-[8%] p-2">SET</td></tr>
+    </table>
+    <div class="text-[11px] mb-3 font-sans">Release : <span class="ml-[40%]">Rev.0 :</span></div>
+    <div class="border border-black">
+      <div class="p-2 font-bold border-b border-black bg-white">LAMPIRAN FOTO ${extraPageNo} / <span class="small-italic font-normal">PHOTO ATTACHMENT ${extraPageNo} :</span></div>
+      <div id="${gridId}" class="grid grid-cols-2 gap-4 p-4 bg-gray-custom min-h-[380px]">
+        <div class="foto-placeholder text-center text-gray-500 col-span-2 py-10 border-2 border-dashed border-gray-400 bg-white">Belum ada foto. Klik "+ Add Foto" untuk menambah.</div>
+      </div>
+    </div>
+    <div class="no-print flex flex-wrap gap-2 justify-center mt-4">
+      <button onclick="addFoto('${gridId}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs">+ Add Foto ke Hal ${extraPageNo}</button>
+      <button onclick="this.closest('.a4-page').remove()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs">− Hapus Halaman</button>
+    </div>
+  `;
+  // fix gridId in onclick (template literal already interpolated, need to keep literal)
+  page.querySelector('button').setAttribute('onclick', "addFoto('"+gridId+"')");
+  container.appendChild(page);
+  window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+}
+</script>
 
 </body>
 </html>
