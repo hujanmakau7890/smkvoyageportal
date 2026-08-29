@@ -549,8 +549,14 @@ class Handler(BaseHTTPRequestHandler):
 
                 shutil.move(pdf_tmp, tmp)
 
-                # HTML backup tidak disimpan (hanya PDF sesuai permintaan user)
-                pass  # no html_backup
+                # Simpan HTML backup untuk Need Approval (diperlukan untuk inject TTD saat approve)
+                # Untuk 059A-F dan 010, TTD SI/FM & DPA di-inject ke HTML sebelum re-render PDF
+                if destination == "Need Approval":
+                    html_backup = p.replace(".pdf", ".html")
+                    try:
+                        shutil.copy(html_path, html_backup)
+                    except Exception:
+                        pass
 
                 try:
                     os.remove(html_path)
