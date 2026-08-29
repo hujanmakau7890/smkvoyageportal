@@ -111,17 +111,18 @@
         .foto-preview { cursor: pointer; }
         .foto-preview img { max-width: 100%; max-height: 100%; }
         .sig-wrap { position: relative; text-align: center; }
-        .sig-wrap .sig-box { width: 100%; height: 72px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px dashed #94a3b8; overflow: hidden; }
-        .sig-wrap .sig-img { max-width: 100%; max-height: 72px; display: none; margin: 0 auto; }
+        .sig-wrap .sig-box { width: 100%; height: 56px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px dashed #94a3b8; overflow: hidden; position: relative; }
+        .sig-wrap .sig-img { max-width: 100%; max-height: 64px; display: none; margin: 0 auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-height: 56px; pointer-events: none; z-index: 2; }
         .sig-wrap.has-img .sig-box { border-style: solid; border-color: #000; }
         .sig-wrap.has-img .sig-img { display: block; }
         .sig-wrap.has-img .sig-placeholder { display: none; }
         @media print {
             .no-print { display: none !important; }
-            .a4-page { box-shadow: none; margin: 0; page-break-after: always; break-after: page; page-break-inside: auto; }
+            .a4-page { box-shadow: none; margin: 0; padding: 6mm 10mm !important; page-break-after: always; break-after: page; page-break-inside: auto; }
             .a4-page:last-child { page-break-after: auto; break-after: auto; }
             .border-table, .sig-wrap { break-inside: avoid; page-break-inside: avoid; }
-            .sig-wrap .sig-box { border: 1px solid #000 !important; }
+            .sig-wrap .sig-box { border: 1px solid #000 !important; height: 48px !important; }
+            .sig-wrap .sig-img { max-height: 48px !important; }
             input[type="text"]::placeholder { color: transparent !important; }
         }
     </style>
