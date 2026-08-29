@@ -127,7 +127,7 @@
         }
     
 function maskDate(e){ let v=e.target.value.replace(/\D/g,'').slice(0,8); if(v.length>2) v=v.slice(0,2)+'-'+v.slice(2); if(v.length>5) v=v.slice(0,5)+'-'+v.slice(5); e.target.value=v; }
-document.querySelectorAll('.date-mask').forEach(x=> x.addEventListener('input', maskDate));
+document.addEventListener('DOMContentLoaded', function(){ document.querySelectorAll('.date-mask').forEach(x=> x.addEventListener('input', maskDate)); });
 </script>
 </head>
 <body>
@@ -160,7 +160,7 @@ document.querySelectorAll('.date-mask').forEach(x=> x.addEventListener('input', 
                 <td class="w-[5%]"></td>
                 <td class="w-[20%] py-1">Tanggal Audit / Date</td>
                 <td class="w-[2%]">:</td>
-                <td class="w-[21%] bg-gray-custom"><input type="text" class="date-mask w-full bg-transparent border-0 outline-none text-xs" placeholder="DD-MM-YYYY" maxlength="10"></td>
+                <td class="w-[21%] bg-gray-custom"><input type="text" class="date-mask w-full bg-transparent border-0 outline-none text-xs" placeholder="DD-MM-YYYY" maxlength="10" oninput="maskDate(event)"></td>
             </tr>
             <tr>
                 <td class="py-2" colspan="3"></td>
@@ -357,7 +357,7 @@ document.querySelectorAll('.date-mask').forEach(x=> x.addEventListener('input', 
                 <td class="w-[38%] bg-gray-custom"><select class="w-full bg-transparent border-0 outline-none text-xs py-1"><option value="">-- Pilih --</option><option>Express Mas</option><option>Mavendra Mas</option><option>Prakarsa Mas</option><option>Pratama Mas</option><option>Sahabat Mas</option><option>Segoro Mas</option><option>Selaras Mas</option><option>Semangat Mas</option><option>Office</option></select></td>
                 <td class="w-[15%] py-1 pl-4">Tanggal / <span class="small-italic">Date</span></td>
                 <td class="w-[2%]">:</td>
-                <td class="w-[18%] bg-gray-custom"><input type="text" class="date-mask w-full bg-transparent border-0 outline-none text-xs" placeholder="DD-MM-YYYY" maxlength="10"></td>
+                <td class="w-[18%] bg-gray-custom"><input type="text" class="date-mask w-full bg-transparent border-0 outline-none text-xs" placeholder="DD-MM-YYYY" maxlength="10" oninput="maskDate(event)"></td>
             </tr>
             <tr>
                 <td class="py-1 mt-2 block">Nama Auditor / <span class="small-italic">Auditor Name</span></td>
