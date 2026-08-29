@@ -45,6 +45,71 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        # Opsi A: preview Need Approval HTML sebagai PDF on-the-fly (tidak bisa di-edit di UI, tapi storage tetap HTML-only)
+        if self.path.startswith("/preview"):
+            token = self.headers.get("X-Token")
+            if token != TOKEN:
+                self.send_response(403); self._cors()
+                self.send_header("Content-Type","application/json"); self.end_headers()
+                self.wfile.write(json.dumps({"ok":False,"error":"Forbidden"}).encode())
+                return
+            try:
+                from urllib.parse import urlparse, parse_qs
+                qs = parse_qs(urlparse(self.path).query)
+                rel = qs.get("path",[""])[0]
+                if not rel:
+                    self.send_error(400,"Missing path"); return
+                STORAGE_ROOT = "/mnt/data/supabase-storage"
+                rel = rel.replace("\\","/")
+                abs_path = os.path.normpath(os.path.join(STORAGE_ROOT, rel))
+                if not abs_path.startswith(os.path.normpath(STORAGE_ROOT)):
+                    self.send_error(403,"Forbidden path"); return
+                if not os.path.isfile(abs_path):
+                    self.send_error(404,"Not found"); return
+                # Jika HTML → render PDF read-only on-the-fly
+                if abs_path.lower().endswith(".html"):
+                    with open(abs_path,"r",encoding="utf-8",errors="replace") as f:
+                        html = f.read()
+                    # Kunci form: sembunyikan toolbar/btn, disable input agar tidak bisa dirubah di preview PDF
+                    readonly_css = "<style>/* preview read-only */ .no-print{display:none!important} .toolbar{display:none!important} input,textarea,select{pointer-events:none!important}</style>"
+                    if "</head>" in html:
+                        html = html.replace("</head>", readonly_css + "</head>", 1)
+                    else:
+                        html = readonly_css + html
+                    os.makedirs(RENDER_TMP, exist_ok=True)
+                    tmp_html = os.path.join(RENDER_TMP, "_preview_" + os.path.basename(abs_path))
+                    tmp_pdf = tmp_html + ".pdf"
+                    with open(tmp_html,"w",encoding="utf-8") as f:
+                        f.write(html)
+                    cmd = [CHROMIUM,"--headless","--disable-gpu","--no-sandbox","--print-to-pdf="+tmp_pdf,"--print-to-pdf-landscape","--no-pdf-header-footer","--timeout=60000", tmp_html]
+                    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    self.send_response(200); self._cors()
+                    self.send_header("Content-Type","application/pdf")
+                    self.send_header("Cache-Control","no-store, no-cache, must-revalidate, max-age=0")
+                    self.send_header("Content-Disposition", f'inline; filename="{os.path.basename(abs_path).replace(".html",".pdf")}"')
+                    self.send_header("Content-Length", str(os.path.getsize(tmp_pdf)))
+                    self.end_headers()
+                    with open(tmp_pdf,"rb") as f:
+                        shutil.copyfileobj(f, self.wfile)
+                    for _t in [tmp_html, tmp_pdf]:
+                        try: os.remove(_t)
+                        except: pass
+                    return
+                # Jika sudah PDF (file lama) → serve PDF langsung
+                self.send_response(200); self._cors()
+                self.send_header("Content-Type","application/pdf")
+                self.send_header("Cache-Control","no-store, no-cache, must-revalidate, max-age=0")
+                self.send_header("Content-Disposition", f'inline; filename="{os.path.basename(abs_path)}"')
+                self.send_header("Content-Length", str(os.path.getsize(abs_path)))
+                self.end_headers()
+                with open(abs_path,"rb") as f:
+                    shutil.copyfileobj(f, self.wfile)
+                return
+            except Exception as e:
+                self.send_response(500); self._cors()
+                self.send_header("Content-Type","application/json"); self.end_headers()
+                self.wfile.write(json.dumps({"ok":False,"error":str(e)}).encode())
+                return
         if self.path.startswith("/download"):
             token = self.headers.get("X-Token")
             if token != TOKEN:

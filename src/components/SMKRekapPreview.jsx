@@ -712,7 +712,11 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
 
   const handleView = async (vessel, file) => {
     try {
-      const dlUrl = `${baseUrl}/download?path=${encodeURIComponent(file.path)}&t=${Date.now()}`;
+      const isHtml = (file.path || "").toLowerCase().endsWith(".html");
+      // Need Approval sekarang HTML-only: Lihat render PDF read-only on-the-fly (/preview), jadi tidak bisa dirubah
+      const isNeedApproval = (file.path || "").startsWith("Need Approval");
+      const endpoint = (isHtml && isNeedApproval) ? "/preview" : "/download";
+      const dlUrl = `${baseUrl}${endpoint}?path=${encodeURIComponent(file.path)}&t=${Date.now()}`;
       const dlRes = await fetch(dlUrl, {
         cache: "no-store",
         headers: { "X-Token": "smk-laporan-2026" }
@@ -721,11 +725,10 @@ function NeedApprovalView({ onApproveSuccess, approverEmail, isAdmin, isSuperint
       const blob = await dlRes.blob();
       const url = URL.createObjectURL(blob);
       const win = window.open(url, "_blank");
-      // Fallback jika popup diblock: download langsung
       if (!win) {
         const a = document.createElement('a');
         a.href = url;
-        a.download = file.path.split('/').pop() || "preview.html";
+        a.download = (file.path.split('/').pop() || "preview.pdf").replace(/\.html$/i, ".pdf");
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
