@@ -166,6 +166,14 @@ class Handler(BaseHTTPRequestHandler):
 
                 # Inject TTD ke HTML lalu re-render ke PDF (jika ada HTML backup)
                 html_src = src_abs.replace(".pdf", ".html")
+                # Handle duplicate counter: pdf may be xxx.pdf but html is xxx (1).html
+                if not os.path.isfile(html_src):
+                    base_h, ext_h = os.path.splitext(html_src)
+                    for i in range(1, 10):
+                        cand = f"{base_h} ({i}){ext_h}"
+                        if os.path.isfile(cand):
+                            html_src = cand
+                            break
                 sig_injected = False
 
                 # Fallback: jika HTML backup tidak ada (file lama pre-1c55ad1), inject TTD langsung ke PDF
