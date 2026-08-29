@@ -264,6 +264,39 @@ export default function SMKReportFormPage() {
           }
         }
       }
+      // 004: unit yang diaudit (Office / kapal) — fallback ketika tidak ada field vessel/kapal
+      for (let i = 0; i < all.length; i++) {
+        const opts = all[i].options || [];
+        for (let j = 0; j < opts.length; j++) {
+          if (/office/.test((opts[j].text || '').toLowerCase())) {
+            // pastikan label sekitar mengandung unit/audited/work
+            const ctx = (all[i].closest('td')?.textContent || all[i].parentElement?.textContent || '').toLowerCase();
+            if (/unit.*audit|audited.*unit|work unit/.test(ctx)) return all[i];
+          }
+        }
+      }
+      // fallback umum: label Unit Kerja yang diaudit
+      {
+        const labels = doc.querySelectorAll('label.f, label.field, label, td');
+        for (let i = 0; i < labels.length; i++) {
+          const t = (labels[i].textContent || '').toLowerCase();
+          if (/unit.*diaudit|work unit|audited work unit/.test(t)) {
+            const inp = labels[i].querySelector('select, input');
+            if (inp) return inp;
+            const next = labels[i].nextElementSibling;
+            if (next) {
+              const sel = next.querySelector('select, input');
+              if (sel) return sel;
+            }
+            // struktur 004: <td>label</td><td>:</td><td><select>
+            const tr = labels[i].closest('tr');
+            if (tr) {
+              const sel = tr.querySelector('select');
+              if (sel) return sel;
+            }
+          }
+        }
+      }
       return null;
     }
 
