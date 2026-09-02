@@ -396,11 +396,11 @@
                 </div>
                 <div class="flex items-center">
                     <label class="text-xs font-semibold w-2/5">Starting at / Mulai Jam:</label>
-                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
+                    <input id="startTime022" type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
                 </div>
                 <div class="flex items-center">
                     <label class="text-xs font-semibold w-2/5">Finish at / Selesai Jam:</label>
-                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
+                    <input id="finishTime022" type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
                 </div>
             </div>
         </div>
@@ -431,7 +431,7 @@
             <div class="mb-3 flex flex-col md:flex-row md:items-end md:justify-between">
                 <label class="text-xs font-semibold md:w-3/4 pr-4 text-justify">The total time required since the fire signal is sounded up to the readiness of Fire Fighting Equipment arrives at the fire location / Total waktu yang diperlukan sejak sinyal kebakaran dibunyikan sampai dengan kesiapan Peralatan Pemadam Kebakaran tiba di lokasi kebakaran:</label>
                 <div class="md:w-1/4 flex items-center justify-end mt-2 md:mt-0">
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-sm"> <span class="text-xs ml-2 font-semibold">menit</span>
+                    <input id="totalMenit022" type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-sm" readonly title="Otomatis = Selesai - Mulai" style="background:#f3f4f6"> <span class="text-xs ml-2 font-semibold">menit</span>
                 </div>
             </div>
 
@@ -767,7 +767,24 @@
                 label.classList.remove('hidden'); // Munculkan kembali tombol Add TTD
             });
         });
-      // Print title: base + vessel + report month (from form fields)
+    <script>
+function calc022(){
+  var a=document.getElementById('startTime022'), b=document.getElementById('finishTime022'), c=document.getElementById('totalMenit022');
+  if(!a||!b||!c) return;
+  var m1=a.value.trim().match(/^(\d{1,2}):(\d{2})$/), m2=b.value.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if(!m1||!m2){ c.value=''; return; }
+  var h1=parseInt(m1[1],10), n1=parseInt(m1[2],10), h2=parseInt(m2[1],10), n2=parseInt(m2[2],10);
+  if(h1>23||n1>59||h2>23||n2>59){ c.value=''; return; }
+  var t1=h1*60+n1, t2=h2*60+n2, d=t2-t1; if(d<0) d+=24*60;
+  c.value=String(d);
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var a=document.getElementById('startTime022'), b=document.getElementById('finishTime022');
+  if(a){ a.addEventListener('input', calc022); a.addEventListener('change', calc022); }
+  if(b){ b.addEventListener('input', calc022); b.addEventListener('change', calc022); }
+});
+</script>
+  // Print title: base + vessel + report month (from form fields)
   (function(){try{
     var base=document.title;
     function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
