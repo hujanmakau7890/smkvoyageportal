@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>022 Fire Drill Report</title>
-    <script src="https://cdn.tailwindcss.com">  // Print title: base + vessel + report month (from form fields)
-  (function(){try{
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>  // Print title: base + vessel + report month (from form fields)
+  function insDeg(id){var el=document.getElementById(id);if(!el)return;var ss=el.selectionStart,ee=el.selectionEnd,v=el.value;el.value=v.slice(0,ss)+'°'+v.slice(ee);el.focus();el.setSelectionRange(ss+1,ss+1);}
+(function(){try{
     var base=document.title;
     function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
     function findVessel(){
@@ -410,8 +412,8 @@
                 <div>
                     <label class="block text-xs font-semibold mb-1">Vessel's Position / Posisi kapal saat latihan:</label>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-sm">N/S:</span><input type="text" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm"></div>
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-sm">E/W:</span><input type="text" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm"></div>
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-sm">N/S:</span><input id="posNS" type="text" placeholder="00° 00' N" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm"><button type="button" onclick="insDeg('posNS')" class="ml-1 px-2 py-1 bg-gray-200 border rounded text-xs no-print" title="Sisipkan °">°</button></div>
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-sm">E/W:</span><input id="posEW" type="text" placeholder="00° 00' E" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm"><button type="button" onclick="insDeg('posEW')" class="ml-1 px-2 py-1 bg-gray-200 border rounded text-xs no-print" title="Sisipkan °">°</button></div>
                     </div>
                 </div>
                 <!-- Right col -->
