@@ -133,13 +133,13 @@
             ::-moz-placeholder { color: transparent !important; }
             :-ms-input-placeholder { color: transparent !important; }
             /* Custom styling to ensure radio buttons print nicely */
-            input[type="radio"] {
+                        input[type="radio"] {
                 appearance: none !important;
                 -webkit-appearance: none !important;
                 -moz-appearance: none !important;
                 width: 14px !important;
                 height: 14px !important;
-                border: 2px solid #000 !important;
+                border: 2px solid #6b7280 !important;
                 border-radius: 50% !important;
                 display: inline-block !important;
                 position: relative !important;
@@ -148,11 +148,14 @@
                 print-color-adjust: exact !important;
                 -webkit-print-color-adjust: exact !important;
             }
+            input[type="radio"]:checked {
+                border-color: #1769d2 !important;
+            }
             input[type="radio"]:checked::after {
                 content: '' !important;
                 width: 6px !important;
                 height: 6px !important;
-                background-color: #000 !important;
+                background-color: #1769d2 !important;
                 border-radius: 50% !important;
                 position: absolute !important;
                 top: 50% !important;
@@ -184,13 +187,13 @@
         .text-sm { font-size: 0.8rem; line-height: 1.2rem; word-break: break-word; white-space: normal; }
         
         /* Global styling for radio buttons to ensure consistency */
-        input[type="radio"] {
+                input[type="radio"] {
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             width: 14px;
             height: 14px;
-            border: 2px solid #000;
+            border: 2px solid #6b7280;
             border-radius: 50%;
             display: inline-block;
             position: relative;
@@ -200,11 +203,14 @@
             vertical-align: middle;
             margin-top: -2px;
         }
+        input[type="radio"]:checked {
+            border-color: #1769d2;
+        }
         input[type="radio"]:checked::after {
             content: '';
             width: 6px;
             height: 6px;
-            background-color: #000;
+            background-color: #1769d2;
             border-radius: 50%;
             position: absolute;
             top: 50%;
