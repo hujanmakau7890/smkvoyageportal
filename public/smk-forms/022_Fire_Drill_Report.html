@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>022 Fire Drill Report</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+
+
+
+</script>
     <script>  // Print title: base + vessel + report month (from form fields)
-  function insDeg(id){var el=document.getElementById(id);if(!el)return;var ss=el.selectionStart,ee=el.selectionEnd,v=el.value;el.value=v.slice(0,ss)+'°'+v.slice(ee);el.focus();el.setSelectionRange(ss+1,ss+1);}
 (function(){try{
     var base=document.title;
     function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
@@ -42,6 +45,10 @@
     if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
     updateTitle();
   }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+
+
+
+
 </script>
     <style>
         /* Sembunyikan panah khusus input tanggal/waktu secara absolut dan global */
@@ -412,8 +419,8 @@
                 <div>
                     <label class="block text-[11px] font-semibold mb-1">Vessel's Position / Posisi kapal saat latihan:</label>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">N/S:</span><input id="posNS" type="text" placeholder="00° 00' N" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"><button type="button" onclick="insDeg('posNS')" class="ml-1 px-2 py-1 bg-gray-200 border rounded text-[11px] no-print" title="Sisipkan °">°</button></div>
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">E/W:</span><input id="posEW" type="text" placeholder="00° 00' E" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"><button type="button" onclick="insDeg('posEW')" class="ml-1 px-2 py-1 bg-gray-200 border rounded text-[11px] no-print" title="Sisipkan °">°</button></div>
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">N/S:</span><input id="posNS" type="text" placeholder="00° 00,00' N" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"></div>
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">E/W:</span><input id="posEW" type="text" placeholder="000° 00,00' E" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"></div>
                     </div>
                 </div>
                 <!-- Right col -->
@@ -803,6 +810,47 @@
     if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
     updateTitle();
   }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+
+
+
+
+</script>
+
+<script>
+
+
+</script>
+
+<script>
+
+
+</script>
+
+<script>
+
+document.getElementById('posNS').addEventListener('input', e => {
+    let raw = e.target.value.toUpperCase();
+    let dir = raw.includes('N') ? ' N' : raw.includes('S') ? ' S' : '';
+    let v = raw.replace(/\D/g, '').slice(0, 6);
+    let out = '';
+    if (v.length > 0) out = v.slice(0, 2);
+    if (v.length > 2) out += '° ' + v.slice(2, 4);
+    if (v.length > 4) out += ',' + v.slice(4, 6) + "'";
+    e.target.value = out + dir;
+});
+document.getElementById('posEW').addEventListener('input', e => {
+    let raw = e.target.value.toUpperCase();
+    let dir = raw.includes('E') ? ' E' : raw.includes('W') ? ' W' : '';
+    let v = raw.replace(/\D/g, '').slice(0, 7);
+    let out = '';
+    if (v.length > 0) out = v.slice(0, 3);
+    if (v.length > 3) out += '° ' + v.slice(3, 5);
+    if (v.length > 5) out += ',' + v.slice(5, 7) + "'";
+    e.target.value = out + dir;
+});
 </script>
 </body>
+
+
+
 </html>
