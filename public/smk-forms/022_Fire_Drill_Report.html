@@ -767,8 +767,7 @@
                 label.classList.remove('hidden'); // Munculkan kembali tombol Add TTD
             });
         });
-    <script>
-function calc022(){
+    function calc022(){
   var a=document.getElementById('startTime022'), b=document.getElementById('finishTime022'), c=document.getElementById('totalMenit022');
   if(!a||!b||!c) return;
   var m1=a.value.trim().match(/^(\d{1,2}):(\d{2})$/), m2=b.value.trim().match(/^(\d{1,2}):(\d{2})$/);
@@ -783,7 +782,6 @@ document.addEventListener('DOMContentLoaded', function(){
   if(a){ a.addEventListener('input', calc022); a.addEventListener('change', calc022); }
   if(b){ b.addEventListener('input', calc022); b.addEventListener('change', calc022); }
 });
-</script>
   // Print title: base + vessel + report month (from form fields)
   (function(){try{
     var base=document.title;
