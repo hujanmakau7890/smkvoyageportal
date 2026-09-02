@@ -46,7 +46,7 @@
   <thead><tr><th style="border-top:2px solid #111; padding:0; height:0; line-height:0;">&#8205;</th></tr></thead>
   <tbody><tr><td style="padding:8px;">
 <div class="head">
-<div class="top"><div class="co">PT MENTARI MAS MULTIMODA</div><div class="ttl">032<br>LAPORAN KEBAKARAN KAPAL / SHIP'S FIRE REPORT</div><div class="st"><div class="code"><span>CS</span><span>SET</span></div><div>Release: &nbsp; Rev.0:</div></div></div><div class="grid"><label class="f">To / Kepada:<input></label><label class="f">From Master / Dari Nakhoda:<select><option value="">Pilih Kapal</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label><label class="f">Departure Port / Pelabuhan Tolak:<input></label><label class="f">Next Port / Pelabuhan Tujuan:<input></label><label class="f">Incident Date:<input class="date" placeholder="DD-MM-YYYY"></label><label class="f">Incident Time:<input class="time" placeholder="HH:MM"></label><label class="f">Incident Location / Lokasi:<input></label><label class="f">Part of Vessel on Fire / Bagian Kapal Terbakar:<input></label><label class="f">Bearing from Shore Object:<input></label><label class="f">Latitude:<input></label><label class="f">Longitude:<input></label><label class="f wide">Emergency Role Time / Waktu Pemberlakuan Peran Darurat:<input class="time" placeholder="HH:MM"></label></div>
+<div class="top"><div class="co">PT MENTARI MAS MULTIMODA</div><div class="ttl">032<br>LAPORAN KEBAKARAN KAPAL / SHIP'S FIRE REPORT</div><div class="st"><div class="code"><span>CS</span><span>SET</span></div><div>Release: &nbsp; Rev.0:</div></div></div><div class="grid"><label class="f">To / Kepada:<input></label><label class="f">From Master / Dari Nakhoda:<select><option value="">Pilih Kapal</option><option>Sahabat Mas</option><option>Semangat Mas</option><option>Express Mas</option><option>Pratama Mas</option><option>Prakarsa Mas</option><option>Mavendra Mas</option><option>Selaras Mas</option><option>Segoro Mas</option></select></label><label class="f">Departure Port / Pelabuhan Tolak:<input></label><label class="f">Next Port / Pelabuhan Tujuan:<input></label><label class="f">Incident Date:<input class="date" placeholder="DD-MM-YYYY"></label><label class="f">Incident Time:<input class="time" placeholder="HH:MM"></label><label class="f">Incident Location / Lokasi:<input></label><label class="f">Part of Vessel on Fire / Bagian Kapal Terbakar:<input></label><label class="f">Bearing from Shore Object:<input></label><label class="f">Latitude / Lintang:<input class="posNS" placeholder="00&deg; 00,00' N/S"></label><label class="f">Longitude / Bujur:<input class="posEW" placeholder="000&deg; 00,00' E/W"></label><label class="f wide">Emergency Role Time / Waktu Pemberlakuan Peran Darurat:<input class="time" placeholder="HH:MM"></label></div>
 </div>
   </td></tr></tbody>
   <tfoot><tr><td style="border-bottom:2px solid #111; padding:0; height:0; line-height:0;">&#8205;</td></tr></tfoot>
@@ -190,4 +190,26 @@
     if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
     updateTitle();
   }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+
+document.querySelectorAll('.posNS').forEach(x => x.oninput = e => {
+    let raw = e.target.value.toUpperCase();
+    let dir = raw.includes('N') ? ' N' : raw.includes('S') ? ' S' : '';
+    let v = raw.replace(/\D/g, '').slice(0, 6);
+    let out = '';
+    if (v.length > 0) out = v.slice(0, 2);
+    if (v.length > 2) out += '° ' + v.slice(2, 4);
+    if (v.length > 4) out += ',' + v.slice(4, 6) + "'";
+    e.target.value = out + dir;
+});
+document.querySelectorAll('.posEW').forEach(x => x.oninput = e => {
+    let raw = e.target.value.toUpperCase();
+    let dir = raw.includes('E') ? ' E' : raw.includes('W') ? ' W' : '';
+    let v = raw.replace(/\D/g, '').slice(0, 7);
+    let out = '';
+    if (v.length > 0) out = v.slice(0, 3);
+    if (v.length > 3) out += '° ' + v.slice(3, 5);
+    if (v.length > 5) out += ',' + v.slice(5, 7) + "'";
+    e.target.value = out + dir;
+});
+
 </script></body></html>
