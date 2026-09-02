@@ -698,33 +698,35 @@
             });
         });
 
-        // Handle photo uploads for preview and print
+        // Handle photo uploads for preview and print (append + delete per foto)
         document.getElementById('photo-upload').addEventListener('change', function(e) {
             const previewContainer = document.getElementById('photo-preview');
-            // Clear existing logic removed to allow appending more photos if needed, 
-            // but let's clear it to keep it simple and match the files array exactly per selection.
-            previewContainer.innerHTML = ''; 
-            
             const files = Array.from(e.target.files);
-            
             files.forEach(file => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         const imgDiv = document.createElement('div');
-                        imgDiv.className = 'border border-gray-300 p-1 flex items-center justify-center';
-                        imgDiv.style.height = '250px'; // fixed height for uniformity in grid
-                        
+                        imgDiv.className = 'photo-item border border-gray-300 p-1 flex items-center justify-center';
+                        imgDiv.style.cssText = 'position:relative;height:250px';
                         const img = document.createElement('img');
                         img.src = event.target.result;
                         img.className = 'max-h-full max-w-full object-contain';
-                        
+                        const del = document.createElement('button');
+                        del.type = 'button';
+                        del.textContent = '×';
+                        del.className = 'no-print';
+                        del.style.cssText = 'position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;background:#dc2626;color:#fff;border:0;font-weight:bold;cursor:pointer;line-height:1';
+                        del.title = 'Hapus foto';
+                        del.onclick = function(){ imgDiv.remove(); };
                         imgDiv.appendChild(img);
+                        imgDiv.appendChild(del);
                         previewContainer.appendChild(imgDiv);
                     }
                     reader.readAsDataURL(file);
                 }
             });
+            e.target.value = '';
         });
 
         // Signature Upload Handler
