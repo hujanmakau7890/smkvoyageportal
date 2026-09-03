@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>022 Fire Drill Report</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+
+
+
+</script>
     <script>  // Print title: base + vessel + report month (from form fields)
-  function insDeg(id){var el=document.getElementById(id);if(!el)return;var ss=el.selectionStart,ee=el.selectionEnd,v=el.value;el.value=v.slice(0,ss)+'°'+v.slice(ee);el.focus();el.setSelectionRange(ss+1,ss+1);}
 (function(){try{
     var base=document.title;
     function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
@@ -42,6 +45,10 @@
     if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
     updateTitle();
   }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+
+
+
+
 </script>
     <style>
         /* Sembunyikan panah khusus input tanggal/waktu secara absolut dan global */
@@ -126,13 +133,13 @@
             ::-moz-placeholder { color: transparent !important; }
             :-ms-input-placeholder { color: transparent !important; }
             /* Custom styling to ensure radio buttons print nicely */
-            input[type="radio"] {
+                        input[type="radio"] {
                 appearance: none !important;
                 -webkit-appearance: none !important;
                 -moz-appearance: none !important;
                 width: 14px !important;
                 height: 14px !important;
-                border: 2px solid #000 !important;
+                border: 2px solid #6b7280 !important;
                 border-radius: 50% !important;
                 display: inline-block !important;
                 position: relative !important;
@@ -141,11 +148,14 @@
                 print-color-adjust: exact !important;
                 -webkit-print-color-adjust: exact !important;
             }
+            input[type="radio"]:checked {
+                border-color: #1769d2 !important;
+            }
             input[type="radio"]:checked::after {
                 content: '' !important;
                 width: 6px !important;
                 height: 6px !important;
-                background-color: #000 !important;
+                background-color: #1769d2 !important;
                 border-radius: 50% !important;
                 position: absolute !important;
                 top: 50% !important;
@@ -173,17 +183,17 @@
         }
         
         /* Tambahkan font custom agar elemen tidak kepotong di PDF dan pastikan layout pas */
-        .text-[10px] { font-size: 0.70rem; line-height: 1.1rem; word-break: break-word; white-space: normal; }
-        .text-xs { font-size: 0.8rem; line-height: 1.2rem; word-break: break-word; white-space: normal; }
+        .text-xs { font-size: 0.70rem; line-height: 1.1rem; word-break: break-word; white-space: normal; }
+        .text-sm { font-size: 0.8rem; line-height: 1.2rem; word-break: break-word; white-space: normal; }
         
         /* Global styling for radio buttons to ensure consistency */
-        input[type="radio"] {
+                input[type="radio"] {
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             width: 14px;
             height: 14px;
-            border: 2px solid #000;
+            border: 2px solid #6b7280;
             border-radius: 50%;
             display: inline-block;
             position: relative;
@@ -193,11 +203,14 @@
             vertical-align: middle;
             margin-top: -2px;
         }
+        input[type="radio"]:checked {
+            border-color: #1769d2;
+        }
         input[type="radio"]:checked::after {
             content: '';
             width: 6px;
             height: 6px;
-            background-color: #000;
+            background-color: #1769d2;
             border-radius: 50%;
             position: absolute;
             top: 50%;
@@ -344,19 +357,22 @@
         </div>
 
         <!-- Header -->
-        <div class="border-2 border-black p-2 mb-4">
+        <table class="w-full mb-4 " style="border-left: 2px solid black; border-right: 2px solid black; border-spacing: 0; border-collapse: collapse;">
+    <thead><tr><th style="border-top: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</th></tr></thead>
+    <tbody><tr><td class="p-2">
+
             <div class="flex flex-col md:flex-row justify-between items-center border-b-2 border-black pb-2 mb-2 relative print-row">
                 <div class="w-full md:w-1/3 text-center md:text-left mb-2 md:mb-0">
-                    <h1 class="text-xs font-bold uppercase leading-tight">PT Mentari Mas Multimoda</h1>
+                    <h1 class="text-sm font-bold uppercase leading-tight">PT Mentari Mas Multimoda</h1>
                 </div>
                 <div class="w-full md:w-1/3 text-center mb-4 md:mb-0">
-                    <h2 class="text-base font-bold leading-tight">022 FIRE DRILL REPORT<br><span class="text-[10px] font-normal">LAPORAN LATIHAN PERAN PEMADAM KEBAKARAN</span></h2>
+                    <h2 class="text-base font-bold leading-tight">022 FIRE DRILL REPORT<br><span class="text-xs font-normal">LAPORAN LATIHAN PERAN PEMADAM KEBAKARAN</span></h2>
                 </div>
-                <div class="w-full md:w-1/3 text-center md:text-right text-[10px] font-semibold relative print-right">
+                <div class="w-full md:w-1/3 text-center md:text-right text-xs font-semibold relative print-right">
                     <!-- Status indicator like in Excel -->
                     <div class="absolute -top-1 right-12 md:right-0 md:-top-2 border border-black flex print-right-box" style="right: 0;">
-                        <div class="w-6 h-6 border-r border-black flex items-center justify-center font-bold text-[10px]">CS</div>
-                        <div class="px-2 h-6 flex items-center justify-center font-bold text-[10px]">BLN</div>
+                        <div class="w-6 h-6 border-r border-black flex items-center justify-center font-bold text-xs">CS</div>
+                        <div class="px-2 h-6 flex items-center justify-center font-bold text-xs">BLN</div>
                     </div>
                     
                     <div class="mt-8 md:mt-6">
@@ -367,139 +383,151 @@
             
             <div class="grid grid-cols-2 gap-x-6 gap-y-2">
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Ship Name / Nama Kapal:</label>
-                    <select class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs bg-transparent">
+                    <label class="text-xs font-semibold w-2/5">Ship Name / Nama Kapal:</label>
+                    <select class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm bg-transparent">
                         <option value="">Pilih kapal</option>
                         <option>Express Mas</option><option>Mavendra Mas</option><option>Prakarsa Mas</option><option>Pratama Mas</option>
                         <option>Semangat Mas</option><option>Segoro Mas</option><option>Sahabat Mas</option><option>Selaras Mas</option>
                     </select>
                 </div>
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Report Date / Tanggal Laporan:</label>
-                    <input type="text" placeholder="DD-MM-YYYY" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs date-mask">
+                    <label class="text-xs font-semibold w-2/5">Report Date / Tanggal Laporan:</label>
+                    <input type="text" placeholder="DD-MM-YYYY" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm date-mask">
                 </div>
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Origin Port / Pelabuhan Asal:</label>
-                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs">
+                    <label class="text-xs font-semibold w-2/5">Origin Port / Pelabuhan Asal:</label>
+                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
                 </div>
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Next Port / Pelabuhan Tujuan:</label>
-                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs">
+                    <label class="text-xs font-semibold w-2/5">Next Port / Pelabuhan Tujuan:</label>
+                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
                 </div>
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Drill Date / Tanggal Latihan:</label>
-                    <input type="text" placeholder="DD-MM-YYYY" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs date-mask">
+                    <label class="text-xs font-semibold w-2/5">Drill Date / Tanggal Latihan:</label>
+                    <input type="text" placeholder="DD-MM-YYYY" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm date-mask">
                 </div>
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Duration / Waktu Latihan:</label>
-                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs">
+                    <label class="text-xs font-semibold w-2/5">Duration / Waktu Latihan:</label>
+                    <input type="text" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm">
                 </div>
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Starting at / Mulai Jam:</label>
-                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs time-mask">
+                    <label class="text-xs font-semibold w-2/5">Starting at / Mulai Jam:</label>
+                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
                 </div>
                 <div class="flex items-center">
-                    <label class="text-[10px] font-semibold w-2/5">Finish at / Selesai Jam:</label>
-                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs time-mask">
+                    <label class="text-xs font-semibold w-2/5">Finish at / Selesai Jam:</label>
+                    <input type="text" placeholder="HH:MM" class="w-3/5 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-sm time-mask">
                 </div>
             </div>
-        </div>
+        
+    </td></tr></tbody>
+    <tfoot><tr><td style="border-bottom: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</td></tr></tfoot>
+</table>
 
         <!-- Position & Details -->
-        <div class="border-2 border-black p-3 mb-4">
+        <table class="w-full mb-4 " style="border-left: 2px solid black; border-right: 2px solid black; border-spacing: 0; border-collapse: collapse;">
+    <thead><tr><th style="border-top: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</th></tr></thead>
+    <tbody><tr><td class="p-3">
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-3">
                 <!-- Left col -->
                 <div>
-                    <label class="block text-[10px] font-semibold mb-1">Vessel's Position / Posisi kapal saat latihan:</label>
+                    <label class="block text-[11px] font-semibold mb-1">Vessel's Position / Posisi kapal saat latihan:</label>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-xs">N/S:</span><input id="posNS" type="text" placeholder="00° 00' N" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs"><button type="button" onclick="insDeg('posNS')" class="ml-1 px-2 py-1 bg-gray-200 border rounded text-[10px] no-print" title="Sisipkan °">°</button></div>
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-xs">E/W:</span><input id="posEW" type="text" placeholder="00° 00' E" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs"><button type="button" onclick="insDeg('posEW')" class="ml-1 px-2 py-1 bg-gray-200 border rounded text-[10px] no-print" title="Sisipkan °">°</button></div>
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">N/S:</span><input id="posNS" type="text" placeholder="00° 00,00' N" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"></div>
+                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">E/W:</span><input id="posEW" type="text" placeholder="000° 00,00' E" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"></div>
                     </div>
                 </div>
                 <!-- Right col -->
                 <div>
-                    <label class="block text-[10px] font-semibold mb-1">Fire Location / Lokasi Kebakaran:</label>
-                    <input type="text" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs">
+                    <label class="block text-[11px] font-semibold mb-1">Fire Location / Lokasi Kebakaran:</label>
+                    <input type="text" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]">
                 </div>
             </div>
 
             <div class="mb-3 flex flex-col md:flex-row md:items-center">
-                <label class="text-[10px] font-semibold md:w-1/3">The Training Commander / Komandan Latihan:</label>
-                <input type="text" class="md:w-2/3 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs w-full">
+                <label class="text-[11px] font-semibold md:w-1/3">The Training Commander / Komandan Latihan:</label>
+                <input type="text" class="md:w-2/3 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px] w-full">
             </div>
 
             <div class="mb-3 flex flex-col md:flex-row md:items-end md:justify-between">
-                <label class="text-[10px] font-semibold md:w-3/4 pr-4 text-justify">The total time required since the fire signal is sounded up to the readiness of Fire Fighting Equipment arrives at the fire location / Total waktu yang diperlukan sejak sinyal kebakaran dibunyikan sampai dengan kesiapan Peralatan Pemadam Kebakaran tiba di lokasi kebakaran:</label>
+                <label class="text-[11px] font-semibold md:w-3/4 pr-4 text-justify">The total time required since the fire signal is sounded up to the readiness of Fire Fighting Equipment arrives at the fire location / Total waktu yang diperlukan sejak sinyal kebakaran dibunyikan sampai dengan kesiapan Peralatan Pemadam Kebakaran tiba di lokasi kebakaran:</label>
                 <div class="md:w-1/4 flex items-center justify-end mt-2 md:mt-0">
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-xs"> <span class="text-[10px] ml-2 font-semibold">menit</span>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-[11px]"> <span class="text-[11px] ml-2 font-semibold">menit</span>
                 </div>
             </div>
 
             <div class="mb-3 flex flex-col md:flex-row md:items-center">
-                <label class="text-[10px] font-semibold md:w-1/2 pr-2">Fire Fighting Equipment Type / Tipe peralatan pemadam kebakaran yang digunakan:</label>
-                <input type="text" class="md:w-1/2 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs w-full">
+                <label class="text-[11px] font-semibold md:w-1/2 pr-2">Fire Fighting Equipment Type / Tipe peralatan pemadam kebakaran yang digunakan:</label>
+                <input type="text" class="md:w-1/2 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px] w-full">
             </div>
 
             <div class="mb-3">
-                <label class="block text-[10px] font-semibold mb-1">How to use its / Bagaimana menggunakannya:</label>
-                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-12 text-xs leading-tight rounded-sm"></textarea>
+                <label class="block text-[11px] font-semibold mb-1">How to use its / Bagaimana menggunakannya:</label>
+                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-12 text-[11px] leading-tight rounded-sm"></textarea>
             </div>
 
             <div class="flex flex-col md:flex-row md:items-end md:justify-between">
-                <label class="text-[10px] font-semibold md:w-3/4 pr-4 text-justify">Conditions of waterproof door, fire door how ABK closes and the time it takes to act / Kondisi dari pintu kedap air, pintu kebakaran (fire door) bagaimana ABK menutup dan waktu yang diperlukan untuk bertindak:</label>
+                <label class="text-[11px] font-semibold md:w-3/4 pr-4 text-justify">Conditions of waterproof door, fire door how ABK closes and the time it takes to act / Kondisi dari pintu kedap air, pintu kebakaran (fire door) bagaimana ABK menutup dan waktu yang diperlukan untuk bertindak:</label>
                 <div class="md:w-1/4 flex items-center justify-end mt-2 md:mt-0">
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-xs"> <span class="text-[10px] ml-2 font-semibold">menit</span>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-16 border-b border-gray-400 focus:outline-none focus:border-black text-center text-[11px]"> <span class="text-[11px] ml-2 font-semibold">menit</span>
                 </div>
             </div>
-        </div>
+        
+    </td></tr></tbody>
+    <tfoot><tr><td style="border-bottom: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</td></tr></tfoot>
+</table>
 
         <!-- Checklists -->
-        <div class="border-2 border-black p-3 mb-4">
+        <table class="w-full mb-4 " style="border-left: 2px solid black; border-right: 2px solid black; border-spacing: 0; border-collapse: collapse;">
+    <thead><tr><th style="border-top: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</th></tr></thead>
+    <tbody><tr><td class="p-3">
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
                 
                 <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
-                    <label class="text-[10px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">If the fire in the room, Whether is the fan/blower has been turn off / Bila kebakaran di ruangan, apakah fan/blower telah dipadamkan:</label>
-                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[10px]">
+                    <label class="text-[11px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">If the fire in the room, Whether is the fan/blower has been turn off / Bila kebakaran di ruangan, apakah fan/blower telah dipadamkan:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[11px]">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="fan_blower" class="mr-1"> Good</label>
                         <label class="flex items-center cursor-pointer"><input type="radio" name="fan_blower" class="mr-1"> Damage</label>
                     </div>
                 </div>
 
                 <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
-                    <label class="text-[10px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Whether is Quick Closing Valve can be enable and functionlized / Apakah quick closing valves dapat difungsikan (simulasi):</label>
-                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[10px]">
+                    <label class="text-[11px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Whether is Quick Closing Valve can be enable and functionlized / Apakah quick closing valves dapat difungsikan (simulasi):</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[11px]">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="quick_valve" class="mr-1"> Yes</label>
                         <label class="flex items-center cursor-pointer"><input type="radio" name="quick_valve" class="mr-1"> No</label>
                     </div>
                 </div>
 
                 <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
-                    <label class="text-[10px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">The hose & nozzle condition / Kondisi selang & nosel:</label>
-                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[10px]">
+                    <label class="text-[11px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">The hose & nozzle condition / Kondisi selang & nosel:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[11px]">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="hose_nozzle" class="mr-1"> Good</label>
                         <label class="flex items-center cursor-pointer"><input type="radio" name="hose_nozzle" class="mr-1"> Damage</label>
                     </div>
                 </div>
 
                 <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
-                    <label class="text-[10px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Fire Pump Condition / Kondisi Pompa Kebakaran:</label>
-                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[10px]">
+                    <label class="text-[11px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Fire Pump Condition / Kondisi Pompa Kebakaran:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[11px]">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="fire_pump" class="mr-1"> Good</label>
                         <label class="flex items-center cursor-pointer"><input type="radio" name="fire_pump" class="mr-1"> Damage</label>
                     </div>
                 </div>
 
                 <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
-                    <label class="text-[10px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Fire Resistance Condition / Kondisi Baju Tahan Api:</label>
-                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[10px]">
+                    <label class="text-[11px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Fire Resistance Condition / Kondisi Baju Tahan Api:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[11px]">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="fire_suit" class="mr-1"> Good</label>
                         <label class="flex items-center cursor-pointer"><input type="radio" name="fire_suit" class="mr-1"> Damage</label>
                     </div>
                 </div>
 
                 <div class="check-item flex mobile-col-break justify-between items-center border-b border-gray-200 pb-2">
-                    <label class="text-[10px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Breathing Apparatus Condition / Kondisi Breathing Apparatus:</label>
-                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[10px]">
+                    <label class="text-[11px] mobile-w-full mobile-mb w-3/4 pr-2 font-semibold leading-tight">Breathing Apparatus Condition / Kondisi Breathing Apparatus:</label>
+                    <div class="choice-group flex gap-3 mobile-w-full justify-start w-1/4 md:justify-end text-[11px]">
                         <label class="flex items-center cursor-pointer"><input type="radio" name="breathing_app" class="mr-1"> Good</label>
                         <label class="flex items-center cursor-pointer"><input type="radio" name="breathing_app" class="mr-1"> Damage</label>
                     </div>
@@ -511,156 +539,177 @@
             <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
                 <div class="flex flex-col border-b border-gray-200 pb-1">
                     <div class="check-item flex mobile-col-break justify-between items-center mb-1">
-                        <label class="text-[10px] mobile-w-full mobile-mb font-semibold leading-tight">CO2 Condition / Kondisi Pemadam CO2:</label>
-                        <div class="choice-group flex gap-3 text-[10px] mobile-w-full justify-start">
+                        <label class="text-[11px] mobile-w-full mobile-mb font-semibold leading-tight">CO2 Condition / Kondisi Pemadam CO2:</label>
+                        <div class="choice-group flex gap-3 text-[11px] mobile-w-full justify-start">
                             <label class="flex items-center cursor-pointer"><input type="radio" name="co2_cond" class="mr-1"> Good</label>
                             <label class="flex items-center cursor-pointer"><input type="radio" name="co2_cond" class="mr-1"> Damage</label>
                         </div>
                     </div>
                     <div class="flex items-center justify-end">
-                        <label class="text-[10px] mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
-                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[10px] w-32 date-mask">
+                        <label class="text-[11px] mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
+                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px] w-32 date-mask">
                     </div>
                 </div>
 
                 <div class="flex flex-col border-b border-gray-200 pb-1">
                     <div class="check-item flex mobile-col-break justify-between items-center mb-1">
-                        <label class="text-[10px] mobile-w-full mobile-mb font-semibold leading-tight">Foam extinguisher condition / Kondisi Pemadam Foam:</label>
-                        <div class="choice-group flex gap-3 text-[10px] mobile-w-full justify-start">
+                        <label class="text-[11px] mobile-w-full mobile-mb font-semibold leading-tight">Foam extinguisher condition / Kondisi Pemadam Foam:</label>
+                        <div class="choice-group flex gap-3 text-[11px] mobile-w-full justify-start">
                             <label class="flex items-center cursor-pointer"><input type="radio" name="foam_cond" class="mr-1"> Good</label>
                             <label class="flex items-center cursor-pointer"><input type="radio" name="foam_cond" class="mr-1"> Damage</label>
                         </div>
                     </div>
                     <div class="flex items-center justify-end">
-                        <label class="text-[10px] mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
-                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[10px] w-32 date-mask">
+                        <label class="text-[11px] mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
+                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px] w-32 date-mask">
                     </div>
                 </div>
 
                 <div class="flex flex-col border-b border-gray-200 pb-1">
                     <div class="check-item flex mobile-col-break justify-between items-center mb-1">
-                        <label class="text-[10px] mobile-w-full mobile-mb font-semibold leading-tight">ABC extinguisher Condition / Kondisi Pemadam ABC:</label>
-                        <div class="choice-group flex gap-3 text-[10px] mobile-w-full justify-start">
+                        <label class="text-[11px] mobile-w-full mobile-mb font-semibold leading-tight">ABC extinguisher Condition / Kondisi Pemadam ABC:</label>
+                        <div class="choice-group flex gap-3 text-[11px] mobile-w-full justify-start">
                             <label class="flex items-center cursor-pointer"><input type="radio" name="abc_cond" class="mr-1"> Good</label>
                             <label class="flex items-center cursor-pointer"><input type="radio" name="abc_cond" class="mr-1"> Damage</label>
                         </div>
                     </div>
                     <div class="flex items-center justify-end">
-                        <label class="text-[10px] mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
-                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[10px] w-32 date-mask">
+                        <label class="text-[11px] mr-2 font-semibold text-gray-600">Checked date / Tanggal Pemeriksaan:</label>
+                        <input type="text" placeholder="DD-MM-YYYY" class="border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px] w-32 date-mask">
                     </div>
                 </div>
             </div>
-        </div>
+        
+    </td></tr></tbody>
+    <tfoot><tr><td style="border-bottom: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</td></tr></tfoot>
+</table>
 
         <!-- Participants & Notes -->
-        <div class="border-2 border-black p-3 mb-4">
+        <table class="w-full mb-4 " style="border-left: 2px solid black; border-right: 2px solid black; border-spacing: 0; border-collapse: collapse;">
+    <thead><tr><th style="border-top: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</th></tr></thead>
+    <tbody><tr><td class="p-3">
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                 <div class="crew-count-row flex items-center justify-between border-b md:border-none border-gray-200 pb-2 md:pb-0">
-                    <label class="crew-count-label text-[10px] font-semibold pr-1">The Number of Crew involved in the drill / Jumlah ABK yang terlibat <span class="font-bold">:</span></label>
+                    <label class="crew-count-label text-[11px] font-semibold pr-1">The Number of Crew involved in the drill / Jumlah ABK yang terlibat <span class="font-bold">:</span></label>
                     <div class="crew-count-field flex items-center gap-1 justify-end">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-14 border-b border-gray-400 focus:outline-none focus:border-black text-center text-xs"><span class="text-[10px]">orang</span>
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-14 border-b border-gray-400 focus:outline-none focus:border-black text-center text-[11px]"><span class="text-[11px]">orang</span>
                     </div>
                 </div>
                 <div class="crew-count-row flex items-center justify-between border-b md:border-none border-gray-200 pb-2 md:pb-0">
-                    <label class="crew-count-label text-[10px] font-semibold pr-1">The number of Crew who are absent due to guard duty / Jumlah ABK absen tugas jaga <span class="font-bold">:</span></label>
+                    <label class="crew-count-label text-[11px] font-semibold pr-1">The number of Crew who are absent due to guard duty / Jumlah ABK absen tugas jaga <span class="font-bold">:</span></label>
                     <div class="crew-count-field flex items-center gap-1 justify-end">
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-14 border-b border-gray-400 focus:outline-none focus:border-black text-center text-xs"><span class="text-[10px]">orang</span>
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" class="w-14 border-b border-gray-400 focus:outline-none focus:border-black text-center text-[11px]"><span class="text-[11px]">orang</span>
                     </div>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="block text-[10px] font-semibold mb-1">Crew can't follow the drill for a reason (name & rank) / ABK yang tidak mengikuti latihan karena suatu alasan (nama & jabatan) <span class="font-bold">:</span></label>
-                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-10 text-[10px] leading-tight rounded-sm"></textarea>
+                <label class="block text-[11px] font-semibold mb-1">Crew can't follow the drill for a reason (name & rank) / ABK yang tidak mengikuti latihan karena suatu alasan (nama & jabatan) <span class="font-bold">:</span></label>
+                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-10 text-[11px] leading-tight rounded-sm"></textarea>
             </div>
 
             <div class="mb-3 flex flex-col md:flex-row md:items-center">
-                <label class="text-[10px] font-semibold md:w-1/2 pr-2">Date of next fire fighting drill / Tanggal rencana latihan kebakaran berikutnya <span class="font-bold">:</span></label>
-                <input type="text" placeholder="DD-MM-YYYY" class="md:w-1/4 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-xs date-mask">
+                <label class="text-[11px] font-semibold md:w-1/2 pr-2">Date of next fire fighting drill / Tanggal rencana latihan kebakaran berikutnya <span class="font-bold">:</span></label>
+                <input type="text" placeholder="DD-MM-YYYY" class="md:w-1/4 border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px] date-mask">
             </div>
 
             <div>
-                <label class="block text-[10px] font-semibold mb-1">Drill Result Notes (filled by Master) / Catatan Hasil Latihan (diisi oleh Nakhoda):</label>
-                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-16 text-xs leading-tight rounded-sm"></textarea>
+                <label class="block text-[11px] font-semibold mb-1">Drill Result Notes (filled by Master) / Catatan Hasil Latihan (diisi oleh Nakhoda):</label>
+                <textarea class="w-full border border-gray-400 focus:outline-none focus:border-black p-2 h-16 text-[11px] leading-tight rounded-sm"></textarea>
             </div>
-        </div>
+        
+    </td></tr></tbody>
+    <tfoot><tr><td style="border-bottom: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</td></tr></tfoot>
+</table>
 
         <!-- Signatures -->
-        <div class="border-2 border-black p-3 mb-2">
+        <table class="w-full mb-2 " style="border-left: 2px solid black; border-right: 2px solid black; border-spacing: 0; border-collapse: collapse;">
+    <thead><tr><th style="border-top: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</th></tr></thead>
+    <tbody><tr><td class="p-3">
+
             <div class="grid grid-cols-3 gap-4 text-center">
                 <div class="flex flex-col justify-between h-32">
-                    <p class="text-[10px] sm:text-[10px] font-semibold">Prepared by / Dibuat oleh,</p>
+                    <p class="text-[11px] sm:text-[11px] font-semibold">Prepared by / Dibuat oleh,</p>
                     <div class="relative flex-grow flex items-center justify-center my-1 sig-container">
-                        <label class="cursor-pointer text-[9px] sm:text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
+                        <label class="cursor-pointer text-[9px] sm:text-[11px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
                             + Add TTD
                             <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-1">
                         </label>
                         <div id="sig-preview-1" class="hidden relative w-full h-full flex items-center justify-center">
                             <img src="" class="max-h-12 sm:max-h-16 max-w-full object-contain" alt="Signature">
-                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-1">&times;</button>
+                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[11px] leading-none no-print remove-sig" data-target="sig-preview-1">&times;</button>
                         </div>
                     </div>
                     <div class="mt-auto">
-                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-[10px] sm:text-xs sig-input bg-transparent">
-                        <p class="text-[9px] sm:text-[10px] mt-1 font-semibold">Chief Officer / Mualim I</p>
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-[11px] sm:text-[11px] sig-input bg-transparent">
+                        <p class="text-[9px] sm:text-[11px] mt-1 font-semibold">Chief Officer / Mualim I</p>
                     </div>
                 </div>
                 <div class="flex flex-col justify-between h-32">
-                    <p class="text-[10px] sm:text-[10px] font-semibold">Knowledge by / Diketahui oleh,</p>
+                    <p class="text-[11px] sm:text-[11px] font-semibold">Knowledge by / Diketahui oleh,</p>
                     <div class="relative flex-grow flex items-center justify-center my-1 sig-container">
-                        <label class="cursor-pointer text-[9px] sm:text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
+                        <label class="cursor-pointer text-[9px] sm:text-[11px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
                             + Add TTD
                             <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-2">
                         </label>
                         <div id="sig-preview-2" class="hidden relative w-full h-full flex items-center justify-center">
                             <img src="" class="max-h-12 sm:max-h-16 max-w-full object-contain" alt="Signature">
-                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-2">&times;</button>
+                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[11px] leading-none no-print remove-sig" data-target="sig-preview-2">&times;</button>
                         </div>
                     </div>
                     <div class="mt-auto">
-                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-[10px] sm:text-xs sig-input bg-transparent">
-                        <p class="text-[9px] sm:text-[10px] mt-1 font-semibold">Chief Engineer / KKM</p>
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-[11px] sm:text-[11px] sig-input bg-transparent">
+                        <p class="text-[9px] sm:text-[11px] mt-1 font-semibold">Chief Engineer / KKM</p>
                     </div>
                 </div>
                 <div class="flex flex-col justify-between h-32">
-                    <p class="text-[10px] sm:text-[10px] font-semibold">Approval by / Disetujui Oleh,</p>
+                    <p class="text-[11px] sm:text-[11px] font-semibold">Approval by / Disetujui Oleh,</p>
                     <div class="relative flex-grow flex items-center justify-center my-1 sig-container">
-                        <label class="cursor-pointer text-[9px] sm:text-[10px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
+                        <label class="cursor-pointer text-[9px] sm:text-[11px] bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-1 sm:px-2 py-1 no-print text-gray-600 transition-colors">
                             + Add TTD
                             <input type="file" class="hidden sig-upload" accept="image/*" data-target="sig-preview-3">
                         </label>
                         <div id="sig-preview-3" class="hidden relative w-full h-full flex items-center justify-center">
                             <img src="" class="max-h-12 sm:max-h-16 max-w-full object-contain" alt="Signature">
-                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none no-print remove-sig" data-target="sig-preview-3">&times;</button>
+                            <button type="button" class="absolute top-0 right-0 sm:-right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[11px] leading-none no-print remove-sig" data-target="sig-preview-3">&times;</button>
                         </div>
                     </div>
                     <div class="mt-auto">
-                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-[10px] sm:text-xs sig-input bg-transparent">
-                        <p class="text-[9px] sm:text-[10px] mt-1 font-semibold">Master / Nakhoda</p>
+                        <input type="text" class="w-full border-b border-black text-center focus:outline-none font-bold text-[11px] sm:text-[11px] sig-input bg-transparent">
+                        <p class="text-[9px] sm:text-[11px] mt-1 font-semibold">Master / Nakhoda</p>
                     </div>
                 </div>
             </div>
-        </div>
+        
+    </td></tr></tbody>
+    <tfoot><tr><td style="border-bottom: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</td></tr></tfoot>
+</table>
 
-        <div class="text-[10px] text-gray-700 font-bold italic print:text-black">
+        <div class="text-[11px] text-gray-700 font-bold italic print:text-black">
             <p>" Lampirkan photo disetiap laporan drill / attach photo every drill report "</p>
             <p>" Setiap Drill agar di catat didalam Log Book / Every Drill must be fill in Log Book "</p>
         </div>
         
         <!-- Photo Attachment Section for Print -->
-        <div class="border-2 border-black p-3 mt-4 print:block" style="page-break-inside: avoid;">
-            <h3 class="font-bold mb-2 text-center border-b border-black pb-1 text-xs">DOKUMENTASI / PHOTO ATTACHMENT</h3>
+        <table class="w-full mt-4" style="border-left: 2px solid black; border-right: 2px solid black; border-spacing: 0; border-collapse: collapse; page-break-inside: avoid;">
+    <thead><tr><th style="border-top: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</th></tr></thead>
+    <tbody><tr><td class="p-3">
+
+            <h3 class="font-bold mb-2 text-center border-b border-black pb-1 text-[11px]">DOKUMENTASI / PHOTO ATTACHMENT</h3>
             <!-- File input hidden in print -->
             <div class="mb-3 no-print text-center bg-gray-50 p-4 border border-dashed border-gray-300 rounded">
-                <p class="text-xs font-semibold mb-2 text-gray-600">Klik di bawah ini untuk memasukkan foto (Foto akan tercetak di PDF)</p>
-                <input type="file" id="photo-upload" multiple accept="image/*" class="text-xs text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                <p class="text-[11px] font-semibold mb-2 text-gray-600">Klik di bawah ini untuk memasukkan foto (Foto akan tercetak di PDF)</p>
+                <input type="file" id="photo-upload" multiple accept="image/*" class="text-[11px] text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-[11px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
             </div>
             <!-- Grid for displaying selected photos -->
             <div id="photo-preview" class="grid grid-cols-2 gap-4">
                 <!-- Preview images will be inserted here -->
             </div>
-        </div>
+        
+    </td></tr></tbody>
+    <tfoot><tr><td style="border-bottom: 2px solid black; padding: 0; height: 0; line-height: 0;">&#8205;</td></tr></tfoot>
+</table>
     </div>
 
     <script>
@@ -803,6 +852,47 @@
     if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
     updateTitle();
   }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+
+
+
+
+</script>
+
+<script>
+
+
+</script>
+
+<script>
+
+
+</script>
+
+<script>
+
+document.getElementById('posNS').addEventListener('input', e => {
+    let raw = e.target.value.toUpperCase();
+    let dir = raw.includes('N') ? ' N' : raw.includes('S') ? ' S' : '';
+    let v = raw.replace(/\D/g, '').slice(0, 6);
+    let out = '';
+    if (v.length > 0) out = v.slice(0, 2);
+    if (v.length > 2) out += '° ' + v.slice(2, 4);
+    if (v.length > 4) out += ',' + v.slice(4, 6) + "'";
+    e.target.value = out + dir;
+});
+document.getElementById('posEW').addEventListener('input', e => {
+    let raw = e.target.value.toUpperCase();
+    let dir = raw.includes('E') ? ' E' : raw.includes('W') ? ' W' : '';
+    let v = raw.replace(/\D/g, '').slice(0, 7);
+    let out = '';
+    if (v.length > 0) out = v.slice(0, 3);
+    if (v.length > 3) out += '° ' + v.slice(3, 5);
+    if (v.length > 5) out += ',' + v.slice(5, 7) + "'";
+    e.target.value = out + dir;
+});
 </script>
 </body>
+
+
+
 </html>

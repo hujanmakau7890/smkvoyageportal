@@ -523,7 +523,7 @@ export default function SMKReportFormPage() {
         <iframe
           ref={iframeRef}
           title={`${selectedForm.code} ${selectedForm.title}`}
-          src={`/smk-forms/${selectedForm.file}?v=${Date.now()}`}
+          src={`/smk-forms/${selectedForm.file}`}
           style={{ flex: 1, width: "100%", border: `1px solid ${colors.border}`, borderRadius: 10, background: "white" }}
         />
       </div>
