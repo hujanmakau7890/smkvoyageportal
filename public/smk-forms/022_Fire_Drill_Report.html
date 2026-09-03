@@ -432,10 +432,18 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-3">
                 <!-- Left col -->
                 <div>
-                    <label class="block text-[11px] font-semibold mb-1">Vessel's Position / Posisi kapal saat latihan:</label>
+                    <label class="block text-[11px] font-semibold mb-1">Vessel's Position / Posisi kapal saat latihan: <span class="no-print text-gray-400 font-normal text-[10px] ml-1">(Ketik * atau klik tombol ° untuk derajat)</span></label>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">N/S:</span><input id="posNS" type="text" placeholder="00° 00,00' N" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"></div>
-                        <div class="flex items-center"><span class="mr-2 font-semibold text-[11px]">E/W:</span><input id="posEW" type="text" placeholder="000° 00,00' E" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]"></div>
+                        <div class="flex items-center">
+                            <span class="mr-2 font-semibold text-[11px]">N/S:</span>
+                            <input id="posNS" type="text" placeholder="00° 00,00' N" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]">
+                            <button type="button" class="no-print ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded text-gray-700 cursor-pointer" title="Sisipkan simbol °" onclick="insertDegree('posNS')">°</button>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="mr-2 font-semibold text-[11px]">E/W:</span>
+                            <input id="posEW" type="text" placeholder="000° 00,00' E" class="w-full border-b border-gray-400 focus:outline-none focus:border-black px-1 text-[11px]">
+                            <button type="button" class="no-print ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded text-gray-700 cursor-pointer" title="Sisipkan simbol °" onclick="insertDegree('posEW')">°</button>
+                        </div>
                     </div>
                 </div>
                 <!-- Right col -->
@@ -870,26 +878,94 @@
 
 <script>
 
-document.getElementById('posNS').addEventListener('input', e => {
-    let raw = e.target.value.toUpperCase();
-    let dir = raw.includes('N') ? ' N' : raw.includes('S') ? ' S' : '';
-    let v = raw.replace(/\D/g, '').slice(0, 6);
-    let out = '';
-    if (v.length > 0) out = v.slice(0, 2);
-    if (v.length > 2) out += '° ' + v.slice(2, 4);
-    if (v.length > 4) out += ',' + v.slice(4, 6) + "'";
-    e.target.value = out + dir;
-});
-document.getElementById('posEW').addEventListener('input', e => {
-    let raw = e.target.value.toUpperCase();
-    let dir = raw.includes('E') ? ' E' : raw.includes('W') ? ' W' : '';
-    let v = raw.replace(/\D/g, '').slice(0, 7);
-    let out = '';
-    if (v.length > 0) out = v.slice(0, 3);
-    if (v.length > 3) out += '° ' + v.slice(3, 5);
-    if (v.length > 5) out += ',' + v.slice(5, 7) + "'";
-    e.target.value = out + dir;
-});
+function insertDegree(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const start = el.selectionStart !== null ? el.selectionStart : el.value.length;
+    const end = el.selectionEnd !== null ? el.selectionEnd : el.value.length;
+    const val = el.value;
+    el.value = val.substring(0, start) + '°' + val.substring(end);
+    el.focus();
+    el.setSelectionRange(start + 1, start + 1);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function handleCoordInput(el, isEW) {
+    let val = el.value;
+    if (val.includes('*')) {
+        let start = el.selectionStart;
+        el.value = val.replace(/\*/g, '°');
+        if (start !== null) el.setSelectionRange(start, start);
+    }
+}
+
+function handleCoordBlur(el, isEW) {
+    let raw = el.value.trim();
+    if (!raw) return;
+    raw = raw.replace(/\*/g, '°').toUpperCase();
+    let dir = '';
+    if (isEW) {
+        if (raw.includes('E')) dir = ' E';
+        else if (raw.includes('W')) dir = ' W';
+    } else {
+        if (raw.includes('N')) dir = ' N';
+        else if (raw.includes('S')) dir = ' S';
+    }
+
+    if (raw.includes('°')) {
+        let cleaned = raw.replace(/[NESW]/g, '').trim();
+        if (!cleaned.endsWith("'") && cleaned.includes(' ')) {
+            el.value = cleaned + "'" + dir;
+        } else {
+            el.value = cleaned + dir;
+        }
+        return;
+    }
+
+    let clean = raw.replace(/[NESW]/g, '').trim();
+    let parts = clean.split(/[\s,.-]+/).filter(Boolean);
+    let degLen = isEW ? 3 : 2;
+
+    if (parts.length >= 2) {
+        let deg = parts[0].padStart(degLen, '0');
+        let min = parts.slice(1).join(',');
+        el.value = deg + '° ' + min + "'" + dir;
+    } else {
+        let digits = clean.replace(/\D/g, '');
+        if (digits.length > degLen) {
+            let deg = digits.slice(0, degLen);
+            let minWhole = digits.slice(degLen, degLen + 2);
+            let minDec = digits.slice(degLen + 2);
+            let out = deg + '° ' + minWhole;
+            if (minDec.length > 0) out += ',' + minDec + "'";
+            el.value = out + dir;
+        }
+    }
+}
+
+const nsEl = document.getElementById('posNS');
+if (nsEl) {
+    nsEl.addEventListener('input', () => handleCoordInput(nsEl, false));
+    nsEl.addEventListener('blur', () => handleCoordBlur(nsEl, false));
+    nsEl.addEventListener('keydown', e => {
+        if (e.key === '*') {
+            e.preventDefault();
+            insertDegree('posNS');
+        }
+    });
+}
+
+const ewEl = document.getElementById('posEW');
+if (ewEl) {
+    ewEl.addEventListener('input', () => handleCoordInput(ewEl, true));
+    ewEl.addEventListener('blur', () => handleCoordBlur(ewEl, true));
+    ewEl.addEventListener('keydown', e => {
+        if (e.key === '*') {
+            e.preventDefault();
+            insertDegree('posEW');
+        }
+    });
+}
 </script>
 </body>
 

@@ -111,6 +111,12 @@
       .page-break .sec:first-child {
         margin-top: 0 !important;
       }
+      /* FIX 045 ME table: paksa muat 1 halaman landscape, Cyl 8 kepotong */
+      .sec div[style*="overflow-x"] { overflow: visible !important; max-width: 100% !important; }
+      .sec table.tbl[style*="min-width"] { min-width: 0 !important; width: 100% !important; }
+      .sec table.tbl th[style*="width:120px"] { width: 90px !important; }
+      .sec table.tbl th[style*="width:80px"] { width: auto !important; }
+      .tbl th, .tbl td { word-break: break-word; overflow-wrap: anywhere; }
       select option[value=""] { display: none !important; }
       input::placeholder, textarea::placeholder { color: transparent !important; }
     }

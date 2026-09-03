@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>059C Running Store Inventory List</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <title>059B Spare Part Inventory List</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; padding: 20px; display: flex; justify-content: center; }
     .container { max-width: 1200px; width: 100%; background: #fff; padding: 24px 28px 30px 28px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .tools { text-align: right; margin-bottom: 16px; }
+    .tools { text-align: right; margin-bottom: 16px; display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
     .btn { border: 0; border-radius: 6px; padding: 10px 20px; background: #1769d2; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px; }
     .btn:hover { background: #0d47a1; }
+    .sheetnav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .sheetnav button { border: 1px solid #1769d2; background: #fff; color: #1769d2; border-radius: 6px; padding: 8px 10px; font-weight: bold; font-size: 12px; cursor: pointer; }
+    .sheetnav button.on { background: #1769d2; color: #fff; }
 
     .head { border: 2px solid #000; padding: 10px 14px; }
     .top { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
     .co { font-weight: bold; font-size: 13px; }
     .ttl { font-weight: bold; font-size: 16px; text-align: center; line-height: 1.3; }
-    .ttl small { font-size: 13px; display: block; font-weight: normal; }
     .st { display: flex; flex-direction: column; align-items: flex-end; font-size: 10px; gap: 2px; }
     .code { display: flex; border: 1px solid #000; font-weight: bold; }
     .code span { padding: 2px 12px; }
@@ -25,120 +26,61 @@
 
     .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 6px; font-size: 13px; }
     .info-row .item { display: flex; align-items: baseline; gap: 6px; }
-    .info-row .item label { font-weight: bold; }
+    .info-row .item label { font-weight: bold; white-space: nowrap; }
     .info-row .item input, .info-row .item select { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 13px; padding: 2px 4px; min-width: 0; outline: none; }
     .info-row .item select { appearance: none; -webkit-appearance: none; background: transparent; }
     .info-row .item input:focus, .info-row .item select:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
 
-    .tbl { width: 100%; min-width: 800px; border-collapse: collapse; margin-top: 10px; font-size: 9.5px; table-layout: fixed; }
+    .tbl { width: 100%; min-width: 900px; border-collapse: collapse; margin-top: 10px; font-size: 9.5px; table-layout: fixed; }
     .tbl th, .tbl td { border: 1px solid #000; padding: 2px 3px; vertical-align: middle; text-align: center; }
-    .tbl th { background: #f3f4f6; font-weight: bold; font-size: 8.5px; }
-    .tbl td:first-child { width: 28px; }
-    .tbl td:nth-child(2) { text-align: left; width: 22%; }
-    .tbl td:nth-child(3) { width: 10%; }
-    .tbl td:nth-child(4) { width: 9%; }
-    .tbl td:nth-child(5) { width: 8%; }
-    .tbl td:nth-child(6) { width: 8%; }
-    .tbl td:nth-child(7) { width: 10%; }
-    .tbl td:nth-child(8) { width: 8%; }
-    .tbl td:nth-child(9) { text-align: left; width: 12%; }
-
+    .tbl thead th { background: #f3f4f6; font-weight: bold; font-size: 8.5px; }
     .tbl input { width: 100%; border: 0; background: transparent; text-align: center; font-size: 9.5px; padding: 1px 2px; min-height: 20px; outline: none; font-family: inherit; }
-    .tbl td:nth-child(2) input { text-align: left; }
-    .tbl td:nth-child(9) input { text-align: left; }
     .tbl input:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
-    .tbl td:first-child input { font-weight: bold; text-align: center; cursor: default; }
-    .tbl .section-header { background: #e8e8e8; font-weight: bold; text-align: left; padding-left: 6px; }
-    .tbl .section-header input { font-weight: bold; text-align: left; padding-left: 4px; cursor: default; }
+    .tbl .c-no { width: 30px; }
+    .tbl .c-name { width: 23%; } .tbl .c-name input { text-align: left; }
+    .tbl .c-pno { width: 11%; }
+    .tbl .c-q { width: 6.5%; }
+    .tbl .c-rem { width: 11%; } .tbl .c-rem input { text-align: left; }
+    .tbl td.c-no input { font-weight: bold; cursor: default; }
+    .tbl .sec-row td { background: #d8d8d8; font-weight: bold; text-align: center; font-size: 10px; padding: 4px 6px; }
+    .tbl .sub-row td { background: #e8e8e8; font-weight: bold; text-align: left; padding-left: 8px; font-size: 9.5px; }
+    .tbl .merk-row td { background: #f3f4f6; font-weight: bold; text-align: left; padding: 4px 8px; font-size: 10px; }
+    .tbl .merk-row input { width: 180px; border: 0; border-bottom: 1px solid #000; text-align: left; font-size: 10px; }
+    .tbl .note-row td { text-align: left; font-style: italic; font-size: 9px; padding: 4px 8px; }
 
-    .footer-section { margin-top: 12px; padding-top: 10px; border-top: 2px solid #000; }
-    .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: end; }
-    .footer-grid .sig-item { text-align: center; }
+    .footer-section { margin-top: 12px; padding-top: 10px; border-top: 2px solid #000; break-inside: avoid; page-break-inside: avoid; }
+    .footer-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; }
+    .footer-grid .sig-item { min-width: 0; text-align: center; }
     .footer-grid .sig-item .label { font-weight: bold; font-size: 11px; }
-    .footer-grid .sig-item .space { height: 50px; display: flex; align-items: center; justify-content: center; border: 1px dashed #aaa; margin: 4px 0; background: #fafafa; position: relative; }
+    .footer-grid .sig-item .space { height: 50px; display: flex; align-items: center; justify-content: center; margin: 4px 0; position: relative; }
     .footer-grid .sig-item .space .pv { display: none; position: relative; width: 100%; height: 100%; align-items: center; justify-content: center; }
     .footer-grid .sig-item .space .pv img { max-height: 45px; max-width: 100%; }
-    .footer-grid .sig-item .space .pv .x { position: absolute; right: 2px; top: 2px; border: 0; background: #dc2626; color: #fff; border-radius: 50%; width: 18px; height: 18px; cursor: pointer; font-size: 12px; line-height: 18px; text-align: center; }
-    .footer-grid .sig-item .nm { border: 0; border-bottom: 1px solid #000; text-align: center; width: 85%; font-size: 11px; margin-top: 2px; outline: none; background: transparent; }
-    .footer-grid .sig-item .nm:focus { outline: 1px solid #1769d2; background: #f0f8ff; }
-    .footer-grid .sig-item .role { font-weight: bold; font-size: 10px; margin-top: 2px; }
-
+    .nm { width: 100%; border: 0; border-bottom: 1px solid #000; text-align: center; font-size: 11px; padding: 3px; outline: none; background: transparent; }
+    .role { font-size: 10px; font-weight: bold; margin-top: 2px; }
     .hidden { display: none !important; }
+    .x { position: absolute; right: 0; top: 0; width: 18px; height: 18px; border: 0; border-radius: 50%; background: #dc2626; color: #fff; font-weight: bold; cursor: pointer; padding: 0; }
 
     @media print {
-      @page { size: A4 landscape; margin: 5mm; }
+      @page { size: A4 landscape; margin: 7mm; }
       .no-print { display: none !important; }
-      body { background: #fff; padding: 0; }
-      .container { margin: 0; padding: 3px; max-width: 100%; box-shadow: none; border-radius: 0; }
-      .head { padding: 3px 6px; }
-      .top { padding-bottom: 3px; margin-bottom: 3px; }
-      .co { font-size: 10px; }
-      .ttl { font-size: 13px; }
-      .ttl small { font-size: 10px; }
-      .st { font-size: 7px; }
-      .info-row { font-size: 10px; }
-      .info-row .item input, .info-row .item select { font-size: 10px; }
-      .tbl { min-width: 0 !important; font-size: 7px; margin-top: 3px; }
-      .tbl th { font-size: 6.5px; }
-      .tbl td { padding: 1px 2px; }
+      body { background: #fff; padding: 0; display: block; }
+      .container { max-width: none; box-shadow: none; padding: 0; }
+      .tbl { min-width: 0; font-size: 7px; }
+      .tbl thead th { font-size: 7px; }
       .tbl input { font-size: 7px; min-height: 14px; }
-      .footer-grid .sig-item .label { font-size: 8px; }
-      .footer-grid .sig-item .space { height: 30px; border: 1px solid #000; }
-      .footer-grid .sig-item .space .pv img { max-height: 25px; }
-      .footer-grid .sig-item .nm { font-size: 8px; }
-      .footer-grid .sig-item .role { font-size: 7px; }
-      select option[value=""] { display: none !important; }
-      input::placeholder { color: transparent !important; }
-    }
-    @media screen and (max-width: 768px) {
-      .top { grid-template-columns: 1fr; text-align: center; gap: 8px; }
-      .st { align-items: center; }
-      .info-grid { grid-template-columns: 1fr; gap: 12px; }
-      .item { flex-direction: column; align-items: flex-start; gap: 4px; }
-      .item label { width: 100%; flex-direction: row; justify-content: flex-start; align-items: baseline; gap: 6px; white-space: normal; }
-      .item input, .item select { width: 100%; flex: none; }
-      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-      .page { padding: 10px; overflow-x: hidden; width: 100%; }
-      .tbl-container { width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
-      .tbl { min-width: 600px; }
-    }
-      .st { align-items: center; }
-      .info-row { grid-template-columns: 1fr; }
-      .info-row .item label { white-space: normal; }
-      .info-row .item input, .info-row .item select { font-size: 11px; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .tbl { font-size: 7px; }
-      .tbl td, .tbl th { padding: 1px; }
+      .tbl .sec-row td { font-size: 8px; padding: 2px 4px; }
+      .tbl .sub-row td { font-size: 7.5px; }
+      .tbl tr { break-inside: avoid; page-break-inside: avoid; }
+      .footer-section { margin-top: 6px; padding-top: 5px; }
+      .tbl input::placeholder, .nm::placeholder { color: transparent !important; opacity: 0 !important; }
+      .tbl select { border: 0 !important; border-bottom: 0 !important; }
     }
   </style>
-
-<style id="global-print-fix">
-@media print {
-    input::-webkit-input-placeholder, 
-    input::-moz-placeholder, 
-    input:-ms-input-placeholder, 
-    input::placeholder {
-        color: transparent !important;
-        opacity: 0 !important;
-    }
-    select {
-        -webkit-appearance: none !important;
-        -moz-appearance: none !important;
-        appearance: none !important;
-        background-image: none !important;
-        background-color: transparent !important;
-        border: none !important;
-    }
-    /* Specifically for bottom-border selects if they were styled */
-    select { border-bottom: 1px dotted #000 !important; }
-    /* Some selects have border: 0 */
-    .tbl select { border: 0 !important; border-bottom: 0 !important; }
-}
-</style>
 </head>
 <body>
 <div class="container" id="form-container">
   <div class="tools no-print">
+    <div class="sheetnav" id="sheetnav"></div>
     <button class="btn" onclick="savePDF()">📄 Print / Simpan PDF</button>
   </div>
 
@@ -146,10 +88,10 @@
   <header class="head">
     <div class="top">
       <div class="co">PT MENTARI MAS MULTIMODA</div>
-      <div class="ttl">059-C<br>RUNNING STORE INVENTORY LIST</div>
+      <div class="ttl" id="sheet-title">059-B1<br>SPARE PARTS INVENTORY LIST</div>
       <div class="st">
         <div class="code"><span>CS</span><span>BLN</span></div>
-        <div>Release: &nbsp; Rev.0:</div>
+        <div>Release: 11 Dec 2017&nbsp; Rev.04: 15 Sep 2021</div>
       </div>
     </div>
     <div class="info-row">
@@ -175,16 +117,17 @@
     <table class="tbl" id="store-table">
       <thead>
         <tr>
-          <th style="width:28px;">No.</th>
-          <th style="width:22%;">Inventory Name</th>
-          <th style="width:10%;">Merk</th>
-          <th style="width:9%;">Paint Code /<br/>RAL Code</th>
-          <th style="width:8%;">R O B<br/>Last Month<br/><span style="font-weight:normal;font-size:7px;">Qtt (in Ltr)</span></th>
-          <th style="width:8%;">R O B<br/>This Month<br/><span style="font-weight:normal;font-size:7px;">Qtt (In Ltr)</span></th>
-          <th style="width:10%;">Last Supply<br/>This Month<br/><span style="font-weight:normal;font-size:7px;">Date</span></th>
-          <th style="width:8%;">Last Supply<br/>This Month<br/><span style="font-weight:normal;font-size:7px;">Qtt (In Ltr)</span></th>
-          <th style="width:12%;">Remarks</th>
+          <th class="c-no" rowspan="4">No.</th>
+          <th class="c-name" rowspan="4">Spare Parts Name</th>
+          <th class="c-pno" rowspan="4">Parts No</th>
+          <th colspan="2">ROB Last Report</th>
+          <th colspan="2" id="th-supply">Supply in 3 Month</th>
+          <th colspan="2">ROB Month of Report</th>
+          <th class="c-rem" rowspan="4">Remarks</th>
         </tr>
+        <tr><th colspan="2">Condition</th><th colspan="2">Condition</th><th colspan="2">Condition</th></tr>
+        <tr><th>Recond</th><th>New</th><th>Recond</th><th>New</th><th>Recond</th><th>New</th></tr>
+        <tr><th>Quantity</th><th>Quantity</th><th>Quantity</th><th>Quantity</th><th>Quantity</th><th>Quantity</th></tr>
       </thead>
       <tbody id="table-body"></tbody>
     </table>
@@ -194,7 +137,7 @@
   <div class="footer-section">
     <div class="footer-grid">
       <div class="sig-item">
-        <div class="label">Reported by Chief Officer,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
+        <div class="label">Reported by Chief Engineer,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
         <div class="space">
           <label class="btn no-print" style="font-size:8px; padding:2px 10px; background:#1769d2; color:#fff; border-radius:4px; cursor:pointer;">+ Add TTD
             <input id="sigup1" class="hidden" type="file" accept="image/*">
@@ -204,8 +147,8 @@
             <button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button>
           </div>
         </div>
-        <input class="nm" placeholder="Nama Chief Officer">
-        <div class="role">Chief Officer</div>
+        <input class="nm" placeholder="Nama Chief Engineer">
+        <div class="role">Chief Engineer</div>
       </div>
       <div class="sig-item">
         <div class="label">Checked by Master,<br/><span style="font-weight:normal;font-size:9px;">Signed &amp; Name</span></div>
@@ -240,83 +183,90 @@
 </div>
 
 <script>
-  // ======= STORE DATA =======
-  var sections = [
-    { name: 'PAINT LIST', items: [
-      'Green Deck (Hijau Deck)','Hijau Muda','White (Putih)','Grey (Abu Abu)',
-      'Yellow (Kuning)','Red (Merah)','Yellow Cutterpilar (Crane)','Black (Hitam)',
-      'Blue funnel (Biru)','Temas Blue','Silver (Perak)','Orange',
-      '','','','',''
-    ]},
-    { name: 'HAWSER', items: [
-      'Mooring Line forcastle','Heaving Line forcastle','Mooring Line aft','Heaving Line aft',
-      'Massanger Line','Towing Line','Rat Guard','','','','','','','',''
-    ]},
-    { name: 'PILOT REQUIREMENT', items: [
-      'Pilot Ladder','Stanchion Rod','Safety Net','Side Rope','','','','','','','','','','',''
-    ]},
-    { name: 'WIRE ROPE', items: [
-      'Wire Gangway','Wire Life Boat Davit','Wire Cargo Crane','Wire Topping Crane',
-      'Wire Provision Crane','Wire Towing','etc','','','','','','','',''
-    ]},
-    { name: 'TOOLS', items: [
-      'Chipping Hummer','Small Roller Brush','Big Roller Brush','Small Roller Brush w/ handle',
-      'Brush 1"','Brush 1/2"','Brush 1/4"','Kuas bengkok','Scalling Machine',
-      'Hose scalling machine','Gear Scalling Machine','Pin Scalling Machine',
-      'Pad Lock (Gembok)','Submursable Pump','etc','','','','',''
-    ]},
-    { name: 'OTHERS', items: [
-      'Waste (Majun)','Wire Oil (Black Grease)','Yellow Grease','Powder Soap',
-      'Green Soap','Tinta Printer','Cotton Gloves','Leather Gloves','Tourch Light',
-      'Rain Clothes','Helmet','etc','','','','','','','','','','','',''
-    ]}
+  // ======= DATA DARI MASTER EXCEL (verbatim, termasuk typo "Feul"/"Scapper"/"ECHONOMIZER") =======
+  var SHEETS = [
+    {key:"1. ME",title:"059-B1 SPARE PARTS INVENTORY LIST MAIN ENGINE (ME)",supply:"Supply in 3 Month",rows:[{t:'sec',v:"MAIN ENGINE (ME)"},{t:'item',no:"1",name:"Nozzle tip",rem:""},{t:'item',no:"2",name:"Injector Assy",rem:""},{t:'item',no:"3",name:"Plunger Barrel",rem:""},{t:'item',no:"4",name:"Feul Pump Assy",rem:""},{t:'item',no:"5",name:"Exhaust valve",rem:""},{t:'item',no:"6",name:"Intake valve",rem:""},{t:'item',no:"7",name:"Sitting",rem:""},{t:'item',no:"8",name:"Spring for Cyl Head",rem:""},{t:'item',no:"9",name:"Cyl Head Complete",rem:""},{t:'item',no:"10",name:"O ring Cyl Head",rem:""},{t:'item',no:"11",name:"Ring Piston No 1",rem:""},{t:'item',no:"12",name:"Ring Piston No 2",rem:""},{t:'item',no:"13",name:"Ring Piston No 3",rem:""},{t:'item',no:"14",name:"Scapper Ring",rem:""},{t:'item',no:"15",name:"Piston Crown",rem:""},{t:'item',no:"16",name:"Piston Skirt",rem:""},{t:'item',no:"17",name:"Small Bush",rem:""},{t:'item',no:"18",name:"Piston Rod",rem:""},{t:'item',no:"19",name:"Bolt Piston Rod",rem:""},{t:'item',no:"20",name:"Crank Pin Bearing",rem:""},{t:'item',no:"21",name:"Main Bearing",rem:""},{t:'item',no:"22",name:"etc",rem:""},{t:'item',no:"23",name:"etc",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'item',no:"35",name:"",rem:""},{t:'item',no:"36",name:"",rem:""},{t:'item',no:"37",name:"",rem:""},{t:'item',no:"38",name:"",rem:""},{t:'item',no:"39",name:"",rem:""},{t:'item',no:"40",name:"",rem:""},{t:'item',no:"41",name:"",rem:""},{t:'item',no:"42",name:"",rem:""},{t:'item',no:"43",name:"",rem:""},{t:'item',no:"44",name:"",rem:""},{t:'item',no:"45",name:"",rem:""},{t:'item',no:"46",name:"",rem:""},{t:'item',no:"47",name:"",rem:""},{t:'item',no:"48",name:"",rem:""},{t:'item',no:"49",name:"",rem:""},{t:'item',no:"50",name:"",rem:""},{t:'item',no:"51",name:"",rem:""},{t:'item',no:"52",name:"",rem:""},{t:'item',no:"53",name:"",rem:""},{t:'item',no:"54",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of Main Engine\" / Diisi sesuai dengan nama spare parts di dalam buku manual Mesin Induk"}]},
+    {key:"2. AE",title:"059-B2 SPARE PARTS INVENTORY LIST AUXILIARY ENGINE (AE)",supply:"Supply in 3 Month",rows:[{t:'sec',v:"AUXILIARY ENGINE (AE)"},{t:'item',no:"1",name:"Nozzle Tip",rem:""},{t:'item',no:"2",name:"Injector Assy",rem:""},{t:'item',no:"3",name:"Cyl Head",rem:""},{t:'item',no:"4",name:"Ring Piston",rem:""},{t:'item',no:"5",name:"Piston",rem:""},{t:'item',no:"6",name:"Con rod",rem:""},{t:'item',no:"7",name:"Crank Pin Bearing",rem:""},{t:'item',no:"8",name:"Main Bearing",rem:""},{t:'item',no:"9",name:"etc",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'item',no:"35",name:"",rem:""},{t:'item',no:"36",name:"",rem:""},{t:'item',no:"37",name:"",rem:""},{t:'item',no:"38",name:"",rem:""},{t:'item',no:"39",name:"",rem:""},{t:'item',no:"40",name:"",rem:""},{t:'item',no:"41",name:"",rem:""},{t:'item',no:"42",name:"",rem:""},{t:'item',no:"43",name:"",rem:""},{t:'item',no:"44",name:"",rem:""},{t:'item',no:"45",name:"",rem:""},{t:'item',no:"46",name:"",rem:""},{t:'item',no:"47",name:"",rem:""},{t:'item',no:"48",name:"",rem:""},{t:'item',no:"49",name:"",rem:""},{t:'item',no:"50",name:"",rem:""},{t:'item',no:"51",name:"",rem:""},{t:'item',no:"52",name:"",rem:""},{t:'item',no:"53",name:"",rem:""},{t:'item',no:"54",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of Aux Engine\" / Diisi sesuai dengan nama spare parts di dalam buku manual Mesin Bantu"}]},
+    {key:"3. Emergency Generator",title:"059-B3 SPARE PARTS INVENTORY LIST EMERGENCY GENERATOR",supply:"Supply in 3 Month",rows:[{t:'sec',v:"EMERGENCY GENERATOR"},{t:'item',no:"1",name:"Nozzle Tip",rem:""},{t:'item',no:"2",name:"Injector Assy",rem:""},{t:'item',no:"3",name:"Cyl Head",rem:""},{t:'item',no:"4",name:"Ring Piston",rem:""},{t:'item',no:"5",name:"Piston",rem:""},{t:'item',no:"6",name:"Con rod",rem:""},{t:'item',no:"7",name:"Crank Pin Bearing",rem:""},{t:'item',no:"8",name:"Main Bearing",rem:""},{t:'item',no:"9",name:"etc",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'item',no:"35",name:"",rem:""},{t:'item',no:"36",name:"",rem:""},{t:'item',no:"37",name:"",rem:""},{t:'item',no:"38",name:"",rem:""},{t:'item',no:"39",name:"",rem:""},{t:'item',no:"40",name:"",rem:""},{t:'item',no:"41",name:"",rem:""},{t:'item',no:"42",name:"",rem:""},{t:'item',no:"43",name:"",rem:""},{t:'item',no:"44",name:"",rem:""},{t:'item',no:"45",name:"",rem:""},{t:'item',no:"46",name:"",rem:""},{t:'item',no:"47",name:"",rem:""},{t:'item',no:"48",name:"",rem:""},{t:'item',no:"49",name:"",rem:""},{t:'item',no:"50",name:"",rem:""},{t:'item',no:"51",name:"",rem:""},{t:'item',no:"52",name:"",rem:""},{t:'item',no:"53",name:"",rem:""},{t:'item',no:"54",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of Emergency Generator\" / Diisi sesuai dengan nama spare parts di dalam buku manual Emergency Generator"}]},
+    {key:"4. Boiler",title:"059-B4 SPARE PARTS INVENTORY LIST BOILER ECHONOMIZER",supply:"Supply in 3 Month",rows:[{t:'sec',v:"BOILER ECHONOMIZER"},{t:'item',no:"1",name:"Safety Valve",rem:""},{t:'item',no:"2",name:"Nozzle Boiler",rem:""},{t:'item',no:"3",name:"Gelas duga",rem:""},{t:'item',no:"4",name:"Valve",rem:""},{t:'item',no:"5",name:"etc",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of  Boiler Echonomizer\" / Diisi sesuai dengan nama spare parts di dalam buku manual  Boiler Echonomizer"}]},
+    {key:"5. MFO Purifier",title:"059-B5 SPARE PARTS INVENTORY LIST MFO PURIFIER",supply:"Supply in 3 Month",rows:[{t:'sec',v:"MFO PURIFIER"},{t:'item',no:"1",name:"O Ring",rem:""},{t:'item',no:"2",name:"Bowl",rem:""},{t:'item',no:"3",name:"Disc",rem:""},{t:'item',no:"4",name:"etc",rem:""},{t:'item',no:"5",name:"etc",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of MFO Purifier\" / Diisi sesuai dengan nama spare parts di dalam buku manual MFO Purifier"}]},
+    {key:"6. LO Purifier",title:"059-B6 SPARE PARTS INVENTORY LIST LO PURIFIER",supply:"Supply in 3 Month",rows:[{t:'sec',v:"LO PURIFIER"},{t:'item',no:"1",name:"O Ring",rem:""},{t:'item',no:"2",name:"Bowl",rem:""},{t:'item',no:"3",name:"Disc",rem:""},{t:'item',no:"4",name:"etc",rem:""},{t:'item',no:"5",name:"etc",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of LO Purifier\" / Diisi sesuai dengan nama spare parts di dalam buku manual LO Purifier"}]},
+    {key:"7. Pumps & Special Tools",title:"059-B7 SPARE PARTS INVENTORY LIST PUMPS & SPECIAL TOOLS",supply:"Supply in 3 Month",rows:[{t:'sec',v:"PUMPS / POMPA - POMPA"},{t:'item',no:"1",name:"Impeler",rem:""},{t:'item',no:"2",name:"Shaft",rem:""},{t:'item',no:"3",name:"Mechanical Seal",rem:""},{t:'item',no:"4",name:"Bearing",rem:""},{t:'item',no:"5",name:"etc",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'sec',v:"SPECIAL TOOLS"},{t:'item',no:"1",name:"",rem:""},{t:'item',no:"2",name:"",rem:""},{t:'item',no:"3",name:"",rem:""},{t:'item',no:"4",name:"",rem:""},{t:'item',no:"5",name:"",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""}]},
+    {key:"8. Crane",title:"059-B8 SPARE PARTS INVENTORY LIST CRANE",supply:"Supply in 3 Month",rows:[{t:'sec',v:"CRANE"},{t:'item',no:"1",name:"Hydraulic Hose",rem:""},{t:'item',no:"2",name:"Oil Filter",rem:""},{t:'item',no:"3",name:"etc",rem:""},{t:'item',no:"4",name:"etc",rem:""},{t:'item',no:"5",name:"etc",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of Crane\" / Diisi sesuai dengan nama spare parts di dalam buku manual Crane"}]},
+    {key:"9. Turbo Charge",title:"059-B9 SPARE PARTS INVENTORY LIST TURBO CHARGE",supply:"Supply in 3 Month",rows:[{t:'sec',v:"TURBO CHARGE MAIN ENGINE (ME)"},{t:'item',no:"1",name:"Impeler",rem:""},{t:'item',no:"2",name:"Shaft",rem:""},{t:'item',no:"3",name:"Mechanical Seal",rem:""},{t:'item',no:"4",name:"Bearing",rem:""},{t:'item',no:"5",name:"etc",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'sec',v:"TURBO CHARGE AUXILIARY ENGINE (AE)"},{t:'item',no:"1",name:"",rem:""},{t:'item',no:"2",name:"",rem:""},{t:'item',no:"3",name:"",rem:""},{t:'item',no:"4",name:"",rem:""},{t:'item',no:"5",name:"",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'note',v:"Pls fill details same with in Manual Book of Turbo Charge\" / Diisi sesuai dengan nama spare parts di dalam buku manual Turbo Charge"}]},
+    {key:"10. Electrical",title:"059-B10 SPARE PARTS INVENTORY LIST ELECTRICAL & ELECTRICAL TOOLS",supply:"Supply in 3 Month",rows:[{t:'sec',v:"ELECTRICAL & ELECTRICAL TOOLS"},{t:'item',no:"1",name:"Hydraulic Hose",rem:""},{t:'item',no:"2",name:"Oil Filter",rem:""},{t:'item',no:"3",name:"etc",rem:""},{t:'item',no:"4",name:"etc",rem:""},{t:'item',no:"5",name:"etc",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""}]},
+    {key:"11. Genset",title:"059-B11 SPARE PARTS INVENTORY LIST ADDITIONAL GENSET",supply:"Supply in 3 Month",rows:[{t:'sec',v:"ADDITIONAL GENSET"},{t:'item',no:"1",name:"",rem:""},{t:'item',no:"2",name:"",rem:""},{t:'item',no:"3",name:"",rem:""},{t:'item',no:"4",name:"",rem:""},{t:'item',no:"5",name:"",rem:""},{t:'item',no:"6",name:"",rem:""},{t:'item',no:"7",name:"",rem:""},{t:'item',no:"8",name:"",rem:""},{t:'item',no:"9",name:"",rem:""},{t:'item',no:"10",name:"",rem:""},{t:'item',no:"11",name:"",rem:""},{t:'item',no:"12",name:"",rem:""},{t:'item',no:"13",name:"",rem:""},{t:'item',no:"14",name:"",rem:""},{t:'item',no:"15",name:"",rem:""},{t:'item',no:"16",name:"",rem:""},{t:'item',no:"17",name:"",rem:""},{t:'item',no:"18",name:"",rem:""},{t:'item',no:"19",name:"",rem:""},{t:'item',no:"20",name:"",rem:""},{t:'item',no:"21",name:"",rem:""},{t:'item',no:"22",name:"",rem:""},{t:'item',no:"23",name:"",rem:""},{t:'item',no:"24",name:"",rem:""},{t:'item',no:"25",name:"",rem:""},{t:'item',no:"26",name:"",rem:""},{t:'item',no:"27",name:"",rem:""},{t:'item',no:"28",name:"",rem:""},{t:'item',no:"29",name:"",rem:""},{t:'item',no:"30",name:"",rem:""},{t:'item',no:"31",name:"",rem:""},{t:'item',no:"32",name:"",rem:""},{t:'item',no:"33",name:"",rem:""},{t:'item',no:"34",name:"",rem:""},{t:'item',no:"35",name:"",rem:""},{t:'item',no:"36",name:"",rem:""}]},
+    {key:"12. Critical",title:"059 - B12 CRITICAL SPARE PARTS LIST",supply:"Supply in this Month",rows:[{t:'sec',v:"MAIN ENGINE"},{t:'item',no:"1",name:"Cylinder Liner",rem:""},{t:'item',no:"2",name:"Piston",rem:""},{t:'item',no:"3",name:"Piston Ring Set",rem:""},{t:'item',no:"4",name:"Connecting Rod",rem:""},{t:'item',no:"5",name:"Fuel Injector",rem:""},{t:'item',no:"6",name:"Main Bearing",rem:""},{t:'item',no:"7",name:"Exhaust Valve Spindle",rem:""},{t:'item',no:"8",name:"Inlet Valve",rem:""},{t:'item',no:"9",name:"Cylinder Head",rem:""},{t:'item',no:"10",name:"Injection Pump",rem:""},{t:'item',no:"11",name:"Connecting Rod Bearing",rem:""},{t:'item',no:"12",name:"Starting Air Valve",rem:""},{t:'sec',v:"Auxiliary Engine"},{t:'item',no:"13",name:"Cylinder Head",rem:""},{t:'item',no:"14",name:"Fuel Injector",rem:""},{t:'item',no:"15",name:"L.O. Pump",rem:""},{t:'item',no:"16",name:"Sea Water Pump",rem:""},{t:'item',no:"17",name:"Fresh Water Pump",rem:""},{t:'item',no:"18",name:"Governor Automatic Control",rem:""},{t:'item',no:"19",name:"AVR",rem:""},{t:'item',no:"20",name:"Injection Pump",rem:""},{t:'item',no:"21",name:"Turbocharger",rem:""},{t:'sec',v:"Compressor"},{t:'item',no:"22",name:"Compressor unit",rem:""},{t:'sec',v:"Steering Gear"},{t:'item',no:"23",name:"Hydraulic Pump",rem:""},{t:'item',no:"24",name:"Limit Switch",rem:""},{t:'item',no:"25",name:"Solenoid Valve",rem:""},{t:'item',no:"26",name:"Cylinder Seal Kit",rem:""},{t:'item',no:"27",name:"Accumulator Bladder",rem:""},{t:'sec',v:"Turbocharge"},{t:'item',no:"28",name:"Bearing VTR",rem:""},{t:'item',no:"29",name:"Sealing Bush",rem:""},{t:'item',no:"30",name:"Kassa Filter",rem:""},{t:'item',no:"31",name:"Special tools for TC",rem:""},{t:'sec',v:"Pump"},{t:'item',no:"32",name:"Mechanical Seal",rem:"Bilge Pump"},{t:'item',no:"33",name:"Impeller",rem:"Bilge Pump"},{t:'item',no:"34",name:"Bearing",rem:"Bilge Pump"},{t:'item',no:"35",name:"Mechanical Seal",rem:"Fire Pump"},{t:'item',no:"36",name:"Impeller",rem:"Fire Pump"},{t:'item',no:"37",name:"Motor Starter",rem:"Fire Pump"},{t:'item',no:"38",name:"Shaft Seal",rem:"Sea Water Pump"},{t:'item',no:"39",name:"Impeller",rem:"Sea Water Pump"},{t:'item',no:"40",name:"Gear Set",rem:"FO Transfer Pump"},{t:'item',no:"41",name:"Shaft & Seal",rem:"FO Booster Pump"},{t:'sec',v:"Electrical"},{t:'item',no:"42",name:"Circuit Breaker",rem:"Main Switchboard"},{t:'item',no:"43",name:"Contactors",rem:"Main Switchboard"},{t:'item',no:"44",name:"Starter Battery",rem:"Emergency Generator"},{t:'item',no:"45",name:"Bulb / Driver",rem:"Navigation Lights"},{t:'note',v:"Note: Critical spare harus tersedia minimum 20% dari total item di atas kapal"}]}
   ];
 
-  // ======= POPULATE TABLE =======
+  var cur = 0;
   var tbody = document.getElementById('table-body');
-  var rowCounter = 0;
 
-  sections.forEach(function(section) {
-    // Section header row
-    var headerRow = document.createElement('tr');
-    headerRow.innerHTML = `
-      <td colspan="9" class="section-header" style="background:#e8e8e8;font-weight:bold;text-align:left;padding-left:8px;font-size:10px;">
-        ${section.name}
-      </td>
-    `;
-    tbody.appendChild(headerRow);
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    // Item rows
-    section.items.forEach(function(item) {
-      rowCounter++;
+  function render(idx){
+    cur = idx;
+    var sh = SHEETS[idx];
+    document.getElementById('sheet-title').innerHTML = esc(sh.title).replace(/ (SPARE|CRITICAL)/, '<br>$1');
+    document.getElementById('th-supply').textContent = sh.supply;
+    document.querySelectorAll('#sheetnav button').forEach(function(b, i){ b.classList.toggle('on', i === idx); });
+    tbody.innerHTML = '';
+    sh.rows.forEach(function(r){
       var tr = document.createElement('tr');
-      var no = (item === '') ? '' : (section.items.indexOf(item) + 1);
-      var displayNo = (item === '') ? '' : no;
-      tr.innerHTML = `
-        <td><input type="text" value="${displayNo}" readonly style="font-weight:bold;text-align:center;cursor:default;${item === '' ? 'color:#ccc;' : ''}"></td>
-        <td><input type="text" value="${item}" style="text-align:left;${item === '' ? 'color:#ccc;' : ''}" placeholder="${item === '' ? 'kosong' : ''}"></td>
-        <td><input type="text" placeholder="merk"></td>
-        <td><input type="text" placeholder="kode"></td>
-        <td><input type="text" placeholder="qtt"></td>
-        <td><input type="text" placeholder="qtt"></td>
-        <td><input type="text" placeholder="DD-MM-YYYY" class="date-mask"></td>
-        <td><input type="text" placeholder="qtt"></td>
-        <td><input type="text" placeholder="catatan" style="text-align:left;"></td>
-      `;
+      if (r.t === 'sec') {
+        tr.innerHTML = '<td colspan="10" class="sec-row">' + esc(r.v) +
+          ' &nbsp; Merk : <input type="text" placeholder="merk" style="width:150px;border:0;border-bottom:1px solid #000;background:transparent;font-size:10px;font-weight:normal;">' +
+          ' &nbsp; Serial No : <input type="text" placeholder="serial no" style="width:150px;border:0;border-bottom:1px solid #000;background:transparent;font-size:10px;font-weight:normal;"></td>';
+        // pakai class merk styling via sec-row (input inline)
+      } else if (r.t === 'sub') {
+        tr.innerHTML = '<td colspan="10" class="sub-row">' + esc(r.v) + '</td>';
+      } else if (r.t === 'note') {
+        tr.innerHTML = '<td colspan="10" class="note-row">' + esc(r.v) + '</td>';
+      } else {
+        var nm = r.name || '';
+        var isEtc = (nm.toLowerCase() === 'etc');
+        tr.innerHTML =
+          '<td class="c-no"><input type="text" value="' + esc(r.no) + '" readonly></td>' +
+          '<td class="c-name"><input type="text" value="' + esc(nm) + '"' + (nm === '' ? ' placeholder="kosong - ketik nama part"' : '') + '></td>' +
+          '<td><input type="text" placeholder="parts no"></td>' +
+          '<td><input type="text" placeholder="recond"></td>' +
+          '<td><input type="text" placeholder="new"></td>' +
+          '<td><input type="text" placeholder="recond"></td>' +
+          '<td><input type="text" placeholder="new"></td>' +
+          '<td><input type="text" placeholder="recond"></td>' +
+          '<td><input type="text" placeholder="new"></td>' +
+          '<td class="c-rem"><input type="text" value="' + esc(r.rem || '') + '" placeholder="catatan"></td>';
+      }
       tbody.appendChild(tr);
     });
+    updateTitle();
+  }
+
+  // nav + save per sheet B1..B12: klik tombol = buka sheet & langsung simpan (059-B1 ... 059-B12)
+  var nav = document.getElementById('sheetnav');
+  function sheetNum(i){ return '059-B' + (i + 1); }
+  window.saveSheet = function(i){
+    render(i);
+    var sh = SHEETS[i];
+    var ship = document.getElementById('vessel').value || '';
+    var date = document.getElementById('date').value || '';
+    var code = sheetNum(i);
+    var label = sh.title.replace(/^059\s*-?\s*B\d+\s*/i, '').trim() || sh.key;
+    var name = code + '_Spare_Part_Inventory_List_' + label.replace(/\s+/g, '_') +
+      (ship ? '_-_' + ship.replace(/\s+/g, '_') : '') + (date ? '_-_' + date : '') + '.pdf';
+    updateTitle();
+    window.parent && window.parent.postMessage({type:'SMK_SAVE_PDF', formCode: code, ship: ship, date: date, name: name, data:{}}, '*');
+  };
+  SHEETS.forEach(function(sh, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = '💾 ' + sh.key.replace('. ', '');
+    b.title = 'Simpan ' + sh.title;
+    b.onclick = function(){ window.saveSheet(i); };
+    nav.appendChild(b);
   });
 
   // ======= DATE MASK =======
-  document.querySelectorAll('.date-mask').forEach(function(el) {
-    el.addEventListener('input', function(e) {
-      var v = e.target.value.replace(/\D/g,'').slice(0,8);
-      if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
-      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5);
-      e.target.value = v;
-    });
-  });
-
   document.querySelectorAll('.date').forEach(function(el) {
     el.addEventListener('input', function(e) {
       var v = e.target.value.replace(/\D/g,'').slice(0,8);
@@ -357,54 +307,40 @@
   initSig('sigup3','pv3');
   window.clearSig = clearSig;
 
-  // ======= SAVE PDF =======
+  // ======= SAVE PDF via app (Need Approval 059-B1..B12, pola 059A) =======
   function savePDF() {
-    var element = document.getElementById('form-container');
-    var ship = document.getElementById('vessel').value || 'Unknown';
-    var date = document.getElementById('date').value || 'unknown';
-    var filename = '059C_Running_Store_Inventory_List_' + ship.replace(/\s/g,'_') + '_' + date + '.pdf';
-    var opt = {
-      margin: [0.3, 0.3, 0.3, 0.3],
-      filename: filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
-    };
-    html2pdf().set(opt).from(element).save();
+    window.saveSheet(cur);
   }
 
   // ======= DYNAMIC TITLE =======
-  (function() {
-    function getMonthName(mm) {
-      var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-      return names[mm-1] || '';
-    }
-    function updateTitle() {
-      var base = '059C Running Store Inventory List';
-      var ship = document.getElementById('vessel');
-      var date = document.getElementById('date');
-      var parts = [];
-      if (ship && ship.value) parts.push(ship.value);
-      if (date && date.value) {
-        var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
-        if (m) {
-          var mo = parseInt(m[2],10);
-          var yr = m[3];
-          if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
-        } else {
-          parts.push(date.value);
-        }
-      }
-      var title = base;
-      if (parts.length) title += ' - ' + parts.join(' - ');
-      document.title = title;
-    }
+  function getMonthName(mm) {
+    var names = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    return names[mm-1] || '';
+  }
+  function updateTitle() {
+    var base = '059B Spare Part Inventory List';
     var ship = document.getElementById('vessel');
     var date = document.getElementById('date');
-    if (ship) ship.addEventListener('change', updateTitle);
-    if (date) date.addEventListener('input', updateTitle);
-    updateTitle();
-  })();
+    var parts = [];
+    if (ship && ship.value) parts.push(ship.value);
+    if (date && date.value) {
+      var m = date.value.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      if (m) {
+        var mo = parseInt(m[2],10);
+        var yr = m[3];
+        if (mo>=1 && mo<=12) parts.push(getMonthName(mo)+' '+yr);
+      } else {
+        parts.push(date.value);
+      }
+    }
+    var title = base;
+    if (parts.length) title += ' - ' + parts.join(' - ');
+    document.title = title;
+  }
+  document.getElementById('vessel').addEventListener('change', updateTitle);
+  document.getElementById('date').addEventListener('input', updateTitle);
+
+  render(0);
 </script>
 </body>
 </html>

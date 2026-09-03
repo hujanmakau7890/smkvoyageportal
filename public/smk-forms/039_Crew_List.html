@@ -1,14 +1,52 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>039 Crew List</title><style>*{box-sizing:border-box}body{margin:0;background:#e5e7eb;font-family:Arial}.p{max-width:1200px;margin:18px auto;background:#fff;padding:18px}.tools{text-align:right}.btn{border:0;border-radius:6px;padding:9px;background:#1769d2;color:#fff;font-weight:bold}.head,.sec{border:2px solid;padding:4px;margin-top:4px}.top{display:grid;grid-template-columns:24% 53% 23%;border-bottom:2px solid;min-height:75px}.co,.ttl{font-weight:bold;font-size:12px}.ttl{text-align:center}.st{display:flex;flex-direction:column;align-items:flex-end;gap:8px;padding-right:14px;font-size:10px}.code{display:flex;border:1px solid}.code span{padding:5px 9px}.code span+span{border-left:1px solid}.grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:6px 14px;margin-top:4px}.f{display:grid;grid-template-columns:148px 1fr;gap:6px;align-items:center;font-size:9px;font-weight:bold}.f input,.f select{flex:1;min-width:0;border:1px solid #999;background:#fff;border-radius:3px;padding:2px 4px}.wide{grid-column:1/-1}.ship{margin:10px 0 6px}.ship label{width:100%}.sec h3{font-size:10px;margin:0 0 8px;background:#eee;padding:5px}.tbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:8px}.tbl th,.tbl td{border:1px solid;padding:1px 2px;vertical-align:middle;text-align:center}.tbl th{background:#f3f4f6}.tbl td:first-child,.tbl th:first-child{text-align:left}.tbl .num{width:28px}.sig{text-align:center;border:2px solid;margin-top:4px;padding:4px;font-size:9px}.space{height:60px;display:flex;align-items:center;justify-content:center}.pv{display:none;position:relative;width:100%;height:100%;align-items:center;justify-content:center}.pv img{max-height:67px}.nm{border:0;border-bottom:1px solid;text-align:center}.hidden{display:none!important}@media screen and (max-width:900px){.grid{grid-template-columns:1fr 1fr}}@media screen and (max-width:650px){.p{margin:0;padding:10px}.top{display:flex;flex-direction:column}.co,.ttl,.st{width:100%;text-align:center}.st{align-items:center}.grid{grid-template-columns:1fr}.tbl{font-size:7px}}
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>039 Crew List</title><style>
+*{box-sizing:border-box}
+body{margin:0;background:#e5e7eb;font-family:Arial}
+.p{max-width:1200px;margin:10px auto;background:#fff;padding:10px}
+.tools{text-align:right;display:flex;justify-content:flex-end;gap:8px;align-items:center;margin-bottom:4px}
+.btn{border:0;border-radius:4px;padding:6px 10px;background:#1769d2;color:#fff;font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:11px}
+.btn:disabled{opacity:0.6;cursor:not-allowed}
+.head,.sec,.sig{border:1.5px solid #000;padding:3px;margin-top:3px}
+.top{display:grid;grid-template-columns:26% 48% 26%;border-bottom:1.5px solid #000;padding-bottom:2px;align-items:center}
+.co{font-weight:bold;font-size:11px}
+.ttl{font-weight:bold;font-size:12px;text-align:center;line-height:1.2}
+.st{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:9px}
+.code{display:flex;border:1px solid #000}
+.code span{padding:2px 7px;font-weight:bold}
+.code span+span{border-left:1px solid #000}
+.grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:2px 10px;margin-top:3px}
+.f{display:grid;grid-template-columns:140px 1fr;gap:4px;align-items:center;font-size:11px;font-weight:bold}
+.f input,.f select{width:100%;min-width:0;border:1px solid #888;background:#fff;border-radius:2px;padding:1px 4px;font-size:11px;height:20px}
+.sec h3{font-size:11px;margin:0 0 2px;background:#eee;padding:2px 4px;text-align:center}
+.tbl{width:100%;border-collapse:collapse;margin-top:2px;font-size:11px}
+.tbl th,.tbl td{border:1px solid #000;padding:1px;vertical-align:middle;text-align:center;height:20px}
+.tbl th{background:#f3f4f6;font-size:11px;line-height:1.15}
+.tbl td:first-child,.tbl th:first-child{text-align:center}
+.tbl .num{width:24px}
+.tbl td input{width:100%;border:0;background:transparent;outline:none;font-size:11px;padding:0 1px;height:19px;text-align:center}
+.tbl td:nth-child(2) input{text-align:left}
+.sig{text-align:center;font-size:11px;padding:2px 4px}
+.sig b{display:block;font-size:10px;margin-bottom:1px;font-weight:bold}
+.space{height:36px;display:flex;align-items:center;justify-content:center}
+.pv{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.pv img{max-height:34px}
+.x{position:absolute;top:-4px;right:calc(50% - 70px);background:#dc2626;color:#fff;border:none;border-radius:50%;width:16px;height:16px;line-height:16px;text-align:center;cursor:pointer;font-size:11px;font-weight:bold}
+.nm{border:0;border-bottom:1px solid #000;text-align:center;font-size:11px;width:240px;margin:1px auto 2px;display:block}
+.sig .grid{display:grid;grid-template-columns:1.2fr 1fr 1.5fr;gap:2px 8px;margin-top:2px}
+.sig .f{grid-template-columns:auto 1fr}
+.hidden{display:none!important}
+@media screen and (max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media screen and (max-width:650px){.p{margin:0;padding:6px}.top{display:flex;flex-direction:column}.co,.ttl,.st{width:100%;text-align:center}.st{justify-content:center}.grid{grid-template-columns:1fr}.tbl{font-size:7px}}
 @media print {
-  @page { size: A4 landscape; margin: 5mm; }
+  @page { size: A4 landscape !important; margin: 6mm !important; }
   .no-print { display: none !important; }
   body { background: #fff; margin: 0; padding: 0; }
-  .p { margin: 0; padding: 0; max-width: none; width: 100%; zoom: 0.82; }
+  .p { margin: 0; padding: 0; max-width: none; width: 100%; zoom: 0.88; }
   .top { display: grid !important; }
-  .f select { appearance: none; }
+  .f select { appearance: none; -webkit-appearance: none; }
   .pv:not(.hidden) { display: flex !important; }
-  html, body { height: 100%; overflow: hidden; }
-}</style>
+  .head, .sec, .sig { break-inside: avoid !important; page-break-inside: avoid !important; }
+}
+</style>
 <style id="global-print-fix">
 @media print {
     input::-webkit-input-placeholder, 
@@ -25,82 +63,486 @@
         background-image: none !important;
         background-color: transparent !important;
         border: none !important;
+        border-bottom: 1px dotted #000 !important;
     }
-    /* Specifically for bottom-border selects if they were styled */
-    select { border-bottom: 1px dotted #000 !important; }
-    /* Some selects have border: 0 */
     .tbl select { border: 0 !important; border-bottom: 0 !important; }
 }
 </style>
-</head><body><main class="p"><div class="tools no-print" style="display:flex;justify-content:flex-end;gap:8px;align-items:center"><button class="btn" style="background:#059669" onclick="addRow()">+ Add Row</button><button class="btn" style="background:#dc2626" onclick="deleteRow()">− Delete Row</button><button class="btn" onclick="print()">Print / Simpan PDF</button></div><header class="head"><div class="top"><div class="co">PT MENTARI MAS MULTIMODA</div><div class="ttl">039<br>CREW LIST</div><div class="st"><div class="code"><span>S</span><span>SET</span></div><div>Release:&nbsp;&nbsp; Rev.0:</div></div></div><div class="ship"><label class="f">Nama Kapal / Name of Vessel:<select class="ship-select" id="ship_name"><option value=""></option><option>Express Mas</option><option>Mavendra Mas</option><option>Prakarsa Mas</option><option>Pratama Mas</option><option>Sahabat Mas</option><option>Segoro Mas</option><option>Selaras Mas</option><option>Semangat Mas</option></select></label></div><div class="grid"><label class="f">Flag / Bendera:<input></label><label class="f">Voy. No.:<input></label><label class="f">Master Name:<input></label><label class="f">Callsign / Tanda Panggilan:<input></label><label class="f">Agent Details:<input></label><label class="f">Owner / Operator:<input></label><label class="f">GRT / NRT:<input></label><label class="f">Agent PIC Name:<input></label><label class="f">Charterer:<input></label><label class="f">Arrival Date / Tanggal Tiba:<input></label><label class="f">Agent Contact No:<input></label><label class="f">Ship Type / Tipe Kapal:<input></label><label class="f">Dep Date / Tgl Berangkat:<input></label><label class="f">Email of ship:<input></label><label class="f">Port of:<input></label><label class="f">Last Port of Call / Pel Asal:<input></label><label class="f">Next Port of Call / Pel Tujuan:<input></label></div></header><section class="sec"><h3>DAFTAR KRU / CREW LIST</h3><div style="overflow-x:auto"><table class="tbl" style="table-layout:fixed"><thead><tr><th class="num" style="width:24px">No.</th><th style="width:160px">Name / Nama</th><th style="width:100px">Sex</th><th style="width:72px">Rank / Jabatan</th><th style="width:72px">Date Of Birth / Tanggal Lahir</th><th style="width:72px">Date of Sign On / Tanggal Naik Kapal</th><th style="width:62px">Nationality / Kebangsaan</th><th style="width:100px">No. of C.O.C / No. Ijazah</th><th style="width:72px">Endorsement Expired / Masa berlaku pengukuhan</th><th style="width:62px">Mustered No. / No. Sijil</th><th style="width:110px">Agreement No. / No. PKL</th><th style="width:70px">Seamen's Book / Buku Pelaut No.</th><th style="width:70px">Travel Document / Paspor No.</th></tr></thead><tbody><tr><td class="num">1</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">2</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">3</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">4</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">5</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">6</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">7</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">8</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">9</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">10</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">11</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">12</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">13</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">14</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">15</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">16</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">17</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">18</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">19</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr><tr><td class="num">20</td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td><td><input style="width:100%;border:0;background:transparent;outline:none"></td></tr></tbody></table></div></section><section class="sig"><b>I Certify that the above information is to the best of my knowledge and belief, true in every particular / Saya menjamin bahwa informasi tersebut di atas adalah benar dan sesuai dengan data yang valid di atas kapal</b><div class="space"><label class="btn no-print">+ Add TTD<input id="sigup1" class="hidden" type="file" accept="image/*"></label><div id="pv1" class="pv hidden"><img><button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button></div></div><input class="nm"><div class="grid"><label class="f">Owners/Master/Agent/Charterer:<input></label><label class="f">Date this / Tanggal dibuat:<input class="date" placeholder="DD-MM-YYYY"></label><label class="f wide">Name & Sign / Nama & Tanda Tangan:<input></label></div></div></section></main><script>function clearSig(pv,up){const box=document.getElementById(pv);const btn=document.getElementById(up);box.querySelector('img').src='';btn.value='';box.classList.add('hidden');box.style.display='none';btn.parentElement.classList.remove('hidden')};document.querySelectorAll('.date').forEach(x=>x.oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);if(v.length>2)v=v.slice(0,2)+'-'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5);e.target.value=v});const initSig=(up,pv)=>{const btn=document.getElementById(up);const box=document.getElementById(pv);btn.onchange=e=>{let f=e.target.files[0];if(!f)return;let rd=new FileReader;rd.onload=z=>{box.querySelector('img').src=z.target.result;btn.parentElement.classList.add('hidden');box.classList.remove('hidden');box.style.display='flex'};rd.readAsDataURL(f)}};initSig('sigup1','pv1');  // Print title: base + vessel + report month (from form fields)
-  (function(){try{
-    var base=document.title;
-    function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
-    function findVessel(){
-      var d=document.querySelector('input.vessel,select.vessel');
-      if(d)return d;
-      var els=document.querySelectorAll('label.f,label.field');
-      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
-        if(/vessel|kapal|nama kapal|ship'?s? name|name of vessel/.test(t)){
-          var inp=els[i].querySelector('input,select');if(inp)return inp}}
-      return null}
-    function findDate(){
-      var d=document.querySelector('input.date');
-      if(d)return d;
-      var els=document.querySelectorAll('label.f,label.field');
-      for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
-        if(/date|tanggal/.test(t)){
-          var inp=els[i].querySelector('input');if(inp)return inp}}
-      return null}
-    function monthName(mm){return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][mm-1]||''}
-    function updateTitle(){
-      var v=findVessel(),d=findDate();
-      var vs=v?esc(v.value):'';var ds=d?esc(d.value):'';
-      var t=base;
-      if(vs)t+=' - '+vs;
-      if(ds){var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/);
-        if(m){var mo=parseInt(m[2],10),yr=m[3];
-          if(mo>=1&&mo<=12)t+=' - '+monthName(mo)+' '+yr}else t+=' - '+ds}
-      document.title=t;
-      window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}
-    var v=findVessel(),d=findDate();
-    if(v){v.addEventListener('change',updateTitle);v.addEventListener('input',updateTitle)}
-    if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
-    updateTitle();
-  }catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+</head><body><main class="p"><div class="tools no-print"><span id="save-status" style="font-size:12px;font-weight:bold;margin-right:auto;color:#059669;"></span><button class="btn" style="background:#059669" onclick="addRow()">+ Add Row</button><button class="btn" style="background:#dc2626" onclick="deleteRow()">− Delete Row</button><button class="btn" id="btn-save" style="background:#2563eb" onclick="aksiSimpanData()">💾 Simpan Data</button><button class="btn" id="btn-print" onclick="aksiSimpanDanCetak()">Print / Simpan PDF</button></div><header class="head"><div class="top"><div class="co">PT MENTARI MAS MULTIMODA</div><div class="ttl">039<br>CREW LIST</div><div class="st"><div class="code"><span>S</span><span>SET</span></div><div>Release:&nbsp;&nbsp; Rev.0:</div></div></div><div class="grid"><label class="f">Nama Kapal / Name of Vessel:<select class="ship-select" id="ship_name"><option value="">Pilih Kapal</option><option>Express Mas</option><option>Mavendra Mas</option><option>Prakarsa Mas</option><option>Pratama Mas</option><option>Sahabat Mas</option><option>Segoro Mas</option><option>Selaras Mas</option><option>Semangat Mas</option></select></label><label class="f">Voy. No.:<input id="voy_no"></label><label class="f">Master Name:<input id="master_name"></label><label class="f">Flag / Bendera:<input id="flag"></label><label class="f">Agent Details:<input id="agent_details"></label><label class="f">Owner / Operator:<input id="owner_operator"></label><label class="f">Callsign / Tanda Panggilan:<input id="callsign"></label><label class="f">Agent PIC Name:<input id="agent_pic_name"></label><label class="f">Charterer:<input id="charterer"></label><label class="f">GRT / NRT:<input id="grt_nrt"></label><label class="f">Agent Contact No:<input id="agent_contact_no"></label><label class="f">Ship Type / Tipe Kapal:<input id="ship_type"></label><label class="f">Arrival Date / Tanggal Tiba:<input id="arrival_date"></label><label class="f">Email of ship:<input id="email_ship"></label><label class="f">Port of:<input id="port_of"></label><label class="f">Dep Date / Tgl Berangkat:<input id="dep_date"></label><label class="f">Last Port of Call / Pel Asal:<input id="last_port"></label><label class="f">Next Port of Call / Pel Tujuan:<input id="next_port"></label></div></header><section class="sec"><h3>DAFTAR KRU / CREW LIST</h3><div style="overflow-x:auto"><table class="tbl" style="table-layout:fixed"><thead><tr><th class="num" style="width:24px">No.</th><th style="width:160px">Name / Nama</th><th style="width:100px">Sex</th><th style="width:85px">Rank / Jabatan</th><th style="width:72px">Date Of Birth / Tanggal Lahir</th><th style="width:72px">Date of Sign On / Tanggal Naik Kapal</th><th style="width:62px">Nationality / Kebangsaan</th><th style="width:100px">No. of C.O.C / No. Ijazah</th><th style="width:72px">Endorsement Expired / Masa berlaku pengukuhan</th><th style="width:62px">Mustered No. / No. Sijil</th><th style="width:110px">Agreement No. / No. PKL</th><th style="width:70px">Seamen's Book / Buku Pelaut No.</th><th style="width:70px">Travel Document / Paspor No.</th></tr></thead><tbody id="crew_tbody"></tbody></table></div></section><section class="sig"><b>I Certify that the above information is to the best of my knowledge and belief, true in every particular / Saya menjamin bahwa informasi tersebut di atas adalah benar dan sesuai dengan data yang valid di atas kapal</b><div class="space"><label class="btn no-print">+ Add TTD<input id="sigup1" class="hidden" type="file" accept="image/*"></label><div id="pv1" class="pv hidden"><img id="sig_img"><button class="x no-print" onclick="clearSig('pv1','sigup1')">×</button></div></div><input class="nm" id="sig_master_name" placeholder="Name of Master"><div class="grid"><label class="f">Owners/Master/Agent/Charterer:<input id="sig_party"></label><label class="f">Date this / Tanggal dibuat:<input class="date" id="sig_date" placeholder="DD-MM-YYYY"></label><label class="f">Name & Sign / Nama & Tanda Tangan:<input id="sig_name_sign"></label></div></section></main><script>
+// === SUPABASE CONFIG ===
+let SUPA_URL = "https://api.voyageportal.my.id";
+let SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg3MzE3NTA0LCJleHAiOjE5NDQ5OTc1MDR9.cXE6tehX2nRVZgNcoKR6vaN5KFgrrcxFuTOxWhjrdgI";
+const FORM_CODE = "039";
 
-function addRow(){
-  var tbl = document.querySelector('.tbl tbody');
-  if(!tbl) return;
-  var cols = document.querySelector('.tbl thead tr').children.length;
-  var n = tbl.querySelectorAll('tr').length + 1;
+async function supa(method, table, params, body) {
+  let url = `${SUPA_URL}/rest/v1/${table}`;
+  if (params) url += '?' + new URLSearchParams(params).toString();
+  const res = await fetch(url, {
+    method,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(txt);
+  }
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : [];
+}
+
+const HEADER_FIELDS = [
+  'flag', 'voy_no', 'master_name', 'callsign', 'agent_details',
+  'owner_operator', 'grt_nrt', 'agent_pic_name', 'charterer',
+  'arrival_date', 'agent_contact_no', 'ship_type', 'dep_date',
+  'email_ship', 'port_of', 'last_port', 'next_port'
+];
+
+const FOOTER_FIELDS = [
+  'sig_master_name', 'sig_party', 'sig_date', 'sig_name_sign'
+];
+
+function clearSig(pv, up) {
+  const box = document.getElementById(pv);
+  const btn = document.getElementById(up);
+  if (box) {
+    const img = box.querySelector('img');
+    if (img) img.src = '';
+    box.classList.add('hidden');
+    box.style.display = 'none';
+  }
+  if (btn) {
+    btn.value = '';
+    if (btn.parentElement) btn.parentElement.classList.remove('hidden');
+  }
+}
+
+document.querySelectorAll('.date').forEach(x => x.oninput = e => {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+  if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+  if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+  e.target.value = v;
+});
+
+const initSig = (up, pv) => {
+  const btn = document.getElementById(up);
+  const box = document.getElementById(pv);
+  if (!btn || !box) return;
+  btn.onchange = e => {
+    let f = e.target.files[0];
+    if (!f) return;
+    let rd = new FileReader();
+    rd.onload = z => {
+      box.querySelector('img').src = z.target.result;
+      btn.parentElement.classList.add('hidden');
+      box.classList.remove('hidden');
+      box.style.display = 'flex';
+    };
+    rd.readAsDataURL(f);
+  };
+};
+initSig('sigup1', 'pv1');
+
+// Master name auto-sync with signature
+const masterNameInput = document.getElementById('master_name');
+const sigMasterNameInput = document.getElementById('sig_master_name');
+if (masterNameInput && sigMasterNameInput) {
+  masterNameInput.addEventListener('input', () => {
+    if (!sigMasterNameInput.dataset.manual) {
+      sigMasterNameInput.value = masterNameInput.value;
+    }
+  });
+  sigMasterNameInput.addEventListener('input', () => {
+    sigMasterNameInput.dataset.manual = 'true';
+  });
+}
+
+function createRow(rowData, num) {
   var tr = document.createElement('tr');
   var td0 = document.createElement('td');
-  td0.className='num';
-  td0.textContent=n;
+  td0.className = 'num';
+  td0.textContent = num;
   tr.appendChild(td0);
-  for(var i=1;i<cols;i++){
-    var td=document.createElement('td');
-    td.innerHTML='<input style="width:100%;border:0;background:transparent;outline:none">';
+  
+  var d = rowData || {};
+  var values = [
+    d.name || d.col0 || d.col1 || '',
+    d.sex || d.col1 || d.col2 || '',
+    d.rank || d.col2 || d.col3 || '',
+    d.dob || d.col3 || d.col4 || '',
+    d.sign_on || d.col4 || d.col5 || '',
+    d.nationality || d.col5 || d.col6 || '',
+    d.coc_no || d.col6 || d.col7 || '',
+    d.endorsement_expired || d.col7 || d.col8 || '',
+    d.mustered_no || d.col8 || d.col9 || '',
+    d.agreement_no || d.col9 || d.col10 || '',
+    d.seamen_book || d.col10 || d.col11 || '',
+    d.travel_doc || d.col11 || d.col12 || ''
+  ];
+  
+  for (var i = 0; i < 12; i++) {
+    var td = document.createElement('td');
+    var inp = document.createElement('input');
+    inp.style.width = '100%';
+    inp.style.border = '0';
+    inp.style.background = 'transparent';
+    inp.style.outline = 'none';
+    inp.style.fontSize = '11px';
+    inp.style.padding = '0 1px';
+    inp.style.height = '19px';
+    if (i === 0) inp.style.textAlign = 'left';
+    inp.value = values[i];
+    td.appendChild(inp);
     tr.appendChild(td);
   }
-  // opsional: tombol hapus row di hover
-  tr.title='Klik 2x untuk hapus baris';
-  tr.ondblclick=function(){
-    if(confirm('Hapus baris '+n+'?')){ tr.remove(); // renumber
-      document.querySelectorAll('.tbl tbody tr').forEach(function(r,idx){ r.children[0].textContent=idx+1; });
+  
+  tr.title = 'Klik 2x untuk hapus baris';
+  tr.ondblclick = function() {
+    if (confirm('Hapus baris ' + td0.textContent + '?')) {
+      tr.remove();
+      renumberRows();
     }
   };
-  tbl.appendChild(tr);
+  return tr;
 }
 
-function deleteRow(){
-  var tbody = document.querySelector('.tbl tbody');
-  if(!tbody) return;
-  var rows = tbody.querySelectorAll('tr');
-  if(rows.length<=1){ alert('Minimal 1 baris harus ada'); return; }
-  // hapus baris terakhir
-  rows[rows.length-1].remove();
-  // renumber not needed - last removed keeps 1..n
+function renumberRows() {
+  document.querySelectorAll('.tbl tbody tr').forEach(function(r, idx) {
+    r.children[0].textContent = idx + 1;
+  });
 }
+
+function addRow(data) {
+  var tbody = document.querySelector('.tbl tbody');
+  if (!tbody) return;
+  var n = tbody.querySelectorAll('tr').length + 1;
+  tbody.appendChild(createRow(data || {}, n));
+}
+
+function deleteRow() {
+  var tbody = document.querySelector('.tbl tbody');
+  if (!tbody) return;
+  var rows = tbody.querySelectorAll('tr');
+  if (rows.length <= 1) {
+    alert('Minimal 1 baris harus ada');
+    return;
+  }
+  rows[rows.length - 1].remove();
+}
+
+function initBlankRows(count) {
+  var tbody = document.querySelector('.tbl tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  for (var i = 1; i <= (count || 20); i++) {
+    tbody.appendChild(createRow({}, i));
+  }
+}
+
+function getFormData() {
+  var d = {};
+  HEADER_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    d[id] = el ? el.value : '';
+  });
+  FOOTER_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    d[id] = el ? el.value : '';
+  });
+  var rows = [];
+  document.querySelectorAll('.tbl tbody tr').forEach(function(tr) {
+    var inp = tr.querySelectorAll('input');
+    rows.push({
+      name: inp[0]?.value || '',
+      sex: inp[1]?.value || '',
+      rank: inp[2]?.value || '',
+      dob: inp[3]?.value || '',
+      sign_on: inp[4]?.value || '',
+      nationality: inp[5]?.value || '',
+      coc_no: inp[6]?.value || '',
+      endorsement_expired: inp[7]?.value || '',
+      mustered_no: inp[8]?.value || '',
+      agreement_no: inp[9]?.value || '',
+      seamen_book: inp[10]?.value || '',
+      travel_doc: inp[11]?.value || ''
+    });
+  });
+  d.rows = rows;
+  
+  var pv = document.getElementById('pv1');
+  var img = document.getElementById('sig_img');
+  if (pv && !pv.classList.contains('hidden') && img && img.src && img.src.startsWith('data:')) {
+    d.signature_image = img.src;
+  } else {
+    d.signature_image = '';
+  }
+  return d;
+}
+
+function populateForm(fd) {
+  if (!fd) return;
+  HEADER_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && fd[id] !== undefined) el.value = fd[id];
+  });
+  FOOTER_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && fd[id] !== undefined) el.value = fd[id];
+  });
+  
+  if (fd.signature_image) {
+    var box = document.getElementById('pv1');
+    var btn = document.getElementById('sigup1');
+    var img = document.getElementById('sig_img');
+    if (box && btn && img) {
+      img.src = fd.signature_image;
+      btn.parentElement.classList.add('hidden');
+      box.classList.remove('hidden');
+      box.style.display = 'flex';
+    }
+  } else {
+    clearSig('pv1', 'sigup1');
+  }
+
+  var tbody = document.querySelector('.tbl tbody');
+  if (tbody) {
+    tbody.innerHTML = '';
+    if (fd.rows && fd.rows.length > 0) {
+      fd.rows.forEach(function(r, idx) {
+        tbody.appendChild(createRow(r, idx + 1));
+      });
+      var cur = tbody.querySelectorAll('tr').length;
+      for (var i = cur + 1; i <= 20; i++) {
+        tbody.appendChild(createRow({}, i));
+      }
+    } else {
+      initBlankRows(20);
+    }
+  }
+}
+
+function clearForm() {
+  HEADER_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  FOOTER_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  clearSig('pv1', 'sigup1');
+  initBlankRows(20);
+}
+
+async function loadFromSupabase() {
+  var sel = document.getElementById('ship_name');
+  var vesselName = sel ? sel.value : '';
+  if (!vesselName) {
+    clearForm();
+    return;
+  }
+  
+  var statusEl = document.getElementById('save-status');
+  if (statusEl) statusEl.textContent = '⏳ Memuat data kapal...';
+
+  try {
+    var rows = await supa('GET', 'smk_form_data', {
+      'vessel_name': 'eq.' + vesselName,
+      'form_code': 'eq.' + FORM_CODE,
+      'select': 'form_data',
+      'limit': 1
+    });
+    
+    if (rows && rows.length > 0 && rows[0].form_data) {
+      populateForm(rows[0].form_data);
+      if (statusEl) {
+        statusEl.textContent = '✅ Data termuat';
+        setTimeout(function() {
+          if (statusEl.textContent === '✅ Data termuat') statusEl.textContent = '';
+        }, 2000);
+      }
+    } else {
+      clearForm();
+      if (statusEl) statusEl.textContent = '';
+    }
+    
+    var dateEl = document.getElementById('sig_date');
+    if (dateEl) dateEl.dispatchEvent(new Event('input'));
+  } catch (err) {
+    console.error('Gagal load 039:', err);
+    if (statusEl) statusEl.textContent = '⚠️ Gagal memuat: ' + err.message;
+  }
+}
+
+async function aksiSimpanData() {
+  var sel = document.getElementById('ship_name');
+  var vesselName = sel ? sel.value : '';
+  if (!vesselName) {
+    alert('Pilih Nama Kapal terlebih dahulu sebelum menyimpan data!');
+    return false;
+  }
+
+  var btn = document.getElementById('btn-save');
+  var originalHtml = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML = '⏳ Menyimpan...'; btn.disabled = true; }
+  
+  var statusEl = document.getElementById('save-status');
+  if (statusEl) statusEl.textContent = '⏳ Menyimpan ke database...';
+
+  try {
+    var formData = getFormData();
+    await supa('POST', 'smk_form_data', null, {
+      vessel_name: vesselName,
+      form_code: FORM_CODE,
+      form_data: formData,
+      updated_at: new Date().toISOString()
+    });
+
+    if (btn) { btn.innerHTML = '✅ Tersimpan!'; }
+    if (statusEl) statusEl.textContent = '✅ Data berhasil disimpan!';
+    setTimeout(function() {
+      if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+      if (statusEl && statusEl.textContent === '✅ Data berhasil disimpan!') statusEl.textContent = '';
+    }, 2500);
+    return true;
+  } catch (err) {
+    console.error('Gagal simpan 039:', err);
+    alert('Gagal menyimpan ke database: ' + err.message);
+    if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+    if (statusEl) statusEl.textContent = '❌ Gagal simpan';
+    return false;
+  }
+}
+
+async function aksiSimpanDanCetak() {
+  var sel = document.getElementById('ship_name');
+  var vesselName = sel ? sel.value : '';
+  if (!vesselName) {
+    alert('Pilih Nama Kapal terlebih dahulu sebelum Print/Simpan!');
+    return;
+  }
+
+  var btn = document.getElementById('btn-print');
+  var originalHtml = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML = '⏳ Menyimpan...'; btn.disabled = true; }
+
+  try {
+    var formData = getFormData();
+    if (SUPA_URL && SUPA_KEY) {
+      await supa('POST', 'smk_form_data', null, {
+        vessel_name: vesselName,
+        form_code: FORM_CODE,
+        form_data: formData,
+        updated_at: new Date().toISOString()
+      });
+    }
+    
+    if (btn) btn.innerHTML = '✅ Berhasil! Membuat PDF...';
+    setTimeout(function() {
+      if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+      var dateEl = document.getElementById('sig_date');
+      var dateVal = dateEl ? dateEl.value : '';
+      window.parent.postMessage({
+        type: 'SMK_SAVE_PDF',
+        name: document.title,
+        ship: vesselName,
+        date: dateVal,
+        formCode: FORM_CODE,
+        formTitle: document.title
+      }, '*');
+      if (window.parent === window) window.print();
+    }, 500);
+  } catch (err) {
+    console.error('Gagal simpan 039:', err);
+    alert('Peringatan: Gagal menyimpan data ke database (' + err.message + '). PDF tetap akan dibuat.');
+    if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+    var dateEl = document.getElementById('sig_date');
+    var dateVal = dateEl ? dateEl.value : '';
+    window.parent.postMessage({
+      type: 'SMK_SAVE_PDF',
+      name: document.title,
+      ship: vesselName,
+      date: dateVal,
+      formCode: FORM_CODE,
+      formTitle: document.title
+    }, '*');
+    if (window.parent === window) window.print();
+  }
+}
+window.savePDF = aksiSimpanDanCetak;
+
+// === TITLE & PARENT SYNC ===
+(function(){try{
+  var base=document.title;
+  function esc(s){return (s||'').replace(/\s+/g,' ').trim()}
+  function findVessel(){
+    var d=document.querySelector('select#ship_name,select.ship-select');
+    if(d)return d;
+    var els=document.querySelectorAll('label.f,label.field');
+    for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+      if(/vessel|kapal|nama kapal|ship'?s? name|name of vessel/.test(t)){
+        var inp=els[i].querySelector('input,select');if(inp)return inp}}
+    return null}
+  function findDate(){
+    var d=document.getElementById('sig_date')||document.querySelector('input.date');
+    if(d)return d;
+    var els=document.querySelectorAll('label.f,label.field');
+    for(var i=0;i<els.length;i++){var t=(els[i].textContent||'').toLowerCase();
+      if(/date|tanggal/.test(t)){
+        var inp=els[i].querySelector('input');if(inp)return inp}}
+    return null}
+  function monthName(mm){return ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][mm-1]||''}
+  function updateTitle(){
+    var v=findVessel(),d=findDate();
+    var vs=v?esc(v.value):'';var ds=d?esc(d.value):'';
+    var t=base;
+    if(vs)t+=' - '+vs;
+    if(ds){var m=ds.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      if(m){var mo=parseInt(m[2],10),yr=m[3];
+        if(mo>=1&&mo<=12)t+=' - '+monthName(mo)+' '+yr}else t+=' - '+ds}
+    document.title=t;
+    window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:t},'*')}
+  var v=findVessel(),d=findDate();
+  if(v){v.addEventListener('change',updateTitle);v.addEventListener('input',updateTitle)}
+  if(d){d.addEventListener('change',updateTitle);d.addEventListener('input',updateTitle)}
+  updateTitle();
+}catch(e){window.parent&&window.parent.postMessage({type:'FORM_TITLE',title:document.title},'*')}})();
+
+// === INIT LISTENERS ===
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'INIT_FORM') {
+    if (e.data.supabaseUrl) SUPA_URL = e.data.supabaseUrl;
+    if (e.data.supabaseKey) SUPA_KEY = e.data.supabaseKey;
+
+    var sel = document.getElementById('ship_name');
+    if (sel && e.data.vessel) {
+      var vLower = String(e.data.vessel).toLowerCase().replace(/_/g, ' ');
+      Array.from(sel.options).forEach(function(opt) {
+        if (opt.value.toLowerCase().replace(/_/g, ' ') === vLower) {
+          sel.value = opt.value;
+        }
+      });
+    }
+    if (sel && e.data.locked) {
+      sel.disabled = true;
+    }
+    if (sel && sel.value) {
+      loadFromSupabase();
+    }
+  }
+});
+
+var shipSelectEl = document.getElementById('ship_name');
+if (shipSelectEl) {
+  shipSelectEl.addEventListener('change', function() {
+    loadFromSupabase();
+  });
+}
+
+// Initial 20 rows
+initBlankRows(20);
 </script></body></html>

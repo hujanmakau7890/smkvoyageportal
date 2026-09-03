@@ -123,9 +123,11 @@
       gap: 4px;
       white-space: nowrap;
     }
-    .info-grid .item label {
+    .info-grid .item > label:first-child {
       font-weight: bold;
       min-width: 80px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
     .info-grid .item input {
       flex: 1;
@@ -145,6 +147,44 @@
     .info-grid .item .inline-label {
       font-weight: normal;
       margin: 0 2px;
+    }
+    .info-grid .item.item-radio {
+      grid-column: span 2;
+      align-items: center;
+    }
+    .info-grid .item .radio-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+    .info-grid .item .radio-opt {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: normal !important;
+      min-width: auto !important;
+      width: auto !important;
+      flex: none !important;
+      white-space: nowrap;
+      user-select: none;
+      line-height: 1;
+    }
+    .info-grid .item input[type="radio"] {
+      flex: none !important;
+      min-width: auto !important;
+      width: 13px !important;
+      height: 13px !important;
+      border: initial !important;
+      border-bottom: none !important;
+      background: initial !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      cursor: pointer;
+      vertical-align: middle;
     }
     /* Perbaikan untuk baris Brand/Type agar tidak overflow */
     .info-grid .oil-row {
@@ -345,8 +385,37 @@
       .info-grid .item input {
         font-size: 8.5px;
       }
-      .info-grid .item label {
+      .info-grid .item > label:first-child {
         min-width: 60px;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+      .info-grid .item.item-radio {
+        grid-column: span 2;
+      }
+      .info-grid .item .radio-wrap {
+        gap: 10px;
+        margin-left: 4px;
+        flex-shrink: 0;
+      }
+      .info-grid .item .radio-opt {
+        font-size: 8px !important;
+        font-weight: normal !important;
+        min-width: auto !important;
+        width: auto !important;
+        gap: 3px !important;
+      }
+      .info-grid .item input[type="radio"] {
+        flex: none !important;
+        min-width: auto !important;
+        width: 10px !important;
+        height: 10px !important;
+        border: initial !important;
+        border-bottom: none !important;
+        background: initial !important;
+        margin: 0 !important;
+        appearance: auto !important;
+        -webkit-appearance: radio !important;
       }
       .info-grid .oil-row .oil-item label {
         font-size: 8px;
@@ -425,6 +494,11 @@
       .st { align-items: center; padding-right: 0; }
       .siggrid { grid-template-columns: 1fr; }
       .info-grid { grid-template-columns: 1fr; }
+      .info-grid .item.item-radio {
+        grid-column: 1 / -1;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+      }
       .tbl { font-size: 7px; }
       .f { font-size: 9px; flex-wrap: wrap; }
     }
@@ -477,7 +551,7 @@
 <div class="container">
   <!-- tools -->
   <div class="tools no-print">
-    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+    <button class="btn" onclick="formatAllDegC(); window.print()">🖨️ Print / Simpan PDF</button>
   </div>
 
   <!-- HEADER -->
@@ -542,7 +616,7 @@
       <div class="item"><label>TC Maker:</label><input></div>
       <div class="item"><label>TC Type :</label><input></div>
       <div class="item"><label>Max RPM :</label><input></div>
-      <div class="item"><label>Max Temp. (°C) :</label><input></div>
+      <div class="item"><label>Max Temp. (°C) :</label><input class="deg-c" inputmode="decimal"></div>
       <div class="item"><label>TC units :</label><input></div>
       <div class="item"><label>Serial no TC 1 :</label><input></div>
       <div class="item"><label>Serial no TC 2 :</label><input></div>
@@ -555,7 +629,12 @@
   <section class="sec">
     <h3>General Information</h3>
     <div class="info-grid">
-      <div class="item"><label>Lub Oil sys. (tick box) :</label><input placeholder="✓ jika ya"></div>
+      <div class="item item-radio"><label>Lub Oil Analys. (tick box) :</label>
+        <div class="radio-wrap">
+          <label class="radio-opt"><input type="radio" name="lub_oil_analys" value="Yes"> Yes</label>
+          <label class="radio-opt"><input type="radio" name="lub_oil_analys" value="No"> No</label>
+        </div>
+      </div>
       <div class="item"><label>Bunker Station :</label><input></div>
       <div class="item"><label>Fuel Oil Viscosity :</label><input></div>
       <div class="item"><label>at :</label><input style="flex:0.5;"> <span class="inline-label">°C</span></div>
@@ -635,15 +714,15 @@
         <tbody>
           <tr>
             <td><strong>Exhaust Gas Temperature (°C)</strong></td>
-            <td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td>
+            <td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td>
           </tr>
           <tr>
             <td><strong>Cooling Water Temperature (°C)</strong></td>
-            <td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td>
+            <td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td>
           </tr>
           <tr>
             <td><strong>Lubricating Oil Temperature (°C)</strong></td>
-            <td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td>
+            <td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td><td><input class="deg-c" inputmode="decimal"></td>
           </tr>
         </tbody>
       </table>
@@ -789,6 +868,93 @@
     if (date) date.addEventListener('input', updateTitle);
     updateTitle();
   })();
+
+  // === Temperature °C auto-formatting ===
+  function formatDegC(val) {
+    if (val === null || val === undefined || val === '') return '';
+    val = String(val).trim();
+    if (val === '') return '';
+    if (!/\d/.test(val)) return val;
+    var clean = val.replace(/\s*(?:deg\.?|derajat)?\s*°?\s*c$/i, '').trim();
+    clean = clean.replace(/°$/, '').trim();
+    if (!clean || !/\d/.test(clean)) return val;
+    return clean + '°C';
+  }
+
+  function stripDegC(val) {
+    if (val === null || val === undefined || val === '') return '';
+    val = String(val);
+    if (!/\d/.test(val)) return val;
+    var raw = val.replace(/\s*(?:deg\.?|derajat)?\s*°?\s*c$/i, '').replace(/°$/, '').trim();
+    return (raw && /\d/.test(raw)) ? raw : val;
+  }
+
+  function formatAllDegC() {
+    document.querySelectorAll('input.deg-c').forEach(function(inp) {
+      if (inp.value) {
+        inp.value = formatDegC(inp.value);
+      }
+    });
+  }
+
+  document.addEventListener('focusin', function(e) {
+    if (e.target && e.target.classList && e.target.classList.contains('deg-c')) {
+      var raw = stripDegC(e.target.value);
+      if (raw !== e.target.value) {
+        e.target.value = raw;
+      }
+      setTimeout(function() {
+        if (document.activeElement === e.target) {
+          e.target.select();
+        }
+      }, 0);
+    }
+  });
+
+  document.addEventListener('focusout', function(e) {
+    if (e.target && e.target.classList && e.target.classList.contains('deg-c')) {
+      e.target.value = formatDegC(e.target.value);
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('deg-c')) {
+      e.target.blur();
+    }
+  });
+
+  window.addEventListener('beforeprint', formatAllDegC);
+
+  // === Toggleable Radio Buttons (click to uncheck) ===
+  function initToggleableRadios() {
+    document.querySelectorAll('label.radio-opt').forEach(function(lbl) {
+      var r = lbl.querySelector('input[type="radio"]');
+      if (!r) return;
+      lbl.addEventListener('pointerdown', function() {
+        r.dataset.wasChecked = r.checked ? '1' : '0';
+      });
+      lbl.addEventListener('click', function(e) {
+        if (r.dataset.wasChecked === '1') {
+          e.preventDefault();
+          r.checked = false;
+          r.dataset.wasChecked = '0';
+        }
+      });
+    });
+
+    document.querySelectorAll('input[type="radio"]').forEach(function(r) {
+      r.addEventListener('pointerdown', function() {
+        r.dataset.wasChecked = r.checked ? '1' : '0';
+      });
+      r.addEventListener('click', function(e) {
+        if (r.dataset.wasChecked === '1') {
+          r.checked = false;
+          r.dataset.wasChecked = '0';
+        }
+      });
+    });
+  }
+  initToggleableRadios();
 
   // === Hide placeholder text when printing (for select) ===
   (function() {

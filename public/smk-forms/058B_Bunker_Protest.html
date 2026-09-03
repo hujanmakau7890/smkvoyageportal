@@ -46,7 +46,10 @@
   .closing{display:flex;justify-content:space-between;gap:24px;margin-top:22px}
   .closing>div{flex:1;text-align:center}
   .closing .lbl{font-size:11px;font-weight:700}
-  .sig-space{height:70px;border-bottom:1px solid #000;display:flex;align-items:center;justify-content:center;position:relative;margin:8px 0 4px}
+  .sig-space{height:70px;border:0;display:flex;align-items:center;justify-content:center;position:relative;margin:8px 0 4px}
+  .sig-name{font-size:10px;font-weight:700;margin-top:4px}
+  .sig-name input{width:90%;border:0;border-bottom:1px solid #000;text-align:center;font-size:10px;font-weight:700;background:transparent}
+  @media print{ .sig-name input{border-bottom:1px solid #000} }
   .sig-space .add{font-size:10px;padding:4px 8px;border-radius:4px}
   .sig-preview{display:none;width:100%;height:100%;align-items:center;justify-content:center;position:relative}
   .sig-preview img{max-width:100%;max-height:62px;object-fit:contain}
@@ -129,15 +132,15 @@
     <div>
       <div class="lbl">Dengan hormat,<br>Yours faithfully,</div>
       <div class="sig-space"><label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div>
-      <div style="font-size:10px;font-weight:700">(Name of Master of Vessel &amp; Stamps)</div>
+      <div class="sig-name"><input type="text" placeholder="Name of Master of Vessel & Stamps"></div>
       <div class="note-small">Catatan &amp; Lampiran (note &amp; attach)</div>
     </div>
     <div>
       <div class="lbl">Mengetahui,<br>Acknowledge Received,</div>
       <div class="sig-space"><label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div>
-      <div style="font-size:10px;font-weight:700">(Name &amp; signature of Master/Cargo officer Bunker Tanker &amp; Stamps)</div>
+      <div class="sig-name"><input type="text" placeholder="Name & signature of Master/Cargo officer Bunker Tanker & Stamps"></div>
       <div style="margin-top:14px" class="sig-space"><label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label><div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div></div>
-      <div style="font-size:10px;font-weight:700">(Name, signature &amp; stamp of Surveyor)</div>
+      <div class="sig-name"><input type="text" placeholder="Name, signature & stamp of Surveyor"></div>
     </div>
   </div>
 

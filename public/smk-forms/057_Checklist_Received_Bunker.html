@@ -43,13 +43,15 @@
   .sigs{display:flex;justify-content:space-between;gap:16px;margin-top:22px;text-align:center}
   .sig{flex:1}
   .sig-title{font-size:11px;font-weight:700;margin-bottom:6px}
-  .sig-space{height:70px;border-bottom:1px solid #000;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:4px}
+  .sig-space{height:70px;border:0;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:4px}
   .sig-space .add{font-size:10px;padding:4px 8px;border-radius:4px}
   .sig-preview{display:none;width:100%;height:100%;align-items:center;justify-content:center;position:relative}
   .sig-preview img{max-width:100%;max-height:62px;object-fit:contain}
   .sig-preview .remove{position:absolute;right:2px;top:2px;width:18px;height:18px;border:0;border-radius:50%;background:#dc2626;color:#fff;font-weight:700;cursor:pointer}
   .hidden{display:none!important}
   .sig-name{font-size:11px;font-weight:700}
+  .sig-name input{width:90%;border:0;border-bottom:1px solid #000;text-align:center;font-size:11px;font-weight:700;background:transparent}
+  @media print{ .sig-name input{border-bottom:1px solid #000} }
   .sig-role{font-size:10px;color:#374151}
   .footer{margin-top:18px;display:flex;justify-content:space-between;font-size:8px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:6px}
   @media print{
@@ -179,7 +181,7 @@
         <label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
         <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
       </div>
-      <div class="sig-name">Signed &amp; Name</div>
+      <div class="sig-name"><input type="text" placeholder="Signed & Name"></div>
     </div>
     <div class="sig">
       <div class="sig-title">Checked by Chief Engineer,</div>
@@ -187,7 +189,7 @@
         <label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
         <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
       </div>
-      <div class="sig-name">Signed &amp; Name</div>
+      <div class="sig-name"><input type="text" placeholder="Signed & Name"></div>
     </div>
     <div class="sig">
       <div class="sig-title">Knowledge by Master</div>
@@ -195,7 +197,7 @@
         <label class="btn add no-print">+ Add TTD<input type="file" class="upload hidden" accept="image/*"></label>
         <div class="sig-preview hidden"><img alt=""><button class="remove no-print" type="button">×</button></div>
       </div>
-      <div class="sig-name">Signed &amp; Name</div>
+      <div class="sig-name"><input type="text" placeholder="Signed & Name"></div>
     </div>
   </div>
 

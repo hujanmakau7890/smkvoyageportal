@@ -49,7 +49,26 @@
     .page { box-shadow: none; margin: 0; padding: 0; max-width: none; border: none; }
     input::placeholder { color: transparent !important; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    @page { size: A4 portrait; margin: 10mm; }
+    @page { size: A4 portrait; margin: 6mm 10mm; }
+    /* FIX 049: remark tabel jangan kepotong — kompakkan atas biar muat 1 halaman */
+    .head { margin-bottom: 6px !important; }
+    .head > div { padding: 4px !important; }
+    .company, .title { font-size: 11px !important; }
+    .info-table { margin-bottom: 4px !important; font-size: 10px !important; }
+    .info-table td { padding: 2px 8px !important; }
+    .info-table input[type="text"], .info-table select { font-size: 10px !important; }
+    .diagram-area { margin: 4px 0 !important; }
+    .diagram-area img { max-height: 150px !important; }
+    .tbl { margin-bottom: 4px !important; font-size: 9px !important; }
+    .tbl th, .tbl td { padding: 2px 3px !important; }
+    .tbl input[type="text"] { font-size: 9px !important; }
+    .tbl tr { break-inside: avoid !important; page-break-inside: avoid !important; }
+    .section-title { font-size: 10px !important; margin-bottom: 3px !important; }
+    div[style*="margin-bottom:5px"], div[style*="margin-bottom: 5px"] { margin-bottom: 3px !important; }
+    div[style*="margin-bottom:40px"] { margin-bottom: 10px !important; }
+    div[style*="margin-bottom: 20px"], div[style*="margin-bottom:20px"] { margin-bottom: 8px !important; }
+    .loading-cond { margin-bottom: 4px !important; }
+    .sig-space { height: 45px !important; }
   }
 </style>
 

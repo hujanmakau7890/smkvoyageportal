@@ -25,10 +25,10 @@
     .f .label { font-weight: bold; white-space: nowrap; }
     .sec h3 { font-size: 10px; margin: 0 0 4px 0; background: #eee; padding: 3px 8px; }
     .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2px 8px; font-size: 8.5px; }
-    .info-grid .item { display: flex; align-items: baseline; gap: 3px; white-space: nowrap; }
+    .info-grid .item { display: flex; align-items: baseline; gap: 3px; min-width: 0; }
     .info-grid .item label { font-weight: bold; min-width: 60px; font-size: 8.5px; }
-    .info-grid .item input { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 8.5px; min-width: 30px; }
-    .info-grid .item .suffix { font-weight: normal; margin-left: 2px; font-size: 8px; }
+    .info-grid .item input { flex: 1; border: 0; border-bottom: 1px solid #000; background: transparent; font-size: 8.5px; min-width: 0; }
+    .info-grid .item .suffix { font-weight: normal; margin-left: 2px; font-size: 8px; flex-shrink: 0; }
     .tbl { width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 7.5px; table-layout: fixed; }
     .tbl th, .tbl td { border: 1px solid #000; padding: 1px 2px; vertical-align: middle; text-align: center; }
     .tbl th { background: #f3f4f6; font-weight: bold; }
@@ -248,8 +248,8 @@
   <!-- TABEL PER SILINDER -->
   <section class="sec">
     <h3>Cylinder Data</h3>
-    <div style="overflow-x:auto;">
-      <table class="tbl" style="min-width:900px;">
+    <div style="overflow-x:auto; max-width:100%;">
+      <table class="tbl" style="min-width:0; width:100%;">
         <thead>
           <tr>
             <th style="width:100px;">Parameter</th>
@@ -267,9 +267,9 @@
   <!-- TEMPERATURES + PRESSURE MAIN ENGINE + FUEL OIL / LUBE OIL -->
   <section class="sec">
     <h3>Temperatures + Pressure of Main Engine &amp; Fuel / Lube Oil</h3>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; max-width:100%;">
       <!-- Kolom kiri: parameter mesin -->
-      <div>
+      <div style="min-width:0;">
         <div class="sub-header">Main Engine Parameters</div>
         <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
           <div class="item"><label>T water engine inlet H.T</label><input><span class="suffix">°C</span></div>
@@ -294,7 +294,7 @@
         </div>
       </div>
       <!-- Kolom kanan: Fuel Oil, Lube Oil, Running Hours, Separator, Boiler -->
-      <div>
+      <div style="min-width:0;">
         <div class="sub-header">Heavy / Light Fuel Oil</div>
         <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
           <div class="item"><label>P fuel before M/E</label><input><span class="suffix">bar</span></div>
@@ -330,8 +330,8 @@
   <!-- COOLING WATER TREATMENT + SEPARATOR -->
   <section class="sec">
     <h3>Cooling Water Treatment &amp; Separator</h3>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-      <div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; max-width:100%;">
+      <div style="min-width:0;">
         <div class="sub-header">Cooling Water Treatment</div>
         <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
           <div class="item"><label>PH (HT)</label><input></div>
@@ -346,7 +346,7 @@
           <div class="item"><label>Condensate pH</label><input></div>
         </div>
       </div>
-      <div>
+      <div style="min-width:0;">
         <div class="sub-header">Separator</div>
         <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
           <div class="item"><label>LO separator M/E</label><input><span class="suffix">h</span><input style="flex:0.5;"><span class="suffix">°C</span></div>

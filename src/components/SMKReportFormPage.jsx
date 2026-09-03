@@ -109,7 +109,7 @@ export default function SMKReportFormPage() {
           }
         });
 
-        const LANDSCAPE_FORMS = new Set(["010_Risk_Assessment.html", "018_Crew_Certificate_Monitoring.html", "091C_Record_Hours_Of_Rest.html", "091D_Weekly_Accomm_Inspection.html", "092_Loading_Cargo_Stability.html", "093D_Covid_Daily_Monitoring.html", "096B1_Crane_Maintenance_Daily.html"]);
+        const LANDSCAPE_FORMS = new Set(["010_Risk_Assessment.html", "018_Crew_Certificate_Monitoring.html", "039_Crew_List.html", "091C_Record_Hours_Of_Rest.html", "091D_Weekly_Accomm_Inspection.html", "092_Loading_Cargo_Stability.html", "093D_Covid_Daily_Monitoring.html", "096B1_Crane_Maintenance_Daily.html"]);
         if (selectedForm?.file && LANDSCAPE_FORMS.has(selectedForm.file)) {
           let styleEl = clone.querySelector("style[data-smk-orientation]");
           if (!styleEl) {
@@ -166,7 +166,7 @@ export default function SMKReportFormPage() {
       }
 
       // Determine destination: forms yang butuh approval masuk ke "Need Approval"
-      const REQUIRE_APPROVAL_FORMS = ['010', '059A', '059B', '059C', '059D', '059E', '059F'];
+      const REQUIRE_APPROVAL_FORMS = ['010', '059A', '059B', '059B1', '059B2', '059B3', '059B4', '059B5', '059B6', '059B7', '059B8', '059B9', '059B10', '059B11', '059B12', '059C', '059D', '059E', '059F'];
       const rawCode = (payload.formCode || selectedForm?.code || '').replace(/[\s-]/g, '').toUpperCase();
       const xDestination = REQUIRE_APPROVAL_FORMS.includes(rawCode) ? 'Need Approval' : 'Laporan';
       if (!xDestination || !safeShip || !safeName) {
@@ -189,9 +189,13 @@ export default function SMKReportFormPage() {
       const result = await res.json().catch(() => ({}));
       if (!res.ok || !result.ok) throw new Error(result.error || `HTTP ${res.status}`);
 
-      // Auto-download PDF
+      // Auto-download: Need Approval tersimpan HTML → render PDF on-the-fly via /preview;
+      // Laporan biasa (PDF) langsung via /download.
       try {
-        const dlUrl = `${uploadUrl}/download?path=${encodeURIComponent(result.path)}`;
+        const isNeedApproval = xDestination === 'Need Approval';
+        const previewPath = (result.path || '');
+        const endpoint = (isNeedApproval && /\.html?$/i.test(previewPath)) ? 'preview' : 'download';
+        const dlUrl = `${uploadUrl}/${endpoint}?path=${encodeURIComponent(result.path)}`;
         const dlRes = await fetch(dlUrl, {
           headers: { "X-Token": "smk-laporan-2026" }
         });
